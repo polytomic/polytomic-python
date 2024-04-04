@@ -141,6 +141,7 @@ from .resources import (
     webhooks,
 )
 from .environment import PolytomicEnvironment
+from .version import __version__
 
 __all__ = [
     "ActivateSyncEnvelope",
@@ -269,6 +270,7 @@ __all__ = [
     "WebhookEnvelope",
     "WebhookListEnvelope",
     "WorkTaskStatus",
+    "__version__",
     "bulk_sync",
     "connections",
     "events",
