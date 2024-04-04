@@ -9,15 +9,15 @@ from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.jsonable_encoder import jsonable_encoder
 from ...core.remove_none_from_dict import remove_none_from_dict
 from ...errors.unauthorized_error import UnauthorizedError
+from ...types.connection_list_response_envelope import ConnectionListResponseEnvelope
+from ...types.connection_parameter_values_response_envelope import ConnectionParameterValuesResponseEnvelope
+from ...types.connection_response_envelope import ConnectionResponseEnvelope
+from ...types.connection_type_response_envelope import ConnectionTypeResponseEnvelope
+from ...types.create_connection_response_envelope import CreateConnectionResponseEnvelope
+from ...types.get_connection_meta_envelope import GetConnectionMetaEnvelope
+from ...types.model_field_response import ModelFieldResponse
 from ...types.rest_err_response import RestErrResponse
-from ...types.v_2_connection_list_response_envelope import V2ConnectionListResponseEnvelope
-from ...types.v_2_connection_response_envelope import V2ConnectionResponseEnvelope
-from ...types.v_2_connection_type_response_envelope import V2ConnectionTypeResponseEnvelope
-from ...types.v_2_create_connection_response_envelope import V2CreateConnectionResponseEnvelope
-from ...types.v_2_get_connection_meta_envelope import V2GetConnectionMetaEnvelope
-from ...types.v_2_model_field_response import V2ModelFieldResponse
-from ...types.v_2_target_response_envelope import V2TargetResponseEnvelope
-from ...types.v_3_connect_card_response_envelope import V3ConnectCardResponseEnvelope
+from ...types.target_response_envelope import TargetResponseEnvelope
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -32,12 +32,12 @@ class ConnectionsClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def get_types(self) -> V2ConnectionTypeResponseEnvelope:
+    def get_types(self) -> ConnectionTypeResponseEnvelope:
         """
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.connections.get_types()
@@ -49,7 +49,7 @@ class ConnectionsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ConnectionTypeResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ConnectionTypeResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -58,12 +58,12 @@ class ConnectionsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def list(self) -> V2ConnectionListResponseEnvelope:
+    def list(self) -> ConnectionListResponseEnvelope:
         """
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.connections.list()
@@ -75,7 +75,7 @@ class ConnectionsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ConnectionListResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ConnectionListResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -94,7 +94,7 @@ class ConnectionsClient:
         redirect_url: typing.Optional[str] = OMIT,
         type: str,
         validate: typing.Optional[bool] = OMIT,
-    ) -> V2CreateConnectionResponseEnvelope:
+    ) -> CreateConnectionResponseEnvelope:
         """
         Parameters:
             - configuration: typing.Optional[typing.Dict[str, typing.Any]].
@@ -114,12 +114,14 @@ class ConnectionsClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.connections.create(
-            name="name",
-            type="type",
+            name="My Connection",
+            redirect_url="https://example.com/oauth_redirect",
+            type="s3",
+            validate=True,
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name, "type": type}
@@ -141,7 +143,7 @@ class ConnectionsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2CreateConnectionResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(CreateConnectionResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -150,69 +152,31 @@ class ConnectionsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def api_v_3_connect(
-        self,
-        *,
-        connection: typing.Optional[str] = OMIT,
-        name: str,
-        organization_id: typing.Optional[str] = OMIT,
-        redirect_url: str,
-        type: typing.Optional[str] = OMIT,
-        whitelist: typing.Optional[typing.List[str]] = OMIT,
-    ) -> V3ConnectCardResponseEnvelope:
+    def connect(self) -> None:
         """
-        Parameters:
-            - connection: typing.Optional[str].
-
-            - name: str.
-
-            - organization_id: typing.Optional[str].
-
-            - redirect_url: str.
-
-            - type: typing.Optional[str].
-
-            - whitelist: typing.Optional[typing.List[str]].
-        ---
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
-        client.connections.api_v_3_connect(
-            connection="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="name",
-            redirect_url="redirect_url",
-        )
+        client.connections.connect()
         """
-        _request: typing.Dict[str, typing.Any] = {"name": name, "redirect_url": redirect_url}
-        if connection is not OMIT:
-            _request["connection"] = connection
-        if organization_id is not OMIT:
-            _request["organization_id"] = organization_id
-        if type is not OMIT:
-            _request["type"] = type
-        if whitelist is not OMIT:
-            _request["whitelist"] = whitelist
         _response = self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/connections/connect"),
-            json=jsonable_encoder(_request),
             headers=self._client_wrapper.get_headers(),
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V3ConnectCardResponseEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            return
         try:
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, id: str) -> V2ConnectionResponseEnvelope:
+    def get(self, id: str) -> ConnectionResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -220,7 +184,7 @@ class ConnectionsClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.connections.get(
@@ -234,7 +198,7 @@ class ConnectionsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ConnectionResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ConnectionResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -253,11 +217,12 @@ class ConnectionsClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.connections.remove(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            force=True,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -288,7 +253,7 @@ class ConnectionsClient:
         reconnect: typing.Optional[bool] = OMIT,
         type: typing.Optional[str] = OMIT,
         validate: typing.Optional[bool] = OMIT,
-    ) -> V2CreateConnectionResponseEnvelope:
+    ) -> CreateConnectionResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -310,12 +275,15 @@ class ConnectionsClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.connections.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="name",
+            name="My Connection",
+            reconnect=False,
+            type="s3",
+            validate=True,
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name}
@@ -339,7 +307,7 @@ class ConnectionsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2CreateConnectionResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(CreateConnectionResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -348,7 +316,7 @@ class ConnectionsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get_source(self, id: str) -> V2GetConnectionMetaEnvelope:
+    def get_parameter_values(self, id: str) -> ConnectionParameterValuesResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -356,7 +324,38 @@ class ConnectionsClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
+            token="YOUR_TOKEN",
+        )
+        client.connections.get_parameter_values(
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "GET",
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"api/connections/{id}/parameter_values"),
+            headers=self._client_wrapper.get_headers(),
+            timeout=60,
+        )
+        if 200 <= _response.status_code < 300:
+            return pydantic.parse_obj_as(ConnectionParameterValuesResponseEnvelope, _response.json())  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def get_source(self, id: str) -> GetConnectionMetaEnvelope:
+        """
+        Parameters:
+            - id: str.
+        ---
+        from polytomic.client import Polytomic
+
+        client = Polytomic(
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.connections.get_source(
@@ -370,7 +369,7 @@ class ConnectionsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2GetConnectionMetaEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(GetConnectionMetaEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -381,7 +380,7 @@ class ConnectionsClient:
 
     def get_source_fields(
         self, id: str, *, query: typing.Optional[typing.Dict[str, typing.Any]] = OMIT
-    ) -> V2ModelFieldResponse:
+    ) -> ModelFieldResponse:
         """
         Parameters:
             - id: str.
@@ -391,7 +390,7 @@ class ConnectionsClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.connections.get_source_fields(
@@ -409,7 +408,7 @@ class ConnectionsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ModelFieldResponse, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ModelFieldResponse, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -420,7 +419,7 @@ class ConnectionsClient:
 
     def get_target(
         self, id: str, *, type: typing.Optional[str] = None, search: typing.Optional[str] = None
-    ) -> V2GetConnectionMetaEnvelope:
+    ) -> GetConnectionMetaEnvelope:
         """
         Parameters:
             - id: str.
@@ -432,11 +431,13 @@ class ConnectionsClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.connections.get_target(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            type="table",
+            search="public.users",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -447,7 +448,7 @@ class ConnectionsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2GetConnectionMetaEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(GetConnectionMetaEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -458,7 +459,7 @@ class ConnectionsClient:
 
     def get_target_fields(
         self, id: str, *, refresh: typing.Optional[bool] = OMIT, target: str
-    ) -> V2TargetResponseEnvelope:
+    ) -> TargetResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -470,11 +471,12 @@ class ConnectionsClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.connections.get_target_fields(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            refresh=False,
             target="database.table",
         )
         """
@@ -489,33 +491,9 @@ class ConnectionsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2TargetResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(TargetResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        try:
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
-    def connect(self) -> None:
-        """
-        from polytomic.client import Polytomic
-
-        client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
-            token="YOUR_TOKEN",
-        )
-        client.connections.connect()
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/connections/connect"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
-        )
-        if 200 <= _response.status_code < 300:
-            return
         try:
             _response_json = _response.json()
         except JSONDecodeError:
@@ -527,12 +505,12 @@ class AsyncConnectionsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def get_types(self) -> V2ConnectionTypeResponseEnvelope:
+    async def get_types(self) -> ConnectionTypeResponseEnvelope:
         """
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.connections.get_types()
@@ -544,7 +522,7 @@ class AsyncConnectionsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ConnectionTypeResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ConnectionTypeResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -553,12 +531,12 @@ class AsyncConnectionsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def list(self) -> V2ConnectionListResponseEnvelope:
+    async def list(self) -> ConnectionListResponseEnvelope:
         """
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.connections.list()
@@ -570,7 +548,7 @@ class AsyncConnectionsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ConnectionListResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ConnectionListResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -589,7 +567,7 @@ class AsyncConnectionsClient:
         redirect_url: typing.Optional[str] = OMIT,
         type: str,
         validate: typing.Optional[bool] = OMIT,
-    ) -> V2CreateConnectionResponseEnvelope:
+    ) -> CreateConnectionResponseEnvelope:
         """
         Parameters:
             - configuration: typing.Optional[typing.Dict[str, typing.Any]].
@@ -609,12 +587,14 @@ class AsyncConnectionsClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.connections.create(
-            name="name",
-            type="type",
+            name="My Connection",
+            redirect_url="https://example.com/oauth_redirect",
+            type="s3",
+            validate=True,
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name, "type": type}
@@ -636,7 +616,7 @@ class AsyncConnectionsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2CreateConnectionResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(CreateConnectionResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -645,69 +625,31 @@ class AsyncConnectionsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def api_v_3_connect(
-        self,
-        *,
-        connection: typing.Optional[str] = OMIT,
-        name: str,
-        organization_id: typing.Optional[str] = OMIT,
-        redirect_url: str,
-        type: typing.Optional[str] = OMIT,
-        whitelist: typing.Optional[typing.List[str]] = OMIT,
-    ) -> V3ConnectCardResponseEnvelope:
+    async def connect(self) -> None:
         """
-        Parameters:
-            - connection: typing.Optional[str].
-
-            - name: str.
-
-            - organization_id: typing.Optional[str].
-
-            - redirect_url: str.
-
-            - type: typing.Optional[str].
-
-            - whitelist: typing.Optional[typing.List[str]].
-        ---
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
-        await client.connections.api_v_3_connect(
-            connection="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="name",
-            redirect_url="redirect_url",
-        )
+        await client.connections.connect()
         """
-        _request: typing.Dict[str, typing.Any] = {"name": name, "redirect_url": redirect_url}
-        if connection is not OMIT:
-            _request["connection"] = connection
-        if organization_id is not OMIT:
-            _request["organization_id"] = organization_id
-        if type is not OMIT:
-            _request["type"] = type
-        if whitelist is not OMIT:
-            _request["whitelist"] = whitelist
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/connections/connect"),
-            json=jsonable_encoder(_request),
             headers=self._client_wrapper.get_headers(),
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V3ConnectCardResponseEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            return
         try:
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, id: str) -> V2ConnectionResponseEnvelope:
+    async def get(self, id: str) -> ConnectionResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -715,7 +657,7 @@ class AsyncConnectionsClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.connections.get(
@@ -729,7 +671,7 @@ class AsyncConnectionsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ConnectionResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ConnectionResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -748,11 +690,12 @@ class AsyncConnectionsClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.connections.remove(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            force=True,
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -783,7 +726,7 @@ class AsyncConnectionsClient:
         reconnect: typing.Optional[bool] = OMIT,
         type: typing.Optional[str] = OMIT,
         validate: typing.Optional[bool] = OMIT,
-    ) -> V2CreateConnectionResponseEnvelope:
+    ) -> CreateConnectionResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -805,12 +748,15 @@ class AsyncConnectionsClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.connections.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="name",
+            name="My Connection",
+            reconnect=False,
+            type="s3",
+            validate=True,
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name}
@@ -834,7 +780,7 @@ class AsyncConnectionsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2CreateConnectionResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(CreateConnectionResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -843,7 +789,7 @@ class AsyncConnectionsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get_source(self, id: str) -> V2GetConnectionMetaEnvelope:
+    async def get_parameter_values(self, id: str) -> ConnectionParameterValuesResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -851,7 +797,38 @@ class AsyncConnectionsClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
+            token="YOUR_TOKEN",
+        )
+        await client.connections.get_parameter_values(
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "GET",
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"api/connections/{id}/parameter_values"),
+            headers=self._client_wrapper.get_headers(),
+            timeout=60,
+        )
+        if 200 <= _response.status_code < 300:
+            return pydantic.parse_obj_as(ConnectionParameterValuesResponseEnvelope, _response.json())  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def get_source(self, id: str) -> GetConnectionMetaEnvelope:
+        """
+        Parameters:
+            - id: str.
+        ---
+        from polytomic.client import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.connections.get_source(
@@ -865,7 +842,7 @@ class AsyncConnectionsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2GetConnectionMetaEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(GetConnectionMetaEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -876,7 +853,7 @@ class AsyncConnectionsClient:
 
     async def get_source_fields(
         self, id: str, *, query: typing.Optional[typing.Dict[str, typing.Any]] = OMIT
-    ) -> V2ModelFieldResponse:
+    ) -> ModelFieldResponse:
         """
         Parameters:
             - id: str.
@@ -886,7 +863,7 @@ class AsyncConnectionsClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.connections.get_source_fields(
@@ -904,7 +881,7 @@ class AsyncConnectionsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ModelFieldResponse, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ModelFieldResponse, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -915,7 +892,7 @@ class AsyncConnectionsClient:
 
     async def get_target(
         self, id: str, *, type: typing.Optional[str] = None, search: typing.Optional[str] = None
-    ) -> V2GetConnectionMetaEnvelope:
+    ) -> GetConnectionMetaEnvelope:
         """
         Parameters:
             - id: str.
@@ -927,11 +904,13 @@ class AsyncConnectionsClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.connections.get_target(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            type="table",
+            search="public.users",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -942,7 +921,7 @@ class AsyncConnectionsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2GetConnectionMetaEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(GetConnectionMetaEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -953,7 +932,7 @@ class AsyncConnectionsClient:
 
     async def get_target_fields(
         self, id: str, *, refresh: typing.Optional[bool] = OMIT, target: str
-    ) -> V2TargetResponseEnvelope:
+    ) -> TargetResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -965,11 +944,12 @@ class AsyncConnectionsClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.connections.get_target_fields(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            refresh=False,
             target="database.table",
         )
         """
@@ -984,33 +964,9 @@ class AsyncConnectionsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2TargetResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(TargetResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        try:
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
-    async def connect(self) -> None:
-        """
-        from polytomic.client import AsyncPolytomic
-
-        client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
-            token="YOUR_TOKEN",
-        )
-        await client.connections.connect()
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/connections/connect"),
-            headers=self._client_wrapper.get_headers(),
-            timeout=60,
-        )
-        if 200 <= _response.status_code < 300:
-            return
         try:
             _response_json = _response.json()
         except JSONDecodeError:

@@ -8,10 +8,10 @@ from .....core.api_error import ApiError
 from .....core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from .....core.jsonable_encoder import jsonable_encoder
 from .....errors.unauthorized_error import UnauthorizedError
+from .....types.list_policies_response_envelope import ListPoliciesResponseEnvelope
+from .....types.policy_action import PolicyAction
+from .....types.policy_response_envelope import PolicyResponseEnvelope
 from .....types.rest_err_response import RestErrResponse
-from .....types.v_2_list_policies_response_envelope import V2ListPoliciesResponseEnvelope
-from .....types.v_2_policy_action import V2PolicyAction
-from .....types.v_2_policy_response_envelope import V2PolicyResponseEnvelope
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -26,12 +26,12 @@ class PoliciesClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list(self) -> V2ListPoliciesResponseEnvelope:
+    def list(self) -> ListPoliciesResponseEnvelope:
         """
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.permissions.policies.list()
@@ -43,7 +43,7 @@ class PoliciesClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ListPoliciesResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ListPoliciesResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -57,27 +57,27 @@ class PoliciesClient:
         *,
         name: str,
         organization_id: typing.Optional[str] = OMIT,
-        policy_actions: typing.Optional[typing.List[V2PolicyAction]] = OMIT,
-    ) -> V2PolicyResponseEnvelope:
+        policy_actions: typing.Optional[typing.List[PolicyAction]] = OMIT,
+    ) -> PolicyResponseEnvelope:
         """
         Parameters:
             - name: str.
 
             - organization_id: typing.Optional[str].
 
-            - policy_actions: typing.Optional[typing.List[V2PolicyAction]].
+            - policy_actions: typing.Optional[typing.List[PolicyAction]].
         ---
-        from polytomic import V2PolicyAction
+        from polytomic import PolicyAction
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.permissions.policies.create(
             name="Custom",
             policy_actions=[
-                V2PolicyAction(
+                PolicyAction(
                     action="read",
                     role_ids=["248df4b7-aa70-47b8-a036-33ac447e668d"],
                 )
@@ -97,7 +97,7 @@ class PoliciesClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2PolicyResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(PolicyResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -106,7 +106,7 @@ class PoliciesClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, id: str) -> V2PolicyResponseEnvelope:
+    def get(self, id: str) -> PolicyResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -114,7 +114,7 @@ class PoliciesClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.permissions.policies.get(
@@ -128,7 +128,7 @@ class PoliciesClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2PolicyResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(PolicyResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -145,7 +145,7 @@ class PoliciesClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.permissions.policies.delete(
@@ -174,8 +174,8 @@ class PoliciesClient:
         *,
         name: str,
         organization_id: typing.Optional[str] = OMIT,
-        policy_actions: typing.Optional[typing.List[V2PolicyAction]] = OMIT,
-    ) -> V2PolicyResponseEnvelope:
+        policy_actions: typing.Optional[typing.List[PolicyAction]] = OMIT,
+    ) -> PolicyResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -184,20 +184,20 @@ class PoliciesClient:
 
             - organization_id: typing.Optional[str].
 
-            - policy_actions: typing.Optional[typing.List[V2PolicyAction]].
+            - policy_actions: typing.Optional[typing.List[PolicyAction]].
         ---
-        from polytomic import V2PolicyAction
+        from polytomic import PolicyAction
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.permissions.policies.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="Custom",
             policy_actions=[
-                V2PolicyAction(
+                PolicyAction(
                     action="read",
                     role_ids=["248df4b7-aa70-47b8-a036-33ac447e668d"],
                 )
@@ -217,7 +217,7 @@ class PoliciesClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2PolicyResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(PolicyResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -231,12 +231,12 @@ class AsyncPoliciesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list(self) -> V2ListPoliciesResponseEnvelope:
+    async def list(self) -> ListPoliciesResponseEnvelope:
         """
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.permissions.policies.list()
@@ -248,7 +248,7 @@ class AsyncPoliciesClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ListPoliciesResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ListPoliciesResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -262,27 +262,27 @@ class AsyncPoliciesClient:
         *,
         name: str,
         organization_id: typing.Optional[str] = OMIT,
-        policy_actions: typing.Optional[typing.List[V2PolicyAction]] = OMIT,
-    ) -> V2PolicyResponseEnvelope:
+        policy_actions: typing.Optional[typing.List[PolicyAction]] = OMIT,
+    ) -> PolicyResponseEnvelope:
         """
         Parameters:
             - name: str.
 
             - organization_id: typing.Optional[str].
 
-            - policy_actions: typing.Optional[typing.List[V2PolicyAction]].
+            - policy_actions: typing.Optional[typing.List[PolicyAction]].
         ---
-        from polytomic import V2PolicyAction
+        from polytomic import PolicyAction
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.permissions.policies.create(
             name="Custom",
             policy_actions=[
-                V2PolicyAction(
+                PolicyAction(
                     action="read",
                     role_ids=["248df4b7-aa70-47b8-a036-33ac447e668d"],
                 )
@@ -302,7 +302,7 @@ class AsyncPoliciesClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2PolicyResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(PolicyResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -311,7 +311,7 @@ class AsyncPoliciesClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, id: str) -> V2PolicyResponseEnvelope:
+    async def get(self, id: str) -> PolicyResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -319,7 +319,7 @@ class AsyncPoliciesClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.permissions.policies.get(
@@ -333,7 +333,7 @@ class AsyncPoliciesClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2PolicyResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(PolicyResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -350,7 +350,7 @@ class AsyncPoliciesClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.permissions.policies.delete(
@@ -379,8 +379,8 @@ class AsyncPoliciesClient:
         *,
         name: str,
         organization_id: typing.Optional[str] = OMIT,
-        policy_actions: typing.Optional[typing.List[V2PolicyAction]] = OMIT,
-    ) -> V2PolicyResponseEnvelope:
+        policy_actions: typing.Optional[typing.List[PolicyAction]] = OMIT,
+    ) -> PolicyResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -389,20 +389,20 @@ class AsyncPoliciesClient:
 
             - organization_id: typing.Optional[str].
 
-            - policy_actions: typing.Optional[typing.List[V2PolicyAction]].
+            - policy_actions: typing.Optional[typing.List[PolicyAction]].
         ---
-        from polytomic import V2PolicyAction
+        from polytomic import PolicyAction
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.permissions.policies.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="Custom",
             policy_actions=[
-                V2PolicyAction(
+                PolicyAction(
                     action="read",
                     role_ids=["248df4b7-aa70-47b8-a036-33ac447e668d"],
                 )
@@ -422,7 +422,7 @@ class AsyncPoliciesClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2PolicyResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(PolicyResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:

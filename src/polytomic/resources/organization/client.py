@@ -8,9 +8,9 @@ from ...core.api_error import ApiError
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.jsonable_encoder import jsonable_encoder
 from ...errors.unauthorized_error import UnauthorizedError
+from ...types.organization_envelope import OrganizationEnvelope
+from ...types.organizations_envelope import OrganizationsEnvelope
 from ...types.rest_err_response import RestErrResponse
-from ...types.v_2_organization_envelope import V2OrganizationEnvelope
-from ...types.v_2_organizations_envelope import V2OrganizationsEnvelope
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -25,7 +25,7 @@ class OrganizationClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list(self) -> V2OrganizationsEnvelope:
+    def list(self) -> OrganizationsEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -35,7 +35,7 @@ class OrganizationClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.organization.list()
@@ -47,7 +47,7 @@ class OrganizationClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2OrganizationsEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(OrganizationsEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -65,7 +65,7 @@ class OrganizationClient:
         name: str,
         sso_domain: typing.Optional[str] = OMIT,
         sso_org_id: typing.Optional[str] = OMIT,
-    ) -> V2OrganizationEnvelope:
+    ) -> OrganizationEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -87,11 +87,16 @@ class OrganizationClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.organization.create(
-            name="name",
+            client_id="client_id",
+            client_secret="client_secret",
+            issuer="https://example.com",
+            name="My Organization",
+            sso_domain="example.com",
+            sso_org_id="123456",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name}
@@ -113,7 +118,7 @@ class OrganizationClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2OrganizationEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(OrganizationEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -122,7 +127,7 @@ class OrganizationClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, id: str) -> V2OrganizationEnvelope:
+    def get(self, id: str) -> OrganizationEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -134,7 +139,7 @@ class OrganizationClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.organization.get(
@@ -148,7 +153,7 @@ class OrganizationClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2OrganizationEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(OrganizationEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -169,7 +174,7 @@ class OrganizationClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.organization.remove(
@@ -202,7 +207,7 @@ class OrganizationClient:
         name: str,
         sso_domain: typing.Optional[str] = OMIT,
         sso_org_id: typing.Optional[str] = OMIT,
-    ) -> V2OrganizationEnvelope:
+    ) -> OrganizationEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -226,12 +231,17 @@ class OrganizationClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.organization.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="name",
+            client_id="client_id",
+            client_secret="client_secret",
+            issuer="https://example.com",
+            name="My Organization",
+            sso_domain="example.com",
+            sso_org_id="123456",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name}
@@ -253,7 +263,7 @@ class OrganizationClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2OrganizationEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(OrganizationEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -267,7 +277,7 @@ class AsyncOrganizationClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list(self) -> V2OrganizationsEnvelope:
+    async def list(self) -> OrganizationsEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -277,7 +287,7 @@ class AsyncOrganizationClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.organization.list()
@@ -289,7 +299,7 @@ class AsyncOrganizationClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2OrganizationsEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(OrganizationsEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -307,7 +317,7 @@ class AsyncOrganizationClient:
         name: str,
         sso_domain: typing.Optional[str] = OMIT,
         sso_org_id: typing.Optional[str] = OMIT,
-    ) -> V2OrganizationEnvelope:
+    ) -> OrganizationEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -329,11 +339,16 @@ class AsyncOrganizationClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.organization.create(
-            name="name",
+            client_id="client_id",
+            client_secret="client_secret",
+            issuer="https://example.com",
+            name="My Organization",
+            sso_domain="example.com",
+            sso_org_id="123456",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name}
@@ -355,7 +370,7 @@ class AsyncOrganizationClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2OrganizationEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(OrganizationEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -364,7 +379,7 @@ class AsyncOrganizationClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, id: str) -> V2OrganizationEnvelope:
+    async def get(self, id: str) -> OrganizationEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -376,7 +391,7 @@ class AsyncOrganizationClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.organization.get(
@@ -390,7 +405,7 @@ class AsyncOrganizationClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2OrganizationEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(OrganizationEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -411,7 +426,7 @@ class AsyncOrganizationClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.organization.remove(
@@ -444,7 +459,7 @@ class AsyncOrganizationClient:
         name: str,
         sso_domain: typing.Optional[str] = OMIT,
         sso_org_id: typing.Optional[str] = OMIT,
-    ) -> V2OrganizationEnvelope:
+    ) -> OrganizationEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -468,12 +483,17 @@ class AsyncOrganizationClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.organization.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="name",
+            client_id="client_id",
+            client_secret="client_secret",
+            issuer="https://example.com",
+            name="My Organization",
+            sso_domain="example.com",
+            sso_org_id="123456",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name}
@@ -495,7 +515,7 @@ class AsyncOrganizationClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2OrganizationEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(OrganizationEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:

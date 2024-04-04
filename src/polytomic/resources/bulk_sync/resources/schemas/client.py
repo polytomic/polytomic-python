@@ -7,11 +7,12 @@ from json.decoder import JSONDecodeError
 from .....core.api_error import ApiError
 from .....core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from .....core.jsonable_encoder import jsonable_encoder
+from .....core.remove_none_from_dict import remove_none_from_dict
 from .....errors.unauthorized_error import UnauthorizedError
+from .....types.bulk_field import BulkField
+from .....types.bulk_schema_envelope import BulkSchemaEnvelope
+from .....types.list_bulk_schema import ListBulkSchema
 from .....types.rest_err_response import RestErrResponse
-from .....types.v_3_bulk_field import V3BulkField
-from .....types.v_3_bulk_schema_envelope import V3BulkSchemaEnvelope
-from .....types.v_3_list_bulk_schema_envelope import V3ListBulkSchemaEnvelope
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -26,15 +27,17 @@ class SchemasClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list(self, id: str) -> V3ListBulkSchemaEnvelope:
+    def list(self, id: str, *, filters: typing.Optional[str] = None) -> ListBulkSchema:
         """
         Parameters:
             - id: str.
+
+            - filters: typing.Optional[str].
         ---
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.bulk_sync.schemas.list(
@@ -44,11 +47,12 @@ class SchemasClient:
         _response = self._client_wrapper.httpx_client.request(
             "GET",
             urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"api/bulk/syncs/{id}/schemas"),
+            params=remove_none_from_dict({"filters": filters}),
             headers=self._client_wrapper.get_headers(),
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V3ListBulkSchemaEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ListBulkSchema, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -63,9 +67,9 @@ class SchemasClient:
         schema_id: str,
         *,
         enabled: typing.Optional[bool] = OMIT,
-        fields: typing.Optional[typing.List[V3BulkField]] = OMIT,
+        fields: typing.Optional[typing.List[BulkField]] = OMIT,
         partition_key: typing.Optional[str] = OMIT,
-    ) -> V3BulkSchemaEnvelope:
+    ) -> BulkSchemaEnvelope:
         """
         Parameters:
             - id: str.
@@ -74,19 +78,21 @@ class SchemasClient:
 
             - enabled: typing.Optional[bool].
 
-            - fields: typing.Optional[typing.List[V3BulkField]].
+            - fields: typing.Optional[typing.List[BulkField]].
 
             - partition_key: typing.Optional[str].
         ---
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.bulk_sync.schemas.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schema_id="schema_id",
+            schema_id="contact",
+            enabled=True,
+            partition_key="email",
         )
         """
         _request: typing.Dict[str, typing.Any] = {}
@@ -104,7 +110,7 @@ class SchemasClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V3BulkSchemaEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSchemaEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -113,7 +119,7 @@ class SchemasClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, id: str, schema_id: str) -> V3BulkSchemaEnvelope:
+    def get(self, id: str, schema_id: str) -> BulkSchemaEnvelope:
         """
         Parameters:
             - id: str.
@@ -123,12 +129,12 @@ class SchemasClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.bulk_sync.schemas.get(
-            id="id",
-            schema_id="schema_id",
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            schema_id="Contact",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -138,7 +144,7 @@ class SchemasClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V3BulkSchemaEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSchemaEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -152,15 +158,17 @@ class AsyncSchemasClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list(self, id: str) -> V3ListBulkSchemaEnvelope:
+    async def list(self, id: str, *, filters: typing.Optional[str] = None) -> ListBulkSchema:
         """
         Parameters:
             - id: str.
+
+            - filters: typing.Optional[str].
         ---
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.bulk_sync.schemas.list(
@@ -170,11 +178,12 @@ class AsyncSchemasClient:
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
             urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"api/bulk/syncs/{id}/schemas"),
+            params=remove_none_from_dict({"filters": filters}),
             headers=self._client_wrapper.get_headers(),
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V3ListBulkSchemaEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ListBulkSchema, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -189,9 +198,9 @@ class AsyncSchemasClient:
         schema_id: str,
         *,
         enabled: typing.Optional[bool] = OMIT,
-        fields: typing.Optional[typing.List[V3BulkField]] = OMIT,
+        fields: typing.Optional[typing.List[BulkField]] = OMIT,
         partition_key: typing.Optional[str] = OMIT,
-    ) -> V3BulkSchemaEnvelope:
+    ) -> BulkSchemaEnvelope:
         """
         Parameters:
             - id: str.
@@ -200,19 +209,21 @@ class AsyncSchemasClient:
 
             - enabled: typing.Optional[bool].
 
-            - fields: typing.Optional[typing.List[V3BulkField]].
+            - fields: typing.Optional[typing.List[BulkField]].
 
             - partition_key: typing.Optional[str].
         ---
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.bulk_sync.schemas.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schema_id="schema_id",
+            schema_id="contact",
+            enabled=True,
+            partition_key="email",
         )
         """
         _request: typing.Dict[str, typing.Any] = {}
@@ -230,7 +241,7 @@ class AsyncSchemasClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V3BulkSchemaEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSchemaEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -239,7 +250,7 @@ class AsyncSchemasClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, id: str, schema_id: str) -> V3BulkSchemaEnvelope:
+    async def get(self, id: str, schema_id: str) -> BulkSchemaEnvelope:
         """
         Parameters:
             - id: str.
@@ -249,12 +260,12 @@ class AsyncSchemasClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.bulk_sync.schemas.get(
-            id="id",
-            schema_id="schema_id",
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            schema_id="Contact",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -264,7 +275,7 @@ class AsyncSchemasClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V3BulkSchemaEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSchemaEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:

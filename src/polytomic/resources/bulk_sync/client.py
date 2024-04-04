@@ -9,17 +9,18 @@ from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.jsonable_encoder import jsonable_encoder
 from ...core.remove_none_from_dict import remove_none_from_dict
 from ...errors.unauthorized_error import UnauthorizedError
+from ...types.activate_sync_envelope import ActivateSyncEnvelope
+from ...types.activate_sync_input import ActivateSyncInput
+from ...types.bulk_discover import BulkDiscover
 from ...types.bulk_schedule import BulkSchedule
+from ...types.bulk_sync_dest_envelope import BulkSyncDestEnvelope
+from ...types.bulk_sync_list_envelope import BulkSyncListEnvelope
+from ...types.bulk_sync_response_envelope import BulkSyncResponseEnvelope
+from ...types.bulk_sync_source_envelope import BulkSyncSourceEnvelope
+from ...types.bulk_sync_source_schema_envelope import BulkSyncSourceSchemaEnvelope
+from ...types.bulk_sync_source_status_envelope import BulkSyncSourceStatusEnvelope
+from ...types.bulk_sync_status_envelope import BulkSyncStatusEnvelope
 from ...types.rest_err_response import RestErrResponse
-from ...types.v_2_activate_sync_envelope import V2ActivateSyncEnvelope
-from ...types.v_2_activate_sync_input import V2ActivateSyncInput
-from ...types.v_2_bulk_sync_dest_envelope import V2BulkSyncDestEnvelope
-from ...types.v_2_bulk_sync_list_envelope import V2BulkSyncListEnvelope
-from ...types.v_2_bulk_sync_response_envelope import V2BulkSyncResponseEnvelope
-from ...types.v_3_bulk_sync_source_envelope import V3BulkSyncSourceEnvelope
-from ...types.v_3_bulk_sync_source_schema_envelope import V3BulkSyncSourceSchemaEnvelope
-from ...types.v_3_bulk_sync_source_status_envelope import V3BulkSyncSourceStatusEnvelope
-from ...types.v_3_bulk_sync_status_envelope import V3BulkSyncStatusEnvelope
 from .resources.executions.client import AsyncExecutionsClient, ExecutionsClient
 from .resources.schemas.client import AsyncSchemasClient, SchemasClient
 
@@ -38,7 +39,7 @@ class BulkSyncClient:
         self.executions = ExecutionsClient(client_wrapper=self._client_wrapper)
         self.schemas = SchemasClient(client_wrapper=self._client_wrapper)
 
-    def get_destination(self, id: str) -> V2BulkSyncDestEnvelope:
+    def get_destination(self, id: str) -> BulkSyncDestEnvelope:
         """
         Parameters:
             - id: str.
@@ -46,7 +47,7 @@ class BulkSyncClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.bulk_sync.get_destination(
@@ -60,7 +61,7 @@ class BulkSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2BulkSyncDestEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSyncDestEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -75,7 +76,7 @@ class BulkSyncClient:
         *,
         refresh_schemas: typing.Optional[bool] = None,
         include_fields: typing.Optional[bool] = None,
-    ) -> V3BulkSyncSourceEnvelope:
+    ) -> BulkSyncSourceEnvelope:
         """
         Parameters:
             - connection_id: str.
@@ -87,11 +88,12 @@ class BulkSyncClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.bulk_sync.get_source(
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            include_fields=True,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -102,7 +104,7 @@ class BulkSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V3BulkSyncSourceEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSyncSourceEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -111,7 +113,7 @@ class BulkSyncClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get_source_schema(self, connection_id: str, schema_id: str) -> V3BulkSyncSourceSchemaEnvelope:
+    def get_source_schema(self, connection_id: str, schema_id: str) -> BulkSyncSourceSchemaEnvelope:
         """
         Parameters:
             - connection_id: str.
@@ -121,7 +123,7 @@ class BulkSyncClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.bulk_sync.get_source_schema(
@@ -138,7 +140,7 @@ class BulkSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V3BulkSyncSourceSchemaEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSyncSourceSchemaEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -147,7 +149,7 @@ class BulkSyncClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def api_v_3_get_bulk_source_status(self, connection_id: str) -> V3BulkSyncSourceStatusEnvelope:
+    def get_source_status(self, connection_id: str) -> BulkSyncSourceStatusEnvelope:
         """
         Parameters:
             - connection_id: str.
@@ -155,10 +157,10 @@ class BulkSyncClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
-        client.bulk_sync.api_v_3_get_bulk_source_status(
+        client.bulk_sync.get_source_status(
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
         """
@@ -169,7 +171,7 @@ class BulkSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V3BulkSyncSourceStatusEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSyncSourceStatusEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -178,12 +180,12 @@ class BulkSyncClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def list(self) -> V2BulkSyncListEnvelope:
+    def list(self) -> BulkSyncListEnvelope:
         """
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.bulk_sync.list()
@@ -195,7 +197,7 @@ class BulkSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2BulkSyncListEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSyncListEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -208,13 +210,13 @@ class BulkSyncClient:
         self,
         *,
         active: typing.Optional[bool] = OMIT,
-        automatically_add_new_fields: typing.Optional[bool] = OMIT,
-        automatically_add_new_objects: typing.Optional[bool] = OMIT,
+        automatically_add_new_fields: typing.Optional[BulkDiscover] = OMIT,
+        automatically_add_new_objects: typing.Optional[BulkDiscover] = OMIT,
         destination_configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         destination_connection_id: str,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
         discover: typing.Optional[bool] = OMIT,
-        mode: str,
+        mode: typing.Optional[str] = OMIT,
         name: str,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.List[str]] = OMIT,
@@ -222,14 +224,14 @@ class BulkSyncClient:
         schemas: typing.Optional[typing.List[str]] = OMIT,
         source_configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         source_connection_id: str,
-    ) -> V2BulkSyncResponseEnvelope:
+    ) -> BulkSyncResponseEnvelope:
         """
         Parameters:
             - active: typing.Optional[bool].
 
-            - automatically_add_new_fields: typing.Optional[bool].
+            - automatically_add_new_fields: typing.Optional[BulkDiscover].
 
-            - automatically_add_new_objects: typing.Optional[bool].
+            - automatically_add_new_objects: typing.Optional[BulkDiscover].
 
             - destination_configuration: typing.Optional[typing.Dict[str, typing.Any]].
 
@@ -239,7 +241,7 @@ class BulkSyncClient:
 
             - discover: typing.Optional[bool]. DEPRECATED: Use automatically_add_new_objects/automatically_add_new_fields instead
 
-            - mode: str.
+            - mode: typing.Optional[str].
 
             - name: str.
 
@@ -255,26 +257,24 @@ class BulkSyncClient:
 
             - source_connection_id: str.
         ---
-        from polytomic import BulkSchedule
+        from polytomic import BulkSchedule, ScheduleFrequency
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.bulk_sync.create(
             destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            mode="mode",
             name="name",
             schedule=BulkSchedule(
-                frequency="frequency",
+                frequency=ScheduleFrequency.MANUAL,
             ),
             source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
         """
         _request: typing.Dict[str, typing.Any] = {
             "destination_connection_id": destination_connection_id,
-            "mode": mode,
             "name": name,
             "schedule": schedule,
             "source_connection_id": source_connection_id,
@@ -282,15 +282,17 @@ class BulkSyncClient:
         if active is not OMIT:
             _request["active"] = active
         if automatically_add_new_fields is not OMIT:
-            _request["automatically_add_new_fields"] = automatically_add_new_fields
+            _request["automatically_add_new_fields"] = automatically_add_new_fields.value
         if automatically_add_new_objects is not OMIT:
-            _request["automatically_add_new_objects"] = automatically_add_new_objects
+            _request["automatically_add_new_objects"] = automatically_add_new_objects.value
         if destination_configuration is not OMIT:
             _request["destination_configuration"] = destination_configuration
         if disable_record_timestamps is not OMIT:
             _request["disable_record_timestamps"] = disable_record_timestamps
         if discover is not OMIT:
             _request["discover"] = discover
+        if mode is not OMIT:
+            _request["mode"] = mode
         if organization_id is not OMIT:
             _request["organization_id"] = organization_id
         if policies is not OMIT:
@@ -307,7 +309,7 @@ class BulkSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2BulkSyncResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSyncResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -316,7 +318,7 @@ class BulkSyncClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, id: str, *, refresh_schemas: typing.Optional[bool] = None) -> V2BulkSyncResponseEnvelope:
+    def get(self, id: str, *, refresh_schemas: typing.Optional[bool] = None) -> BulkSyncResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -326,11 +328,12 @@ class BulkSyncClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.bulk_sync.get(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            refresh_schemas=True,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -341,7 +344,7 @@ class BulkSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2BulkSyncResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSyncResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -360,11 +363,12 @@ class BulkSyncClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.bulk_sync.remove(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            refresh_schemas=True,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -389,17 +393,21 @@ class BulkSyncClient:
         id: str,
         *,
         active: typing.Optional[bool] = OMIT,
+        automatically_add_new_fields: typing.Optional[BulkDiscover] = OMIT,
+        automatically_add_new_objects: typing.Optional[BulkDiscover] = OMIT,
         destination_configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         destination_connection_id: str,
+        disable_record_timestamps: typing.Optional[bool] = OMIT,
         discover: typing.Optional[bool] = OMIT,
-        mode: str,
+        mode: typing.Optional[str] = OMIT,
         name: str,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.List[str]] = OMIT,
         schedule: BulkSchedule,
+        schemas: typing.Optional[typing.List[str]] = OMIT,
         source_configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         source_connection_id: str,
-    ) -> V2BulkSyncResponseEnvelope:
+    ) -> BulkSyncResponseEnvelope:
         """
         > 📘 Updating schemas
         >
@@ -410,13 +418,19 @@ class BulkSyncClient:
 
             - active: typing.Optional[bool].
 
+            - automatically_add_new_fields: typing.Optional[BulkDiscover].
+
+            - automatically_add_new_objects: typing.Optional[BulkDiscover].
+
             - destination_configuration: typing.Optional[typing.Dict[str, typing.Any]].
 
             - destination_connection_id: str.
 
-            - discover: typing.Optional[bool].
+            - disable_record_timestamps: typing.Optional[bool].
 
-            - mode: str.
+            - discover: typing.Optional[bool]. DEPRECATED: Use automatically_add_new_objects/automatically_add_new_fields instead
+
+            - mode: typing.Optional[str].
 
             - name: str.
 
@@ -426,45 +440,55 @@ class BulkSyncClient:
 
             - schedule: BulkSchedule.
 
+            - schemas: typing.Optional[typing.List[str]].
+
             - source_configuration: typing.Optional[typing.Dict[str, typing.Any]].
 
             - source_connection_id: str.
         ---
-        from polytomic import BulkSchedule
+        from polytomic import BulkSchedule, ScheduleFrequency
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.bulk_sync.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            mode="mode",
             name="name",
             schedule=BulkSchedule(
-                frequency="frequency",
+                frequency=ScheduleFrequency.MANUAL,
             ),
             source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
         """
         _request: typing.Dict[str, typing.Any] = {
             "destination_connection_id": destination_connection_id,
-            "mode": mode,
             "name": name,
             "schedule": schedule,
             "source_connection_id": source_connection_id,
         }
         if active is not OMIT:
             _request["active"] = active
+        if automatically_add_new_fields is not OMIT:
+            _request["automatically_add_new_fields"] = automatically_add_new_fields.value
+        if automatically_add_new_objects is not OMIT:
+            _request["automatically_add_new_objects"] = automatically_add_new_objects.value
         if destination_configuration is not OMIT:
             _request["destination_configuration"] = destination_configuration
+        if disable_record_timestamps is not OMIT:
+            _request["disable_record_timestamps"] = disable_record_timestamps
         if discover is not OMIT:
             _request["discover"] = discover
+        if mode is not OMIT:
+            _request["mode"] = mode
         if organization_id is not OMIT:
             _request["organization_id"] = organization_id
         if policies is not OMIT:
             _request["policies"] = policies
+        if schemas is not OMIT:
+            _request["schemas"] = schemas
         if source_configuration is not OMIT:
             _request["source_configuration"] = source_configuration
         _response = self._client_wrapper.httpx_client.request(
@@ -475,7 +499,7 @@ class BulkSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2BulkSyncResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSyncResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -484,23 +508,23 @@ class BulkSyncClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def activate(self, id: str, *, request: V2ActivateSyncInput) -> V2ActivateSyncEnvelope:
+    def activate(self, id: str, *, request: ActivateSyncInput) -> ActivateSyncEnvelope:
         """
         Parameters:
             - id: str.
 
-            - request: V2ActivateSyncInput.
+            - request: ActivateSyncInput.
         ---
-        from polytomic import V2ActivateSyncInput
+        from polytomic import ActivateSyncInput
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.bulk_sync.activate(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            request=V2ActivateSyncInput(
+            request=ActivateSyncInput(
                 active=True,
             ),
         )
@@ -513,7 +537,7 @@ class BulkSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ActivateSyncEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ActivateSyncEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -522,7 +546,7 @@ class BulkSyncClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get_status(self, id: str) -> V3BulkSyncStatusEnvelope:
+    def get_status(self, id: str) -> BulkSyncStatusEnvelope:
         """
         Parameters:
             - id: str.
@@ -530,7 +554,7 @@ class BulkSyncClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.bulk_sync.get_status(
@@ -544,7 +568,7 @@ class BulkSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V3BulkSyncStatusEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSyncStatusEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -560,7 +584,7 @@ class AsyncBulkSyncClient:
         self.executions = AsyncExecutionsClient(client_wrapper=self._client_wrapper)
         self.schemas = AsyncSchemasClient(client_wrapper=self._client_wrapper)
 
-    async def get_destination(self, id: str) -> V2BulkSyncDestEnvelope:
+    async def get_destination(self, id: str) -> BulkSyncDestEnvelope:
         """
         Parameters:
             - id: str.
@@ -568,7 +592,7 @@ class AsyncBulkSyncClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.bulk_sync.get_destination(
@@ -582,7 +606,7 @@ class AsyncBulkSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2BulkSyncDestEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSyncDestEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -597,7 +621,7 @@ class AsyncBulkSyncClient:
         *,
         refresh_schemas: typing.Optional[bool] = None,
         include_fields: typing.Optional[bool] = None,
-    ) -> V3BulkSyncSourceEnvelope:
+    ) -> BulkSyncSourceEnvelope:
         """
         Parameters:
             - connection_id: str.
@@ -609,11 +633,12 @@ class AsyncBulkSyncClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.bulk_sync.get_source(
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            include_fields=True,
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -624,7 +649,7 @@ class AsyncBulkSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V3BulkSyncSourceEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSyncSourceEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -633,7 +658,7 @@ class AsyncBulkSyncClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get_source_schema(self, connection_id: str, schema_id: str) -> V3BulkSyncSourceSchemaEnvelope:
+    async def get_source_schema(self, connection_id: str, schema_id: str) -> BulkSyncSourceSchemaEnvelope:
         """
         Parameters:
             - connection_id: str.
@@ -643,7 +668,7 @@ class AsyncBulkSyncClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.bulk_sync.get_source_schema(
@@ -660,7 +685,7 @@ class AsyncBulkSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V3BulkSyncSourceSchemaEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSyncSourceSchemaEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -669,7 +694,7 @@ class AsyncBulkSyncClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def api_v_3_get_bulk_source_status(self, connection_id: str) -> V3BulkSyncSourceStatusEnvelope:
+    async def get_source_status(self, connection_id: str) -> BulkSyncSourceStatusEnvelope:
         """
         Parameters:
             - connection_id: str.
@@ -677,10 +702,10 @@ class AsyncBulkSyncClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
-        await client.bulk_sync.api_v_3_get_bulk_source_status(
+        await client.bulk_sync.get_source_status(
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
         """
@@ -691,7 +716,7 @@ class AsyncBulkSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V3BulkSyncSourceStatusEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSyncSourceStatusEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -700,12 +725,12 @@ class AsyncBulkSyncClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def list(self) -> V2BulkSyncListEnvelope:
+    async def list(self) -> BulkSyncListEnvelope:
         """
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.bulk_sync.list()
@@ -717,7 +742,7 @@ class AsyncBulkSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2BulkSyncListEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSyncListEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -730,13 +755,13 @@ class AsyncBulkSyncClient:
         self,
         *,
         active: typing.Optional[bool] = OMIT,
-        automatically_add_new_fields: typing.Optional[bool] = OMIT,
-        automatically_add_new_objects: typing.Optional[bool] = OMIT,
+        automatically_add_new_fields: typing.Optional[BulkDiscover] = OMIT,
+        automatically_add_new_objects: typing.Optional[BulkDiscover] = OMIT,
         destination_configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         destination_connection_id: str,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
         discover: typing.Optional[bool] = OMIT,
-        mode: str,
+        mode: typing.Optional[str] = OMIT,
         name: str,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.List[str]] = OMIT,
@@ -744,14 +769,14 @@ class AsyncBulkSyncClient:
         schemas: typing.Optional[typing.List[str]] = OMIT,
         source_configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         source_connection_id: str,
-    ) -> V2BulkSyncResponseEnvelope:
+    ) -> BulkSyncResponseEnvelope:
         """
         Parameters:
             - active: typing.Optional[bool].
 
-            - automatically_add_new_fields: typing.Optional[bool].
+            - automatically_add_new_fields: typing.Optional[BulkDiscover].
 
-            - automatically_add_new_objects: typing.Optional[bool].
+            - automatically_add_new_objects: typing.Optional[BulkDiscover].
 
             - destination_configuration: typing.Optional[typing.Dict[str, typing.Any]].
 
@@ -761,7 +786,7 @@ class AsyncBulkSyncClient:
 
             - discover: typing.Optional[bool]. DEPRECATED: Use automatically_add_new_objects/automatically_add_new_fields instead
 
-            - mode: str.
+            - mode: typing.Optional[str].
 
             - name: str.
 
@@ -777,26 +802,24 @@ class AsyncBulkSyncClient:
 
             - source_connection_id: str.
         ---
-        from polytomic import BulkSchedule
+        from polytomic import BulkSchedule, ScheduleFrequency
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.bulk_sync.create(
             destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            mode="mode",
             name="name",
             schedule=BulkSchedule(
-                frequency="frequency",
+                frequency=ScheduleFrequency.MANUAL,
             ),
             source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
         """
         _request: typing.Dict[str, typing.Any] = {
             "destination_connection_id": destination_connection_id,
-            "mode": mode,
             "name": name,
             "schedule": schedule,
             "source_connection_id": source_connection_id,
@@ -804,15 +827,17 @@ class AsyncBulkSyncClient:
         if active is not OMIT:
             _request["active"] = active
         if automatically_add_new_fields is not OMIT:
-            _request["automatically_add_new_fields"] = automatically_add_new_fields
+            _request["automatically_add_new_fields"] = automatically_add_new_fields.value
         if automatically_add_new_objects is not OMIT:
-            _request["automatically_add_new_objects"] = automatically_add_new_objects
+            _request["automatically_add_new_objects"] = automatically_add_new_objects.value
         if destination_configuration is not OMIT:
             _request["destination_configuration"] = destination_configuration
         if disable_record_timestamps is not OMIT:
             _request["disable_record_timestamps"] = disable_record_timestamps
         if discover is not OMIT:
             _request["discover"] = discover
+        if mode is not OMIT:
+            _request["mode"] = mode
         if organization_id is not OMIT:
             _request["organization_id"] = organization_id
         if policies is not OMIT:
@@ -829,7 +854,7 @@ class AsyncBulkSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2BulkSyncResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSyncResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -838,7 +863,7 @@ class AsyncBulkSyncClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, id: str, *, refresh_schemas: typing.Optional[bool] = None) -> V2BulkSyncResponseEnvelope:
+    async def get(self, id: str, *, refresh_schemas: typing.Optional[bool] = None) -> BulkSyncResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -848,11 +873,12 @@ class AsyncBulkSyncClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.bulk_sync.get(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            refresh_schemas=True,
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -863,7 +889,7 @@ class AsyncBulkSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2BulkSyncResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSyncResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -882,11 +908,12 @@ class AsyncBulkSyncClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.bulk_sync.remove(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            refresh_schemas=True,
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -911,17 +938,21 @@ class AsyncBulkSyncClient:
         id: str,
         *,
         active: typing.Optional[bool] = OMIT,
+        automatically_add_new_fields: typing.Optional[BulkDiscover] = OMIT,
+        automatically_add_new_objects: typing.Optional[BulkDiscover] = OMIT,
         destination_configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         destination_connection_id: str,
+        disable_record_timestamps: typing.Optional[bool] = OMIT,
         discover: typing.Optional[bool] = OMIT,
-        mode: str,
+        mode: typing.Optional[str] = OMIT,
         name: str,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.List[str]] = OMIT,
         schedule: BulkSchedule,
+        schemas: typing.Optional[typing.List[str]] = OMIT,
         source_configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         source_connection_id: str,
-    ) -> V2BulkSyncResponseEnvelope:
+    ) -> BulkSyncResponseEnvelope:
         """
         > 📘 Updating schemas
         >
@@ -932,13 +963,19 @@ class AsyncBulkSyncClient:
 
             - active: typing.Optional[bool].
 
+            - automatically_add_new_fields: typing.Optional[BulkDiscover].
+
+            - automatically_add_new_objects: typing.Optional[BulkDiscover].
+
             - destination_configuration: typing.Optional[typing.Dict[str, typing.Any]].
 
             - destination_connection_id: str.
 
-            - discover: typing.Optional[bool].
+            - disable_record_timestamps: typing.Optional[bool].
 
-            - mode: str.
+            - discover: typing.Optional[bool]. DEPRECATED: Use automatically_add_new_objects/automatically_add_new_fields instead
+
+            - mode: typing.Optional[str].
 
             - name: str.
 
@@ -948,45 +985,55 @@ class AsyncBulkSyncClient:
 
             - schedule: BulkSchedule.
 
+            - schemas: typing.Optional[typing.List[str]].
+
             - source_configuration: typing.Optional[typing.Dict[str, typing.Any]].
 
             - source_connection_id: str.
         ---
-        from polytomic import BulkSchedule
+        from polytomic import BulkSchedule, ScheduleFrequency
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.bulk_sync.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            mode="mode",
             name="name",
             schedule=BulkSchedule(
-                frequency="frequency",
+                frequency=ScheduleFrequency.MANUAL,
             ),
             source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
         """
         _request: typing.Dict[str, typing.Any] = {
             "destination_connection_id": destination_connection_id,
-            "mode": mode,
             "name": name,
             "schedule": schedule,
             "source_connection_id": source_connection_id,
         }
         if active is not OMIT:
             _request["active"] = active
+        if automatically_add_new_fields is not OMIT:
+            _request["automatically_add_new_fields"] = automatically_add_new_fields.value
+        if automatically_add_new_objects is not OMIT:
+            _request["automatically_add_new_objects"] = automatically_add_new_objects.value
         if destination_configuration is not OMIT:
             _request["destination_configuration"] = destination_configuration
+        if disable_record_timestamps is not OMIT:
+            _request["disable_record_timestamps"] = disable_record_timestamps
         if discover is not OMIT:
             _request["discover"] = discover
+        if mode is not OMIT:
+            _request["mode"] = mode
         if organization_id is not OMIT:
             _request["organization_id"] = organization_id
         if policies is not OMIT:
             _request["policies"] = policies
+        if schemas is not OMIT:
+            _request["schemas"] = schemas
         if source_configuration is not OMIT:
             _request["source_configuration"] = source_configuration
         _response = await self._client_wrapper.httpx_client.request(
@@ -997,7 +1044,7 @@ class AsyncBulkSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2BulkSyncResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSyncResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -1006,23 +1053,23 @@ class AsyncBulkSyncClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def activate(self, id: str, *, request: V2ActivateSyncInput) -> V2ActivateSyncEnvelope:
+    async def activate(self, id: str, *, request: ActivateSyncInput) -> ActivateSyncEnvelope:
         """
         Parameters:
             - id: str.
 
-            - request: V2ActivateSyncInput.
+            - request: ActivateSyncInput.
         ---
-        from polytomic import V2ActivateSyncInput
+        from polytomic import ActivateSyncInput
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.bulk_sync.activate(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            request=V2ActivateSyncInput(
+            request=ActivateSyncInput(
                 active=True,
             ),
         )
@@ -1035,7 +1082,7 @@ class AsyncBulkSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ActivateSyncEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ActivateSyncEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -1044,7 +1091,7 @@ class AsyncBulkSyncClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get_status(self, id: str) -> V3BulkSyncStatusEnvelope:
+    async def get_status(self, id: str) -> BulkSyncStatusEnvelope:
         """
         Parameters:
             - id: str.
@@ -1052,7 +1099,7 @@ class AsyncBulkSyncClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.bulk_sync.get_status(
@@ -1066,7 +1113,7 @@ class AsyncBulkSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V3BulkSyncStatusEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSyncStatusEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:

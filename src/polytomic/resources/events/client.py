@@ -10,9 +10,9 @@ from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.datetime_utils import serialize_datetime
 from ...core.remove_none_from_dict import remove_none_from_dict
 from ...errors.unauthorized_error import UnauthorizedError
+from ...types.event_types_envelope import EventTypesEnvelope
+from ...types.events_envelope import EventsEnvelope
 from ...types.rest_err_response import RestErrResponse
-from ...types.v_2_event_types_envelope import V2EventTypesEnvelope
-from ...types.v_2_events_envelope import V2EventsEnvelope
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -32,7 +32,7 @@ class EventsClient:
         starting_after: typing.Optional[dt.datetime] = None,
         ending_before: typing.Optional[dt.datetime] = None,
         limit: typing.Optional[int] = None,
-    ) -> V2EventsEnvelope:
+    ) -> EventsEnvelope:
         """
         Parameters:
             - organization_id: typing.Optional[str].
@@ -50,7 +50,7 @@ class EventsClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.events.api_v_2_get_events(
@@ -79,7 +79,7 @@ class EventsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2EventsEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(EventsEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -88,12 +88,12 @@ class EventsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def api_v_2_get_event_types(self) -> V2EventTypesEnvelope:
+    def api_v_2_get_event_types(self) -> EventTypesEnvelope:
         """
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.events.api_v_2_get_event_types()
@@ -105,7 +105,7 @@ class EventsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2EventTypesEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(EventTypesEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -127,7 +127,7 @@ class AsyncEventsClient:
         starting_after: typing.Optional[dt.datetime] = None,
         ending_before: typing.Optional[dt.datetime] = None,
         limit: typing.Optional[int] = None,
-    ) -> V2EventsEnvelope:
+    ) -> EventsEnvelope:
         """
         Parameters:
             - organization_id: typing.Optional[str].
@@ -145,7 +145,7 @@ class AsyncEventsClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.events.api_v_2_get_events(
@@ -174,7 +174,7 @@ class AsyncEventsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2EventsEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(EventsEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -183,12 +183,12 @@ class AsyncEventsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def api_v_2_get_event_types(self) -> V2EventTypesEnvelope:
+    async def api_v_2_get_event_types(self) -> EventTypesEnvelope:
         """
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.events.api_v_2_get_event_types()
@@ -200,7 +200,7 @@ class AsyncEventsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2EventTypesEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(EventTypesEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:

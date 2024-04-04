@@ -4,4 +4,4 @@ import enum
 
 
 class PolytomicEnvironment(enum.Enum):
-    DEFAULT = "https://app.polytomic.com/"
+    DEFAULT = "https://app.polytomic.com"

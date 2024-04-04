@@ -7,7 +7,7 @@ from ...core.api_error import ApiError
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...errors.unauthorized_error import UnauthorizedError
 from ...types.rest_err_response import RestErrResponse
-from ...types.v_3_schema_records_response_envelope import V3SchemaRecordsResponseEnvelope
+from ...types.schema_records_response_envelope import SchemaRecordsResponseEnvelope
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -19,7 +19,7 @@ class SchemasClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def get_records(self, connection_id: str, schema_id: str) -> V3SchemaRecordsResponseEnvelope:
+    def get_records(self, connection_id: str, schema_id: str) -> SchemaRecordsResponseEnvelope:
         """
         Parameters:
             - connection_id: str.
@@ -29,12 +29,12 @@ class SchemasClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.schemas.get_records(
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schema_id="schema_id",
+            schema_id="contact",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -46,7 +46,7 @@ class SchemasClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V3SchemaRecordsResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(SchemaRecordsResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -60,7 +60,7 @@ class AsyncSchemasClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def get_records(self, connection_id: str, schema_id: str) -> V3SchemaRecordsResponseEnvelope:
+    async def get_records(self, connection_id: str, schema_id: str) -> SchemaRecordsResponseEnvelope:
         """
         Parameters:
             - connection_id: str.
@@ -70,12 +70,12 @@ class AsyncSchemasClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.schemas.get_records(
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schema_id="schema_id",
+            schema_id="contact",
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -87,7 +87,7 @@ class AsyncSchemasClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V3SchemaRecordsResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(SchemaRecordsResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:

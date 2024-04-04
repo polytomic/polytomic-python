@@ -9,8 +9,8 @@ from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.jsonable_encoder import jsonable_encoder
 from ...errors.unauthorized_error import UnauthorizedError
 from ...types.rest_err_response import RestErrResponse
-from ...types.v_2_webhook_envelope import V2WebhookEnvelope
-from ...types.v_2_webhook_list_envelope import V2WebhookListEnvelope
+from ...types.webhook_envelope import WebhookEnvelope
+from ...types.webhook_list_envelope import WebhookListEnvelope
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -25,7 +25,7 @@ class WebhooksClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list(self) -> V2WebhookListEnvelope:
+    def list(self) -> WebhookListEnvelope:
         """
         Webooks can be set up using the webhook API endpoints. Currently, only one
         webhook may be created per organization. The webhook will be called for events
@@ -37,7 +37,7 @@ class WebhooksClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.webhooks.list()
@@ -49,7 +49,7 @@ class WebhooksClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2WebhookListEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(WebhookListEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -58,7 +58,7 @@ class WebhooksClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def create(self, *, endpoint: str, organization_id: typing.Optional[str] = OMIT, secret: str) -> V2WebhookEnvelope:
+    def create(self, *, endpoint: str, organization_id: typing.Optional[str] = OMIT, secret: str) -> WebhookEnvelope:
         """
         Webooks can be set up using the webhook API endpoints. Currently, only one
         webhook may be created per organization. The webhook will be called for events
@@ -76,7 +76,7 @@ class WebhooksClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.webhooks.create(
@@ -95,7 +95,7 @@ class WebhooksClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2WebhookEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(WebhookEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -104,7 +104,7 @@ class WebhooksClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, id: str) -> V2WebhookEnvelope:
+    def get(self, id: str) -> WebhookEnvelope:
         """
         Webooks can be set up using the webhook API endpoints. Currently, only one
         webhook may be created per organization. The webhook will be called for events
@@ -118,7 +118,7 @@ class WebhooksClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.webhooks.get(
@@ -132,7 +132,7 @@ class WebhooksClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2WebhookEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(WebhookEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -149,7 +149,7 @@ class WebhooksClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.webhooks.delete(
@@ -174,7 +174,7 @@ class WebhooksClient:
 
     def update(
         self, id: str, *, endpoint: str, organization_id: typing.Optional[str] = OMIT, secret: str
-    ) -> V2WebhookEnvelope:
+    ) -> WebhookEnvelope:
         """
         Webooks can be set up using the webhook API endpoints. Currently, only one
         webhook may be created per organization. The webhook will be called for events
@@ -194,7 +194,7 @@ class WebhooksClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.webhooks.update(
@@ -214,7 +214,7 @@ class WebhooksClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2WebhookEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(WebhookEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -228,7 +228,7 @@ class AsyncWebhooksClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list(self) -> V2WebhookListEnvelope:
+    async def list(self) -> WebhookListEnvelope:
         """
         Webooks can be set up using the webhook API endpoints. Currently, only one
         webhook may be created per organization. The webhook will be called for events
@@ -240,7 +240,7 @@ class AsyncWebhooksClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.webhooks.list()
@@ -252,7 +252,7 @@ class AsyncWebhooksClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2WebhookListEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(WebhookListEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -263,7 +263,7 @@ class AsyncWebhooksClient:
 
     async def create(
         self, *, endpoint: str, organization_id: typing.Optional[str] = OMIT, secret: str
-    ) -> V2WebhookEnvelope:
+    ) -> WebhookEnvelope:
         """
         Webooks can be set up using the webhook API endpoints. Currently, only one
         webhook may be created per organization. The webhook will be called for events
@@ -281,7 +281,7 @@ class AsyncWebhooksClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.webhooks.create(
@@ -300,7 +300,7 @@ class AsyncWebhooksClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2WebhookEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(WebhookEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -309,7 +309,7 @@ class AsyncWebhooksClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, id: str) -> V2WebhookEnvelope:
+    async def get(self, id: str) -> WebhookEnvelope:
         """
         Webooks can be set up using the webhook API endpoints. Currently, only one
         webhook may be created per organization. The webhook will be called for events
@@ -323,7 +323,7 @@ class AsyncWebhooksClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.webhooks.get(
@@ -337,7 +337,7 @@ class AsyncWebhooksClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2WebhookEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(WebhookEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -354,7 +354,7 @@ class AsyncWebhooksClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.webhooks.delete(
@@ -379,7 +379,7 @@ class AsyncWebhooksClient:
 
     async def update(
         self, id: str, *, endpoint: str, organization_id: typing.Optional[str] = OMIT, secret: str
-    ) -> V2WebhookEnvelope:
+    ) -> WebhookEnvelope:
         """
         Webooks can be set up using the webhook API endpoints. Currently, only one
         webhook may be created per organization. The webhook will be called for events
@@ -399,7 +399,7 @@ class AsyncWebhooksClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.webhooks.update(
@@ -419,7 +419,7 @@ class AsyncWebhooksClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2WebhookEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(WebhookEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:

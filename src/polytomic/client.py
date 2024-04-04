@@ -10,6 +10,7 @@ from .environment import PolytomicEnvironment
 from .resources.bulk_sync.client import AsyncBulkSyncClient, BulkSyncClient
 from .resources.connections.client import AsyncConnectionsClient, ConnectionsClient
 from .resources.events.client import AsyncEventsClient, EventsClient
+from .resources.jobs.client import AsyncJobsClient, JobsClient
 from .resources.model_sync.client import AsyncModelSyncClient, ModelSyncClient
 from .resources.models.client import AsyncModelsClient, ModelsClient
 from .resources.organization.client import AsyncOrganizationClient, OrganizationClient
@@ -25,14 +26,14 @@ class Polytomic:
         *,
         base_url: typing.Optional[str] = None,
         environment: PolytomicEnvironment = PolytomicEnvironment.DEFAULT,
-        polytomic_version: typing.Optional[typing_extensions.Literal["2022-12-12"]] = None,
+        x_polytomic_version: typing.Optional[typing_extensions.Literal["2023-04-25"]] = None,
         token: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = None,
         timeout: typing.Optional[float] = 60,
         httpx_client: typing.Optional[httpx.Client] = None
     ):
         self._client_wrapper = SyncClientWrapper(
             base_url=_get_base_url(base_url=base_url, environment=environment),
-            polytomic_version=polytomic_version,
+            x_polytomic_version=x_polytomic_version,
             token=token,
             httpx_client=httpx.Client(timeout=timeout) if httpx_client is None else httpx_client,
         )
@@ -40,6 +41,7 @@ class Polytomic:
         self.connections = ConnectionsClient(client_wrapper=self._client_wrapper)
         self.schemas = SchemasClient(client_wrapper=self._client_wrapper)
         self.events = EventsClient(client_wrapper=self._client_wrapper)
+        self.jobs = JobsClient(client_wrapper=self._client_wrapper)
         self.models = ModelsClient(client_wrapper=self._client_wrapper)
         self.organization = OrganizationClient(client_wrapper=self._client_wrapper)
         self.users = UsersClient(client_wrapper=self._client_wrapper)
@@ -54,14 +56,14 @@ class AsyncPolytomic:
         *,
         base_url: typing.Optional[str] = None,
         environment: PolytomicEnvironment = PolytomicEnvironment.DEFAULT,
-        polytomic_version: typing.Optional[typing_extensions.Literal["2022-12-12"]] = None,
+        x_polytomic_version: typing.Optional[typing_extensions.Literal["2023-04-25"]] = None,
         token: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = None,
         timeout: typing.Optional[float] = 60,
         httpx_client: typing.Optional[httpx.AsyncClient] = None
     ):
         self._client_wrapper = AsyncClientWrapper(
             base_url=_get_base_url(base_url=base_url, environment=environment),
-            polytomic_version=polytomic_version,
+            x_polytomic_version=x_polytomic_version,
             token=token,
             httpx_client=httpx.AsyncClient(timeout=timeout) if httpx_client is None else httpx_client,
         )
@@ -69,6 +71,7 @@ class AsyncPolytomic:
         self.connections = AsyncConnectionsClient(client_wrapper=self._client_wrapper)
         self.schemas = AsyncSchemasClient(client_wrapper=self._client_wrapper)
         self.events = AsyncEventsClient(client_wrapper=self._client_wrapper)
+        self.jobs = AsyncJobsClient(client_wrapper=self._client_wrapper)
         self.models = AsyncModelsClient(client_wrapper=self._client_wrapper)
         self.organization = AsyncOrganizationClient(client_wrapper=self._client_wrapper)
         self.users = AsyncUsersClient(client_wrapper=self._client_wrapper)

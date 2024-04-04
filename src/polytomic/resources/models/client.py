@@ -7,12 +7,13 @@ from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.jsonable_encoder import jsonable_encoder
+from ...core.remove_none_from_dict import remove_none_from_dict
 from ...errors.unauthorized_error import UnauthorizedError
+from ...types.model_list_response_envelope import ModelListResponseEnvelope
+from ...types.model_model_field_request import ModelModelFieldRequest
+from ...types.model_relation import ModelRelation
+from ...types.model_response_envelope import ModelResponseEnvelope
 from ...types.rest_err_response import RestErrResponse
-from ...types.v_2_model_field_request import V2ModelFieldRequest
-from ...types.v_2_model_list_response_envelope import V2ModelListResponseEnvelope
-from ...types.v_2_model_response_envelope import V2ModelResponseEnvelope
-from ...types.v_2_relation import V2Relation
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -27,12 +28,12 @@ class ModelsClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list(self) -> V2ModelListResponseEnvelope:
+    def list(self) -> ModelListResponseEnvelope:
         """
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.models.list()
@@ -44,7 +45,7 @@ class ModelsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ModelListResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ModelListResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -56,7 +57,8 @@ class ModelsClient:
     def create(
         self,
         *,
-        additional_fields: typing.Optional[typing.List[V2ModelFieldRequest]] = OMIT,
+        async_: typing.Optional[bool] = None,
+        additional_fields: typing.Optional[typing.List[ModelModelFieldRequest]] = OMIT,
         configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         connection_id: str,
         fields: typing.Optional[typing.List[str]] = OMIT,
@@ -65,12 +67,14 @@ class ModelsClient:
         name: str,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.List[str]] = OMIT,
-        relations: typing.Optional[typing.List[V2Relation]] = OMIT,
+        relations: typing.Optional[typing.List[ModelRelation]] = OMIT,
         tracking_columns: typing.Optional[typing.List[str]] = OMIT,
-    ) -> V2ModelResponseEnvelope:
+    ) -> ModelResponseEnvelope:
         """
         Parameters:
-            - additional_fields: typing.Optional[typing.List[V2ModelFieldRequest]].
+            - async_: typing.Optional[bool].
+
+            - additional_fields: typing.Optional[typing.List[ModelModelFieldRequest]].
 
             - configuration: typing.Optional[typing.Dict[str, typing.Any]].
 
@@ -88,19 +92,20 @@ class ModelsClient:
 
             - policies: typing.Optional[typing.List[str]].
 
-            - relations: typing.Optional[typing.List[V2Relation]].
+            - relations: typing.Optional[typing.List[ModelRelation]].
 
             - tracking_columns: typing.Optional[typing.List[str]].
         ---
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.models.create(
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="name",
+            identifier="id",
+            name="Users",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"connection_id": connection_id, "name": name}
@@ -125,12 +130,13 @@ class ModelsClient:
         _response = self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/models"),
+            params=remove_none_from_dict({"async": async_}),
             json=jsonable_encoder(_request),
             headers=self._client_wrapper.get_headers(),
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ModelResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -139,7 +145,7 @@ class ModelsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, id: str) -> V2ModelResponseEnvelope:
+    def get(self, id: str) -> ModelResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -147,7 +153,7 @@ class ModelsClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.models.get(
@@ -161,7 +167,7 @@ class ModelsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ModelResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -178,7 +184,7 @@ class ModelsClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.models.remove(
@@ -205,7 +211,8 @@ class ModelsClient:
         self,
         id: str,
         *,
-        additional_fields: typing.Optional[typing.List[V2ModelFieldRequest]] = OMIT,
+        async_: typing.Optional[bool] = None,
+        additional_fields: typing.Optional[typing.List[ModelModelFieldRequest]] = OMIT,
         configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         connection_id: str,
         fields: typing.Optional[typing.List[str]] = OMIT,
@@ -214,14 +221,16 @@ class ModelsClient:
         name: str,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.List[str]] = OMIT,
-        relations: typing.Optional[typing.List[V2Relation]] = OMIT,
+        relations: typing.Optional[typing.List[ModelRelation]] = OMIT,
         tracking_columns: typing.Optional[typing.List[str]] = OMIT,
-    ) -> V2ModelResponseEnvelope:
+    ) -> ModelResponseEnvelope:
         """
         Parameters:
             - id: str.
 
-            - additional_fields: typing.Optional[typing.List[V2ModelFieldRequest]].
+            - async_: typing.Optional[bool].
+
+            - additional_fields: typing.Optional[typing.List[ModelModelFieldRequest]].
 
             - configuration: typing.Optional[typing.Dict[str, typing.Any]].
 
@@ -239,20 +248,22 @@ class ModelsClient:
 
             - policies: typing.Optional[typing.List[str]].
 
-            - relations: typing.Optional[typing.List[V2Relation]].
+            - relations: typing.Optional[typing.List[ModelRelation]].
 
             - tracking_columns: typing.Optional[typing.List[str]].
         ---
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.models.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            async_=False,
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="name",
+            identifier="id",
+            name="Users",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"connection_id": connection_id, "name": name}
@@ -277,12 +288,13 @@ class ModelsClient:
         _response = self._client_wrapper.httpx_client.request(
             "PATCH",
             urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"api/models/{id}"),
+            params=remove_none_from_dict({"async": async_}),
             json=jsonable_encoder(_request),
             headers=self._client_wrapper.get_headers(),
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ModelResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -296,12 +308,12 @@ class AsyncModelsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list(self) -> V2ModelListResponseEnvelope:
+    async def list(self) -> ModelListResponseEnvelope:
         """
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.models.list()
@@ -313,7 +325,7 @@ class AsyncModelsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ModelListResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ModelListResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -325,7 +337,8 @@ class AsyncModelsClient:
     async def create(
         self,
         *,
-        additional_fields: typing.Optional[typing.List[V2ModelFieldRequest]] = OMIT,
+        async_: typing.Optional[bool] = None,
+        additional_fields: typing.Optional[typing.List[ModelModelFieldRequest]] = OMIT,
         configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         connection_id: str,
         fields: typing.Optional[typing.List[str]] = OMIT,
@@ -334,12 +347,14 @@ class AsyncModelsClient:
         name: str,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.List[str]] = OMIT,
-        relations: typing.Optional[typing.List[V2Relation]] = OMIT,
+        relations: typing.Optional[typing.List[ModelRelation]] = OMIT,
         tracking_columns: typing.Optional[typing.List[str]] = OMIT,
-    ) -> V2ModelResponseEnvelope:
+    ) -> ModelResponseEnvelope:
         """
         Parameters:
-            - additional_fields: typing.Optional[typing.List[V2ModelFieldRequest]].
+            - async_: typing.Optional[bool].
+
+            - additional_fields: typing.Optional[typing.List[ModelModelFieldRequest]].
 
             - configuration: typing.Optional[typing.Dict[str, typing.Any]].
 
@@ -357,19 +372,20 @@ class AsyncModelsClient:
 
             - policies: typing.Optional[typing.List[str]].
 
-            - relations: typing.Optional[typing.List[V2Relation]].
+            - relations: typing.Optional[typing.List[ModelRelation]].
 
             - tracking_columns: typing.Optional[typing.List[str]].
         ---
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.models.create(
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="name",
+            identifier="id",
+            name="Users",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"connection_id": connection_id, "name": name}
@@ -394,12 +410,13 @@ class AsyncModelsClient:
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/models"),
+            params=remove_none_from_dict({"async": async_}),
             json=jsonable_encoder(_request),
             headers=self._client_wrapper.get_headers(),
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ModelResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -408,7 +425,7 @@ class AsyncModelsClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, id: str) -> V2ModelResponseEnvelope:
+    async def get(self, id: str) -> ModelResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -416,7 +433,7 @@ class AsyncModelsClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.models.get(
@@ -430,7 +447,7 @@ class AsyncModelsClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ModelResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -447,7 +464,7 @@ class AsyncModelsClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.models.remove(
@@ -474,7 +491,8 @@ class AsyncModelsClient:
         self,
         id: str,
         *,
-        additional_fields: typing.Optional[typing.List[V2ModelFieldRequest]] = OMIT,
+        async_: typing.Optional[bool] = None,
+        additional_fields: typing.Optional[typing.List[ModelModelFieldRequest]] = OMIT,
         configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         connection_id: str,
         fields: typing.Optional[typing.List[str]] = OMIT,
@@ -483,14 +501,16 @@ class AsyncModelsClient:
         name: str,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.List[str]] = OMIT,
-        relations: typing.Optional[typing.List[V2Relation]] = OMIT,
+        relations: typing.Optional[typing.List[ModelRelation]] = OMIT,
         tracking_columns: typing.Optional[typing.List[str]] = OMIT,
-    ) -> V2ModelResponseEnvelope:
+    ) -> ModelResponseEnvelope:
         """
         Parameters:
             - id: str.
 
-            - additional_fields: typing.Optional[typing.List[V2ModelFieldRequest]].
+            - async_: typing.Optional[bool].
+
+            - additional_fields: typing.Optional[typing.List[ModelModelFieldRequest]].
 
             - configuration: typing.Optional[typing.Dict[str, typing.Any]].
 
@@ -508,20 +528,22 @@ class AsyncModelsClient:
 
             - policies: typing.Optional[typing.List[str]].
 
-            - relations: typing.Optional[typing.List[V2Relation]].
+            - relations: typing.Optional[typing.List[ModelRelation]].
 
             - tracking_columns: typing.Optional[typing.List[str]].
         ---
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.models.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            async_=False,
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="name",
+            identifier="id",
+            name="Users",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"connection_id": connection_id, "name": name}
@@ -546,12 +568,13 @@ class AsyncModelsClient:
         _response = await self._client_wrapper.httpx_client.request(
             "PATCH",
             urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"api/models/{id}"),
+            params=remove_none_from_dict({"async": async_}),
             json=jsonable_encoder(_request),
             headers=self._client_wrapper.get_headers(),
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ModelResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:

@@ -9,10 +9,10 @@ from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.jsonable_encoder import jsonable_encoder
 from ...core.remove_none_from_dict import remove_none_from_dict
 from ...errors.unauthorized_error import UnauthorizedError
+from ...types.api_key_response_envelope import ApiKeyResponseEnvelope
+from ...types.list_users_envelope import ListUsersEnvelope
 from ...types.rest_err_response import RestErrResponse
-from ...types.v_2_api_key_response_envelope import V2ApiKeyResponseEnvelope
-from ...types.v_2_list_users_envelope import V2ListUsersEnvelope
-from ...types.v_2_user_envelope import V2UserEnvelope
+from ...types.user_envelope import UserEnvelope
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -27,7 +27,7 @@ class UsersClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list(self, org_id: str) -> V2ListUsersEnvelope:
+    def list(self, org_id: str) -> ListUsersEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -39,7 +39,7 @@ class UsersClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.users.list(
@@ -53,7 +53,7 @@ class UsersClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ListUsersEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ListUsersEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -62,7 +62,7 @@ class UsersClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def create(self, org_id: str, *, email: str, role: typing.Optional[str] = OMIT) -> V2UserEnvelope:
+    def create(self, org_id: str, *, email: str, role: typing.Optional[str] = OMIT) -> UserEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -78,12 +78,13 @@ class UsersClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.users.create(
             org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            email="email",
+            email="mail@example.com",
+            role="admin",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"email": email}
@@ -97,7 +98,7 @@ class UsersClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2UserEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(UserEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -106,7 +107,7 @@ class UsersClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, id: str, org_id: str) -> V2UserEnvelope:
+    def get(self, id: str, org_id: str) -> UserEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -120,7 +121,7 @@ class UsersClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.users.get(
@@ -135,7 +136,7 @@ class UsersClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2UserEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(UserEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -144,7 +145,7 @@ class UsersClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def remove(self, id: str, org_id: str) -> V2UserEnvelope:
+    def remove(self, id: str, org_id: str) -> UserEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -158,7 +159,7 @@ class UsersClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.users.remove(
@@ -173,7 +174,7 @@ class UsersClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2UserEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(UserEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -182,7 +183,7 @@ class UsersClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def update(self, id: str, org_id: str, *, email: str, role: typing.Optional[str] = OMIT) -> V2UserEnvelope:
+    def update(self, id: str, org_id: str, *, email: str, role: typing.Optional[str] = OMIT) -> UserEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -200,13 +201,14 @@ class UsersClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.users.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            email="email",
+            email="mail@example.com",
+            role="admin",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"email": email}
@@ -220,7 +222,7 @@ class UsersClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2UserEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(UserEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -229,7 +231,7 @@ class UsersClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def create_api_key(self, org_id: str, id: str, *, force: typing.Optional[bool] = None) -> V2ApiKeyResponseEnvelope:
+    def create_api_key(self, org_id: str, id: str, *, force: typing.Optional[bool] = None) -> ApiKeyResponseEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -245,12 +247,13 @@ class UsersClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.users.create_api_key(
             org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            force=True,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -263,7 +266,7 @@ class UsersClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ApiKeyResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ApiKeyResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -277,7 +280,7 @@ class AsyncUsersClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list(self, org_id: str) -> V2ListUsersEnvelope:
+    async def list(self, org_id: str) -> ListUsersEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -289,7 +292,7 @@ class AsyncUsersClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.users.list(
@@ -303,7 +306,7 @@ class AsyncUsersClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ListUsersEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ListUsersEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -312,7 +315,7 @@ class AsyncUsersClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def create(self, org_id: str, *, email: str, role: typing.Optional[str] = OMIT) -> V2UserEnvelope:
+    async def create(self, org_id: str, *, email: str, role: typing.Optional[str] = OMIT) -> UserEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -328,12 +331,13 @@ class AsyncUsersClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.users.create(
             org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            email="email",
+            email="mail@example.com",
+            role="admin",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"email": email}
@@ -347,7 +351,7 @@ class AsyncUsersClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2UserEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(UserEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -356,7 +360,7 @@ class AsyncUsersClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, id: str, org_id: str) -> V2UserEnvelope:
+    async def get(self, id: str, org_id: str) -> UserEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -370,7 +374,7 @@ class AsyncUsersClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.users.get(
@@ -385,7 +389,7 @@ class AsyncUsersClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2UserEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(UserEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -394,7 +398,7 @@ class AsyncUsersClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def remove(self, id: str, org_id: str) -> V2UserEnvelope:
+    async def remove(self, id: str, org_id: str) -> UserEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -408,7 +412,7 @@ class AsyncUsersClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.users.remove(
@@ -423,7 +427,7 @@ class AsyncUsersClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2UserEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(UserEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -432,7 +436,7 @@ class AsyncUsersClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def update(self, id: str, org_id: str, *, email: str, role: typing.Optional[str] = OMIT) -> V2UserEnvelope:
+    async def update(self, id: str, org_id: str, *, email: str, role: typing.Optional[str] = OMIT) -> UserEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -450,13 +454,14 @@ class AsyncUsersClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.users.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            email="email",
+            email="mail@example.com",
+            role="admin",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"email": email}
@@ -470,7 +475,7 @@ class AsyncUsersClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2UserEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(UserEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -481,7 +486,7 @@ class AsyncUsersClient:
 
     async def create_api_key(
         self, org_id: str, id: str, *, force: typing.Optional[bool] = None
-    ) -> V2ApiKeyResponseEnvelope:
+    ) -> ApiKeyResponseEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -497,12 +502,13 @@ class AsyncUsersClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.users.create_api_key(
             org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            force=True,
         )
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -515,7 +521,7 @@ class AsyncUsersClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ApiKeyResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ApiKeyResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:

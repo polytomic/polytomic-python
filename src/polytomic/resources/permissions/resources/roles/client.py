@@ -9,8 +9,8 @@ from .....core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from .....core.jsonable_encoder import jsonable_encoder
 from .....errors.unauthorized_error import UnauthorizedError
 from .....types.rest_err_response import RestErrResponse
-from .....types.v_2_role_list_response_envelope import V2RoleListResponseEnvelope
-from .....types.v_2_role_response_envelope import V2RoleResponseEnvelope
+from .....types.role_list_response_envelope import RoleListResponseEnvelope
+from .....types.role_response_envelope import RoleResponseEnvelope
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -25,12 +25,12 @@ class RolesClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list(self) -> V2RoleListResponseEnvelope:
+    def list(self) -> RoleListResponseEnvelope:
         """
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.permissions.roles.list()
@@ -42,7 +42,7 @@ class RolesClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2RoleListResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(RoleListResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -51,7 +51,7 @@ class RolesClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def create(self, *, name: str, organization_id: typing.Optional[str] = OMIT) -> V2RoleResponseEnvelope:
+    def create(self, *, name: str, organization_id: typing.Optional[str] = OMIT) -> RoleResponseEnvelope:
         """
         Parameters:
             - name: str.
@@ -61,7 +61,7 @@ class RolesClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.permissions.roles.create(
@@ -79,7 +79,7 @@ class RolesClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2RoleResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(RoleResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -88,7 +88,7 @@ class RolesClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, id: str) -> V2RoleResponseEnvelope:
+    def get(self, id: str) -> RoleResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -96,7 +96,7 @@ class RolesClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.permissions.roles.get(
@@ -110,7 +110,7 @@ class RolesClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2RoleResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(RoleResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -127,7 +127,7 @@ class RolesClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.permissions.roles.delete(
@@ -150,7 +150,7 @@ class RolesClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def update(self, id: str, *, name: str, organization_id: typing.Optional[str] = OMIT) -> V2RoleResponseEnvelope:
+    def update(self, id: str, *, name: str, organization_id: typing.Optional[str] = OMIT) -> RoleResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -162,7 +162,7 @@ class RolesClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.permissions.roles.update(
@@ -181,7 +181,7 @@ class RolesClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2RoleResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(RoleResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -195,12 +195,12 @@ class AsyncRolesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list(self) -> V2RoleListResponseEnvelope:
+    async def list(self) -> RoleListResponseEnvelope:
         """
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.permissions.roles.list()
@@ -212,7 +212,7 @@ class AsyncRolesClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2RoleListResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(RoleListResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -221,7 +221,7 @@ class AsyncRolesClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def create(self, *, name: str, organization_id: typing.Optional[str] = OMIT) -> V2RoleResponseEnvelope:
+    async def create(self, *, name: str, organization_id: typing.Optional[str] = OMIT) -> RoleResponseEnvelope:
         """
         Parameters:
             - name: str.
@@ -231,7 +231,7 @@ class AsyncRolesClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.permissions.roles.create(
@@ -249,7 +249,7 @@ class AsyncRolesClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2RoleResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(RoleResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -258,7 +258,7 @@ class AsyncRolesClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, id: str) -> V2RoleResponseEnvelope:
+    async def get(self, id: str) -> RoleResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -266,7 +266,7 @@ class AsyncRolesClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.permissions.roles.get(
@@ -280,7 +280,7 @@ class AsyncRolesClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2RoleResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(RoleResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -297,7 +297,7 @@ class AsyncRolesClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.permissions.roles.delete(
@@ -320,9 +320,7 @@ class AsyncRolesClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def update(
-        self, id: str, *, name: str, organization_id: typing.Optional[str] = OMIT
-    ) -> V2RoleResponseEnvelope:
+    async def update(self, id: str, *, name: str, organization_id: typing.Optional[str] = OMIT) -> RoleResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -334,7 +332,7 @@ class AsyncRolesClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.permissions.roles.update(
@@ -353,7 +351,7 @@ class AsyncRolesClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2RoleResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(RoleResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:

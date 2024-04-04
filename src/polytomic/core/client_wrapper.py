@@ -10,11 +10,11 @@ class BaseClientWrapper:
     def __init__(
         self,
         *,
-        polytomic_version: typing.Optional[typing_extensions.Literal["2022-12-12"]] = None,
+        x_polytomic_version: typing.Optional[typing_extensions.Literal["2023-04-25"]] = None,
         token: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = None,
         base_url: str,
     ):
-        self._polytomic_version = polytomic_version
+        self._x_polytomic_version = x_polytomic_version
         self._token = token
         self._base_url = base_url
 
@@ -22,10 +22,10 @@ class BaseClientWrapper:
         headers: typing.Dict[str, str] = {
             "X-Fern-Language": "Python",
             "X-Fern-SDK-Name": "polytomic",
-            "X-Fern-SDK-Version": "0.1.0",
+            "X-Fern-SDK-Version": "0.1.1",
         }
-        if self._polytomic_version is not None:
-            headers["X-Polytomic-Version"] = self._polytomic_version
+        if self._x_polytomic_version is not None:
+            headers["X-Polytomic-Version"] = self._x_polytomic_version
         token = self._get_token()
         if token is not None:
             headers["Authorization"] = f"Bearer {token}"
@@ -45,12 +45,12 @@ class SyncClientWrapper(BaseClientWrapper):
     def __init__(
         self,
         *,
-        polytomic_version: typing.Optional[typing_extensions.Literal["2022-12-12"]] = None,
+        x_polytomic_version: typing.Optional[typing_extensions.Literal["2023-04-25"]] = None,
         token: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = None,
         base_url: str,
         httpx_client: httpx.Client,
     ):
-        super().__init__(polytomic_version=polytomic_version, token=token, base_url=base_url)
+        super().__init__(x_polytomic_version=x_polytomic_version, token=token, base_url=base_url)
         self.httpx_client = httpx_client
 
 
@@ -58,10 +58,10 @@ class AsyncClientWrapper(BaseClientWrapper):
     def __init__(
         self,
         *,
-        polytomic_version: typing.Optional[typing_extensions.Literal["2022-12-12"]] = None,
+        x_polytomic_version: typing.Optional[typing_extensions.Literal["2023-04-25"]] = None,
         token: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = None,
         base_url: str,
         httpx_client: httpx.AsyncClient,
     ):
-        super().__init__(polytomic_version=polytomic_version, token=token, base_url=base_url)
+        super().__init__(x_polytomic_version=x_polytomic_version, token=token, base_url=base_url)
         self.httpx_client = httpx_client

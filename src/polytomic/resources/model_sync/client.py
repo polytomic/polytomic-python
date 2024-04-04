@@ -8,22 +8,21 @@ from ...core.api_error import ApiError
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.jsonable_encoder import jsonable_encoder
 from ...errors.unauthorized_error import UnauthorizedError
+from ...types.activate_sync_envelope import ActivateSyncEnvelope
+from ...types.activate_sync_input import ActivateSyncInput
+from ...types.filter import Filter
+from ...types.identity import Identity
+from ...types.list_model_sync_response_envelope import ListModelSyncResponseEnvelope
+from ...types.model_sync_field import ModelSyncField
+from ...types.model_sync_response_envelope import ModelSyncResponseEnvelope
+from ...types.override import Override
 from ...types.rest_err_response import RestErrResponse
-from ...types.v_2_activate_sync_envelope import V2ActivateSyncEnvelope
-from ...types.v_2_activate_sync_input import V2ActivateSyncInput
-from ...types.v_2_filter import V2Filter
-from ...types.v_2_identity import V2Identity
-from ...types.v_2_list_sync_response_envelope import V2ListSyncResponseEnvelope
-from ...types.v_2_override import V2Override
-from ...types.v_2_schedule import V2Schedule
-from ...types.v_2_start_sync_response_envelope import V2StartSyncResponseEnvelope
-from ...types.v_2_sync_field import V2SyncField
-from ...types.v_2_sync_response_envelope import V2SyncResponseEnvelope
-from ...types.v_2_sync_status_envelope import V2SyncStatusEnvelope
-from ...types.v_2_target import V2Target
+from ...types.schedule import Schedule
+from ...types.schedule_option_response_envelope import ScheduleOptionResponseEnvelope
+from ...types.start_model_sync_response_envelope import StartModelSyncResponseEnvelope
+from ...types.sync_status_envelope import SyncStatusEnvelope
+from ...types.target import Target
 from .resources.executions.client import AsyncExecutionsClient, ExecutionsClient
-from .types.v_2_create_sync_request_mode import V2CreateSyncRequestMode
-from .types.v_2_update_sync_request_mode import V2UpdateSyncRequestMode
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -39,12 +38,12 @@ class ModelSyncClient:
         self._client_wrapper = client_wrapper
         self.executions = ExecutionsClient(client_wrapper=self._client_wrapper)
 
-    def list(self) -> V2ListSyncResponseEnvelope:
+    def list(self) -> ListModelSyncResponseEnvelope:
         """
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.model_sync.list()
@@ -56,7 +55,7 @@ class ModelSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ListSyncResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ListModelSyncResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -69,68 +68,61 @@ class ModelSyncClient:
         self,
         *,
         active: typing.Optional[bool] = OMIT,
-        fields: typing.Optional[typing.List[V2SyncField]] = OMIT,
+        fields: typing.Optional[typing.List[ModelSyncField]] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
-        filters: typing.Optional[typing.List[V2Filter]] = OMIT,
-        identity: typing.Optional[V2Identity] = OMIT,
-        mode: V2CreateSyncRequestMode,
+        filters: typing.Optional[typing.List[Filter]] = OMIT,
+        identity: typing.Optional[Identity] = OMIT,
+        mode: str,
         name: str,
         organization_id: typing.Optional[str] = OMIT,
-        override_fields: typing.Optional[typing.List[V2SyncField]] = OMIT,
-        overrides: typing.Optional[typing.List[V2Override]] = OMIT,
+        override_fields: typing.Optional[typing.List[ModelSyncField]] = OMIT,
+        overrides: typing.Optional[typing.List[Override]] = OMIT,
         policies: typing.Optional[typing.List[str]] = OMIT,
-        schedule: V2Schedule,
+        schedule: Schedule,
         sync_all_records: typing.Optional[bool] = OMIT,
-        target: V2Target,
-    ) -> V2SyncResponseEnvelope:
+        target: Target,
+    ) -> ModelSyncResponseEnvelope:
         """
         Parameters:
             - active: typing.Optional[bool].
 
-            - fields: typing.Optional[typing.List[V2SyncField]].
+            - fields: typing.Optional[typing.List[ModelSyncField]].
 
             - filter_logic: typing.Optional[str].
 
-            - filters: typing.Optional[typing.List[V2Filter]].
+            - filters: typing.Optional[typing.List[Filter]].
 
-            - identity: typing.Optional[V2Identity].
+            - identity: typing.Optional[Identity].
 
-            - mode: V2CreateSyncRequestMode.
+            - mode: str.
 
             - name: str.
 
             - organization_id: typing.Optional[str].
 
-            - override_fields: typing.Optional[typing.List[V2SyncField]].
+            - override_fields: typing.Optional[typing.List[ModelSyncField]].
 
-            - overrides: typing.Optional[typing.List[V2Override]].
+            - overrides: typing.Optional[typing.List[Override]].
 
             - policies: typing.Optional[typing.List[str]].
 
-            - schedule: V2Schedule.
+            - schedule: Schedule.
 
             - sync_all_records: typing.Optional[bool].
 
-            - target: V2Target.
+            - target: Target.
         ---
-        from polytomic import (
-            V2CreateSyncRequestMode,
-            V2Identity,
-            V2Schedule,
-            V2Source,
-            V2SyncField,
-            V2Target,
-        )
+        from polytomic import Identity, ModelSyncField, Schedule, Source, Target
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.model_sync.create(
             fields=[
-                V2SyncField(
-                    source=V2Source(
+                ModelSyncField(
+                    source=Source(
                         field="id",
                         model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                     ),
@@ -138,29 +130,28 @@ class ModelSyncClient:
                 )
             ],
             filter_logic="A and B or C",
-            identity=V2Identity(
-                function="function",
-                source=V2Source(
+            identity=Identity(
+                function="Equality",
+                source=Source(
                     field="id",
                     model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 ),
                 target="name",
             ),
-            mode=V2CreateSyncRequestMode.UPDATE,
+            mode="create",
             name="Users Sync",
-            schedule=V2Schedule(),
-            target=V2Target(
+            schedule=Schedule(
+                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                frequency="daily",
+            ),
+            sync_all_records=False,
+            target=Target(
                 connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 object="Users",
             ),
         )
         """
-        _request: typing.Dict[str, typing.Any] = {
-            "mode": mode.value,
-            "name": name,
-            "schedule": schedule,
-            "target": target,
-        }
+        _request: typing.Dict[str, typing.Any] = {"mode": mode, "name": name, "schedule": schedule, "target": target}
         if active is not OMIT:
             _request["active"] = active
         if fields is not OMIT:
@@ -189,7 +180,7 @@ class ModelSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2SyncResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ModelSyncResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -198,7 +189,33 @@ class ModelSyncClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, id: str) -> V2SyncResponseEnvelope:
+    def get_schedule_options(self) -> ScheduleOptionResponseEnvelope:
+        """
+        from polytomic.client import Polytomic
+
+        client = Polytomic(
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
+            token="YOUR_TOKEN",
+        )
+        client.model_sync.get_schedule_options()
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "GET",
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/syncs/schedules"),
+            headers=self._client_wrapper.get_headers(),
+            timeout=60,
+        )
+        if 200 <= _response.status_code < 300:
+            return pydantic.parse_obj_as(ScheduleOptionResponseEnvelope, _response.json())  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    def get(self, id: str) -> ModelSyncResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -206,7 +223,7 @@ class ModelSyncClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.model_sync.get(
@@ -220,7 +237,7 @@ class ModelSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2SyncResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ModelSyncResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -237,7 +254,7 @@ class ModelSyncClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.model_sync.remove(
@@ -265,71 +282,64 @@ class ModelSyncClient:
         id: str,
         *,
         active: typing.Optional[bool] = OMIT,
-        fields: typing.Optional[typing.List[V2SyncField]] = OMIT,
+        fields: typing.Optional[typing.List[ModelSyncField]] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
-        filters: typing.Optional[typing.List[V2Filter]] = OMIT,
-        identity: typing.Optional[V2Identity] = OMIT,
-        mode: V2UpdateSyncRequestMode,
+        filters: typing.Optional[typing.List[Filter]] = OMIT,
+        identity: typing.Optional[Identity] = OMIT,
+        mode: str,
         name: str,
         organization_id: typing.Optional[str] = OMIT,
-        override_fields: typing.Optional[typing.List[V2SyncField]] = OMIT,
-        overrides: typing.Optional[typing.List[V2Override]] = OMIT,
+        override_fields: typing.Optional[typing.List[ModelSyncField]] = OMIT,
+        overrides: typing.Optional[typing.List[Override]] = OMIT,
         policies: typing.Optional[typing.List[str]] = OMIT,
-        schedule: V2Schedule,
+        schedule: Schedule,
         sync_all_records: typing.Optional[bool] = OMIT,
-        target: V2Target,
-    ) -> V2SyncResponseEnvelope:
+        target: Target,
+    ) -> ModelSyncResponseEnvelope:
         """
         Parameters:
             - id: str.
 
             - active: typing.Optional[bool].
 
-            - fields: typing.Optional[typing.List[V2SyncField]].
+            - fields: typing.Optional[typing.List[ModelSyncField]].
 
             - filter_logic: typing.Optional[str].
 
-            - filters: typing.Optional[typing.List[V2Filter]].
+            - filters: typing.Optional[typing.List[Filter]].
 
-            - identity: typing.Optional[V2Identity].
+            - identity: typing.Optional[Identity].
 
-            - mode: V2UpdateSyncRequestMode.
+            - mode: str.
 
             - name: str.
 
             - organization_id: typing.Optional[str].
 
-            - override_fields: typing.Optional[typing.List[V2SyncField]].
+            - override_fields: typing.Optional[typing.List[ModelSyncField]].
 
-            - overrides: typing.Optional[typing.List[V2Override]].
+            - overrides: typing.Optional[typing.List[Override]].
 
             - policies: typing.Optional[typing.List[str]].
 
-            - schedule: V2Schedule.
+            - schedule: Schedule.
 
             - sync_all_records: typing.Optional[bool].
 
-            - target: V2Target.
+            - target: Target.
         ---
-        from polytomic import (
-            V2Identity,
-            V2Schedule,
-            V2Source,
-            V2SyncField,
-            V2Target,
-            V2UpdateSyncRequestMode,
-        )
+        from polytomic import Identity, ModelSyncField, Schedule, Source, Target
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.model_sync.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             fields=[
-                V2SyncField(
-                    source=V2Source(
+                ModelSyncField(
+                    source=Source(
                         field="id",
                         model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                     ),
@@ -337,29 +347,28 @@ class ModelSyncClient:
                 )
             ],
             filter_logic="A and B or C",
-            identity=V2Identity(
-                function="function",
-                source=V2Source(
+            identity=Identity(
+                function="Equality",
+                source=Source(
                     field="id",
                     model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 ),
                 target="name",
             ),
-            mode=V2UpdateSyncRequestMode.UPDATE,
+            mode="create",
             name="Users Sync",
-            schedule=V2Schedule(),
-            target=V2Target(
+            schedule=Schedule(
+                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                frequency="daily",
+            ),
+            sync_all_records=False,
+            target=Target(
                 connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 object="Users",
             ),
         )
         """
-        _request: typing.Dict[str, typing.Any] = {
-            "mode": mode.value,
-            "name": name,
-            "schedule": schedule,
-            "target": target,
-        }
+        _request: typing.Dict[str, typing.Any] = {"mode": mode, "name": name, "schedule": schedule, "target": target}
         if active is not OMIT:
             _request["active"] = active
         if fields is not OMIT:
@@ -388,7 +397,7 @@ class ModelSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2SyncResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ModelSyncResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -397,23 +406,23 @@ class ModelSyncClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def activate(self, id: str, *, request: V2ActivateSyncInput) -> V2ActivateSyncEnvelope:
+    def activate(self, id: str, *, request: ActivateSyncInput) -> ActivateSyncEnvelope:
         """
         Parameters:
             - id: str.
 
-            - request: V2ActivateSyncInput.
+            - request: ActivateSyncInput.
         ---
-        from polytomic import V2ActivateSyncInput
+        from polytomic import ActivateSyncInput
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.model_sync.activate(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            request=V2ActivateSyncInput(
+            request=ActivateSyncInput(
                 active=True,
             ),
         )
@@ -426,7 +435,7 @@ class ModelSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ActivateSyncEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ActivateSyncEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -435,7 +444,7 @@ class ModelSyncClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def start(self, id: str, *, identities: typing.Optional[typing.List[str]] = OMIT) -> V2StartSyncResponseEnvelope:
+    def start(self, id: str, *, identities: typing.Optional[typing.List[str]] = OMIT) -> StartModelSyncResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -445,7 +454,7 @@ class ModelSyncClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.model_sync.start(
@@ -463,7 +472,7 @@ class ModelSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2StartSyncResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(StartModelSyncResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -472,7 +481,7 @@ class ModelSyncClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get_status(self, id: str) -> V2SyncStatusEnvelope:
+    def get_status(self, id: str) -> SyncStatusEnvelope:
         """
         Parameters:
             - id: str.
@@ -480,7 +489,7 @@ class ModelSyncClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.model_sync.get_status(
@@ -494,7 +503,7 @@ class ModelSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2SyncStatusEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(SyncStatusEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -509,12 +518,12 @@ class AsyncModelSyncClient:
         self._client_wrapper = client_wrapper
         self.executions = AsyncExecutionsClient(client_wrapper=self._client_wrapper)
 
-    async def list(self) -> V2ListSyncResponseEnvelope:
+    async def list(self) -> ListModelSyncResponseEnvelope:
         """
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.model_sync.list()
@@ -526,7 +535,7 @@ class AsyncModelSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ListSyncResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ListModelSyncResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -539,68 +548,61 @@ class AsyncModelSyncClient:
         self,
         *,
         active: typing.Optional[bool] = OMIT,
-        fields: typing.Optional[typing.List[V2SyncField]] = OMIT,
+        fields: typing.Optional[typing.List[ModelSyncField]] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
-        filters: typing.Optional[typing.List[V2Filter]] = OMIT,
-        identity: typing.Optional[V2Identity] = OMIT,
-        mode: V2CreateSyncRequestMode,
+        filters: typing.Optional[typing.List[Filter]] = OMIT,
+        identity: typing.Optional[Identity] = OMIT,
+        mode: str,
         name: str,
         organization_id: typing.Optional[str] = OMIT,
-        override_fields: typing.Optional[typing.List[V2SyncField]] = OMIT,
-        overrides: typing.Optional[typing.List[V2Override]] = OMIT,
+        override_fields: typing.Optional[typing.List[ModelSyncField]] = OMIT,
+        overrides: typing.Optional[typing.List[Override]] = OMIT,
         policies: typing.Optional[typing.List[str]] = OMIT,
-        schedule: V2Schedule,
+        schedule: Schedule,
         sync_all_records: typing.Optional[bool] = OMIT,
-        target: V2Target,
-    ) -> V2SyncResponseEnvelope:
+        target: Target,
+    ) -> ModelSyncResponseEnvelope:
         """
         Parameters:
             - active: typing.Optional[bool].
 
-            - fields: typing.Optional[typing.List[V2SyncField]].
+            - fields: typing.Optional[typing.List[ModelSyncField]].
 
             - filter_logic: typing.Optional[str].
 
-            - filters: typing.Optional[typing.List[V2Filter]].
+            - filters: typing.Optional[typing.List[Filter]].
 
-            - identity: typing.Optional[V2Identity].
+            - identity: typing.Optional[Identity].
 
-            - mode: V2CreateSyncRequestMode.
+            - mode: str.
 
             - name: str.
 
             - organization_id: typing.Optional[str].
 
-            - override_fields: typing.Optional[typing.List[V2SyncField]].
+            - override_fields: typing.Optional[typing.List[ModelSyncField]].
 
-            - overrides: typing.Optional[typing.List[V2Override]].
+            - overrides: typing.Optional[typing.List[Override]].
 
             - policies: typing.Optional[typing.List[str]].
 
-            - schedule: V2Schedule.
+            - schedule: Schedule.
 
             - sync_all_records: typing.Optional[bool].
 
-            - target: V2Target.
+            - target: Target.
         ---
-        from polytomic import (
-            V2CreateSyncRequestMode,
-            V2Identity,
-            V2Schedule,
-            V2Source,
-            V2SyncField,
-            V2Target,
-        )
+        from polytomic import Identity, ModelSyncField, Schedule, Source, Target
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.model_sync.create(
             fields=[
-                V2SyncField(
-                    source=V2Source(
+                ModelSyncField(
+                    source=Source(
                         field="id",
                         model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                     ),
@@ -608,29 +610,28 @@ class AsyncModelSyncClient:
                 )
             ],
             filter_logic="A and B or C",
-            identity=V2Identity(
-                function="function",
-                source=V2Source(
+            identity=Identity(
+                function="Equality",
+                source=Source(
                     field="id",
                     model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 ),
                 target="name",
             ),
-            mode=V2CreateSyncRequestMode.UPDATE,
+            mode="create",
             name="Users Sync",
-            schedule=V2Schedule(),
-            target=V2Target(
+            schedule=Schedule(
+                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                frequency="daily",
+            ),
+            sync_all_records=False,
+            target=Target(
                 connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 object="Users",
             ),
         )
         """
-        _request: typing.Dict[str, typing.Any] = {
-            "mode": mode.value,
-            "name": name,
-            "schedule": schedule,
-            "target": target,
-        }
+        _request: typing.Dict[str, typing.Any] = {"mode": mode, "name": name, "schedule": schedule, "target": target}
         if active is not OMIT:
             _request["active"] = active
         if fields is not OMIT:
@@ -659,7 +660,7 @@ class AsyncModelSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2SyncResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ModelSyncResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -668,7 +669,33 @@ class AsyncModelSyncClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, id: str) -> V2SyncResponseEnvelope:
+    async def get_schedule_options(self) -> ScheduleOptionResponseEnvelope:
+        """
+        from polytomic.client import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
+            token="YOUR_TOKEN",
+        )
+        await client.model_sync.get_schedule_options()
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "GET",
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/syncs/schedules"),
+            headers=self._client_wrapper.get_headers(),
+            timeout=60,
+        )
+        if 200 <= _response.status_code < 300:
+            return pydantic.parse_obj_as(ScheduleOptionResponseEnvelope, _response.json())  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, body=_response.text)
+        raise ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def get(self, id: str) -> ModelSyncResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -676,7 +703,7 @@ class AsyncModelSyncClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.model_sync.get(
@@ -690,7 +717,7 @@ class AsyncModelSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2SyncResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ModelSyncResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -707,7 +734,7 @@ class AsyncModelSyncClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.model_sync.remove(
@@ -735,71 +762,64 @@ class AsyncModelSyncClient:
         id: str,
         *,
         active: typing.Optional[bool] = OMIT,
-        fields: typing.Optional[typing.List[V2SyncField]] = OMIT,
+        fields: typing.Optional[typing.List[ModelSyncField]] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
-        filters: typing.Optional[typing.List[V2Filter]] = OMIT,
-        identity: typing.Optional[V2Identity] = OMIT,
-        mode: V2UpdateSyncRequestMode,
+        filters: typing.Optional[typing.List[Filter]] = OMIT,
+        identity: typing.Optional[Identity] = OMIT,
+        mode: str,
         name: str,
         organization_id: typing.Optional[str] = OMIT,
-        override_fields: typing.Optional[typing.List[V2SyncField]] = OMIT,
-        overrides: typing.Optional[typing.List[V2Override]] = OMIT,
+        override_fields: typing.Optional[typing.List[ModelSyncField]] = OMIT,
+        overrides: typing.Optional[typing.List[Override]] = OMIT,
         policies: typing.Optional[typing.List[str]] = OMIT,
-        schedule: V2Schedule,
+        schedule: Schedule,
         sync_all_records: typing.Optional[bool] = OMIT,
-        target: V2Target,
-    ) -> V2SyncResponseEnvelope:
+        target: Target,
+    ) -> ModelSyncResponseEnvelope:
         """
         Parameters:
             - id: str.
 
             - active: typing.Optional[bool].
 
-            - fields: typing.Optional[typing.List[V2SyncField]].
+            - fields: typing.Optional[typing.List[ModelSyncField]].
 
             - filter_logic: typing.Optional[str].
 
-            - filters: typing.Optional[typing.List[V2Filter]].
+            - filters: typing.Optional[typing.List[Filter]].
 
-            - identity: typing.Optional[V2Identity].
+            - identity: typing.Optional[Identity].
 
-            - mode: V2UpdateSyncRequestMode.
+            - mode: str.
 
             - name: str.
 
             - organization_id: typing.Optional[str].
 
-            - override_fields: typing.Optional[typing.List[V2SyncField]].
+            - override_fields: typing.Optional[typing.List[ModelSyncField]].
 
-            - overrides: typing.Optional[typing.List[V2Override]].
+            - overrides: typing.Optional[typing.List[Override]].
 
             - policies: typing.Optional[typing.List[str]].
 
-            - schedule: V2Schedule.
+            - schedule: Schedule.
 
             - sync_all_records: typing.Optional[bool].
 
-            - target: V2Target.
+            - target: Target.
         ---
-        from polytomic import (
-            V2Identity,
-            V2Schedule,
-            V2Source,
-            V2SyncField,
-            V2Target,
-            V2UpdateSyncRequestMode,
-        )
+        from polytomic import Identity, ModelSyncField, Schedule, Source, Target
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.model_sync.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             fields=[
-                V2SyncField(
-                    source=V2Source(
+                ModelSyncField(
+                    source=Source(
                         field="id",
                         model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                     ),
@@ -807,29 +827,28 @@ class AsyncModelSyncClient:
                 )
             ],
             filter_logic="A and B or C",
-            identity=V2Identity(
-                function="function",
-                source=V2Source(
+            identity=Identity(
+                function="Equality",
+                source=Source(
                     field="id",
                     model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 ),
                 target="name",
             ),
-            mode=V2UpdateSyncRequestMode.UPDATE,
+            mode="create",
             name="Users Sync",
-            schedule=V2Schedule(),
-            target=V2Target(
+            schedule=Schedule(
+                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                frequency="daily",
+            ),
+            sync_all_records=False,
+            target=Target(
                 connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 object="Users",
             ),
         )
         """
-        _request: typing.Dict[str, typing.Any] = {
-            "mode": mode.value,
-            "name": name,
-            "schedule": schedule,
-            "target": target,
-        }
+        _request: typing.Dict[str, typing.Any] = {"mode": mode, "name": name, "schedule": schedule, "target": target}
         if active is not OMIT:
             _request["active"] = active
         if fields is not OMIT:
@@ -858,7 +877,7 @@ class AsyncModelSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2SyncResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ModelSyncResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -867,23 +886,23 @@ class AsyncModelSyncClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def activate(self, id: str, *, request: V2ActivateSyncInput) -> V2ActivateSyncEnvelope:
+    async def activate(self, id: str, *, request: ActivateSyncInput) -> ActivateSyncEnvelope:
         """
         Parameters:
             - id: str.
 
-            - request: V2ActivateSyncInput.
+            - request: ActivateSyncInput.
         ---
-        from polytomic import V2ActivateSyncInput
+        from polytomic import ActivateSyncInput
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.model_sync.activate(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            request=V2ActivateSyncInput(
+            request=ActivateSyncInput(
                 active=True,
             ),
         )
@@ -896,7 +915,7 @@ class AsyncModelSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2ActivateSyncEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(ActivateSyncEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -907,7 +926,7 @@ class AsyncModelSyncClient:
 
     async def start(
         self, id: str, *, identities: typing.Optional[typing.List[str]] = OMIT
-    ) -> V2StartSyncResponseEnvelope:
+    ) -> StartModelSyncResponseEnvelope:
         """
         Parameters:
             - id: str.
@@ -917,7 +936,7 @@ class AsyncModelSyncClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.model_sync.start(
@@ -935,7 +954,7 @@ class AsyncModelSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2StartSyncResponseEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(StartModelSyncResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
@@ -944,7 +963,7 @@ class AsyncModelSyncClient:
             raise ApiError(status_code=_response.status_code, body=_response.text)
         raise ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get_status(self, id: str) -> V2SyncStatusEnvelope:
+    async def get_status(self, id: str) -> SyncStatusEnvelope:
         """
         Parameters:
             - id: str.
@@ -952,7 +971,7 @@ class AsyncModelSyncClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            polytomic_version="YOUR_POLYTOMIC_VERSION",
+            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.model_sync.get_status(
@@ -966,7 +985,7 @@ class AsyncModelSyncClient:
             timeout=60,
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(V2SyncStatusEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(SyncStatusEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
