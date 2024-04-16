@@ -5,13 +5,16 @@ import typing
 import urllib.parse
 from json.decoder import JSONDecodeError
 
-from ...core.api_error import ApiError
+from ...core.api_error import ApiError as core_api_error_ApiError
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.datetime_utils import serialize_datetime
 from ...core.jsonable_encoder import jsonable_encoder
 from ...core.remove_none_from_dict import remove_none_from_dict
 from ...core.request_options import RequestOptions
+from ...errors.internal_server_error import InternalServerError
 from ...errors.unauthorized_error import UnauthorizedError
+from ...errors.unprocessable_entity_error import UnprocessableEntityError
+from ...types.api_error import ApiError as types_api_error_ApiError
 from ...types.event_types_envelope import EventTypesEnvelope
 from ...types.events_envelope import EventsEnvelope
 from ...types.rest_err_response import RestErrResponse
@@ -26,7 +29,7 @@ class EventsClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def api_v_2_get_events(
+    def list(
         self,
         *,
         organization_id: typing.Optional[str] = None,
@@ -55,10 +58,9 @@ class EventsClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
-        client.events.api_v_2_get_events(
+        client.events.list(
             organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             starting_after=datetime.datetime.fromisoformat(
                 "2020-01-01 00:00:00+00:00",
@@ -105,13 +107,19 @@ class EventsClient:
             return pydantic.parse_obj_as(EventsEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        if _response.status_code == 422:
+            raise UnprocessableEntityError(
+                pydantic.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+            )
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         try:
             _response_json = _response.json()
         except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def api_v_2_get_event_types(self, *, request_options: typing.Optional[RequestOptions] = None) -> EventTypesEnvelope:
+    def get_types(self, *, request_options: typing.Optional[RequestOptions] = None) -> EventTypesEnvelope:
         """
         Parameters:
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
@@ -119,10 +127,9 @@ class EventsClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
-        client.events.api_v_2_get_event_types()
+        client.events.get_types()
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
@@ -151,15 +158,15 @@ class EventsClient:
         try:
             _response_json = _response.json()
         except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
 
 class AsyncEventsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def api_v_2_get_events(
+    async def list(
         self,
         *,
         organization_id: typing.Optional[str] = None,
@@ -188,10 +195,9 @@ class AsyncEventsClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
-        await client.events.api_v_2_get_events(
+        await client.events.list(
             organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             starting_after=datetime.datetime.fromisoformat(
                 "2020-01-01 00:00:00+00:00",
@@ -238,15 +244,19 @@ class AsyncEventsClient:
             return pydantic.parse_obj_as(EventsEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        if _response.status_code == 422:
+            raise UnprocessableEntityError(
+                pydantic.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+            )
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         try:
             _response_json = _response.json()
         except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def api_v_2_get_event_types(
-        self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> EventTypesEnvelope:
+    async def get_types(self, *, request_options: typing.Optional[RequestOptions] = None) -> EventTypesEnvelope:
         """
         Parameters:
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
@@ -254,10 +264,9 @@ class AsyncEventsClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
-        await client.events.api_v_2_get_event_types()
+        await client.events.get_types()
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
@@ -286,5 +295,5 @@ class AsyncEventsClient:
         try:
             _response_json = _response.json()
         except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)

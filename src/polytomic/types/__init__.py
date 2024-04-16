@@ -3,6 +3,7 @@
 from .activate_sync_envelope import ActivateSyncEnvelope
 from .activate_sync_input import ActivateSyncInput
 from .activate_sync_output import ActivateSyncOutput
+from .api_error import ApiError
 from .api_key_response import ApiKeyResponse
 from .api_key_response_envelope import ApiKeyResponseEnvelope
 from .bulk_discover import BulkDiscover
@@ -59,6 +60,7 @@ from .get_execution_response_envelope import GetExecutionResponseEnvelope
 from .get_execution_response_schema import GetExecutionResponseSchema
 from .get_identity_response_envelope import GetIdentityResponseEnvelope
 from .get_identity_response_schema import GetIdentityResponseSchema
+from .get_model_sync_source_meta_envelope import GetModelSyncSourceMetaEnvelope
 from .identity import Identity
 from .identity_function import IdentityFunction
 from .job_response import JobResponse
@@ -83,6 +85,7 @@ from .model_response_envelope import ModelResponseEnvelope
 from .model_sync_field import ModelSyncField
 from .model_sync_response import ModelSyncResponse
 from .model_sync_response_envelope import ModelSyncResponseEnvelope
+from .model_sync_source_meta_response import ModelSyncSourceMetaResponse
 from .organization import Organization
 from .organization_envelope import OrganizationEnvelope
 from .organizations_envelope import OrganizationsEnvelope
@@ -108,6 +111,7 @@ from .schema_association import SchemaAssociation
 from .schema_field import SchemaField
 from .schema_records_response_envelope import SchemaRecordsResponseEnvelope
 from .source import Source
+from .source_meta import SourceMeta
 from .start_model_sync_response_envelope import StartModelSyncResponseEnvelope
 from .start_model_sync_response_schema import StartModelSyncResponseSchema
 from .supported_mode import SupportedMode
@@ -129,6 +133,7 @@ __all__ = [
     "ActivateSyncEnvelope",
     "ActivateSyncInput",
     "ActivateSyncOutput",
+    "ApiError",
     "ApiKeyResponse",
     "ApiKeyResponseEnvelope",
     "BulkDiscover",
@@ -185,6 +190,7 @@ __all__ = [
     "GetExecutionResponseSchema",
     "GetIdentityResponseEnvelope",
     "GetIdentityResponseSchema",
+    "GetModelSyncSourceMetaEnvelope",
     "Identity",
     "IdentityFunction",
     "JobResponse",
@@ -209,6 +215,7 @@ __all__ = [
     "ModelSyncField",
     "ModelSyncResponse",
     "ModelSyncResponseEnvelope",
+    "ModelSyncSourceMetaResponse",
     "Organization",
     "OrganizationEnvelope",
     "OrganizationsEnvelope",
@@ -234,6 +241,7 @@ __all__ = [
     "SchemaField",
     "SchemaRecordsResponseEnvelope",
     "Source",
+    "SourceMeta",
     "StartModelSyncResponseEnvelope",
     "StartModelSyncResponseSchema",
     "SupportedMode",

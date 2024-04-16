@@ -9,6 +9,7 @@ from .environment import PolytomicEnvironment
 from .resources.bulk_sync.client import AsyncBulkSyncClient, BulkSyncClient
 from .resources.connections.client import AsyncConnectionsClient, ConnectionsClient
 from .resources.events.client import AsyncEventsClient, EventsClient
+from .resources.identity.client import AsyncIdentityClient, IdentityClient
 from .resources.jobs.client import AsyncJobsClient, JobsClient
 from .resources.model_sync.client import AsyncModelSyncClient, ModelSyncClient
 from .resources.models.client import AsyncModelsClient, ModelsClient
@@ -30,9 +31,7 @@ class Polytomic:
 
                                              Defaults to PolytomicEnvironment.DEFAULT
 
-        - x_polytomic_version: typing.Optional[typing.Literal["2023-04-25"]].
-
-        - token: typing.Optional[typing.Union[str, typing.Callable[[], str]]].
+        - token: typing.Union[str, typing.Callable[[], str]].
 
         - timeout: typing.Optional[float]. The timeout to be used, in seconds, for requests by default the timeout is 60 seconds, unless a custom httpx client is used, in which case a default is not set.
 
@@ -41,7 +40,6 @@ class Polytomic:
     from polytomic.client import Polytomic
 
     client = Polytomic(
-        x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
         token="YOUR_TOKEN",
     )
     """
@@ -51,29 +49,28 @@ class Polytomic:
         *,
         base_url: typing.Optional[str] = None,
         environment: PolytomicEnvironment = PolytomicEnvironment.DEFAULT,
-        x_polytomic_version: typing.Optional[typing.Literal["2023-04-25"]] = None,
-        token: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = None,
+        token: typing.Union[str, typing.Callable[[], str]],
         timeout: typing.Optional[float] = None,
         httpx_client: typing.Optional[httpx.Client] = None
     ):
         _defaulted_timeout = timeout if timeout is not None else 60 if httpx_client is None else None
         self._client_wrapper = SyncClientWrapper(
             base_url=_get_base_url(base_url=base_url, environment=environment),
-            x_polytomic_version=x_polytomic_version,
             token=token,
             httpx_client=httpx.Client(timeout=_defaulted_timeout) if httpx_client is None else httpx_client,
             timeout=_defaulted_timeout,
         )
         self.bulk_sync = BulkSyncClient(client_wrapper=self._client_wrapper)
         self.connections = ConnectionsClient(client_wrapper=self._client_wrapper)
+        self.model_sync = ModelSyncClient(client_wrapper=self._client_wrapper)
         self.schemas = SchemasClient(client_wrapper=self._client_wrapper)
         self.events = EventsClient(client_wrapper=self._client_wrapper)
         self.jobs = JobsClient(client_wrapper=self._client_wrapper)
+        self.identity = IdentityClient(client_wrapper=self._client_wrapper)
         self.models = ModelsClient(client_wrapper=self._client_wrapper)
         self.organization = OrganizationClient(client_wrapper=self._client_wrapper)
         self.users = UsersClient(client_wrapper=self._client_wrapper)
         self.permissions = PermissionsClient(client_wrapper=self._client_wrapper)
-        self.model_sync = ModelSyncClient(client_wrapper=self._client_wrapper)
         self.webhooks = WebhooksClient(client_wrapper=self._client_wrapper)
 
 
@@ -88,9 +85,7 @@ class AsyncPolytomic:
 
                                              Defaults to PolytomicEnvironment.DEFAULT
 
-        - x_polytomic_version: typing.Optional[typing.Literal["2023-04-25"]].
-
-        - token: typing.Optional[typing.Union[str, typing.Callable[[], str]]].
+        - token: typing.Union[str, typing.Callable[[], str]].
 
         - timeout: typing.Optional[float]. The timeout to be used, in seconds, for requests by default the timeout is 60 seconds, unless a custom httpx client is used, in which case a default is not set.
 
@@ -99,7 +94,6 @@ class AsyncPolytomic:
     from polytomic.client import AsyncPolytomic
 
     client = AsyncPolytomic(
-        x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
         token="YOUR_TOKEN",
     )
     """
@@ -109,29 +103,28 @@ class AsyncPolytomic:
         *,
         base_url: typing.Optional[str] = None,
         environment: PolytomicEnvironment = PolytomicEnvironment.DEFAULT,
-        x_polytomic_version: typing.Optional[typing.Literal["2023-04-25"]] = None,
-        token: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = None,
+        token: typing.Union[str, typing.Callable[[], str]],
         timeout: typing.Optional[float] = None,
         httpx_client: typing.Optional[httpx.AsyncClient] = None
     ):
         _defaulted_timeout = timeout if timeout is not None else 60 if httpx_client is None else None
         self._client_wrapper = AsyncClientWrapper(
             base_url=_get_base_url(base_url=base_url, environment=environment),
-            x_polytomic_version=x_polytomic_version,
             token=token,
             httpx_client=httpx.AsyncClient(timeout=_defaulted_timeout) if httpx_client is None else httpx_client,
             timeout=_defaulted_timeout,
         )
         self.bulk_sync = AsyncBulkSyncClient(client_wrapper=self._client_wrapper)
         self.connections = AsyncConnectionsClient(client_wrapper=self._client_wrapper)
+        self.model_sync = AsyncModelSyncClient(client_wrapper=self._client_wrapper)
         self.schemas = AsyncSchemasClient(client_wrapper=self._client_wrapper)
         self.events = AsyncEventsClient(client_wrapper=self._client_wrapper)
         self.jobs = AsyncJobsClient(client_wrapper=self._client_wrapper)
+        self.identity = AsyncIdentityClient(client_wrapper=self._client_wrapper)
         self.models = AsyncModelsClient(client_wrapper=self._client_wrapper)
         self.organization = AsyncOrganizationClient(client_wrapper=self._client_wrapper)
         self.users = AsyncUsersClient(client_wrapper=self._client_wrapper)
         self.permissions = AsyncPermissionsClient(client_wrapper=self._client_wrapper)
-        self.model_sync = AsyncModelSyncClient(client_wrapper=self._client_wrapper)
         self.webhooks = AsyncWebhooksClient(client_wrapper=self._client_wrapper)
 
 

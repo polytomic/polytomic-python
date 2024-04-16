@@ -21,7 +21,6 @@ pip install --upgrade polytomic
 from polytomic.client import Polytomic
 
 client = Polytomic(
-    x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
     token="YOUR_TOKEN",
 )
 ```
@@ -34,7 +33,6 @@ client = Polytomic(
 from polytomic.client import AsyncPolytomic
 
 client = AsyncPolytomic(
-    x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
     token="YOUR_TOKEN",
 )
 ```

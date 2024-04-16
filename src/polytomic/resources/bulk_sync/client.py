@@ -4,22 +4,26 @@ import typing
 import urllib.parse
 from json.decoder import JSONDecodeError
 
-from ...core.api_error import ApiError
+from ...core.api_error import ApiError as core_api_error_ApiError
 from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.jsonable_encoder import jsonable_encoder
 from ...core.remove_none_from_dict import remove_none_from_dict
 from ...core.request_options import RequestOptions
+from ...errors.bad_request_error import BadRequestError
+from ...errors.forbidden_error import ForbiddenError
+from ...errors.internal_server_error import InternalServerError
+from ...errors.not_found_error import NotFoundError
 from ...errors.unauthorized_error import UnauthorizedError
 from ...types.activate_sync_envelope import ActivateSyncEnvelope
 from ...types.activate_sync_input import ActivateSyncInput
+from ...types.api_error import ApiError as types_api_error_ApiError
 from ...types.bulk_discover import BulkDiscover
 from ...types.bulk_schedule import BulkSchedule
 from ...types.bulk_sync_dest_envelope import BulkSyncDestEnvelope
+from ...types.bulk_sync_execution_envelope import BulkSyncExecutionEnvelope
 from ...types.bulk_sync_list_envelope import BulkSyncListEnvelope
 from ...types.bulk_sync_response_envelope import BulkSyncResponseEnvelope
 from ...types.bulk_sync_source_envelope import BulkSyncSourceEnvelope
-from ...types.bulk_sync_source_schema_envelope import BulkSyncSourceSchemaEnvelope
-from ...types.bulk_sync_source_status_envelope import BulkSyncSourceStatusEnvelope
 from ...types.bulk_sync_status_envelope import BulkSyncStatusEnvelope
 from ...types.rest_err_response import RestErrResponse
 from .resources.executions.client import AsyncExecutionsClient, ExecutionsClient
@@ -40,232 +44,6 @@ class BulkSyncClient:
         self.executions = ExecutionsClient(client_wrapper=self._client_wrapper)
         self.schemas = SchemasClient(client_wrapper=self._client_wrapper)
 
-    def get_destination(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> BulkSyncDestEnvelope:
-        """
-        Parameters:
-            - id: str.
-
-            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
-        ---
-        from polytomic.client import Polytomic
-
-        client = Polytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
-            token="YOUR_TOKEN",
-        )
-        client.bulk_sync.get_destination(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-        )
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"api/bulk/dest/{jsonable_encoder(id)}"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
-        )
-        if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(BulkSyncDestEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        try:
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
-    def get_source(
-        self,
-        connection_id: str,
-        *,
-        refresh_schemas: typing.Optional[bool] = None,
-        include_fields: typing.Optional[bool] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> BulkSyncSourceEnvelope:
-        """
-        Parameters:
-            - connection_id: str.
-
-            - refresh_schemas: typing.Optional[bool].
-
-            - include_fields: typing.Optional[bool].
-
-            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
-        ---
-        from polytomic.client import Polytomic
-
-        client = Polytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
-            token="YOUR_TOKEN",
-        )
-        client.bulk_sync.get_source(
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            include_fields=True,
-        )
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "GET",
-            urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"api/bulk/source/{jsonable_encoder(connection_id)}"
-            ),
-            params=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        "refresh_schemas": refresh_schemas,
-                        "include_fields": include_fields,
-                        **(
-                            request_options.get("additional_query_parameters", {})
-                            if request_options is not None
-                            else {}
-                        ),
-                    }
-                )
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
-        )
-        if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(BulkSyncSourceEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        try:
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
-    def get_source_schema(
-        self, connection_id: str, schema_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> BulkSyncSourceSchemaEnvelope:
-        """
-        Parameters:
-            - connection_id: str.
-
-            - schema_id: str.
-
-            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
-        ---
-        from polytomic.client import Polytomic
-
-        client = Polytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
-            token="YOUR_TOKEN",
-        )
-        client.bulk_sync.get_source_schema(
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schema_id="schema_id",
-        )
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "GET",
-            urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/",
-                f"api/bulk/source/{jsonable_encoder(connection_id)}/schema/{jsonable_encoder(schema_id)}",
-            ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
-        )
-        if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(BulkSyncSourceSchemaEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        try:
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
-    def get_source_status(
-        self, connection_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> BulkSyncSourceStatusEnvelope:
-        """
-        Parameters:
-            - connection_id: str.
-
-            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
-        ---
-        from polytomic.client import Polytomic
-
-        client = Polytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
-            token="YOUR_TOKEN",
-        )
-        client.bulk_sync.get_source_status(
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-        )
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "GET",
-            urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"api/bulk/source/{jsonable_encoder(connection_id)}/status"
-            ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
-        )
-        if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(BulkSyncSourceStatusEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        try:
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
     def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> BulkSyncListEnvelope:
         """
         Parameters:
@@ -274,7 +52,6 @@ class BulkSyncClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.bulk_sync.list()
@@ -303,11 +80,13 @@ class BulkSyncClient:
             return pydantic.parse_obj_as(BulkSyncListEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         try:
             _response_json = _response.json()
         except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     def create(
         self,
@@ -367,14 +146,19 @@ class BulkSyncClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.bulk_sync.create(
             destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="name",
+            mode="replicate",
+            name="My Bulk Sync",
             schedule=BulkSchedule(
+                day_of_month="1",
+                day_of_week="monday",
                 frequency=ScheduleFrequency.MANUAL,
+                hour="0",
+                minute="0",
+                month="1",
             ),
             source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
@@ -435,13 +219,19 @@ class BulkSyncClient:
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(BulkSyncResponseEnvelope, _response.json())  # type: ignore
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        if _response.status_code == 403:
+            raise ForbiddenError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         try:
             _response_json = _response.json()
         except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     def get(
         self,
@@ -461,7 +251,6 @@ class BulkSyncClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.bulk_sync.get(
@@ -502,76 +291,13 @@ class BulkSyncClient:
             return pydantic.parse_obj_as(BulkSyncResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         try:
             _response_json = _response.json()
         except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
-    def remove(
-        self,
-        id: str,
-        *,
-        refresh_schemas: typing.Optional[bool] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> None:
-        """
-        Parameters:
-            - id: str.
-
-            - refresh_schemas: typing.Optional[bool].
-
-            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
-        ---
-        from polytomic.client import Polytomic
-
-        client = Polytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
-            token="YOUR_TOKEN",
-        )
-        client.bulk_sync.remove(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            refresh_schemas=True,
-        )
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            "DELETE",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"api/bulk/syncs/{jsonable_encoder(id)}"),
-            params=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        "refresh_schemas": refresh_schemas,
-                        **(
-                            request_options.get("additional_query_parameters", {})
-                            if request_options is not None
-                            else {}
-                        ),
-                    }
-                )
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
-        )
-        if 200 <= _response.status_code < 300:
-            return
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        try:
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     def update(
         self,
@@ -638,15 +364,20 @@ class BulkSyncClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.bulk_sync.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="name",
+            mode="replicate",
+            name="My Bulk Sync",
             schedule=BulkSchedule(
+                day_of_month="1",
+                day_of_week="monday",
                 frequency=ScheduleFrequency.MANUAL,
+                hour="0",
+                minute="0",
+                month="1",
             ),
             source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
@@ -680,7 +411,7 @@ class BulkSyncClient:
         if source_configuration is not OMIT:
             _request["source_configuration"] = source_configuration
         _response = self._client_wrapper.httpx_client.request(
-            "PATCH",
+            "PUT",
             urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"api/bulk/syncs/{jsonable_encoder(id)}"),
             params=jsonable_encoder(
                 request_options.get("additional_query_parameters") if request_options is not None else None
@@ -707,13 +438,91 @@ class BulkSyncClient:
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(BulkSyncResponseEnvelope, _response.json())  # type: ignore
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        if _response.status_code == 403:
+            raise ForbiddenError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         try:
             _response_json = _response.json()
         except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
+    def remove(
+        self,
+        id: str,
+        *,
+        refresh_schemas: typing.Optional[bool] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> None:
+        """
+        Parameters:
+            - id: str.
+
+            - refresh_schemas: typing.Optional[bool].
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from polytomic.client import Polytomic
+
+        client = Polytomic(
+            token="YOUR_TOKEN",
+        )
+        client.bulk_sync.remove(
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            refresh_schemas=True,
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "DELETE",
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"api/bulk/syncs/{jsonable_encoder(id)}"),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "refresh_schemas": refresh_schemas,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else self._client_wrapper.get_timeout(),
+            retries=0,
+            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+        )
+        if 200 <= _response.status_code < 300:
+            return
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        if _response.status_code == 403:
+            raise ForbiddenError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     def activate(
         self, id: str, *, request: ActivateSyncInput, request_options: typing.Optional[RequestOptions] = None
@@ -730,7 +539,6 @@ class BulkSyncClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.bulk_sync.activate(
@@ -772,11 +580,96 @@ class BulkSyncClient:
             return pydantic.parse_obj_as(ActivateSyncEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        if _response.status_code == 403:
+            raise ForbiddenError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         try:
             _response_json = _response.json()
         except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
+    def start(
+        self,
+        id: str,
+        *,
+        resync: typing.Optional[bool] = OMIT,
+        schemas: typing.Optional[typing.Sequence[str]] = OMIT,
+        test: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> BulkSyncExecutionEnvelope:
+        """
+        Parameters:
+            - id: str.
+
+            - resync: typing.Optional[bool].
+
+            - schemas: typing.Optional[typing.Sequence[str]].
+
+            - test: typing.Optional[bool].
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from polytomic.client import Polytomic
+
+        client = Polytomic(
+            token="YOUR_TOKEN",
+        )
+        client.bulk_sync.start(
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            resync=False,
+            test=False,
+        )
+        """
+        _request: typing.Dict[str, typing.Any] = {}
+        if resync is not OMIT:
+            _request["resync"] = resync
+        if schemas is not OMIT:
+            _request["schemas"] = schemas
+        if test is not OMIT:
+            _request["test"] = test
+        _response = self._client_wrapper.httpx_client.request(
+            "POST",
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"api/bulk/syncs/{jsonable_encoder(id)}/executions"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else self._client_wrapper.get_timeout(),
+            retries=0,
+            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+        )
+        if 200 <= _response.status_code < 300:
+            return pydantic.parse_obj_as(BulkSyncExecutionEnvelope, _response.json())  # type: ignore
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     def get_status(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> BulkSyncStatusEnvelope:
         """
@@ -788,7 +681,6 @@ class BulkSyncClient:
         from polytomic.client import Polytomic
 
         client = Polytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         client.bulk_sync.get_status(
@@ -821,106 +713,49 @@ class BulkSyncClient:
             return pydantic.parse_obj_as(BulkSyncStatusEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         try:
             _response_json = _response.json()
         except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-
-class AsyncBulkSyncClient:
-    def __init__(self, *, client_wrapper: AsyncClientWrapper):
-        self._client_wrapper = client_wrapper
-        self.executions = AsyncExecutionsClient(client_wrapper=self._client_wrapper)
-        self.schemas = AsyncSchemasClient(client_wrapper=self._client_wrapper)
-
-    async def get_destination(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> BulkSyncDestEnvelope:
-        """
-        Parameters:
-            - id: str.
-
-            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
-        ---
-        from polytomic.client import AsyncPolytomic
-
-        client = AsyncPolytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
-            token="YOUR_TOKEN",
-        )
-        await client.bulk_sync.get_destination(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-        )
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "GET",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"api/bulk/dest/{jsonable_encoder(id)}"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
-        )
-        if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(BulkSyncDestEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        try:
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
-    async def get_source(
+    def get_source(
         self,
-        connection_id: str,
+        id: str,
         *,
-        refresh_schemas: typing.Optional[bool] = None,
         include_fields: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BulkSyncSourceEnvelope:
         """
         Parameters:
-            - connection_id: str.
-
-            - refresh_schemas: typing.Optional[bool].
+            - id: str.
 
             - include_fields: typing.Optional[bool].
 
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
-        from polytomic.client import AsyncPolytomic
+        from polytomic.client import Polytomic
 
-        client = AsyncPolytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
+        client = Polytomic(
             token="YOUR_TOKEN",
         )
-        await client.bulk_sync.get_source(
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        client.bulk_sync.get_source(
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
             include_fields=True,
         )
         """
-        _response = await self._client_wrapper.httpx_client.request(
+        _response = self._client_wrapper.httpx_client.request(
             "GET",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"api/bulk/source/{jsonable_encoder(connection_id)}"
+                f"{self._client_wrapper.get_base_url()}/", f"api/connections/{jsonable_encoder(id)}/bulksync/source"
             ),
             params=jsonable_encoder(
                 remove_none_from_dict(
                     {
-                        "refresh_schemas": refresh_schemas,
                         "include_fields": include_fields,
                         **(
                             request_options.get("additional_query_parameters", {})
@@ -946,41 +781,42 @@ class AsyncBulkSyncClient:
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(BulkSyncSourceEnvelope, _response.json())  # type: ignore
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         try:
             _response_json = _response.json()
         except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get_source_schema(
-        self, connection_id: str, schema_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> BulkSyncSourceSchemaEnvelope:
+    def get_destination(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> BulkSyncDestEnvelope:
         """
         Parameters:
-            - connection_id: str.
-
-            - schema_id: str.
+            - id: str.
 
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
-        from polytomic.client import AsyncPolytomic
+        from polytomic.client import Polytomic
 
-        client = AsyncPolytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
+        client = Polytomic(
             token="YOUR_TOKEN",
         )
-        await client.bulk_sync.get_source_schema(
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schema_id="schema_id",
+        client.bulk_sync.get_destination(
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
         """
-        _response = await self._client_wrapper.httpx_client.request(
+        _response = self._client_wrapper.httpx_client.request(
             "GET",
             urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/",
-                f"api/bulk/source/{jsonable_encoder(connection_id)}/schema/{jsonable_encoder(schema_id)}",
+                f"{self._client_wrapper.get_base_url()}/", f"api/connections/{jsonable_encoder(id)}/bulksync/target"
             ),
             params=jsonable_encoder(
                 request_options.get("additional_query_parameters") if request_options is not None else None
@@ -1000,65 +836,27 @@ class AsyncBulkSyncClient:
             max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(BulkSyncSourceSchemaEnvelope, _response.json())  # type: ignore
+            return pydantic.parse_obj_as(BulkSyncDestEnvelope, _response.json())  # type: ignore
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        if _response.status_code == 403:
+            raise ForbiddenError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         try:
             _response_json = _response.json()
         except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get_source_status(
-        self, connection_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> BulkSyncSourceStatusEnvelope:
-        """
-        Parameters:
-            - connection_id: str.
 
-            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
-        ---
-        from polytomic.client import AsyncPolytomic
-
-        client = AsyncPolytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
-            token="YOUR_TOKEN",
-        )
-        await client.bulk_sync.get_source_status(
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-        )
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "GET",
-            urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"api/bulk/source/{jsonable_encoder(connection_id)}/status"
-            ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
-        )
-        if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(BulkSyncSourceStatusEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        try:
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
+class AsyncBulkSyncClient:
+    def __init__(self, *, client_wrapper: AsyncClientWrapper):
+        self._client_wrapper = client_wrapper
+        self.executions = AsyncExecutionsClient(client_wrapper=self._client_wrapper)
+        self.schemas = AsyncSchemasClient(client_wrapper=self._client_wrapper)
 
     async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> BulkSyncListEnvelope:
         """
@@ -1068,7 +866,6 @@ class AsyncBulkSyncClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.bulk_sync.list()
@@ -1097,11 +894,13 @@ class AsyncBulkSyncClient:
             return pydantic.parse_obj_as(BulkSyncListEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         try:
             _response_json = _response.json()
         except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     async def create(
         self,
@@ -1161,14 +960,19 @@ class AsyncBulkSyncClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.bulk_sync.create(
             destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="name",
+            mode="replicate",
+            name="My Bulk Sync",
             schedule=BulkSchedule(
+                day_of_month="1",
+                day_of_week="monday",
                 frequency=ScheduleFrequency.MANUAL,
+                hour="0",
+                minute="0",
+                month="1",
             ),
             source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
@@ -1229,13 +1033,19 @@ class AsyncBulkSyncClient:
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(BulkSyncResponseEnvelope, _response.json())  # type: ignore
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        if _response.status_code == 403:
+            raise ForbiddenError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         try:
             _response_json = _response.json()
         except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     async def get(
         self,
@@ -1255,7 +1065,6 @@ class AsyncBulkSyncClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.bulk_sync.get(
@@ -1296,76 +1105,13 @@ class AsyncBulkSyncClient:
             return pydantic.parse_obj_as(BulkSyncResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         try:
             _response_json = _response.json()
         except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
-
-    async def remove(
-        self,
-        id: str,
-        *,
-        refresh_schemas: typing.Optional[bool] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> None:
-        """
-        Parameters:
-            - id: str.
-
-            - refresh_schemas: typing.Optional[bool].
-
-            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
-        ---
-        from polytomic.client import AsyncPolytomic
-
-        client = AsyncPolytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
-            token="YOUR_TOKEN",
-        )
-        await client.bulk_sync.remove(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            refresh_schemas=True,
-        )
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            "DELETE",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"api/bulk/syncs/{jsonable_encoder(id)}"),
-            params=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        "refresh_schemas": refresh_schemas,
-                        **(
-                            request_options.get("additional_query_parameters", {})
-                            if request_options is not None
-                            else {}
-                        ),
-                    }
-                )
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
-        )
-        if 200 <= _response.status_code < 300:
-            return
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        try:
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     async def update(
         self,
@@ -1432,15 +1178,20 @@ class AsyncBulkSyncClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.bulk_sync.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="name",
+            mode="replicate",
+            name="My Bulk Sync",
             schedule=BulkSchedule(
+                day_of_month="1",
+                day_of_week="monday",
                 frequency=ScheduleFrequency.MANUAL,
+                hour="0",
+                minute="0",
+                month="1",
             ),
             source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
@@ -1474,7 +1225,7 @@ class AsyncBulkSyncClient:
         if source_configuration is not OMIT:
             _request["source_configuration"] = source_configuration
         _response = await self._client_wrapper.httpx_client.request(
-            "PATCH",
+            "PUT",
             urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"api/bulk/syncs/{jsonable_encoder(id)}"),
             params=jsonable_encoder(
                 request_options.get("additional_query_parameters") if request_options is not None else None
@@ -1501,13 +1252,91 @@ class AsyncBulkSyncClient:
         )
         if 200 <= _response.status_code < 300:
             return pydantic.parse_obj_as(BulkSyncResponseEnvelope, _response.json())  # type: ignore
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        if _response.status_code == 403:
+            raise ForbiddenError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         try:
             _response_json = _response.json()
         except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def remove(
+        self,
+        id: str,
+        *,
+        refresh_schemas: typing.Optional[bool] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> None:
+        """
+        Parameters:
+            - id: str.
+
+            - refresh_schemas: typing.Optional[bool].
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from polytomic.client import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            token="YOUR_TOKEN",
+        )
+        await client.bulk_sync.remove(
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            refresh_schemas=True,
+        )
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "DELETE",
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"api/bulk/syncs/{jsonable_encoder(id)}"),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "refresh_schemas": refresh_schemas,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else self._client_wrapper.get_timeout(),
+            retries=0,
+            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+        )
+        if 200 <= _response.status_code < 300:
+            return
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        if _response.status_code == 403:
+            raise ForbiddenError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     async def activate(
         self, id: str, *, request: ActivateSyncInput, request_options: typing.Optional[RequestOptions] = None
@@ -1524,7 +1353,6 @@ class AsyncBulkSyncClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.bulk_sync.activate(
@@ -1566,11 +1394,96 @@ class AsyncBulkSyncClient:
             return pydantic.parse_obj_as(ActivateSyncEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        if _response.status_code == 403:
+            raise ForbiddenError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         try:
             _response_json = _response.json()
         except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def start(
+        self,
+        id: str,
+        *,
+        resync: typing.Optional[bool] = OMIT,
+        schemas: typing.Optional[typing.Sequence[str]] = OMIT,
+        test: typing.Optional[bool] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> BulkSyncExecutionEnvelope:
+        """
+        Parameters:
+            - id: str.
+
+            - resync: typing.Optional[bool].
+
+            - schemas: typing.Optional[typing.Sequence[str]].
+
+            - test: typing.Optional[bool].
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from polytomic.client import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            token="YOUR_TOKEN",
+        )
+        await client.bulk_sync.start(
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            resync=False,
+            test=False,
+        )
+        """
+        _request: typing.Dict[str, typing.Any] = {}
+        if resync is not OMIT:
+            _request["resync"] = resync
+        if schemas is not OMIT:
+            _request["schemas"] = schemas
+        if test is not OMIT:
+            _request["test"] = test
+        _response = await self._client_wrapper.httpx_client.request(
+            "POST",
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"api/bulk/syncs/{jsonable_encoder(id)}/executions"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            json=jsonable_encoder(_request)
+            if request_options is None or request_options.get("additional_body_parameters") is None
+            else {
+                **jsonable_encoder(_request),
+                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            },
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else self._client_wrapper.get_timeout(),
+            retries=0,
+            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+        )
+        if 200 <= _response.status_code < 300:
+            return pydantic.parse_obj_as(BulkSyncExecutionEnvelope, _response.json())  # type: ignore
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     async def get_status(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
@@ -1584,7 +1497,6 @@ class AsyncBulkSyncClient:
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
-            x_polytomic_version="YOUR_X_POLYTOMIC_VERSION",
             token="YOUR_TOKEN",
         )
         await client.bulk_sync.get_status(
@@ -1617,8 +1529,140 @@ class AsyncBulkSyncClient:
             return pydantic.parse_obj_as(BulkSyncStatusEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         try:
             _response_json = _response.json()
         except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, body=_response.text)
-        raise ApiError(status_code=_response.status_code, body=_response_json)
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def get_source(
+        self,
+        id: str,
+        *,
+        include_fields: typing.Optional[bool] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> BulkSyncSourceEnvelope:
+        """
+        Parameters:
+            - id: str.
+
+            - include_fields: typing.Optional[bool].
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from polytomic.client import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            token="YOUR_TOKEN",
+        )
+        await client.bulk_sync.get_source(
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            include_fields=True,
+        )
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "GET",
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"api/connections/{jsonable_encoder(id)}/bulksync/source"
+            ),
+            params=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        "include_fields": include_fields,
+                        **(
+                            request_options.get("additional_query_parameters", {})
+                            if request_options is not None
+                            else {}
+                        ),
+                    }
+                )
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else self._client_wrapper.get_timeout(),
+            retries=0,
+            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+        )
+        if 200 <= _response.status_code < 300:
+            return pydantic.parse_obj_as(BulkSyncSourceEnvelope, _response.json())  # type: ignore
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        if _response.status_code == 404:
+            raise NotFoundError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def get_destination(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> BulkSyncDestEnvelope:
+        """
+        Parameters:
+            - id: str.
+
+            - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
+        ---
+        from polytomic.client import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            token="YOUR_TOKEN",
+        )
+        await client.bulk_sync.get_destination(
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "GET",
+            urllib.parse.urljoin(
+                f"{self._client_wrapper.get_base_url()}/", f"api/connections/{jsonable_encoder(id)}/bulksync/target"
+            ),
+            params=jsonable_encoder(
+                request_options.get("additional_query_parameters") if request_options is not None else None
+            ),
+            headers=jsonable_encoder(
+                remove_none_from_dict(
+                    {
+                        **self._client_wrapper.get_headers(),
+                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
+                    }
+                )
+            ),
+            timeout=request_options.get("timeout_in_seconds")
+            if request_options is not None and request_options.get("timeout_in_seconds") is not None
+            else self._client_wrapper.get_timeout(),
+            retries=0,
+            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+        )
+        if 200 <= _response.status_code < 300:
+            return pydantic.parse_obj_as(BulkSyncDestEnvelope, _response.json())  # type: ignore
+        if _response.status_code == 400:
+            raise BadRequestError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 401:
+            raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+        if _response.status_code == 403:
+            raise ForbiddenError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        if _response.status_code == 500:
+            raise InternalServerError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+        try:
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)

@@ -11,12 +11,10 @@ class BaseClientWrapper:
     def __init__(
         self,
         *,
-        x_polytomic_version: typing.Optional[typing.Literal["2023-04-25"]] = None,
-        token: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = None,
+        token: typing.Union[str, typing.Callable[[], str]],
         base_url: str,
         timeout: typing.Optional[float] = None,
     ):
-        self._x_polytomic_version = x_polytomic_version
         self._token = token
         self._base_url = base_url
         self._timeout = timeout
@@ -25,17 +23,14 @@ class BaseClientWrapper:
         headers: typing.Dict[str, str] = {
             "X-Fern-Language": "Python",
             "X-Fern-SDK-Name": "polytomic",
-            "X-Fern-SDK-Version": "0.1.2",
+            "X-Fern-SDK-Version": "0.2.0",
         }
-        if self._x_polytomic_version is not None:
-            headers["X-Polytomic-Version"] = self._x_polytomic_version
-        token = self._get_token()
-        if token is not None:
-            headers["Authorization"] = f"Bearer {token}"
+        headers["Authorization"] = f"Bearer {self._get_token()}"
+        headers["X-Polytomic-Version"] = "2024-02-08"
         return headers
 
-    def _get_token(self) -> typing.Optional[str]:
-        if isinstance(self._token, str) or self._token is None:
+    def _get_token(self) -> str:
+        if isinstance(self._token, str):
             return self._token
         else:
             return self._token()
@@ -51,13 +46,12 @@ class SyncClientWrapper(BaseClientWrapper):
     def __init__(
         self,
         *,
-        x_polytomic_version: typing.Optional[typing.Literal["2023-04-25"]] = None,
-        token: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = None,
+        token: typing.Union[str, typing.Callable[[], str]],
         base_url: str,
         timeout: typing.Optional[float] = None,
         httpx_client: httpx.Client,
     ):
-        super().__init__(x_polytomic_version=x_polytomic_version, token=token, base_url=base_url, timeout=timeout)
+        super().__init__(token=token, base_url=base_url, timeout=timeout)
         self.httpx_client = HttpClient(httpx_client=httpx_client)
 
 
@@ -65,11 +59,10 @@ class AsyncClientWrapper(BaseClientWrapper):
     def __init__(
         self,
         *,
-        x_polytomic_version: typing.Optional[typing.Literal["2023-04-25"]] = None,
-        token: typing.Optional[typing.Union[str, typing.Callable[[], str]]] = None,
+        token: typing.Union[str, typing.Callable[[], str]],
         base_url: str,
         timeout: typing.Optional[float] = None,
         httpx_client: httpx.AsyncClient,
     ):
-        super().__init__(x_polytomic_version=x_polytomic_version, token=token, base_url=base_url, timeout=timeout)
+        super().__init__(token=token, base_url=base_url, timeout=timeout)
         self.httpx_client = AsyncHttpClient(httpx_client=httpx_client)

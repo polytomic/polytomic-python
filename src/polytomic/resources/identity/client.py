@@ -9,12 +9,10 @@ from ...core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ...core.jsonable_encoder import jsonable_encoder
 from ...core.remove_none_from_dict import remove_none_from_dict
 from ...core.request_options import RequestOptions
-from ...errors.bad_request_error import BadRequestError
 from ...errors.internal_server_error import InternalServerError
-from ...errors.not_found_error import NotFoundError
 from ...errors.unauthorized_error import UnauthorizedError
 from ...types.api_error import ApiError as types_api_error_ApiError
-from ...types.job_response_envelope import JobResponseEnvelope
+from ...types.get_identity_response_envelope import GetIdentityResponseEnvelope
 from ...types.rest_err_response import RestErrResponse
 
 try:
@@ -23,19 +21,13 @@ except ImportError:
     import pydantic  # type: ignore
 
 
-class JobsClient:
+class IdentityClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def get(
-        self, id: str, type: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> JobResponseEnvelope:
+    def get(self, *, request_options: typing.Optional[RequestOptions] = None) -> GetIdentityResponseEnvelope:
         """
         Parameters:
-            - id: str.
-
-            - type: str.
-
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from polytomic.client import Polytomic
@@ -43,16 +35,11 @@ class JobsClient:
         client = Polytomic(
             token="YOUR_TOKEN",
         )
-        client.jobs.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            type="createmodel",
-        )
+        client.identity.get()
         """
         _response = self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"api/jobs/{jsonable_encoder(type)}/{jsonable_encoder(id)}"
-            ),
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/me"),
             params=jsonable_encoder(
                 request_options.get("additional_query_parameters") if request_options is not None else None
             ),
@@ -71,13 +58,9 @@ class JobsClient:
             max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(JobResponseEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 400:
-            raise BadRequestError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+            return pydantic.parse_obj_as(GetIdentityResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        if _response.status_code == 404:
-            raise NotFoundError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         if _response.status_code == 500:
             raise InternalServerError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         try:
@@ -87,19 +70,13 @@ class JobsClient:
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
 
-class AsyncJobsClient:
+class AsyncIdentityClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def get(
-        self, id: str, type: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> JobResponseEnvelope:
+    async def get(self, *, request_options: typing.Optional[RequestOptions] = None) -> GetIdentityResponseEnvelope:
         """
         Parameters:
-            - id: str.
-
-            - type: str.
-
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
         from polytomic.client import AsyncPolytomic
@@ -107,16 +84,11 @@ class AsyncJobsClient:
         client = AsyncPolytomic(
             token="YOUR_TOKEN",
         )
-        await client.jobs.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            type="createmodel",
-        )
+        await client.identity.get()
         """
         _response = await self._client_wrapper.httpx_client.request(
             "GET",
-            urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"api/jobs/{jsonable_encoder(type)}/{jsonable_encoder(id)}"
-            ),
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/me"),
             params=jsonable_encoder(
                 request_options.get("additional_query_parameters") if request_options is not None else None
             ),
@@ -135,13 +107,9 @@ class AsyncJobsClient:
             max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
         )
         if 200 <= _response.status_code < 300:
-            return pydantic.parse_obj_as(JobResponseEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 400:
-            raise BadRequestError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
+            return pydantic.parse_obj_as(GetIdentityResponseEnvelope, _response.json())  # type: ignore
         if _response.status_code == 401:
             raise UnauthorizedError(pydantic.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        if _response.status_code == 404:
-            raise NotFoundError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         if _response.status_code == 500:
             raise InternalServerError(pydantic.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         try:
