@@ -36,7 +36,7 @@ class UsersClient:
         """
         > 🚧 Requires partner key
         >
-        > User endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - org_id: str.
@@ -97,7 +97,7 @@ class UsersClient:
         """
         > 🚧 Requires partner key
         >
-        > User endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - org_id: str.
@@ -116,7 +116,6 @@ class UsersClient:
         client.users.create(
             org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             email="mail@example.com",
-            role="admin",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"email": email}
@@ -170,7 +169,7 @@ class UsersClient:
         """
         > 🚧 Requires partner key
         >
-        > User endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - id: str.
@@ -238,7 +237,7 @@ class UsersClient:
         """
         > 🚧 Requires partner key
         >
-        > User endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - id: str.
@@ -260,7 +259,6 @@ class UsersClient:
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             email="mail@example.com",
-            role="admin",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"email": email}
@@ -315,7 +313,7 @@ class UsersClient:
         """
         > 🚧 Requires partner key
         >
-        > User endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - id: str.
@@ -382,7 +380,7 @@ class UsersClient:
         """
         > 🚧 Requires partner key
         >
-        > User endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - org_id: str.
@@ -462,7 +460,7 @@ class AsyncUsersClient:
         """
         > 🚧 Requires partner key
         >
-        > User endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - org_id: str.
@@ -523,7 +521,7 @@ class AsyncUsersClient:
         """
         > 🚧 Requires partner key
         >
-        > User endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - org_id: str.
@@ -542,7 +540,6 @@ class AsyncUsersClient:
         await client.users.create(
             org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             email="mail@example.com",
-            role="admin",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"email": email}
@@ -598,7 +595,7 @@ class AsyncUsersClient:
         """
         > 🚧 Requires partner key
         >
-        > User endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - id: str.
@@ -666,7 +663,7 @@ class AsyncUsersClient:
         """
         > 🚧 Requires partner key
         >
-        > User endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - id: str.
@@ -688,7 +685,6 @@ class AsyncUsersClient:
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             email="mail@example.com",
-            role="admin",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"email": email}
@@ -745,7 +741,7 @@ class AsyncUsersClient:
         """
         > 🚧 Requires partner key
         >
-        > User endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - id: str.
@@ -812,7 +808,7 @@ class AsyncUsersClient:
         """
         > 🚧 Requires partner key
         >
-        > User endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - org_id: str.

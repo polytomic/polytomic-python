@@ -130,7 +130,6 @@ class ModelsClient:
         )
         client.models.create(
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            identifier="id",
             name="Users",
         )
         """
@@ -311,7 +310,6 @@ class ModelsClient:
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             async_=False,
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            identifier="id",
             name="Users",
         )
         """
@@ -538,7 +536,6 @@ class AsyncModelsClient:
         )
         await client.models.create(
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            identifier="id",
             name="Users",
         )
         """
@@ -719,7 +716,6 @@ class AsyncModelsClient:
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             async_=False,
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            identifier="id",
             name="Users",
         )
         """

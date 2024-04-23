@@ -150,15 +150,9 @@ class BulkSyncClient:
         )
         client.bulk_sync.create(
             destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            mode="replicate",
             name="My Bulk Sync",
             schedule=BulkSchedule(
-                day_of_month="1",
-                day_of_week="monday",
                 frequency=ScheduleFrequency.MANUAL,
-                hour="0",
-                minute="0",
-                month="1",
             ),
             source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
@@ -323,7 +317,7 @@ class BulkSyncClient:
         """
         > 📘 Updating schemas
         >
-        > Schema updates can be performed using the [Update Bulk Sync Schemas](https://docs.polytomic.com/reference/apiv3updatebulksyncschemas) endpoint.
+        > Schema updates can be performed using the [Update Bulk Sync Schemas](https://apidocs.polytomic.com/api-reference/bulk-sync/schemas/patch) endpoint.
 
         Parameters:
             - id: str.
@@ -369,15 +363,9 @@ class BulkSyncClient:
         client.bulk_sync.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            mode="replicate",
             name="My Bulk Sync",
             schedule=BulkSchedule(
-                day_of_month="1",
-                day_of_week="monday",
                 frequency=ScheduleFrequency.MANUAL,
-                hour="0",
-                minute="0",
-                month="1",
             ),
             source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
@@ -620,8 +608,6 @@ class BulkSyncClient:
         )
         client.bulk_sync.start(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            resync=False,
-            test=False,
         )
         """
         _request: typing.Dict[str, typing.Any] = {}
@@ -964,15 +950,9 @@ class AsyncBulkSyncClient:
         )
         await client.bulk_sync.create(
             destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            mode="replicate",
             name="My Bulk Sync",
             schedule=BulkSchedule(
-                day_of_month="1",
-                day_of_week="monday",
                 frequency=ScheduleFrequency.MANUAL,
-                hour="0",
-                minute="0",
-                month="1",
             ),
             source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
@@ -1137,7 +1117,7 @@ class AsyncBulkSyncClient:
         """
         > 📘 Updating schemas
         >
-        > Schema updates can be performed using the [Update Bulk Sync Schemas](https://docs.polytomic.com/reference/apiv3updatebulksyncschemas) endpoint.
+        > Schema updates can be performed using the [Update Bulk Sync Schemas](https://apidocs.polytomic.com/api-reference/bulk-sync/schemas/patch) endpoint.
 
         Parameters:
             - id: str.
@@ -1183,15 +1163,9 @@ class AsyncBulkSyncClient:
         await client.bulk_sync.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            mode="replicate",
             name="My Bulk Sync",
             schedule=BulkSchedule(
-                day_of_month="1",
-                day_of_week="monday",
                 frequency=ScheduleFrequency.MANUAL,
-                hour="0",
-                minute="0",
-                month="1",
             ),
             source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
@@ -1434,8 +1408,6 @@ class AsyncBulkSyncClient:
         )
         await client.bulk_sync.start(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            resync=False,
-            test=False,
         )
         """
         _request: typing.Dict[str, typing.Any] = {}

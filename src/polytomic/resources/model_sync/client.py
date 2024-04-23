@@ -434,38 +434,16 @@ class ModelSyncClient:
 
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
-        from polytomic import Identity, ModelSyncField, Schedule, Source, Target
+        from polytomic import Schedule, Target
         from polytomic.client import Polytomic
 
         client = Polytomic(
             token="YOUR_TOKEN",
         )
         client.model_sync.create(
-            fields=[
-                ModelSyncField(
-                    source=Source(
-                        field="id",
-                        model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                    ),
-                    target="name",
-                )
-            ],
-            filter_logic="A and B or C",
-            identity=Identity(
-                function="Equality",
-                source=Source(
-                    field="id",
-                    model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                ),
-                target="name",
-            ),
             mode="create",
             name="Users Sync",
-            schedule=Schedule(
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                frequency="daily",
-            ),
-            sync_all_records=False,
+            schedule=Schedule(),
             target=Target(
                 connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 object="Users",
@@ -689,7 +667,7 @@ class ModelSyncClient:
 
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
-        from polytomic import Identity, ModelSyncField, Schedule, Source, Target
+        from polytomic import Schedule, Target
         from polytomic.client import Polytomic
 
         client = Polytomic(
@@ -697,31 +675,9 @@ class ModelSyncClient:
         )
         client.model_sync.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            fields=[
-                ModelSyncField(
-                    source=Source(
-                        field="id",
-                        model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                    ),
-                    target="name",
-                )
-            ],
-            filter_logic="A and B or C",
-            identity=Identity(
-                function="Equality",
-                source=Source(
-                    field="id",
-                    model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                ),
-                target="name",
-            ),
             mode="create",
             name="Users Sync",
-            schedule=Schedule(
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                frequency="daily",
-            ),
-            sync_all_records=False,
+            schedule=Schedule(),
             target=Target(
                 connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 object="Users",
@@ -922,13 +878,20 @@ class ModelSyncClient:
         id: str,
         *,
         identities: typing.Optional[typing.Sequence[str]] = OMIT,
+        resync: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> StartModelSyncResponseEnvelope:
         """
+        > 🚧 Force full resync
+        >
+        > Use caution when setting the `resync` parameter to `true`. This will force a full resync of the data from the source system. This can be a time-consuming operation and may impact the performance of the source system. It is recommended to only use this option when necessary.
+
         Parameters:
             - id: str.
 
             - identities: typing.Optional[typing.Sequence[str]].
+
+            - resync: typing.Optional[bool].
 
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
@@ -944,6 +907,8 @@ class ModelSyncClient:
         _request: typing.Dict[str, typing.Any] = {}
         if identities is not OMIT:
             _request["identities"] = identities
+        if resync is not OMIT:
+            _request["resync"] = resync
         _response = self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(
@@ -1430,38 +1395,16 @@ class AsyncModelSyncClient:
 
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
-        from polytomic import Identity, ModelSyncField, Schedule, Source, Target
+        from polytomic import Schedule, Target
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
             token="YOUR_TOKEN",
         )
         await client.model_sync.create(
-            fields=[
-                ModelSyncField(
-                    source=Source(
-                        field="id",
-                        model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                    ),
-                    target="name",
-                )
-            ],
-            filter_logic="A and B or C",
-            identity=Identity(
-                function="Equality",
-                source=Source(
-                    field="id",
-                    model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                ),
-                target="name",
-            ),
             mode="create",
             name="Users Sync",
-            schedule=Schedule(
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                frequency="daily",
-            ),
-            sync_all_records=False,
+            schedule=Schedule(),
             target=Target(
                 connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 object="Users",
@@ -1687,7 +1630,7 @@ class AsyncModelSyncClient:
 
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
-        from polytomic import Identity, ModelSyncField, Schedule, Source, Target
+        from polytomic import Schedule, Target
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
@@ -1695,31 +1638,9 @@ class AsyncModelSyncClient:
         )
         await client.model_sync.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            fields=[
-                ModelSyncField(
-                    source=Source(
-                        field="id",
-                        model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                    ),
-                    target="name",
-                )
-            ],
-            filter_logic="A and B or C",
-            identity=Identity(
-                function="Equality",
-                source=Source(
-                    field="id",
-                    model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                ),
-                target="name",
-            ),
             mode="create",
             name="Users Sync",
-            schedule=Schedule(
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                frequency="daily",
-            ),
-            sync_all_records=False,
+            schedule=Schedule(),
             target=Target(
                 connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 object="Users",
@@ -1920,13 +1841,20 @@ class AsyncModelSyncClient:
         id: str,
         *,
         identities: typing.Optional[typing.Sequence[str]] = OMIT,
+        resync: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> StartModelSyncResponseEnvelope:
         """
+        > 🚧 Force full resync
+        >
+        > Use caution when setting the `resync` parameter to `true`. This will force a full resync of the data from the source system. This can be a time-consuming operation and may impact the performance of the source system. It is recommended to only use this option when necessary.
+
         Parameters:
             - id: str.
 
             - identities: typing.Optional[typing.Sequence[str]].
+
+            - resync: typing.Optional[bool].
 
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
@@ -1942,6 +1870,8 @@ class AsyncModelSyncClient:
         _request: typing.Dict[str, typing.Any] = {}
         if identities is not OMIT:
             _request["identities"] = identities
+        if resync is not OMIT:
+            _request["resync"] = resync
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
             urllib.parse.urljoin(

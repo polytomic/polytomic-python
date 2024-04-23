@@ -35,7 +35,7 @@ class OrganizationClient:
         """
         > 🚧 Requires partner key
         >
-        > Organization endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
@@ -93,7 +93,7 @@ class OrganizationClient:
         """
         > 🚧 Requires partner key
         >
-        > Organization endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - client_id: typing.Optional[str].
@@ -116,12 +116,7 @@ class OrganizationClient:
             token="YOUR_TOKEN",
         )
         client.organization.create(
-            client_id="client_id",
-            client_secret="client_secret",
-            issuer="https://example.com",
             name="My Organization",
-            sso_domain="example.com",
-            sso_org_id="123456",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name}
@@ -181,7 +176,7 @@ class OrganizationClient:
         """
         > 🚧 Requires partner key
         >
-        > Organization endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - id: str.
@@ -246,7 +241,7 @@ class OrganizationClient:
         """
         > 🚧 Requires partner key
         >
-        > Organization endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - id: str.
@@ -272,12 +267,7 @@ class OrganizationClient:
         )
         client.organization.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            client_id="client_id",
-            client_secret="client_secret",
-            issuer="https://example.com",
             name="My Organization",
-            sso_domain="example.com",
-            sso_org_id="123456",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name}
@@ -339,7 +329,7 @@ class OrganizationClient:
         """
         > 🚧 Requires partner key
         >
-        > Organization endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - id: str.
@@ -400,7 +390,7 @@ class AsyncOrganizationClient:
         """
         > 🚧 Requires partner key
         >
-        > Organization endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
@@ -458,7 +448,7 @@ class AsyncOrganizationClient:
         """
         > 🚧 Requires partner key
         >
-        > Organization endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - client_id: typing.Optional[str].
@@ -481,12 +471,7 @@ class AsyncOrganizationClient:
             token="YOUR_TOKEN",
         )
         await client.organization.create(
-            client_id="client_id",
-            client_secret="client_secret",
-            issuer="https://example.com",
             name="My Organization",
-            sso_domain="example.com",
-            sso_org_id="123456",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name}
@@ -546,7 +531,7 @@ class AsyncOrganizationClient:
         """
         > 🚧 Requires partner key
         >
-        > Organization endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - id: str.
@@ -611,7 +596,7 @@ class AsyncOrganizationClient:
         """
         > 🚧 Requires partner key
         >
-        > Organization endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - id: str.
@@ -637,12 +622,7 @@ class AsyncOrganizationClient:
         )
         await client.organization.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            client_id="client_id",
-            client_secret="client_secret",
-            issuer="https://example.com",
             name="My Organization",
-            sso_domain="example.com",
-            sso_org_id="123456",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name}
@@ -704,7 +684,7 @@ class AsyncOrganizationClient:
         """
         > 🚧 Requires partner key
         >
-        > Organization endpoints are only accessible using [partner keys](https://docs.polytomic.com/reference/authentication#partner-keys)
+        > Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/getting-started/obtaining-api-keys#partner-keys)
 
         Parameters:
             - id: str.

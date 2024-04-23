@@ -37,7 +37,7 @@ class WebhooksClient:
         webhook may be created per organization. The webhook will be called for events
         in that organization.
 
-        Consult the [Events documentation](https://docs.polytomic.com/reference/events) for more information.
+        Consult the [Events documentation](https://apidocs.polytomic.com/getting-started/events) for more information.
 
         Parameters:
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
@@ -94,7 +94,7 @@ class WebhooksClient:
         webhook may be created per organization. The webhook will be called for events
         in that organization.
 
-        Consult the [Events documentation](https://docs.polytomic.com/reference/events) for more information.
+        Consult the [Events documentation](https://apidocs.polytomic.com/getting-started/events) for more information.
 
         Parameters:
             - endpoint: str.
@@ -166,7 +166,7 @@ class WebhooksClient:
         webhook may be created per organization. The webhook will be called for events
         in that organization.
 
-        Consult the [Events documentation](https://docs.polytomic.com/reference/events) for more information.
+        Consult the [Events documentation](https://apidocs.polytomic.com/getting-started/events) for more information.
 
         Parameters:
             - id: str.
@@ -228,7 +228,7 @@ class WebhooksClient:
         webhook may be created per organization. The webhook will be called for events
         in that organization.
 
-        Consult the [Events documentation](https://docs.polytomic.com/reference/events) for more information.
+        Consult the [Events documentation](https://apidocs.polytomic.com/getting-started/events) for more information.
 
         Parameters:
             - id: str.
@@ -358,7 +358,7 @@ class AsyncWebhooksClient:
         webhook may be created per organization. The webhook will be called for events
         in that organization.
 
-        Consult the [Events documentation](https://docs.polytomic.com/reference/events) for more information.
+        Consult the [Events documentation](https://apidocs.polytomic.com/getting-started/events) for more information.
 
         Parameters:
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
@@ -415,7 +415,7 @@ class AsyncWebhooksClient:
         webhook may be created per organization. The webhook will be called for events
         in that organization.
 
-        Consult the [Events documentation](https://docs.polytomic.com/reference/events) for more information.
+        Consult the [Events documentation](https://apidocs.polytomic.com/getting-started/events) for more information.
 
         Parameters:
             - endpoint: str.
@@ -487,7 +487,7 @@ class AsyncWebhooksClient:
         webhook may be created per organization. The webhook will be called for events
         in that organization.
 
-        Consult the [Events documentation](https://docs.polytomic.com/reference/events) for more information.
+        Consult the [Events documentation](https://apidocs.polytomic.com/getting-started/events) for more information.
 
         Parameters:
             - id: str.
@@ -549,7 +549,7 @@ class AsyncWebhooksClient:
         webhook may be created per organization. The webhook will be called for events
         in that organization.
 
-        Consult the [Events documentation](https://docs.polytomic.com/reference/events) for more information.
+        Consult the [Events documentation](https://apidocs.polytomic.com/getting-started/events) for more information.
 
         Parameters:
             - id: str.

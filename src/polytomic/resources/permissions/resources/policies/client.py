@@ -95,7 +95,6 @@ class PoliciesClient:
 
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
-        from polytomic import PolicyAction
         from polytomic.client import Polytomic
 
         client = Polytomic(
@@ -103,12 +102,6 @@ class PoliciesClient:
         )
         client.permissions.policies.create(
             name="Custom",
-            policy_actions=[
-                PolicyAction(
-                    action="read",
-                    role_ids=["248df4b7-aa70-47b8-a036-33ac447e668d"],
-                )
-            ],
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name}
@@ -233,7 +226,6 @@ class PoliciesClient:
 
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
-        from polytomic import PolicyAction
         from polytomic.client import Polytomic
 
         client = Polytomic(
@@ -242,12 +234,6 @@ class PoliciesClient:
         client.permissions.policies.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="Custom",
-            policy_actions=[
-                PolicyAction(
-                    action="read",
-                    role_ids=["248df4b7-aa70-47b8-a036-33ac447e668d"],
-                )
-            ],
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name}
@@ -422,7 +408,6 @@ class AsyncPoliciesClient:
 
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
-        from polytomic import PolicyAction
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
@@ -430,12 +415,6 @@ class AsyncPoliciesClient:
         )
         await client.permissions.policies.create(
             name="Custom",
-            policy_actions=[
-                PolicyAction(
-                    action="read",
-                    role_ids=["248df4b7-aa70-47b8-a036-33ac447e668d"],
-                )
-            ],
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name}
@@ -560,7 +539,6 @@ class AsyncPoliciesClient:
 
             - request_options: typing.Optional[RequestOptions]. Request-specific configuration.
         ---
-        from polytomic import PolicyAction
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
@@ -569,12 +547,6 @@ class AsyncPoliciesClient:
         await client.permissions.policies.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="Custom",
-            policy_actions=[
-                PolicyAction(
-                    action="read",
-                    role_ids=["248df4b7-aa70-47b8-a036-33ac447e668d"],
-                )
-            ],
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name}

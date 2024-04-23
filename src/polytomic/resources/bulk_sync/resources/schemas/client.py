@@ -259,8 +259,6 @@ class SchemasClient:
         client.bulk_sync.schemas.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             schema_id="contact",
-            enabled=True,
-            partition_key="email",
         )
         """
         _request: typing.Dict[str, typing.Any] = {}
@@ -546,8 +544,6 @@ class AsyncSchemasClient:
         await client.bulk_sync.schemas.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             schema_id="contact",
-            enabled=True,
-            partition_key="email",
         )
         """
         _request: typing.Dict[str, typing.Any] = {}

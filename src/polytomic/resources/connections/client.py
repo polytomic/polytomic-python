@@ -162,9 +162,7 @@ class ConnectionsClient:
         )
         client.connections.create(
             name="My Postgres Connection",
-            redirect_url="https://example.com/oauth_redirect",
             type="postgresql",
-            validate=True,
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name, "type": type}
@@ -257,10 +255,8 @@ class ConnectionsClient:
             token="YOUR_TOKEN",
         )
         client.connections.connect(
-            connection="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="Salesforce Connection",
             redirect_url="redirect_url",
-            type="salesforce",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name, "redirect_url": redirect_url}
@@ -274,7 +270,7 @@ class ConnectionsClient:
             _request["whitelist"] = whitelist
         _response = self._client_wrapper.httpx_client.request(
             "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/connections/connect"),
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/connections/connect/"),
             params=jsonable_encoder(
                 request_options.get("additional_query_parameters") if request_options is not None else None
             ),
@@ -407,9 +403,6 @@ class ConnectionsClient:
         client.connections.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="My Postgres Connection",
-            reconnect=False,
-            type="postgresql",
-            validate=True,
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name}
@@ -729,9 +722,7 @@ class AsyncConnectionsClient:
         )
         await client.connections.create(
             name="My Postgres Connection",
-            redirect_url="https://example.com/oauth_redirect",
             type="postgresql",
-            validate=True,
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name, "type": type}
@@ -824,10 +815,8 @@ class AsyncConnectionsClient:
             token="YOUR_TOKEN",
         )
         await client.connections.connect(
-            connection="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="Salesforce Connection",
             redirect_url="redirect_url",
-            type="salesforce",
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name, "redirect_url": redirect_url}
@@ -841,7 +830,7 @@ class AsyncConnectionsClient:
             _request["whitelist"] = whitelist
         _response = await self._client_wrapper.httpx_client.request(
             "POST",
-            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/connections/connect"),
+            urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/connections/connect/"),
             params=jsonable_encoder(
                 request_options.get("additional_query_parameters") if request_options is not None else None
             ),
@@ -976,9 +965,6 @@ class AsyncConnectionsClient:
         await client.connections.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="My Postgres Connection",
-            reconnect=False,
-            type="postgresql",
-            validate=True,
         )
         """
         _request: typing.Dict[str, typing.Any] = {"name": name}
