@@ -47,6 +47,8 @@ from .connection_type_response_envelope import ConnectionTypeResponseEnvelope
 from .connection_type_schema import ConnectionTypeSchema
 from .create_connection_response_envelope import CreateConnectionResponseEnvelope
 from .create_connection_response_schema import CreateConnectionResponseSchema
+from .create_model_request import CreateModelRequest
+from .enrichment import Enrichment
 from .event import Event
 from .event_types_envelope import EventTypesEnvelope
 from .events_envelope import EventsEnvelope
@@ -124,6 +126,9 @@ from .target_response import TargetResponse
 from .target_response_envelope import TargetResponseEnvelope
 from .user import User
 from .user_envelope import UserEnvelope
+from .v_2_enricher_configuration import V2EnricherConfiguration
+from .v_2_enricher_mapping import V2EnricherMapping
+from .v_2_get_enrichment_input_fields_response_envelope import V2GetEnrichmentInputFieldsResponseEnvelope
 from .webhook import Webhook
 from .webhook_envelope import WebhookEnvelope
 from .webhook_list_envelope import WebhookListEnvelope
@@ -177,6 +182,8 @@ __all__ = [
     "ConnectionTypeSchema",
     "CreateConnectionResponseEnvelope",
     "CreateConnectionResponseSchema",
+    "CreateModelRequest",
+    "Enrichment",
     "Event",
     "EventTypesEnvelope",
     "EventsEnvelope",
@@ -254,6 +261,9 @@ __all__ = [
     "TargetResponseEnvelope",
     "User",
     "UserEnvelope",
+    "V2EnricherConfiguration",
+    "V2EnricherMapping",
+    "V2GetEnrichmentInputFieldsResponseEnvelope",
     "Webhook",
     "WebhookEnvelope",
     "WebhookListEnvelope",

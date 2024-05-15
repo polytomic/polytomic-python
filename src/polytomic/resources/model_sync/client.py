@@ -18,6 +18,7 @@ from ...errors.unprocessable_entity_error import UnprocessableEntityError
 from ...types.activate_sync_envelope import ActivateSyncEnvelope
 from ...types.activate_sync_input import ActivateSyncInput
 from ...types.api_error import ApiError as types_api_error_ApiError
+from ...types.enrichment import Enrichment
 from ...types.filter import Filter
 from ...types.get_connection_meta_envelope import GetConnectionMetaEnvelope
 from ...types.get_model_sync_source_meta_envelope import GetModelSyncSourceMetaEnvelope
@@ -387,6 +388,7 @@ class ModelSyncClient:
         self,
         *,
         active: typing.Optional[bool] = OMIT,
+        enricher: typing.Optional[Enrichment] = OMIT,
         fields: typing.Optional[typing.Sequence[ModelSyncField]] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
@@ -405,6 +407,8 @@ class ModelSyncClient:
         """
         Parameters:
             - active: typing.Optional[bool].
+
+            - enricher: typing.Optional[Enrichment].
 
             - fields: typing.Optional[typing.Sequence[ModelSyncField]].
 
@@ -453,6 +457,8 @@ class ModelSyncClient:
         _request: typing.Dict[str, typing.Any] = {"mode": mode, "name": name, "schedule": schedule, "target": target}
         if active is not OMIT:
             _request["active"] = active
+        if enricher is not OMIT:
+            _request["enricher"] = enricher
         if fields is not OMIT:
             _request["fields"] = fields
         if filter_logic is not OMIT:
@@ -618,6 +624,7 @@ class ModelSyncClient:
         id: str,
         *,
         active: typing.Optional[bool] = OMIT,
+        enricher: typing.Optional[Enrichment] = OMIT,
         fields: typing.Optional[typing.Sequence[ModelSyncField]] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
@@ -638,6 +645,8 @@ class ModelSyncClient:
             - id: str.
 
             - active: typing.Optional[bool].
+
+            - enricher: typing.Optional[Enrichment].
 
             - fields: typing.Optional[typing.Sequence[ModelSyncField]].
 
@@ -687,6 +696,8 @@ class ModelSyncClient:
         _request: typing.Dict[str, typing.Any] = {"mode": mode, "name": name, "schedule": schedule, "target": target}
         if active is not OMIT:
             _request["active"] = active
+        if enricher is not OMIT:
+            _request["enricher"] = enricher
         if fields is not OMIT:
             _request["fields"] = fields
         if filter_logic is not OMIT:
@@ -1348,6 +1359,7 @@ class AsyncModelSyncClient:
         self,
         *,
         active: typing.Optional[bool] = OMIT,
+        enricher: typing.Optional[Enrichment] = OMIT,
         fields: typing.Optional[typing.Sequence[ModelSyncField]] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
@@ -1366,6 +1378,8 @@ class AsyncModelSyncClient:
         """
         Parameters:
             - active: typing.Optional[bool].
+
+            - enricher: typing.Optional[Enrichment].
 
             - fields: typing.Optional[typing.Sequence[ModelSyncField]].
 
@@ -1414,6 +1428,8 @@ class AsyncModelSyncClient:
         _request: typing.Dict[str, typing.Any] = {"mode": mode, "name": name, "schedule": schedule, "target": target}
         if active is not OMIT:
             _request["active"] = active
+        if enricher is not OMIT:
+            _request["enricher"] = enricher
         if fields is not OMIT:
             _request["fields"] = fields
         if filter_logic is not OMIT:
@@ -1581,6 +1597,7 @@ class AsyncModelSyncClient:
         id: str,
         *,
         active: typing.Optional[bool] = OMIT,
+        enricher: typing.Optional[Enrichment] = OMIT,
         fields: typing.Optional[typing.Sequence[ModelSyncField]] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
@@ -1601,6 +1618,8 @@ class AsyncModelSyncClient:
             - id: str.
 
             - active: typing.Optional[bool].
+
+            - enricher: typing.Optional[Enrichment].
 
             - fields: typing.Optional[typing.Sequence[ModelSyncField]].
 
@@ -1650,6 +1669,8 @@ class AsyncModelSyncClient:
         _request: typing.Dict[str, typing.Any] = {"mode": mode, "name": name, "schedule": schedule, "target": target}
         if active is not OMIT:
             _request["active"] = active
+        if enricher is not OMIT:
+            _request["enricher"] = enricher
         if fields is not OMIT:
             _request["fields"] = fields
         if filter_logic is not OMIT:

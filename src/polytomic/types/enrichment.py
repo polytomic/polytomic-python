@@ -4,7 +4,9 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
-from .connection_type_schema import ConnectionTypeSchema
+from .model_field import ModelField
+from .v_2_enricher_configuration import V2EnricherConfiguration
+from .v_2_enricher_mapping import V2EnricherMapping
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -12,20 +14,20 @@ except ImportError:
     import pydantic  # type: ignore
 
 
-class ConnectionResponseSchema(pydantic.BaseModel):
-    api_calls_last_24_hours: typing.Optional[int] = pydantic.Field(default=None)
+class Enrichment(pydantic.BaseModel):
+    configuration: typing.Optional[V2EnricherConfiguration] = None
+    connection_id: typing.Optional[str] = None
+    enricher_id: typing.Optional[str] = pydantic.Field(default=None)
     """
-    API calls made to service in the last 24h (supported integrations only).
+    Must be provided to update an existing enrichment
     """
 
-    configuration: typing.Optional[typing.Dict[str, typing.Any]] = None
-    id: typing.Optional[str] = None
-    name: typing.Optional[str] = None
-    organization_id: typing.Optional[str] = None
-    policies: typing.Optional[typing.List[str]] = None
-    status: typing.Optional[str] = None
-    status_error: typing.Optional[str] = None
-    type: typing.Optional[ConnectionTypeSchema] = None
+    fields: typing.Optional[typing.List[ModelField]] = pydantic.Field(default=None)
+    """
+    If not provided, all fields will be enabled.
+    """
+
+    mappings: typing.Optional[V2EnricherMapping] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

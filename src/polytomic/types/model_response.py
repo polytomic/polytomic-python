@@ -4,6 +4,7 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
+from .enrichment import Enrichment
 from .label_label import LabelLabel
 from .model_field import ModelField
 from .relation import Relation
@@ -17,6 +18,7 @@ except ImportError:
 class ModelResponse(pydantic.BaseModel):
     configuration: typing.Optional[typing.Dict[str, typing.Any]] = None
     connection_id: typing.Optional[str] = None
+    enricher: typing.Optional[Enrichment] = None
     fields: typing.Optional[typing.List[ModelField]] = None
     id: typing.Optional[str] = None
     identifier: typing.Optional[str] = None

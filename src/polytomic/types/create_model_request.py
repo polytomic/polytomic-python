@@ -4,7 +4,9 @@ import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
-from .connection_type_schema import ConnectionTypeSchema
+from .enrichment import Enrichment
+from .model_model_field_request import ModelModelFieldRequest
+from .model_relation import ModelRelation
 
 try:
     import pydantic.v1 as pydantic  # type: ignore
@@ -12,20 +14,19 @@ except ImportError:
     import pydantic  # type: ignore
 
 
-class ConnectionResponseSchema(pydantic.BaseModel):
-    api_calls_last_24_hours: typing.Optional[int] = pydantic.Field(default=None)
-    """
-    API calls made to service in the last 24h (supported integrations only).
-    """
-
+class CreateModelRequest(pydantic.BaseModel):
+    additional_fields: typing.Optional[typing.List[ModelModelFieldRequest]] = None
     configuration: typing.Optional[typing.Dict[str, typing.Any]] = None
-    id: typing.Optional[str] = None
-    name: typing.Optional[str] = None
+    connection_id: str
+    enricher: typing.Optional[Enrichment] = None
+    fields: typing.Optional[typing.List[str]] = None
+    identifier: typing.Optional[str] = None
+    labels: typing.Optional[typing.List[str]] = None
+    name: str
     organization_id: typing.Optional[str] = None
     policies: typing.Optional[typing.List[str]] = None
-    status: typing.Optional[str] = None
-    status_error: typing.Optional[str] = None
-    type: typing.Optional[ConnectionTypeSchema] = None
+    relations: typing.Optional[typing.List[ModelRelation]] = None
+    tracking_columns: typing.Optional[typing.List[str]] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
