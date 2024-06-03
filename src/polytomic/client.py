@@ -4,39 +4,52 @@ import typing
 
 import httpx
 
+from .bulk_sync.client import AsyncBulkSyncClient, BulkSyncClient
+from .connections.client import AsyncConnectionsClient, ConnectionsClient
 from .core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from .environment import PolytomicEnvironment
-from .resources.bulk_sync.client import AsyncBulkSyncClient, BulkSyncClient
-from .resources.connections.client import AsyncConnectionsClient, ConnectionsClient
-from .resources.events.client import AsyncEventsClient, EventsClient
-from .resources.identity.client import AsyncIdentityClient, IdentityClient
-from .resources.jobs.client import AsyncJobsClient, JobsClient
-from .resources.model_sync.client import AsyncModelSyncClient, ModelSyncClient
-from .resources.models.client import AsyncModelsClient, ModelsClient
-from .resources.organization.client import AsyncOrganizationClient, OrganizationClient
-from .resources.permissions.client import AsyncPermissionsClient, PermissionsClient
-from .resources.schemas.client import AsyncSchemasClient, SchemasClient
-from .resources.users.client import AsyncUsersClient, UsersClient
-from .resources.webhooks.client import AsyncWebhooksClient, WebhooksClient
+from .events.client import AsyncEventsClient, EventsClient
+from .identity.client import AsyncIdentityClient, IdentityClient
+from .jobs.client import AsyncJobsClient, JobsClient
+from .model_sync.client import AsyncModelSyncClient, ModelSyncClient
+from .models.client import AsyncModelsClient, ModelsClient
+from .organization.client import AsyncOrganizationClient, OrganizationClient
+from .permissions.client import AsyncPermissionsClient, PermissionsClient
+from .schemas.client import AsyncSchemasClient, SchemasClient
+from .users.client import AsyncUsersClient, UsersClient
+from .webhooks.client import AsyncWebhooksClient, WebhooksClient
 
 
 class Polytomic:
     """
     Use this class to access the different functions within the SDK. You can instantiate any number of clients with different configuration that will propogate to these functions.
 
-    Parameters:
-        - base_url: typing.Optional[str]. The base url to use for requests from the client.
+    Parameters
+    ----------
+    base_url : typing.Optional[str]
+        The base url to use for requests from the client.
 
-        - environment: PolytomicEnvironment. The environment to use for requests from the client. from .environment import PolytomicEnvironment
+    environment : PolytomicEnvironment
+        The environment to use for requests from the client. from .environment import PolytomicEnvironment
 
-                                             Defaults to PolytomicEnvironment.DEFAULT
 
-        - token: typing.Union[str, typing.Callable[[], str]].
 
-        - timeout: typing.Optional[float]. The timeout to be used, in seconds, for requests by default the timeout is 60 seconds, unless a custom httpx client is used, in which case a default is not set.
+        Defaults to PolytomicEnvironment.DEFAULT
 
-        - httpx_client: typing.Optional[httpx.Client]. The httpx client to use for making requests, a preconfigured client is used by default, however this is useful should you want to pass in any custom httpx configuration.
-    ---
+
+
+    token : typing.Union[str, typing.Callable[[], str]]
+    timeout : typing.Optional[float]
+        The timeout to be used, in seconds, for requests by default the timeout is 60 seconds, unless a custom httpx client is used, in which case a default is not set.
+
+    follow_redirects : typing.Optional[bool]
+        Whether the default httpx client follows redirects or not, this is irrelevant if a custom httpx client is passed in.
+
+    httpx_client : typing.Optional[httpx.Client]
+        The httpx client to use for making requests, a preconfigured client is used by default, however this is useful should you want to pass in any custom httpx configuration.
+
+    Examples
+    --------
     from polytomic.client import Polytomic
 
     client = Polytomic(
@@ -51,13 +64,18 @@ class Polytomic:
         environment: PolytomicEnvironment = PolytomicEnvironment.DEFAULT,
         token: typing.Union[str, typing.Callable[[], str]],
         timeout: typing.Optional[float] = None,
+        follow_redirects: typing.Optional[bool] = True,
         httpx_client: typing.Optional[httpx.Client] = None
     ):
         _defaulted_timeout = timeout if timeout is not None else 60 if httpx_client is None else None
         self._client_wrapper = SyncClientWrapper(
             base_url=_get_base_url(base_url=base_url, environment=environment),
             token=token,
-            httpx_client=httpx.Client(timeout=_defaulted_timeout) if httpx_client is None else httpx_client,
+            httpx_client=httpx_client
+            if httpx_client is not None
+            else httpx.Client(timeout=_defaulted_timeout, follow_redirects=follow_redirects)
+            if follow_redirects is not None
+            else httpx.Client(timeout=_defaulted_timeout),
             timeout=_defaulted_timeout,
         )
         self.bulk_sync = BulkSyncClient(client_wrapper=self._client_wrapper)
@@ -78,19 +96,32 @@ class AsyncPolytomic:
     """
     Use this class to access the different functions within the SDK. You can instantiate any number of clients with different configuration that will propogate to these functions.
 
-    Parameters:
-        - base_url: typing.Optional[str]. The base url to use for requests from the client.
+    Parameters
+    ----------
+    base_url : typing.Optional[str]
+        The base url to use for requests from the client.
 
-        - environment: PolytomicEnvironment. The environment to use for requests from the client. from .environment import PolytomicEnvironment
+    environment : PolytomicEnvironment
+        The environment to use for requests from the client. from .environment import PolytomicEnvironment
 
-                                             Defaults to PolytomicEnvironment.DEFAULT
 
-        - token: typing.Union[str, typing.Callable[[], str]].
 
-        - timeout: typing.Optional[float]. The timeout to be used, in seconds, for requests by default the timeout is 60 seconds, unless a custom httpx client is used, in which case a default is not set.
+        Defaults to PolytomicEnvironment.DEFAULT
 
-        - httpx_client: typing.Optional[httpx.AsyncClient]. The httpx client to use for making requests, a preconfigured client is used by default, however this is useful should you want to pass in any custom httpx configuration.
-    ---
+
+
+    token : typing.Union[str, typing.Callable[[], str]]
+    timeout : typing.Optional[float]
+        The timeout to be used, in seconds, for requests by default the timeout is 60 seconds, unless a custom httpx client is used, in which case a default is not set.
+
+    follow_redirects : typing.Optional[bool]
+        Whether the default httpx client follows redirects or not, this is irrelevant if a custom httpx client is passed in.
+
+    httpx_client : typing.Optional[httpx.AsyncClient]
+        The httpx client to use for making requests, a preconfigured client is used by default, however this is useful should you want to pass in any custom httpx configuration.
+
+    Examples
+    --------
     from polytomic.client import AsyncPolytomic
 
     client = AsyncPolytomic(
@@ -105,13 +136,18 @@ class AsyncPolytomic:
         environment: PolytomicEnvironment = PolytomicEnvironment.DEFAULT,
         token: typing.Union[str, typing.Callable[[], str]],
         timeout: typing.Optional[float] = None,
+        follow_redirects: typing.Optional[bool] = True,
         httpx_client: typing.Optional[httpx.AsyncClient] = None
     ):
         _defaulted_timeout = timeout if timeout is not None else 60 if httpx_client is None else None
         self._client_wrapper = AsyncClientWrapper(
             base_url=_get_base_url(base_url=base_url, environment=environment),
             token=token,
-            httpx_client=httpx.AsyncClient(timeout=_defaulted_timeout) if httpx_client is None else httpx_client,
+            httpx_client=httpx_client
+            if httpx_client is not None
+            else httpx.AsyncClient(timeout=_defaulted_timeout, follow_redirects=follow_redirects)
+            if follow_redirects is not None
+            else httpx.AsyncClient(timeout=_defaulted_timeout),
             timeout=_defaulted_timeout,
         )
         self.bulk_sync = AsyncBulkSyncClient(client_wrapper=self._client_wrapper)

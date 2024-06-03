@@ -57,6 +57,8 @@ from .execution_log_response import ExecutionLogResponse
 from .execution_logs_response_envelope import ExecutionLogsResponseEnvelope
 from .execution_status import ExecutionStatus
 from .filter import Filter
+from .filter_field_reference_type import FilterFieldReferenceType
+from .filter_function import FilterFunction
 from .get_connection_meta_envelope import GetConnectionMetaEnvelope
 from .get_execution_response_envelope import GetExecutionResponseEnvelope
 from .get_execution_response_schema import GetExecutionResponseSchema
@@ -84,6 +86,8 @@ from .model_relation import ModelRelation
 from .model_relation_to import ModelRelationTo
 from .model_response import ModelResponse
 from .model_response_envelope import ModelResponseEnvelope
+from .model_sample import ModelSample
+from .model_sample_response_envelope import ModelSampleResponseEnvelope
 from .model_sync_field import ModelSyncField
 from .model_sync_response import ModelSyncResponse
 from .model_sync_response_envelope import ModelSyncResponseEnvelope
@@ -111,6 +115,7 @@ from .schedule_schedule_option import ScheduleScheduleOption
 from .schema import Schema
 from .schema_association import SchemaAssociation
 from .schema_field import SchemaField
+from .schema_identity_function import SchemaIdentityFunction
 from .schema_records_response_envelope import SchemaRecordsResponseEnvelope
 from .source import Source
 from .source_meta import SourceMeta
@@ -129,6 +134,7 @@ from .user_envelope import UserEnvelope
 from .v_2_enricher_configuration import V2EnricherConfiguration
 from .v_2_enricher_mapping import V2EnricherMapping
 from .v_2_get_enrichment_input_fields_response_envelope import V2GetEnrichmentInputFieldsResponseEnvelope
+from .v_2_sample_record import V2SampleRecord
 from .webhook import Webhook
 from .webhook_envelope import WebhookEnvelope
 from .webhook_list_envelope import WebhookListEnvelope
@@ -192,6 +198,8 @@ __all__ = [
     "ExecutionLogsResponseEnvelope",
     "ExecutionStatus",
     "Filter",
+    "FilterFieldReferenceType",
+    "FilterFunction",
     "GetConnectionMetaEnvelope",
     "GetExecutionResponseEnvelope",
     "GetExecutionResponseSchema",
@@ -219,6 +227,8 @@ __all__ = [
     "ModelRelationTo",
     "ModelResponse",
     "ModelResponseEnvelope",
+    "ModelSample",
+    "ModelSampleResponseEnvelope",
     "ModelSyncField",
     "ModelSyncResponse",
     "ModelSyncResponseEnvelope",
@@ -246,6 +256,7 @@ __all__ = [
     "Schema",
     "SchemaAssociation",
     "SchemaField",
+    "SchemaIdentityFunction",
     "SchemaRecordsResponseEnvelope",
     "Source",
     "SourceMeta",
@@ -264,6 +275,7 @@ __all__ = [
     "V2EnricherConfiguration",
     "V2EnricherMapping",
     "V2GetEnrichmentInputFieldsResponseEnvelope",
+    "V2SampleRecord",
     "Webhook",
     "WebhookEnvelope",
     "WebhookListEnvelope",
