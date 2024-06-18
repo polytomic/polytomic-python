@@ -98,6 +98,7 @@ class BulkSyncClient:
         self,
         *,
         destination_connection_id: str,
+        mode: str,
         name: str,
         schedule: BulkSchedule,
         source_connection_id: str,
@@ -107,7 +108,6 @@ class BulkSyncClient:
         destination_configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
         discover: typing.Optional[bool] = OMIT,
-        mode: typing.Optional[str] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         schemas: typing.Optional[typing.Sequence[str]] = OMIT,
@@ -118,6 +118,9 @@ class BulkSyncClient:
         Parameters
         ----------
         destination_connection_id : str
+
+        mode : str
+            Either 'replicate' or 'snapshot'.
 
         name : str
 
@@ -137,9 +140,6 @@ class BulkSyncClient:
 
         discover : typing.Optional[bool]
             DEPRECATED: Use automatically_add_new_objects/automatically_add_new_fields instead
-
-        mode : typing.Optional[str]
-
 
         organization_id : typing.Optional[str]
 
@@ -167,6 +167,7 @@ class BulkSyncClient:
         )
         client.bulk_sync.create(
             destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            mode="replicate",
             name="My Bulk Sync",
             schedule=BulkSchedule(
                 frequency="manual",
@@ -176,6 +177,7 @@ class BulkSyncClient:
         """
         _request: typing.Dict[str, typing.Any] = {
             "destination_connection_id": destination_connection_id,
+            "mode": mode,
             "name": name,
             "schedule": schedule,
             "source_connection_id": source_connection_id,
@@ -192,8 +194,6 @@ class BulkSyncClient:
             _request["disable_record_timestamps"] = disable_record_timestamps
         if discover is not OMIT:
             _request["discover"] = discover
-        if mode is not OMIT:
-            _request["mode"] = mode
         if organization_id is not OMIT:
             _request["organization_id"] = organization_id
         if policies is not OMIT:
@@ -328,6 +328,7 @@ class BulkSyncClient:
         id: str,
         *,
         destination_connection_id: str,
+        mode: str,
         name: str,
         schedule: BulkSchedule,
         source_connection_id: str,
@@ -337,7 +338,6 @@ class BulkSyncClient:
         destination_configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
         discover: typing.Optional[bool] = OMIT,
-        mode: typing.Optional[str] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         schemas: typing.Optional[typing.Sequence[str]] = OMIT,
@@ -354,6 +354,9 @@ class BulkSyncClient:
         id : str
 
         destination_connection_id : str
+
+        mode : str
+            Either 'replicate' or 'snapshot'.
 
         name : str
 
@@ -373,9 +376,6 @@ class BulkSyncClient:
 
         discover : typing.Optional[bool]
             DEPRECATED: Use automatically_add_new_objects/automatically_add_new_fields instead
-
-        mode : typing.Optional[str]
-
 
         organization_id : typing.Optional[str]
 
@@ -404,6 +404,7 @@ class BulkSyncClient:
         client.bulk_sync.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            mode="replicate",
             name="My Bulk Sync",
             schedule=BulkSchedule(
                 frequency="manual",
@@ -413,6 +414,7 @@ class BulkSyncClient:
         """
         _request: typing.Dict[str, typing.Any] = {
             "destination_connection_id": destination_connection_id,
+            "mode": mode,
             "name": name,
             "schedule": schedule,
             "source_connection_id": source_connection_id,
@@ -429,8 +431,6 @@ class BulkSyncClient:
             _request["disable_record_timestamps"] = disable_record_timestamps
         if discover is not OMIT:
             _request["discover"] = discover
-        if mode is not OMIT:
-            _request["mode"] = mode
         if organization_id is not OMIT:
             _request["organization_id"] = organization_id
         if policies is not OMIT:
@@ -1011,6 +1011,7 @@ class AsyncBulkSyncClient:
         self,
         *,
         destination_connection_id: str,
+        mode: str,
         name: str,
         schedule: BulkSchedule,
         source_connection_id: str,
@@ -1020,7 +1021,6 @@ class AsyncBulkSyncClient:
         destination_configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
         discover: typing.Optional[bool] = OMIT,
-        mode: typing.Optional[str] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         schemas: typing.Optional[typing.Sequence[str]] = OMIT,
@@ -1031,6 +1031,9 @@ class AsyncBulkSyncClient:
         Parameters
         ----------
         destination_connection_id : str
+
+        mode : str
+            Either 'replicate' or 'snapshot'.
 
         name : str
 
@@ -1050,9 +1053,6 @@ class AsyncBulkSyncClient:
 
         discover : typing.Optional[bool]
             DEPRECATED: Use automatically_add_new_objects/automatically_add_new_fields instead
-
-        mode : typing.Optional[str]
-
 
         organization_id : typing.Optional[str]
 
@@ -1080,6 +1080,7 @@ class AsyncBulkSyncClient:
         )
         await client.bulk_sync.create(
             destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            mode="replicate",
             name="My Bulk Sync",
             schedule=BulkSchedule(
                 frequency="manual",
@@ -1089,6 +1090,7 @@ class AsyncBulkSyncClient:
         """
         _request: typing.Dict[str, typing.Any] = {
             "destination_connection_id": destination_connection_id,
+            "mode": mode,
             "name": name,
             "schedule": schedule,
             "source_connection_id": source_connection_id,
@@ -1105,8 +1107,6 @@ class AsyncBulkSyncClient:
             _request["disable_record_timestamps"] = disable_record_timestamps
         if discover is not OMIT:
             _request["discover"] = discover
-        if mode is not OMIT:
-            _request["mode"] = mode
         if organization_id is not OMIT:
             _request["organization_id"] = organization_id
         if policies is not OMIT:
@@ -1241,6 +1241,7 @@ class AsyncBulkSyncClient:
         id: str,
         *,
         destination_connection_id: str,
+        mode: str,
         name: str,
         schedule: BulkSchedule,
         source_connection_id: str,
@@ -1250,7 +1251,6 @@ class AsyncBulkSyncClient:
         destination_configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
         discover: typing.Optional[bool] = OMIT,
-        mode: typing.Optional[str] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         schemas: typing.Optional[typing.Sequence[str]] = OMIT,
@@ -1267,6 +1267,9 @@ class AsyncBulkSyncClient:
         id : str
 
         destination_connection_id : str
+
+        mode : str
+            Either 'replicate' or 'snapshot'.
 
         name : str
 
@@ -1286,9 +1289,6 @@ class AsyncBulkSyncClient:
 
         discover : typing.Optional[bool]
             DEPRECATED: Use automatically_add_new_objects/automatically_add_new_fields instead
-
-        mode : typing.Optional[str]
-
 
         organization_id : typing.Optional[str]
 
@@ -1317,6 +1317,7 @@ class AsyncBulkSyncClient:
         await client.bulk_sync.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            mode="replicate",
             name="My Bulk Sync",
             schedule=BulkSchedule(
                 frequency="manual",
@@ -1326,6 +1327,7 @@ class AsyncBulkSyncClient:
         """
         _request: typing.Dict[str, typing.Any] = {
             "destination_connection_id": destination_connection_id,
+            "mode": mode,
             "name": name,
             "schedule": schedule,
             "source_connection_id": source_connection_id,
@@ -1342,8 +1344,6 @@ class AsyncBulkSyncClient:
             _request["disable_record_timestamps"] = disable_record_timestamps
         if discover is not OMIT:
             _request["discover"] = discover
-        if mode is not OMIT:
-            _request["mode"] = mode
         if organization_id is not OMIT:
             _request["organization_id"] = organization_id
         if policies is not OMIT:

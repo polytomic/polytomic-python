@@ -8,6 +8,7 @@ from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 
 
 class ExecutionCounts(pydantic_v1.BaseModel):
+    delete: typing.Optional[int] = None
     error: typing.Optional[int] = None
     insert: typing.Optional[int] = None
     total: typing.Optional[int] = None

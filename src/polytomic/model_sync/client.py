@@ -437,13 +437,13 @@ class ModelSyncClient:
     def create(
         self,
         *,
+        fields: typing.Sequence[ModelSyncField],
         mode: str,
         name: str,
         schedule: Schedule,
         target: Target,
         active: typing.Optional[bool] = OMIT,
         enricher: typing.Optional[Enrichment] = OMIT,
-        fields: typing.Optional[typing.Sequence[ModelSyncField]] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
         identity: typing.Optional[Identity] = OMIT,
@@ -457,6 +457,8 @@ class ModelSyncClient:
         """
         Parameters
         ----------
+        fields : typing.Sequence[ModelSyncField]
+
         mode : str
 
         name : str
@@ -468,8 +470,6 @@ class ModelSyncClient:
         active : typing.Optional[bool]
 
         enricher : typing.Optional[Enrichment]
-
-        fields : typing.Optional[typing.Sequence[ModelSyncField]]
 
         filter_logic : typing.Optional[str]
 
@@ -499,13 +499,22 @@ class ModelSyncClient:
 
         Examples
         --------
-        from polytomic import Schedule, Target
+        from polytomic import ModelSyncField, Schedule, Source, Target
         from polytomic.client import Polytomic
 
         client = Polytomic(
             token="YOUR_TOKEN",
         )
         client.model_sync.create(
+            fields=[
+                ModelSyncField(
+                    source=Source(
+                        field="id",
+                        model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                    ),
+                    target="name",
+                )
+            ],
             mode="create",
             name="Users Sync",
             schedule=Schedule(),
@@ -515,13 +524,17 @@ class ModelSyncClient:
             ),
         )
         """
-        _request: typing.Dict[str, typing.Any] = {"mode": mode, "name": name, "schedule": schedule, "target": target}
+        _request: typing.Dict[str, typing.Any] = {
+            "fields": fields,
+            "mode": mode,
+            "name": name,
+            "schedule": schedule,
+            "target": target,
+        }
         if active is not OMIT:
             _request["active"] = active
         if enricher is not OMIT:
             _request["enricher"] = enricher
-        if fields is not OMIT:
-            _request["fields"] = fields
         if filter_logic is not OMIT:
             _request["filter_logic"] = filter_logic
         if filters is not OMIT:
@@ -708,13 +721,13 @@ class ModelSyncClient:
         self,
         id: str,
         *,
+        fields: typing.Sequence[ModelSyncField],
         mode: str,
         name: str,
         schedule: Schedule,
         target: Target,
         active: typing.Optional[bool] = OMIT,
         enricher: typing.Optional[Enrichment] = OMIT,
-        fields: typing.Optional[typing.Sequence[ModelSyncField]] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
         identity: typing.Optional[Identity] = OMIT,
@@ -730,6 +743,8 @@ class ModelSyncClient:
         ----------
         id : str
 
+        fields : typing.Sequence[ModelSyncField]
+
         mode : str
 
         name : str
@@ -741,8 +756,6 @@ class ModelSyncClient:
         active : typing.Optional[bool]
 
         enricher : typing.Optional[Enrichment]
-
-        fields : typing.Optional[typing.Sequence[ModelSyncField]]
 
         filter_logic : typing.Optional[str]
 
@@ -772,7 +785,7 @@ class ModelSyncClient:
 
         Examples
         --------
-        from polytomic import Schedule, Target
+        from polytomic import ModelSyncField, Schedule, Source, Target
         from polytomic.client import Polytomic
 
         client = Polytomic(
@@ -780,6 +793,15 @@ class ModelSyncClient:
         )
         client.model_sync.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            fields=[
+                ModelSyncField(
+                    source=Source(
+                        field="id",
+                        model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                    ),
+                    target="name",
+                )
+            ],
             mode="create",
             name="Users Sync",
             schedule=Schedule(),
@@ -789,13 +811,17 @@ class ModelSyncClient:
             ),
         )
         """
-        _request: typing.Dict[str, typing.Any] = {"mode": mode, "name": name, "schedule": schedule, "target": target}
+        _request: typing.Dict[str, typing.Any] = {
+            "fields": fields,
+            "mode": mode,
+            "name": name,
+            "schedule": schedule,
+            "target": target,
+        }
         if active is not OMIT:
             _request["active"] = active
         if enricher is not OMIT:
             _request["enricher"] = enricher
-        if fields is not OMIT:
-            _request["fields"] = fields
         if filter_logic is not OMIT:
             _request["filter_logic"] = filter_logic
         if filters is not OMIT:
@@ -1554,13 +1580,13 @@ class AsyncModelSyncClient:
     async def create(
         self,
         *,
+        fields: typing.Sequence[ModelSyncField],
         mode: str,
         name: str,
         schedule: Schedule,
         target: Target,
         active: typing.Optional[bool] = OMIT,
         enricher: typing.Optional[Enrichment] = OMIT,
-        fields: typing.Optional[typing.Sequence[ModelSyncField]] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
         identity: typing.Optional[Identity] = OMIT,
@@ -1574,6 +1600,8 @@ class AsyncModelSyncClient:
         """
         Parameters
         ----------
+        fields : typing.Sequence[ModelSyncField]
+
         mode : str
 
         name : str
@@ -1585,8 +1613,6 @@ class AsyncModelSyncClient:
         active : typing.Optional[bool]
 
         enricher : typing.Optional[Enrichment]
-
-        fields : typing.Optional[typing.Sequence[ModelSyncField]]
 
         filter_logic : typing.Optional[str]
 
@@ -1616,13 +1642,22 @@ class AsyncModelSyncClient:
 
         Examples
         --------
-        from polytomic import Schedule, Target
+        from polytomic import ModelSyncField, Schedule, Source, Target
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
             token="YOUR_TOKEN",
         )
         await client.model_sync.create(
+            fields=[
+                ModelSyncField(
+                    source=Source(
+                        field="id",
+                        model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                    ),
+                    target="name",
+                )
+            ],
             mode="create",
             name="Users Sync",
             schedule=Schedule(),
@@ -1632,13 +1667,17 @@ class AsyncModelSyncClient:
             ),
         )
         """
-        _request: typing.Dict[str, typing.Any] = {"mode": mode, "name": name, "schedule": schedule, "target": target}
+        _request: typing.Dict[str, typing.Any] = {
+            "fields": fields,
+            "mode": mode,
+            "name": name,
+            "schedule": schedule,
+            "target": target,
+        }
         if active is not OMIT:
             _request["active"] = active
         if enricher is not OMIT:
             _request["enricher"] = enricher
-        if fields is not OMIT:
-            _request["fields"] = fields
         if filter_logic is not OMIT:
             _request["filter_logic"] = filter_logic
         if filters is not OMIT:
@@ -1827,13 +1866,13 @@ class AsyncModelSyncClient:
         self,
         id: str,
         *,
+        fields: typing.Sequence[ModelSyncField],
         mode: str,
         name: str,
         schedule: Schedule,
         target: Target,
         active: typing.Optional[bool] = OMIT,
         enricher: typing.Optional[Enrichment] = OMIT,
-        fields: typing.Optional[typing.Sequence[ModelSyncField]] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
         identity: typing.Optional[Identity] = OMIT,
@@ -1849,6 +1888,8 @@ class AsyncModelSyncClient:
         ----------
         id : str
 
+        fields : typing.Sequence[ModelSyncField]
+
         mode : str
 
         name : str
@@ -1860,8 +1901,6 @@ class AsyncModelSyncClient:
         active : typing.Optional[bool]
 
         enricher : typing.Optional[Enrichment]
-
-        fields : typing.Optional[typing.Sequence[ModelSyncField]]
 
         filter_logic : typing.Optional[str]
 
@@ -1891,7 +1930,7 @@ class AsyncModelSyncClient:
 
         Examples
         --------
-        from polytomic import Schedule, Target
+        from polytomic import ModelSyncField, Schedule, Source, Target
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
@@ -1899,6 +1938,15 @@ class AsyncModelSyncClient:
         )
         await client.model_sync.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            fields=[
+                ModelSyncField(
+                    source=Source(
+                        field="id",
+                        model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                    ),
+                    target="name",
+                )
+            ],
             mode="create",
             name="Users Sync",
             schedule=Schedule(),
@@ -1908,13 +1956,17 @@ class AsyncModelSyncClient:
             ),
         )
         """
-        _request: typing.Dict[str, typing.Any] = {"mode": mode, "name": name, "schedule": schedule, "target": target}
+        _request: typing.Dict[str, typing.Any] = {
+            "fields": fields,
+            "mode": mode,
+            "name": name,
+            "schedule": schedule,
+            "target": target,
+        }
         if active is not OMIT:
             _request["active"] = active
         if enricher is not OMIT:
             _request["enricher"] = enricher
-        if fields is not OMIT:
-            _request["fields"] = fields
         if filter_logic is not OMIT:
             _request["filter_logic"] = filter_logic
         if filters is not OMIT:

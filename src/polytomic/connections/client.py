@@ -146,9 +146,9 @@ class ConnectionsClient:
     def create(
         self,
         *,
+        configuration: typing.Dict[str, typing.Any],
         name: str,
         type: str,
-        configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         redirect_url: typing.Optional[str] = OMIT,
@@ -158,11 +158,11 @@ class ConnectionsClient:
         """
         Parameters
         ----------
+        configuration : typing.Dict[str, typing.Any]
+
         name : str
 
         type : str
-
-        configuration : typing.Optional[typing.Dict[str, typing.Any]]
 
         organization_id : typing.Optional[str]
 
@@ -190,13 +190,18 @@ class ConnectionsClient:
             token="YOUR_TOKEN",
         )
         client.connections.create(
+            configuration={
+                "database": "example",
+                "hostname": "postgres.example.com",
+                "password": "password",
+                "port": 5432,
+                "username": "user",
+            },
             name="My Postgres Connection",
             type="postgresql",
         )
         """
-        _request: typing.Dict[str, typing.Any] = {"name": name, "type": type}
-        if configuration is not OMIT:
-            _request["configuration"] = configuration
+        _request: typing.Dict[str, typing.Any] = {"configuration": configuration, "name": name, "type": type}
         if organization_id is not OMIT:
             _request["organization_id"] = organization_id
         if policies is not OMIT:
@@ -421,8 +426,8 @@ class ConnectionsClient:
         self,
         id: str,
         *,
+        configuration: typing.Dict[str, typing.Any],
         name: str,
-        configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         reconnect: typing.Optional[bool] = OMIT,
@@ -435,9 +440,9 @@ class ConnectionsClient:
         ----------
         id : str
 
-        name : str
+        configuration : typing.Dict[str, typing.Any]
 
-        configuration : typing.Optional[typing.Dict[str, typing.Any]]
+        name : str
 
         organization_id : typing.Optional[str]
 
@@ -467,12 +472,17 @@ class ConnectionsClient:
         )
         client.connections.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            configuration={
+                "database": "example",
+                "hostname": "postgres.example.com",
+                "password": "password",
+                "port": 5432,
+                "username": "user",
+            },
             name="My Postgres Connection",
         )
         """
-        _request: typing.Dict[str, typing.Any] = {"name": name}
-        if configuration is not OMIT:
-            _request["configuration"] = configuration
+        _request: typing.Dict[str, typing.Any] = {"configuration": configuration, "name": name}
         if organization_id is not OMIT:
             _request["organization_id"] = organization_id
         if policies is not OMIT:
@@ -802,9 +812,9 @@ class AsyncConnectionsClient:
     async def create(
         self,
         *,
+        configuration: typing.Dict[str, typing.Any],
         name: str,
         type: str,
-        configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         redirect_url: typing.Optional[str] = OMIT,
@@ -814,11 +824,11 @@ class AsyncConnectionsClient:
         """
         Parameters
         ----------
+        configuration : typing.Dict[str, typing.Any]
+
         name : str
 
         type : str
-
-        configuration : typing.Optional[typing.Dict[str, typing.Any]]
 
         organization_id : typing.Optional[str]
 
@@ -846,13 +856,18 @@ class AsyncConnectionsClient:
             token="YOUR_TOKEN",
         )
         await client.connections.create(
+            configuration={
+                "database": "example",
+                "hostname": "postgres.example.com",
+                "password": "password",
+                "port": 5432,
+                "username": "user",
+            },
             name="My Postgres Connection",
             type="postgresql",
         )
         """
-        _request: typing.Dict[str, typing.Any] = {"name": name, "type": type}
-        if configuration is not OMIT:
-            _request["configuration"] = configuration
+        _request: typing.Dict[str, typing.Any] = {"configuration": configuration, "name": name, "type": type}
         if organization_id is not OMIT:
             _request["organization_id"] = organization_id
         if policies is not OMIT:
@@ -1079,8 +1094,8 @@ class AsyncConnectionsClient:
         self,
         id: str,
         *,
+        configuration: typing.Dict[str, typing.Any],
         name: str,
-        configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         reconnect: typing.Optional[bool] = OMIT,
@@ -1093,9 +1108,9 @@ class AsyncConnectionsClient:
         ----------
         id : str
 
-        name : str
+        configuration : typing.Dict[str, typing.Any]
 
-        configuration : typing.Optional[typing.Dict[str, typing.Any]]
+        name : str
 
         organization_id : typing.Optional[str]
 
@@ -1125,12 +1140,17 @@ class AsyncConnectionsClient:
         )
         await client.connections.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            configuration={
+                "database": "example",
+                "hostname": "postgres.example.com",
+                "password": "password",
+                "port": 5432,
+                "username": "user",
+            },
             name="My Postgres Connection",
         )
         """
-        _request: typing.Dict[str, typing.Any] = {"name": name}
-        if configuration is not OMIT:
-            _request["configuration"] = configuration
+        _request: typing.Dict[str, typing.Any] = {"configuration": configuration, "name": name}
         if organization_id is not OMIT:
             _request["organization_id"] = organization_id
         if policies is not OMIT:

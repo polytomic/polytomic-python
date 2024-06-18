@@ -122,11 +122,11 @@ class ModelsClient:
     def preview(
         self,
         *,
+        configuration: typing.Dict[str, typing.Any],
         connection_id: str,
         name: str,
         async_: typing.Optional[bool] = None,
         additional_fields: typing.Optional[typing.Sequence[ModelModelFieldRequest]] = OMIT,
-        configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         enricher: typing.Optional[Enrichment] = OMIT,
         fields: typing.Optional[typing.Sequence[str]] = OMIT,
         identifier: typing.Optional[str] = OMIT,
@@ -140,6 +140,8 @@ class ModelsClient:
         """
         Parameters
         ----------
+        configuration : typing.Dict[str, typing.Any]
+
         connection_id : str
 
         name : str
@@ -147,8 +149,6 @@ class ModelsClient:
         async_ : typing.Optional[bool]
 
         additional_fields : typing.Optional[typing.Sequence[ModelModelFieldRequest]]
-
-        configuration : typing.Optional[typing.Dict[str, typing.Any]]
 
         enricher : typing.Optional[Enrichment]
 
@@ -182,15 +182,18 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.preview(
+            configuration={"table": "public.users"},
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="Users",
         )
         """
-        _request: typing.Dict[str, typing.Any] = {"connection_id": connection_id, "name": name}
+        _request: typing.Dict[str, typing.Any] = {
+            "configuration": configuration,
+            "connection_id": connection_id,
+            "name": name,
+        }
         if additional_fields is not OMIT:
             _request["additional_fields"] = additional_fields
-        if configuration is not OMIT:
-            _request["configuration"] = configuration
         if enricher is not OMIT:
             _request["enricher"] = enricher
         if fields is not OMIT:
@@ -316,11 +319,11 @@ class ModelsClient:
     def create(
         self,
         *,
+        configuration: typing.Dict[str, typing.Any],
         connection_id: str,
         name: str,
         async_: typing.Optional[bool] = None,
         additional_fields: typing.Optional[typing.Sequence[ModelModelFieldRequest]] = OMIT,
-        configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         enricher: typing.Optional[Enrichment] = OMIT,
         fields: typing.Optional[typing.Sequence[str]] = OMIT,
         identifier: typing.Optional[str] = OMIT,
@@ -334,6 +337,8 @@ class ModelsClient:
         """
         Parameters
         ----------
+        configuration : typing.Dict[str, typing.Any]
+
         connection_id : str
 
         name : str
@@ -341,8 +346,6 @@ class ModelsClient:
         async_ : typing.Optional[bool]
 
         additional_fields : typing.Optional[typing.Sequence[ModelModelFieldRequest]]
-
-        configuration : typing.Optional[typing.Dict[str, typing.Any]]
 
         enricher : typing.Optional[Enrichment]
 
@@ -376,15 +379,18 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.create(
+            configuration={"table": "public.users"},
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="Users",
         )
         """
-        _request: typing.Dict[str, typing.Any] = {"connection_id": connection_id, "name": name}
+        _request: typing.Dict[str, typing.Any] = {
+            "configuration": configuration,
+            "connection_id": connection_id,
+            "name": name,
+        }
         if additional_fields is not OMIT:
             _request["additional_fields"] = additional_fields
-        if configuration is not OMIT:
-            _request["configuration"] = configuration
         if enricher is not OMIT:
             _request["enricher"] = enricher
         if fields is not OMIT:
@@ -532,11 +538,11 @@ class ModelsClient:
         self,
         id: str,
         *,
+        configuration: typing.Dict[str, typing.Any],
         connection_id: str,
         name: str,
         async_: typing.Optional[bool] = None,
         additional_fields: typing.Optional[typing.Sequence[ModelModelFieldRequest]] = OMIT,
-        configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         enricher: typing.Optional[Enrichment] = OMIT,
         fields: typing.Optional[typing.Sequence[str]] = OMIT,
         identifier: typing.Optional[str] = OMIT,
@@ -552,6 +558,8 @@ class ModelsClient:
         ----------
         id : str
 
+        configuration : typing.Dict[str, typing.Any]
+
         connection_id : str
 
         name : str
@@ -559,8 +567,6 @@ class ModelsClient:
         async_ : typing.Optional[bool]
 
         additional_fields : typing.Optional[typing.Sequence[ModelModelFieldRequest]]
-
-        configuration : typing.Optional[typing.Dict[str, typing.Any]]
 
         enricher : typing.Optional[Enrichment]
 
@@ -596,15 +602,18 @@ class ModelsClient:
         client.models.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             async_=False,
+            configuration={"table": "public.users"},
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="Users",
         )
         """
-        _request: typing.Dict[str, typing.Any] = {"connection_id": connection_id, "name": name}
+        _request: typing.Dict[str, typing.Any] = {
+            "configuration": configuration,
+            "connection_id": connection_id,
+            "name": name,
+        }
         if additional_fields is not OMIT:
             _request["additional_fields"] = additional_fields
-        if configuration is not OMIT:
-            _request["configuration"] = configuration
         if enricher is not OMIT:
             _request["enricher"] = enricher
         if fields is not OMIT:
@@ -922,11 +931,11 @@ class AsyncModelsClient:
     async def preview(
         self,
         *,
+        configuration: typing.Dict[str, typing.Any],
         connection_id: str,
         name: str,
         async_: typing.Optional[bool] = None,
         additional_fields: typing.Optional[typing.Sequence[ModelModelFieldRequest]] = OMIT,
-        configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         enricher: typing.Optional[Enrichment] = OMIT,
         fields: typing.Optional[typing.Sequence[str]] = OMIT,
         identifier: typing.Optional[str] = OMIT,
@@ -940,6 +949,8 @@ class AsyncModelsClient:
         """
         Parameters
         ----------
+        configuration : typing.Dict[str, typing.Any]
+
         connection_id : str
 
         name : str
@@ -947,8 +958,6 @@ class AsyncModelsClient:
         async_ : typing.Optional[bool]
 
         additional_fields : typing.Optional[typing.Sequence[ModelModelFieldRequest]]
-
-        configuration : typing.Optional[typing.Dict[str, typing.Any]]
 
         enricher : typing.Optional[Enrichment]
 
@@ -982,15 +991,18 @@ class AsyncModelsClient:
             token="YOUR_TOKEN",
         )
         await client.models.preview(
+            configuration={"table": "public.users"},
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="Users",
         )
         """
-        _request: typing.Dict[str, typing.Any] = {"connection_id": connection_id, "name": name}
+        _request: typing.Dict[str, typing.Any] = {
+            "configuration": configuration,
+            "connection_id": connection_id,
+            "name": name,
+        }
         if additional_fields is not OMIT:
             _request["additional_fields"] = additional_fields
-        if configuration is not OMIT:
-            _request["configuration"] = configuration
         if enricher is not OMIT:
             _request["enricher"] = enricher
         if fields is not OMIT:
@@ -1116,11 +1128,11 @@ class AsyncModelsClient:
     async def create(
         self,
         *,
+        configuration: typing.Dict[str, typing.Any],
         connection_id: str,
         name: str,
         async_: typing.Optional[bool] = None,
         additional_fields: typing.Optional[typing.Sequence[ModelModelFieldRequest]] = OMIT,
-        configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         enricher: typing.Optional[Enrichment] = OMIT,
         fields: typing.Optional[typing.Sequence[str]] = OMIT,
         identifier: typing.Optional[str] = OMIT,
@@ -1134,6 +1146,8 @@ class AsyncModelsClient:
         """
         Parameters
         ----------
+        configuration : typing.Dict[str, typing.Any]
+
         connection_id : str
 
         name : str
@@ -1141,8 +1155,6 @@ class AsyncModelsClient:
         async_ : typing.Optional[bool]
 
         additional_fields : typing.Optional[typing.Sequence[ModelModelFieldRequest]]
-
-        configuration : typing.Optional[typing.Dict[str, typing.Any]]
 
         enricher : typing.Optional[Enrichment]
 
@@ -1176,15 +1188,18 @@ class AsyncModelsClient:
             token="YOUR_TOKEN",
         )
         await client.models.create(
+            configuration={"table": "public.users"},
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="Users",
         )
         """
-        _request: typing.Dict[str, typing.Any] = {"connection_id": connection_id, "name": name}
+        _request: typing.Dict[str, typing.Any] = {
+            "configuration": configuration,
+            "connection_id": connection_id,
+            "name": name,
+        }
         if additional_fields is not OMIT:
             _request["additional_fields"] = additional_fields
-        if configuration is not OMIT:
-            _request["configuration"] = configuration
         if enricher is not OMIT:
             _request["enricher"] = enricher
         if fields is not OMIT:
@@ -1332,11 +1347,11 @@ class AsyncModelsClient:
         self,
         id: str,
         *,
+        configuration: typing.Dict[str, typing.Any],
         connection_id: str,
         name: str,
         async_: typing.Optional[bool] = None,
         additional_fields: typing.Optional[typing.Sequence[ModelModelFieldRequest]] = OMIT,
-        configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         enricher: typing.Optional[Enrichment] = OMIT,
         fields: typing.Optional[typing.Sequence[str]] = OMIT,
         identifier: typing.Optional[str] = OMIT,
@@ -1352,6 +1367,8 @@ class AsyncModelsClient:
         ----------
         id : str
 
+        configuration : typing.Dict[str, typing.Any]
+
         connection_id : str
 
         name : str
@@ -1359,8 +1376,6 @@ class AsyncModelsClient:
         async_ : typing.Optional[bool]
 
         additional_fields : typing.Optional[typing.Sequence[ModelModelFieldRequest]]
-
-        configuration : typing.Optional[typing.Dict[str, typing.Any]]
 
         enricher : typing.Optional[Enrichment]
 
@@ -1396,15 +1411,18 @@ class AsyncModelsClient:
         await client.models.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             async_=False,
+            configuration={"table": "public.users"},
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="Users",
         )
         """
-        _request: typing.Dict[str, typing.Any] = {"connection_id": connection_id, "name": name}
+        _request: typing.Dict[str, typing.Any] = {
+            "configuration": configuration,
+            "connection_id": connection_id,
+            "name": name,
+        }
         if additional_fields is not OMIT:
             _request["additional_fields"] = additional_fields
-        if configuration is not OMIT:
-            _request["configuration"] = configuration
         if enricher is not OMIT:
             _request["enricher"] = enricher
         if fields is not OMIT:

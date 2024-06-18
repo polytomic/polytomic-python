@@ -12,7 +12,7 @@ from .model_relation import ModelRelation
 
 class CreateModelRequest(pydantic_v1.BaseModel):
     additional_fields: typing.Optional[typing.List[ModelModelFieldRequest]] = None
-    configuration: typing.Optional[typing.Dict[str, typing.Any]] = None
+    configuration: typing.Dict[str, typing.Any]
     connection_id: str
     enricher: typing.Optional[Enrichment] = None
     fields: typing.Optional[typing.List[str]] = None
