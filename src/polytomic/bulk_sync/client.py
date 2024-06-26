@@ -28,6 +28,8 @@ from ..types.bulk_sync_status_envelope import BulkSyncStatusEnvelope
 from ..types.rest_err_response import RestErrResponse
 from .executions.client import AsyncExecutionsClient, ExecutionsClient
 from .schemas.client import AsyncSchemasClient, SchemasClient
+from .types.v_2_create_bulk_sync_request_schemas_item import V2CreateBulkSyncRequestSchemasItem
+from .types.v_2_update_bulk_sync_request_schemas_item import V2UpdateBulkSyncRequestSchemasItem
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -110,7 +112,7 @@ class BulkSyncClient:
         discover: typing.Optional[bool] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
-        schemas: typing.Optional[typing.Sequence[str]] = OMIT,
+        schemas: typing.Optional[typing.Sequence[V2CreateBulkSyncRequestSchemasItem]] = OMIT,
         source_configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BulkSyncResponseEnvelope:
@@ -145,7 +147,8 @@ class BulkSyncClient:
 
         policies : typing.Optional[typing.Sequence[str]]
 
-        schemas : typing.Optional[typing.Sequence[str]]
+        schemas : typing.Optional[typing.Sequence[V2CreateBulkSyncRequestSchemasItem]]
+            List of schemas to sync; if omitted, all schemas will be selected for syncing.
 
         source_configuration : typing.Optional[typing.Dict[str, typing.Any]]
 
@@ -340,7 +343,7 @@ class BulkSyncClient:
         discover: typing.Optional[bool] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
-        schemas: typing.Optional[typing.Sequence[str]] = OMIT,
+        schemas: typing.Optional[typing.Sequence[V2UpdateBulkSyncRequestSchemasItem]] = OMIT,
         source_configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BulkSyncResponseEnvelope:
@@ -381,7 +384,8 @@ class BulkSyncClient:
 
         policies : typing.Optional[typing.Sequence[str]]
 
-        schemas : typing.Optional[typing.Sequence[str]]
+        schemas : typing.Optional[typing.Sequence[V2UpdateBulkSyncRequestSchemasItem]]
+            List of schemas to sync; if omitted, all schemas will be selected for syncing.
 
         source_configuration : typing.Optional[typing.Dict[str, typing.Any]]
 
@@ -1023,7 +1027,7 @@ class AsyncBulkSyncClient:
         discover: typing.Optional[bool] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
-        schemas: typing.Optional[typing.Sequence[str]] = OMIT,
+        schemas: typing.Optional[typing.Sequence[V2CreateBulkSyncRequestSchemasItem]] = OMIT,
         source_configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BulkSyncResponseEnvelope:
@@ -1058,7 +1062,8 @@ class AsyncBulkSyncClient:
 
         policies : typing.Optional[typing.Sequence[str]]
 
-        schemas : typing.Optional[typing.Sequence[str]]
+        schemas : typing.Optional[typing.Sequence[V2CreateBulkSyncRequestSchemasItem]]
+            List of schemas to sync; if omitted, all schemas will be selected for syncing.
 
         source_configuration : typing.Optional[typing.Dict[str, typing.Any]]
 
@@ -1253,7 +1258,7 @@ class AsyncBulkSyncClient:
         discover: typing.Optional[bool] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
-        schemas: typing.Optional[typing.Sequence[str]] = OMIT,
+        schemas: typing.Optional[typing.Sequence[V2UpdateBulkSyncRequestSchemasItem]] = OMIT,
         source_configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BulkSyncResponseEnvelope:
@@ -1294,7 +1299,8 @@ class AsyncBulkSyncClient:
 
         policies : typing.Optional[typing.Sequence[str]]
 
-        schemas : typing.Optional[typing.Sequence[str]]
+        schemas : typing.Optional[typing.Sequence[V2UpdateBulkSyncRequestSchemasItem]]
+            List of schemas to sync; if omitted, all schemas will be selected for syncing.
 
         source_configuration : typing.Optional[typing.Dict[str, typing.Any]]
 

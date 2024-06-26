@@ -163,6 +163,14 @@ from . import (
     users,
     webhooks,
 )
+from .bulk_sync import (
+    FieldConfiguration,
+    SchemaConfiguration,
+    V2CreateBulkSyncRequestSchemasItem,
+    V2CreateBulkSyncRequestSchemasItemEnabledFieldsItem,
+    V2UpdateBulkSyncRequestSchemasItem,
+    V2UpdateBulkSyncRequestSchemasItemEnabledFieldsItem,
+)
 from .environment import PolytomicEnvironment
 from .version import __version__
 
@@ -224,6 +232,7 @@ __all__ = [
     "ExecutionLogResponse",
     "ExecutionLogsResponseEnvelope",
     "ExecutionStatus",
+    "FieldConfiguration",
     "Filter",
     "FilterFieldReferenceType",
     "FilterFunction",
@@ -286,6 +295,7 @@ __all__ = [
     "ScheduleScheduleOption",
     "Schema",
     "SchemaAssociation",
+    "SchemaConfiguration",
     "SchemaField",
     "SchemaIdentityFunction",
     "SchemaRecordsResponseEnvelope",
@@ -305,10 +315,14 @@ __all__ = [
     "UnprocessableEntityError",
     "User",
     "UserEnvelope",
+    "V2CreateBulkSyncRequestSchemasItem",
+    "V2CreateBulkSyncRequestSchemasItemEnabledFieldsItem",
     "V2EnricherConfiguration",
     "V2EnricherMapping",
     "V2GetEnrichmentInputFieldsResponseEnvelope",
     "V2SampleRecord",
+    "V2UpdateBulkSyncRequestSchemasItem",
+    "V2UpdateBulkSyncRequestSchemasItemEnabledFieldsItem",
     "Webhook",
     "WebhookEnvelope",
     "WebhookListEnvelope",
