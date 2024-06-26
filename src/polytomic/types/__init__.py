@@ -9,8 +9,10 @@ from .api_key_response_envelope import ApiKeyResponseEnvelope
 from .bulk_discover import BulkDiscover
 from .bulk_execution_status import BulkExecutionStatus
 from .bulk_field import BulkField
+from .bulk_filter import BulkFilter
 from .bulk_itemized_schedule import BulkItemizedSchedule
 from .bulk_multi_schedule_configuration import BulkMultiScheduleConfiguration
+from .bulk_multi_schedule_type import BulkMultiScheduleType
 from .bulk_schedule import BulkSchedule
 from .bulk_schema import BulkSchema
 from .bulk_schema_envelope import BulkSchemaEnvelope
@@ -150,8 +152,10 @@ __all__ = [
     "BulkDiscover",
     "BulkExecutionStatus",
     "BulkField",
+    "BulkFilter",
     "BulkItemizedSchedule",
     "BulkMultiScheduleConfiguration",
+    "BulkMultiScheduleType",
     "BulkSchedule",
     "BulkSchema",
     "BulkSchemaEnvelope",

@@ -6,11 +6,13 @@ import typing
 from ..core.datetime_utils import serialize_datetime
 from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 from .bulk_field import BulkField
+from .bulk_filter import BulkFilter
 
 
 class BulkSchema(pydantic_v1.BaseModel):
     enabled: typing.Optional[bool] = None
     fields: typing.Optional[typing.List[BulkField]] = None
+    filters: typing.Optional[typing.List[BulkFilter]] = None
     id: typing.Optional[str] = None
     output_name: typing.Optional[str] = None
     partition_key: typing.Optional[str] = None

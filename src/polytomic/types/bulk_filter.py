@@ -1,18 +1,21 @@
 # This file was auto-generated from our API Definition.
 
-from __future__ import annotations
-
 import datetime as dt
 import typing
 
 from ..core.datetime_utils import serialize_datetime
 from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
-from .bulk_multi_schedule_type import BulkMultiScheduleType
+from .filter_function import FilterFunction
 
 
-class BulkMultiScheduleConfiguration(pydantic_v1.BaseModel):
-    schedules: typing.Optional[typing.List[BulkItemizedSchedule]] = None
-    type: typing.Optional[BulkMultiScheduleType] = None
+class BulkFilter(pydantic_v1.BaseModel):
+    field_id: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    Schema field ID to filter on.
+    """
+
+    function: FilterFunction
+    value: typing.Optional[typing.Any] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
@@ -31,8 +34,3 @@ class BulkMultiScheduleConfiguration(pydantic_v1.BaseModel):
         smart_union = True
         extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}
-
-
-from .bulk_itemized_schedule import BulkItemizedSchedule  # noqa: E402
-
-BulkMultiScheduleConfiguration.update_forward_refs()
