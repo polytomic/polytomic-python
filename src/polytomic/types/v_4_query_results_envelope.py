@@ -3,21 +3,20 @@
 import datetime as dt
 import typing
 
-from ...core.datetime_utils import serialize_datetime
-from ...core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
+from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
+from .pagination import Pagination
+from .v_4_run_query_result import V4RunQueryResult
 
 
-class FieldConfiguration(pydantic_v1.BaseModel):
-    enabled: typing.Optional[bool] = pydantic_v1.Field(default=None)
+class V4QueryResultsEnvelope(pydantic_v1.BaseModel):
+    data: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = pydantic_v1.Field(default=None)
     """
-    Whether the field is enabled for syncing.
+    The query results, returned as an array of objects.
     """
 
-    id: typing.Optional[str] = None
-    obfuscate: typing.Optional[bool] = pydantic_v1.Field(default=None)
-    """
-    Whether the field should be obfuscated.
-    """
+    links: typing.Optional[Pagination] = None
+    metadata: typing.Optional[V4RunQueryResult] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

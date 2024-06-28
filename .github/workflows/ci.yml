@@ -32,9 +32,8 @@ jobs:
           curl -sSL https://install.python-poetry.org | python - -y --version 1.5.1
       - name: Install dependencies
         run: poetry install
-
       - name: Test
-        run: poetry run pytest ./tests/custom/
+        run: poetry run pytest .
 
   publish:
     needs: [compile, test]

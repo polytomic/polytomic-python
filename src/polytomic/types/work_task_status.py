@@ -2,4 +2,4 @@
 
 import typing
 
-WorkTaskStatus = typing.Union[typing.Literal["running", "done", "failed"], typing.Any]
+WorkTaskStatus = typing.Union[typing.Literal["created", "running", "done", "failed"], typing.Any]

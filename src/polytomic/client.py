@@ -15,6 +15,7 @@ from .model_sync.client import AsyncModelSyncClient, ModelSyncClient
 from .models.client import AsyncModelsClient, ModelsClient
 from .organization.client import AsyncOrganizationClient, OrganizationClient
 from .permissions.client import AsyncPermissionsClient, PermissionsClient
+from .query_runner.client import AsyncQueryRunnerClient, QueryRunnerClient
 from .schemas.client import AsyncSchemasClient, SchemasClient
 from .users.client import AsyncUsersClient, UsersClient
 from .webhooks.client import AsyncWebhooksClient, WebhooksClient
@@ -22,7 +23,7 @@ from .webhooks.client import AsyncWebhooksClient, WebhooksClient
 
 class Polytomic:
     """
-    Use this class to access the different functions within the SDK. You can instantiate any number of clients with different configuration that will propagate to these functions.
+    Use this class to access the different functions within the SDK. You can instantiate any number of clients with different configuration that will propogate to these functions.
 
     Parameters
     ----------
@@ -38,9 +39,10 @@ class Polytomic:
 
 
 
+    version : typing.Optional[str]
     token : typing.Union[str, typing.Callable[[], str]]
     timeout : typing.Optional[float]
-        The timeout to be used, in seconds, for requests. By default the timeout is 60 seconds, unless a custom httpx client is used, in which case this default is not enforced.
+        The timeout to be used, in seconds, for requests by default the timeout is 60 seconds, unless a custom httpx client is used, in which case a default is not set.
 
     follow_redirects : typing.Optional[bool]
         Whether the default httpx client follows redirects or not, this is irrelevant if a custom httpx client is passed in.
@@ -53,6 +55,7 @@ class Polytomic:
     from polytomic.client import Polytomic
 
     client = Polytomic(
+        version="YOUR_VERSION",
         token="YOUR_TOKEN",
     )
     """
@@ -62,6 +65,7 @@ class Polytomic:
         *,
         base_url: typing.Optional[str] = None,
         environment: PolytomicEnvironment = PolytomicEnvironment.DEFAULT,
+        version: typing.Optional[str] = None,
         token: typing.Union[str, typing.Callable[[], str]],
         timeout: typing.Optional[float] = None,
         follow_redirects: typing.Optional[bool] = True,
@@ -70,6 +74,7 @@ class Polytomic:
         _defaulted_timeout = timeout if timeout is not None else 60 if httpx_client is None else None
         self._client_wrapper = SyncClientWrapper(
             base_url=_get_base_url(base_url=base_url, environment=environment),
+            version=version,
             token=token,
             httpx_client=httpx_client
             if httpx_client is not None
@@ -80,6 +85,7 @@ class Polytomic:
         )
         self.bulk_sync = BulkSyncClient(client_wrapper=self._client_wrapper)
         self.connections = ConnectionsClient(client_wrapper=self._client_wrapper)
+        self.query_runner = QueryRunnerClient(client_wrapper=self._client_wrapper)
         self.model_sync = ModelSyncClient(client_wrapper=self._client_wrapper)
         self.schemas = SchemasClient(client_wrapper=self._client_wrapper)
         self.models = ModelsClient(client_wrapper=self._client_wrapper)
@@ -94,7 +100,7 @@ class Polytomic:
 
 class AsyncPolytomic:
     """
-    Use this class to access the different functions within the SDK. You can instantiate any number of clients with different configuration that will propagate to these functions.
+    Use this class to access the different functions within the SDK. You can instantiate any number of clients with different configuration that will propogate to these functions.
 
     Parameters
     ----------
@@ -110,9 +116,10 @@ class AsyncPolytomic:
 
 
 
+    version : typing.Optional[str]
     token : typing.Union[str, typing.Callable[[], str]]
     timeout : typing.Optional[float]
-        The timeout to be used, in seconds, for requests. By default the timeout is 60 seconds, unless a custom httpx client is used, in which case this default is not enforced.
+        The timeout to be used, in seconds, for requests by default the timeout is 60 seconds, unless a custom httpx client is used, in which case a default is not set.
 
     follow_redirects : typing.Optional[bool]
         Whether the default httpx client follows redirects or not, this is irrelevant if a custom httpx client is passed in.
@@ -125,6 +132,7 @@ class AsyncPolytomic:
     from polytomic.client import AsyncPolytomic
 
     client = AsyncPolytomic(
+        version="YOUR_VERSION",
         token="YOUR_TOKEN",
     )
     """
@@ -134,6 +142,7 @@ class AsyncPolytomic:
         *,
         base_url: typing.Optional[str] = None,
         environment: PolytomicEnvironment = PolytomicEnvironment.DEFAULT,
+        version: typing.Optional[str] = None,
         token: typing.Union[str, typing.Callable[[], str]],
         timeout: typing.Optional[float] = None,
         follow_redirects: typing.Optional[bool] = True,
@@ -142,6 +151,7 @@ class AsyncPolytomic:
         _defaulted_timeout = timeout if timeout is not None else 60 if httpx_client is None else None
         self._client_wrapper = AsyncClientWrapper(
             base_url=_get_base_url(base_url=base_url, environment=environment),
+            version=version,
             token=token,
             httpx_client=httpx_client
             if httpx_client is not None
@@ -152,6 +162,7 @@ class AsyncPolytomic:
         )
         self.bulk_sync = AsyncBulkSyncClient(client_wrapper=self._client_wrapper)
         self.connections = AsyncConnectionsClient(client_wrapper=self._client_wrapper)
+        self.query_runner = AsyncQueryRunnerClient(client_wrapper=self._client_wrapper)
         self.model_sync = AsyncModelSyncClient(client_wrapper=self._client_wrapper)
         self.schemas = AsyncSchemasClient(client_wrapper=self._client_wrapper)
         self.models = AsyncModelsClient(client_wrapper=self._client_wrapper)

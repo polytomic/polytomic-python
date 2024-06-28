@@ -3,23 +3,13 @@
 import datetime as dt
 import typing
 
-from ...core.datetime_utils import serialize_datetime
-from ...core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
-from .v_2_update_bulk_sync_request_schemas_item_enabled_fields_item import (
-    V2UpdateBulkSyncRequestSchemasItemEnabledFieldsItem,
-)
+from ..core.datetime_utils import serialize_datetime
+from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
+from .v_4_run_query_result import V4RunQueryResult
 
 
-class SchemaConfiguration(pydantic_v1.BaseModel):
-    enabled: typing.Optional[bool] = pydantic_v1.Field(default=None)
-    """
-    Whether the schema is enabled for syncing.
-    """
-
-    fields: typing.Optional[typing.List[V2UpdateBulkSyncRequestSchemasItemEnabledFieldsItem]] = None
-    id: typing.Optional[str] = None
-    partition_key: typing.Optional[str] = pydantic_v1.Field(alias="partitionKey", default=None)
-    tracking_field: typing.Optional[str] = pydantic_v1.Field(alias="trackingField", default=None)
+class V4RunQueryEnvelope(pydantic_v1.BaseModel):
+    data: typing.Optional[V4RunQueryResult] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
@@ -36,7 +26,5 @@ class SchemaConfiguration(pydantic_v1.BaseModel):
     class Config:
         frozen = True
         smart_union = True
-        allow_population_by_field_name = True
-        populate_by_name = True
         extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}

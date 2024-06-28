@@ -2,6 +2,6 @@
 
 import typing
 
-from .schema_configuration import SchemaConfiguration
+from ...types.schema_configuration import SchemaConfiguration
 
 V2UpdateBulkSyncRequestSchemasItem = typing.Union[str, SchemaConfiguration]

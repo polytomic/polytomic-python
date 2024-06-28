@@ -4,4 +4,4 @@ import typing
 
 from .field_configuration import FieldConfiguration
 
-V2UpdateBulkSyncRequestSchemasItemEnabledFieldsItem = typing.Union[str, FieldConfiguration]
+V2SchemaConfigurationFieldsItem = typing.Union[str, FieldConfiguration]

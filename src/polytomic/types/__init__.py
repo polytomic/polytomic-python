@@ -12,7 +12,6 @@ from .bulk_field import BulkField
 from .bulk_filter import BulkFilter
 from .bulk_itemized_schedule import BulkItemizedSchedule
 from .bulk_multi_schedule_configuration import BulkMultiScheduleConfiguration
-from .bulk_multi_schedule_type import BulkMultiScheduleType
 from .bulk_schedule import BulkSchedule
 from .bulk_schema import BulkSchema
 from .bulk_schema_envelope import BulkSchemaEnvelope
@@ -58,6 +57,7 @@ from .execution_counts import ExecutionCounts
 from .execution_log_response import ExecutionLogResponse
 from .execution_logs_response_envelope import ExecutionLogsResponseEnvelope
 from .execution_status import ExecutionStatus
+from .field_configuration import FieldConfiguration
 from .filter import Filter
 from .filter_field_reference_type import FilterFieldReferenceType
 from .filter_function import FilterFunction
@@ -98,6 +98,7 @@ from .organization import Organization
 from .organization_envelope import OrganizationEnvelope
 from .organizations_envelope import OrganizationsEnvelope
 from .override import Override
+from .pagination import Pagination
 from .pick_value import PickValue
 from .policy_action import PolicyAction
 from .policy_response import PolicyResponse
@@ -116,6 +117,7 @@ from .schedule_option_response_envelope import ScheduleOptionResponseEnvelope
 from .schedule_schedule_option import ScheduleScheduleOption
 from .schema import Schema
 from .schema_association import SchemaAssociation
+from .schema_configuration import SchemaConfiguration
 from .schema_field import SchemaField
 from .schema_identity_function import SchemaIdentityFunction
 from .schema_records_response_envelope import SchemaRecordsResponseEnvelope
@@ -137,6 +139,10 @@ from .v_2_enricher_configuration import V2EnricherConfiguration
 from .v_2_enricher_mapping import V2EnricherMapping
 from .v_2_get_enrichment_input_fields_response_envelope import V2GetEnrichmentInputFieldsResponseEnvelope
 from .v_2_sample_record import V2SampleRecord
+from .v_2_schema_configuration_fields_item import V2SchemaConfigurationFieldsItem
+from .v_4_query_results_envelope import V4QueryResultsEnvelope
+from .v_4_run_query_envelope import V4RunQueryEnvelope
+from .v_4_run_query_result import V4RunQueryResult
 from .webhook import Webhook
 from .webhook_envelope import WebhookEnvelope
 from .webhook_list_envelope import WebhookListEnvelope
@@ -155,7 +161,6 @@ __all__ = [
     "BulkFilter",
     "BulkItemizedSchedule",
     "BulkMultiScheduleConfiguration",
-    "BulkMultiScheduleType",
     "BulkSchedule",
     "BulkSchema",
     "BulkSchemaEnvelope",
@@ -201,6 +206,7 @@ __all__ = [
     "ExecutionLogResponse",
     "ExecutionLogsResponseEnvelope",
     "ExecutionStatus",
+    "FieldConfiguration",
     "Filter",
     "FilterFieldReferenceType",
     "FilterFunction",
@@ -241,6 +247,7 @@ __all__ = [
     "OrganizationEnvelope",
     "OrganizationsEnvelope",
     "Override",
+    "Pagination",
     "PickValue",
     "PolicyAction",
     "PolicyResponse",
@@ -259,6 +266,7 @@ __all__ = [
     "ScheduleScheduleOption",
     "Schema",
     "SchemaAssociation",
+    "SchemaConfiguration",
     "SchemaField",
     "SchemaIdentityFunction",
     "SchemaRecordsResponseEnvelope",
@@ -280,6 +288,10 @@ __all__ = [
     "V2EnricherMapping",
     "V2GetEnrichmentInputFieldsResponseEnvelope",
     "V2SampleRecord",
+    "V2SchemaConfigurationFieldsItem",
+    "V4QueryResultsEnvelope",
+    "V4RunQueryEnvelope",
+    "V4RunQueryResult",
     "Webhook",
     "WebhookEnvelope",
     "WebhookListEnvelope",
