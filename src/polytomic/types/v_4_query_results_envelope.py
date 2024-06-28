@@ -10,13 +10,8 @@ from .v_4_run_query_result import V4RunQueryResult
 
 
 class V4QueryResultsEnvelope(pydantic_v1.BaseModel):
-    data: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = pydantic_v1.Field(default=None)
-    """
-    The query results, returned as an array of objects.
-    """
-
+    data: typing.Optional[V4RunQueryResult] = None
     links: typing.Optional[Pagination] = None
-    metadata: typing.Optional[V4RunQueryResult] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

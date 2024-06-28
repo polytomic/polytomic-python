@@ -11,7 +11,7 @@ from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 
 class BulkMultiScheduleConfiguration(pydantic_v1.BaseModel):
     schedules: typing.Optional[typing.List[BulkItemizedSchedule]] = None
-    type: typing.Optional[typing.Literal["incremental"]] = None
+    type: typing.Optional[str] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

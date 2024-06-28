@@ -15,7 +15,7 @@ class V4RunQueryResult(pydantic_v1.BaseModel):
     """
 
     error: typing.Optional[str] = None
-    expires: typing.Optional[dt.datetime] = pydantic_v1.Field(default=None)
+    expires: typing.Optional[str] = pydantic_v1.Field(default=None)
     """
     The time at which the query will expire and be deleted. This will not be returned until the query completes.
     """
@@ -28,6 +28,11 @@ class V4RunQueryResult(pydantic_v1.BaseModel):
     id: typing.Optional[str] = pydantic_v1.Field(default=None)
     """
     The ID of the query task.
+    """
+
+    results: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = pydantic_v1.Field(default=None)
+    """
+    The query results, returned as an array of objects.
     """
 
     status: typing.Optional[WorkTaskStatus] = None
