@@ -25,7 +25,7 @@ class BaseClientWrapper:
         headers: typing.Dict[str, str] = {
             "X-Fern-Language": "Python",
             "X-Fern-SDK-Name": "polytomic",
-            "X-Fern-SDK-Version": "1.6.0",
+            "X-Fern-SDK-Version": "1.6.1",
         }
         if self._version is not None:
             headers["X-Polytomic-Version"] = self._version
