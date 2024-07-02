@@ -5,30 +5,22 @@ import typing
 
 from ..core.datetime_utils import serialize_datetime
 from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
-from .source import Source
+from .bulk_schema_execution_status import BulkSchemaExecutionStatus
 
 
-class ModelSyncField(pydantic_v1.BaseModel):
-    new: typing.Optional[bool] = pydantic_v1.Field(default=None)
+class BulkSyncSchemaExecutionStatus(pydantic_v1.BaseModel):
+    completed_at: typing.Optional[dt.datetime] = None
+    error_count: typing.Optional[int] = None
+    execution_id: typing.Optional[str] = pydantic_v1.Field(default=None)
     """
-    New is set to true if the target field should be created by Polytomic. This is not supported by all backends.
-    """
-
-    override_value: typing.Optional[str] = pydantic_v1.Field(default=None)
-    """
-    Value to set in the target field; if provided, 'source' is ignored.
+    ID of the most recent execution for the schema.
     """
 
-    source: typing.Optional[Source] = None
-    sync_mode: typing.Optional[str] = pydantic_v1.Field(default=None)
-    """
-    Sync mode for the field; defaults to 'updateOrCreate'. If set to 'create', the field will not be synced if it already has a value. This is not supported by all backends.
-    """
-
-    target: str = pydantic_v1.Field()
-    """
-    Target field ID the source field value will be written to.
-    """
+    record_count: typing.Optional[int] = None
+    schema_: typing.Optional[str] = pydantic_v1.Field(alias="schema", default=None)
+    started_at: typing.Optional[dt.datetime] = None
+    status: typing.Optional[BulkSchemaExecutionStatus] = None
+    status_message: typing.Optional[str] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
@@ -45,5 +37,7 @@ class ModelSyncField(pydantic_v1.BaseModel):
     class Config:
         frozen = True
         smart_union = True
+        allow_population_by_field_name = True
+        populate_by_name = True
         extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}

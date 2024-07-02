@@ -463,6 +463,7 @@ class ModelSyncClient:
         Parameters
         ----------
         fields : typing.Sequence[ModelSyncField]
+            Fields to sync from source to target.
 
         mode : str
 
@@ -485,10 +486,10 @@ class ModelSyncClient:
         organization_id : typing.Optional[str]
 
         override_fields : typing.Optional[typing.Sequence[ModelSyncField]]
-            Values to set as sync target fields.
+            Values to set in the target unconditionally.
 
         overrides : typing.Optional[typing.Sequence[Override]]
-            Conditional value replacement for field mappings.
+            Conditional value replacement for fields.
 
         policies : typing.Optional[typing.Sequence[str]]
 
@@ -504,7 +505,7 @@ class ModelSyncClient:
 
         Examples
         --------
-        from polytomic import ModelSyncField, Schedule, Source, Target
+        from polytomic import ModelSyncField, Schedule, Target
         from polytomic.client import Polytomic
 
         client = Polytomic(
@@ -514,10 +515,6 @@ class ModelSyncClient:
         client.model_sync.create(
             fields=[
                 ModelSyncField(
-                    source=Source(
-                        field="id",
-                        model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                    ),
                     target="name",
                 )
             ],
@@ -752,6 +749,7 @@ class ModelSyncClient:
         id : str
 
         fields : typing.Sequence[ModelSyncField]
+            Fields to sync from source to target.
 
         mode : str
 
@@ -774,10 +772,10 @@ class ModelSyncClient:
         organization_id : typing.Optional[str]
 
         override_fields : typing.Optional[typing.Sequence[ModelSyncField]]
-            Values to set as sync target fields.
+            Values to set in the target unconditionally.
 
         overrides : typing.Optional[typing.Sequence[Override]]
-            Conditional value replacement for field mappings.
+            Conditional value replacement for fields.
 
         policies : typing.Optional[typing.Sequence[str]]
 
@@ -793,7 +791,7 @@ class ModelSyncClient:
 
         Examples
         --------
-        from polytomic import ModelSyncField, Schedule, Source, Target
+        from polytomic import ModelSyncField, Schedule, Target
         from polytomic.client import Polytomic
 
         client = Polytomic(
@@ -804,10 +802,6 @@ class ModelSyncClient:
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             fields=[
                 ModelSyncField(
-                    source=Source(
-                        field="id",
-                        model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                    ),
                     target="name",
                 )
             ],
@@ -1619,6 +1613,7 @@ class AsyncModelSyncClient:
         Parameters
         ----------
         fields : typing.Sequence[ModelSyncField]
+            Fields to sync from source to target.
 
         mode : str
 
@@ -1641,10 +1636,10 @@ class AsyncModelSyncClient:
         organization_id : typing.Optional[str]
 
         override_fields : typing.Optional[typing.Sequence[ModelSyncField]]
-            Values to set as sync target fields.
+            Values to set in the target unconditionally.
 
         overrides : typing.Optional[typing.Sequence[Override]]
-            Conditional value replacement for field mappings.
+            Conditional value replacement for fields.
 
         policies : typing.Optional[typing.Sequence[str]]
 
@@ -1660,7 +1655,7 @@ class AsyncModelSyncClient:
 
         Examples
         --------
-        from polytomic import ModelSyncField, Schedule, Source, Target
+        from polytomic import ModelSyncField, Schedule, Target
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
@@ -1670,10 +1665,6 @@ class AsyncModelSyncClient:
         await client.model_sync.create(
             fields=[
                 ModelSyncField(
-                    source=Source(
-                        field="id",
-                        model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                    ),
                     target="name",
                 )
             ],
@@ -1910,6 +1901,7 @@ class AsyncModelSyncClient:
         id : str
 
         fields : typing.Sequence[ModelSyncField]
+            Fields to sync from source to target.
 
         mode : str
 
@@ -1932,10 +1924,10 @@ class AsyncModelSyncClient:
         organization_id : typing.Optional[str]
 
         override_fields : typing.Optional[typing.Sequence[ModelSyncField]]
-            Values to set as sync target fields.
+            Values to set in the target unconditionally.
 
         overrides : typing.Optional[typing.Sequence[Override]]
-            Conditional value replacement for field mappings.
+            Conditional value replacement for fields.
 
         policies : typing.Optional[typing.Sequence[str]]
 
@@ -1951,7 +1943,7 @@ class AsyncModelSyncClient:
 
         Examples
         --------
-        from polytomic import ModelSyncField, Schedule, Source, Target
+        from polytomic import ModelSyncField, Schedule, Target
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
@@ -1962,10 +1954,6 @@ class AsyncModelSyncClient:
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             fields=[
                 ModelSyncField(
-                    source=Source(
-                        field="id",
-                        model_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                    ),
                     target="name",
                 )
             ],

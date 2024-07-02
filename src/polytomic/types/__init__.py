@@ -21,10 +21,12 @@ from .bulk_sync_dest import BulkSyncDest
 from .bulk_sync_dest_envelope import BulkSyncDestEnvelope
 from .bulk_sync_execution import BulkSyncExecution
 from .bulk_sync_execution_envelope import BulkSyncExecutionEnvelope
+from .bulk_sync_execution_status import BulkSyncExecutionStatus
 from .bulk_sync_list_envelope import BulkSyncListEnvelope
 from .bulk_sync_response import BulkSyncResponse
 from .bulk_sync_response_envelope import BulkSyncResponseEnvelope
 from .bulk_sync_schema_execution import BulkSyncSchemaExecution
+from .bulk_sync_schema_execution_status import BulkSyncSchemaExecutionStatus
 from .bulk_sync_source import BulkSyncSource
 from .bulk_sync_source_envelope import BulkSyncSourceEnvelope
 from .bulk_sync_source_schema_envelope import BulkSyncSourceSchemaEnvelope
@@ -74,6 +76,7 @@ from .job_response_envelope import JobResponseEnvelope
 from .jsonschema_form import JsonschemaForm
 from .label_label import LabelLabel
 from .list_bulk_schema import ListBulkSchema
+from .list_bulk_sync_execution_status_envelope import ListBulkSyncExecutionStatusEnvelope
 from .list_bulk_sync_executions_envelope import ListBulkSyncExecutionsEnvelope
 from .list_execution_response_envelope import ListExecutionResponseEnvelope
 from .list_model_sync_response_envelope import ListModelSyncResponseEnvelope
@@ -170,10 +173,12 @@ __all__ = [
     "BulkSyncDestEnvelope",
     "BulkSyncExecution",
     "BulkSyncExecutionEnvelope",
+    "BulkSyncExecutionStatus",
     "BulkSyncListEnvelope",
     "BulkSyncResponse",
     "BulkSyncResponseEnvelope",
     "BulkSyncSchemaExecution",
+    "BulkSyncSchemaExecutionStatus",
     "BulkSyncSource",
     "BulkSyncSourceEnvelope",
     "BulkSyncSourceSchemaEnvelope",
@@ -223,6 +228,7 @@ __all__ = [
     "JsonschemaForm",
     "LabelLabel",
     "ListBulkSchema",
+    "ListBulkSyncExecutionStatusEnvelope",
     "ListBulkSyncExecutionsEnvelope",
     "ListExecutionResponseEnvelope",
     "ListModelSyncResponseEnvelope",

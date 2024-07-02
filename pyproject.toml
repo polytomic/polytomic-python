@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "polytomic"
-version = "1.6.2"
+version = "1.7.0"
 description = ""
 readme = "README.md"
 authors = []
