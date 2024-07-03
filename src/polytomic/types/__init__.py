@@ -17,14 +17,19 @@ from .bulk_schema import BulkSchema
 from .bulk_schema_envelope import BulkSchemaEnvelope
 from .bulk_schema_execution_status import BulkSchemaExecutionStatus
 from .bulk_selective_mode import BulkSelectiveMode
+from .bulk_sync_canceled_event import BulkSyncCanceledEvent
+from .bulk_sync_completed_event import BulkSyncCompletedEvent
+from .bulk_sync_completed_with_error_event import BulkSyncCompletedWithErrorEvent
 from .bulk_sync_dest import BulkSyncDest
 from .bulk_sync_dest_envelope import BulkSyncDestEnvelope
 from .bulk_sync_execution import BulkSyncExecution
 from .bulk_sync_execution_envelope import BulkSyncExecutionEnvelope
 from .bulk_sync_execution_status import BulkSyncExecutionStatus
+from .bulk_sync_failed_event import BulkSyncFailedEvent
 from .bulk_sync_list_envelope import BulkSyncListEnvelope
 from .bulk_sync_response import BulkSyncResponse
 from .bulk_sync_response_envelope import BulkSyncResponseEnvelope
+from .bulk_sync_running_event import BulkSyncRunningEvent
 from .bulk_sync_schema_execution import BulkSyncSchemaExecution
 from .bulk_sync_schema_execution_status import BulkSyncSchemaExecutionStatus
 from .bulk_sync_source import BulkSyncSource
@@ -53,6 +58,7 @@ from .create_connection_response_schema import CreateConnectionResponseSchema
 from .create_model_request import CreateModelRequest
 from .enrichment import Enrichment
 from .event import Event
+from .event_body import EventBody
 from .event_types_envelope import EventTypesEnvelope
 from .events_envelope import EventsEnvelope
 from .execution_counts import ExecutionCounts
@@ -129,7 +135,12 @@ from .source_meta import SourceMeta
 from .start_model_sync_response_envelope import StartModelSyncResponseEnvelope
 from .start_model_sync_response_schema import StartModelSyncResponseSchema
 from .supported_mode import SupportedMode
+from .sync_canceled_event import SyncCanceledEvent
+from .sync_completed_event import SyncCompletedEvent
+from .sync_completed_with_errors_event import SyncCompletedWithErrorsEvent
 from .sync_destination_properties import SyncDestinationProperties
+from .sync_failed_event import SyncFailedEvent
+from .sync_running_event import SyncRunningEvent
 from .sync_status_envelope import SyncStatusEnvelope
 from .sync_status_response import SyncStatusResponse
 from .target import Target
@@ -169,14 +180,19 @@ __all__ = [
     "BulkSchemaEnvelope",
     "BulkSchemaExecutionStatus",
     "BulkSelectiveMode",
+    "BulkSyncCanceledEvent",
+    "BulkSyncCompletedEvent",
+    "BulkSyncCompletedWithErrorEvent",
     "BulkSyncDest",
     "BulkSyncDestEnvelope",
     "BulkSyncExecution",
     "BulkSyncExecutionEnvelope",
     "BulkSyncExecutionStatus",
+    "BulkSyncFailedEvent",
     "BulkSyncListEnvelope",
     "BulkSyncResponse",
     "BulkSyncResponseEnvelope",
+    "BulkSyncRunningEvent",
     "BulkSyncSchemaExecution",
     "BulkSyncSchemaExecutionStatus",
     "BulkSyncSource",
@@ -205,6 +221,7 @@ __all__ = [
     "CreateModelRequest",
     "Enrichment",
     "Event",
+    "EventBody",
     "EventTypesEnvelope",
     "EventsEnvelope",
     "ExecutionCounts",
@@ -281,7 +298,12 @@ __all__ = [
     "StartModelSyncResponseEnvelope",
     "StartModelSyncResponseSchema",
     "SupportedMode",
+    "SyncCanceledEvent",
+    "SyncCompletedEvent",
+    "SyncCompletedWithErrorsEvent",
     "SyncDestinationProperties",
+    "SyncFailedEvent",
+    "SyncRunningEvent",
     "SyncStatusEnvelope",
     "SyncStatusResponse",
     "Target",

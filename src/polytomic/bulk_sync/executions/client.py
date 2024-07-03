@@ -59,7 +59,10 @@ class ExecutionsClient:
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        client.bulk_sync.executions.list_status()
+        client.bulk_sync.executions.list_status(
+            all_=True,
+            active=True,
+        )
         """
         _response = self._client_wrapper.httpx_client.request(
             method="GET",
@@ -273,7 +276,10 @@ class AsyncExecutionsClient:
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        await client.bulk_sync.executions.list_status()
+        await client.bulk_sync.executions.list_status(
+            all_=True,
+            active=True,
+        )
         """
         _response = await self._client_wrapper.httpx_client.request(
             method="GET",

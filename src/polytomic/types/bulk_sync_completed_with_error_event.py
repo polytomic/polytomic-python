@@ -5,15 +5,16 @@ import typing
 
 from ..core.datetime_utils import serialize_datetime
 from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
-from .event_body import EventBody
 
 
-class Event(pydantic_v1.BaseModel):
-    created_at: typing.Optional[dt.datetime] = None
-    event: typing.Optional[EventBody] = None
-    id: typing.Optional[str] = None
+class BulkSyncCompletedWithErrorEvent(pydantic_v1.BaseModel):
+    destination_connection_id: typing.Optional[str] = None
+    execution_id: typing.Optional[str] = None
+    name: typing.Optional[str] = None
     organization_id: typing.Optional[str] = None
-    type: typing.Optional[str] = None
+    source_connection_id: typing.Optional[str] = None
+    sync_id: typing.Optional[str] = None
+    trigger_source: typing.Optional[str] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
