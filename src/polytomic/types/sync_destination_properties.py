@@ -9,6 +9,7 @@ from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 
 class SyncDestinationProperties(pydantic_v1.BaseModel):
     does_not_report_operation_counts: typing.Optional[bool] = None
+    mappings_not_required: typing.Optional[bool] = None
     new_target_label: typing.Optional[str] = None
     optional_target_mappings: typing.Optional[bool] = None
     primary_metadata_object: typing.Optional[str] = None

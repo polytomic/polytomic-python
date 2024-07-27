@@ -10,16 +10,32 @@ from .bulk_schedule import BulkSchedule
 
 class BulkSyncResponse(pydantic_v1.BaseModel):
     active: typing.Optional[bool] = None
-    destination_configuration: typing.Optional[typing.Dict[str, typing.Any]] = None
+    destination_configuration: typing.Optional[typing.Dict[str, typing.Any]] = pydantic_v1.Field(default=None)
+    """
+    Destination-specific bulk sync configuration. e.g. output schema name, s3 file format, etc.
+    """
+
     destination_connection_id: typing.Optional[str] = None
     discover: typing.Optional[bool] = None
     id: typing.Optional[str] = None
     mode: typing.Optional[str] = None
-    name: typing.Optional[str] = None
+    name: typing.Optional[str] = pydantic_v1.Field(default=None)
+    """
+    Name of the bulk sync
+    """
+
     organization_id: typing.Optional[str] = None
-    policies: typing.Optional[typing.List[str]] = None
+    policies: typing.Optional[typing.List[str]] = pydantic_v1.Field(default=None)
+    """
+    List of permissions policies applied to the bulk sync.
+    """
+
     schedule: typing.Optional[BulkSchedule] = None
-    source_configuration: typing.Optional[typing.Dict[str, typing.Any]] = None
+    source_configuration: typing.Optional[typing.Dict[str, typing.Any]] = pydantic_v1.Field(default=None)
+    """
+    Source-specific bulk sync configuration. e.g. replication slot name, sync lookback, etc.
+    """
+
     source_connection_id: typing.Optional[str] = None
 
     def json(self, **kwargs: typing.Any) -> str:

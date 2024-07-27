@@ -1,14 +1,12 @@
 # This file was auto-generated from our API Definition.
 
 import typing
-import urllib.parse
 from json.decoder import JSONDecodeError
 
 from ..core.api_error import ApiError as core_api_error_ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.jsonable_encoder import jsonable_encoder
 from ..core.pydantic_utilities import pydantic_v1
-from ..core.remove_none_from_dict import remove_none_from_dict
 from ..core.request_options import RequestOptions
 from ..errors.bad_request_error import BadRequestError
 from ..errors.forbidden_error import ForbiddenError
@@ -70,51 +68,30 @@ class ModelsClient:
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
         """
-        _request: typing.Dict[str, typing.Any] = {}
-        if configuration is not OMIT:
-            _request["configuration"] = configuration
         _response = self._client_wrapper.httpx_client.request(
+            f"api/enrichment/{jsonable_encoder(connection_id)}/inputfields",
             method="POST",
-            url=urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/",
-                f"api/enrichment/{jsonable_encoder(connection_id)}/inputfields",
-            ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
-            ),
-            json=jsonable_encoder(_request)
-            if request_options is None or request_options.get("additional_body_parameters") is None
-            else {
-                **jsonable_encoder(_request),
-                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
-            },
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+            json={"configuration": configuration},
+            request_options=request_options,
+            omit=OMIT,
         )
-        if 200 <= _response.status_code < 300:
-            return pydantic_v1.parse_obj_as(V2GetEnrichmentInputFieldsResponseEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        if _response.status_code == 403:
-            raise ForbiddenError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 404:
-            raise NotFoundError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 500:
-            raise InternalServerError(
-                pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
-            )
         try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(V2GetEnrichmentInputFieldsResponseEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
@@ -189,77 +166,44 @@ class ModelsClient:
             name="Users",
         )
         """
-        _request: typing.Dict[str, typing.Any] = {
-            "configuration": configuration,
-            "connection_id": connection_id,
-            "name": name,
-        }
-        if additional_fields is not OMIT:
-            _request["additional_fields"] = additional_fields
-        if enricher is not OMIT:
-            _request["enricher"] = enricher
-        if fields is not OMIT:
-            _request["fields"] = fields
-        if identifier is not OMIT:
-            _request["identifier"] = identifier
-        if labels is not OMIT:
-            _request["labels"] = labels
-        if organization_id is not OMIT:
-            _request["organization_id"] = organization_id
-        if policies is not OMIT:
-            _request["policies"] = policies
-        if relations is not OMIT:
-            _request["relations"] = relations
-        if tracking_columns is not OMIT:
-            _request["tracking_columns"] = tracking_columns
         _response = self._client_wrapper.httpx_client.request(
+            "api/model-preview",
             method="POST",
-            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/model-preview"),
-            params=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        "async": async_,
-                        **(
-                            request_options.get("additional_query_parameters", {})
-                            if request_options is not None
-                            else {}
-                        ),
-                    }
-                )
-            ),
-            json=jsonable_encoder(_request)
-            if request_options is None or request_options.get("additional_body_parameters") is None
-            else {
-                **jsonable_encoder(_request),
-                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            params={"async": async_},
+            json={
+                "additional_fields": additional_fields,
+                "configuration": configuration,
+                "connection_id": connection_id,
+                "enricher": enricher,
+                "fields": fields,
+                "identifier": identifier,
+                "labels": labels,
+                "name": name,
+                "organization_id": organization_id,
+                "policies": policies,
+                "relations": relations,
+                "tracking_columns": tracking_columns,
             },
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+            request_options=request_options,
+            omit=OMIT,
         )
-        if 200 <= _response.status_code < 300:
-            return pydantic_v1.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 400:
-            raise BadRequestError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        if _response.status_code == 404:
-            raise NotFoundError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 500:
-            raise InternalServerError(
-                pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
-            )
         try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
@@ -288,32 +232,17 @@ class ModelsClient:
         client.models.list()
         """
         _response = self._client_wrapper.httpx_client.request(
-            method="GET",
-            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/models"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+            "api/models", method="GET", request_options=request_options
         )
-        if 200 <= _response.status_code < 300:
-            return pydantic_v1.parse_obj_as(ModelListResponseEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        if _response.status_code == 404:
-            raise NotFoundError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(ModelListResponseEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
@@ -388,77 +317,44 @@ class ModelsClient:
             name="Users",
         )
         """
-        _request: typing.Dict[str, typing.Any] = {
-            "configuration": configuration,
-            "connection_id": connection_id,
-            "name": name,
-        }
-        if additional_fields is not OMIT:
-            _request["additional_fields"] = additional_fields
-        if enricher is not OMIT:
-            _request["enricher"] = enricher
-        if fields is not OMIT:
-            _request["fields"] = fields
-        if identifier is not OMIT:
-            _request["identifier"] = identifier
-        if labels is not OMIT:
-            _request["labels"] = labels
-        if organization_id is not OMIT:
-            _request["organization_id"] = organization_id
-        if policies is not OMIT:
-            _request["policies"] = policies
-        if relations is not OMIT:
-            _request["relations"] = relations
-        if tracking_columns is not OMIT:
-            _request["tracking_columns"] = tracking_columns
         _response = self._client_wrapper.httpx_client.request(
+            "api/models",
             method="POST",
-            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/models"),
-            params=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        "async": async_,
-                        **(
-                            request_options.get("additional_query_parameters", {})
-                            if request_options is not None
-                            else {}
-                        ),
-                    }
-                )
-            ),
-            json=jsonable_encoder(_request)
-            if request_options is None or request_options.get("additional_body_parameters") is None
-            else {
-                **jsonable_encoder(_request),
-                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            params={"async": async_},
+            json={
+                "additional_fields": additional_fields,
+                "configuration": configuration,
+                "connection_id": connection_id,
+                "enricher": enricher,
+                "fields": fields,
+                "identifier": identifier,
+                "labels": labels,
+                "name": name,
+                "organization_id": organization_id,
+                "policies": policies,
+                "relations": relations,
+                "tracking_columns": tracking_columns,
             },
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+            request_options=request_options,
+            omit=OMIT,
         )
-        if 200 <= _response.status_code < 300:
-            return pydantic_v1.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 400:
-            raise BadRequestError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        if _response.status_code == 403:
-            raise ForbiddenError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 500:
-            raise InternalServerError(
-                pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
-            )
         try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
@@ -495,45 +391,24 @@ class ModelsClient:
         )
         """
         _response = self._client_wrapper.httpx_client.request(
+            f"api/models/{jsonable_encoder(id)}",
             method="GET",
-            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"api/models/{jsonable_encoder(id)}"),
-            params=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        "async": async_,
-                        **(
-                            request_options.get("additional_query_parameters", {})
-                            if request_options is not None
-                            else {}
-                        ),
-                    }
-                )
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+            params={"async": async_},
+            request_options=request_options,
         )
-        if 200 <= _response.status_code < 300:
-            return pydantic_v1.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        if _response.status_code == 404:
-            raise NotFoundError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 500:
-            raise InternalServerError(
-                pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
-            )
         try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
@@ -613,77 +488,44 @@ class ModelsClient:
             name="Users",
         )
         """
-        _request: typing.Dict[str, typing.Any] = {
-            "configuration": configuration,
-            "connection_id": connection_id,
-            "name": name,
-        }
-        if additional_fields is not OMIT:
-            _request["additional_fields"] = additional_fields
-        if enricher is not OMIT:
-            _request["enricher"] = enricher
-        if fields is not OMIT:
-            _request["fields"] = fields
-        if identifier is not OMIT:
-            _request["identifier"] = identifier
-        if labels is not OMIT:
-            _request["labels"] = labels
-        if organization_id is not OMIT:
-            _request["organization_id"] = organization_id
-        if policies is not OMIT:
-            _request["policies"] = policies
-        if relations is not OMIT:
-            _request["relations"] = relations
-        if tracking_columns is not OMIT:
-            _request["tracking_columns"] = tracking_columns
         _response = self._client_wrapper.httpx_client.request(
+            f"api/models/{jsonable_encoder(id)}",
             method="PUT",
-            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"api/models/{jsonable_encoder(id)}"),
-            params=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        "async": async_,
-                        **(
-                            request_options.get("additional_query_parameters", {})
-                            if request_options is not None
-                            else {}
-                        ),
-                    }
-                )
-            ),
-            json=jsonable_encoder(_request)
-            if request_options is None or request_options.get("additional_body_parameters") is None
-            else {
-                **jsonable_encoder(_request),
-                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
+            params={"async": async_},
+            json={
+                "additional_fields": additional_fields,
+                "configuration": configuration,
+                "connection_id": connection_id,
+                "enricher": enricher,
+                "fields": fields,
+                "identifier": identifier,
+                "labels": labels,
+                "name": name,
+                "organization_id": organization_id,
+                "policies": policies,
+                "relations": relations,
+                "tracking_columns": tracking_columns,
             },
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+            request_options=request_options,
+            omit=OMIT,
         )
-        if 200 <= _response.status_code < 300:
-            return pydantic_v1.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 400:
-            raise BadRequestError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        if _response.status_code == 404:
-            raise NotFoundError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 500:
-            raise InternalServerError(
-                pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
-            )
         try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
@@ -719,47 +561,28 @@ class ModelsClient:
         )
         """
         _response = self._client_wrapper.httpx_client.request(
+            f"api/models/{jsonable_encoder(id)}",
             method="DELETE",
-            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"api/models/{jsonable_encoder(id)}"),
-            params=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        "async": async_,
-                        **(
-                            request_options.get("additional_query_parameters", {})
-                            if request_options is not None
-                            else {}
-                        ),
-                    }
-                )
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+            params={"async": async_},
+            request_options=request_options,
         )
-        if 200 <= _response.status_code < 300:
-            return
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        if _response.status_code == 403:
-            raise ForbiddenError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 404:
-            raise NotFoundError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 500:
-            raise InternalServerError(
-                pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
-            )
         try:
+            if 200 <= _response.status_code < 300:
+                return
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
@@ -798,49 +621,28 @@ class ModelsClient:
         )
         """
         _response = self._client_wrapper.httpx_client.request(
+            f"api/models/{jsonable_encoder(id)}/sample",
             method="GET",
-            url=urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"api/models/{jsonable_encoder(id)}/sample"
-            ),
-            params=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        "async": async_,
-                        **(
-                            request_options.get("additional_query_parameters", {})
-                            if request_options is not None
-                            else {}
-                        ),
-                    }
-                )
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+            params={"async": async_},
+            request_options=request_options,
         )
-        if 200 <= _response.status_code < 300:
-            return pydantic_v1.parse_obj_as(ModelSampleResponseEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 400:
-            raise BadRequestError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        if _response.status_code == 404:
-            raise NotFoundError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 500:
-            raise InternalServerError(
-                pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
-            )
         try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(ModelSampleResponseEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
@@ -877,61 +679,48 @@ class AsyncModelsClient:
 
         Examples
         --------
+        import asyncio
+
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        await client.models.post(
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-        )
-        """
-        _request: typing.Dict[str, typing.Any] = {}
-        if configuration is not OMIT:
-            _request["configuration"] = configuration
-        _response = await self._client_wrapper.httpx_client.request(
-            method="POST",
-            url=urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/",
-                f"api/enrichment/{jsonable_encoder(connection_id)}/inputfields",
-            ),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
-            ),
-            json=jsonable_encoder(_request)
-            if request_options is None or request_options.get("additional_body_parameters") is None
-            else {
-                **jsonable_encoder(_request),
-                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
-            },
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
-        )
-        if 200 <= _response.status_code < 300:
-            return pydantic_v1.parse_obj_as(V2GetEnrichmentInputFieldsResponseEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        if _response.status_code == 403:
-            raise ForbiddenError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 404:
-            raise NotFoundError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 500:
-            raise InternalServerError(
-                pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+
+
+        async def main() -> None:
+            await client.models.post(
+                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"api/enrichment/{jsonable_encoder(connection_id)}/inputfields",
+            method="POST",
+            json={"configuration": configuration},
+            request_options=request_options,
+            omit=OMIT,
+        )
         try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(V2GetEnrichmentInputFieldsResponseEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
@@ -994,89 +783,64 @@ class AsyncModelsClient:
 
         Examples
         --------
+        import asyncio
+
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        await client.models.preview(
-            configuration={"table": "public.users"},
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="Users",
-        )
-        """
-        _request: typing.Dict[str, typing.Any] = {
-            "configuration": configuration,
-            "connection_id": connection_id,
-            "name": name,
-        }
-        if additional_fields is not OMIT:
-            _request["additional_fields"] = additional_fields
-        if enricher is not OMIT:
-            _request["enricher"] = enricher
-        if fields is not OMIT:
-            _request["fields"] = fields
-        if identifier is not OMIT:
-            _request["identifier"] = identifier
-        if labels is not OMIT:
-            _request["labels"] = labels
-        if organization_id is not OMIT:
-            _request["organization_id"] = organization_id
-        if policies is not OMIT:
-            _request["policies"] = policies
-        if relations is not OMIT:
-            _request["relations"] = relations
-        if tracking_columns is not OMIT:
-            _request["tracking_columns"] = tracking_columns
-        _response = await self._client_wrapper.httpx_client.request(
-            method="POST",
-            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/model-preview"),
-            params=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        "async": async_,
-                        **(
-                            request_options.get("additional_query_parameters", {})
-                            if request_options is not None
-                            else {}
-                        ),
-                    }
-                )
-            ),
-            json=jsonable_encoder(_request)
-            if request_options is None or request_options.get("additional_body_parameters") is None
-            else {
-                **jsonable_encoder(_request),
-                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
-            },
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
-        )
-        if 200 <= _response.status_code < 300:
-            return pydantic_v1.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 400:
-            raise BadRequestError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        if _response.status_code == 404:
-            raise NotFoundError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 500:
-            raise InternalServerError(
-                pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+
+
+        async def main() -> None:
+            await client.models.preview(
+                configuration={"table": "public.users"},
+                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                name="Users",
             )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "api/model-preview",
+            method="POST",
+            params={"async": async_},
+            json={
+                "additional_fields": additional_fields,
+                "configuration": configuration,
+                "connection_id": connection_id,
+                "enricher": enricher,
+                "fields": fields,
+                "identifier": identifier,
+                "labels": labels,
+                "name": name,
+                "organization_id": organization_id,
+                "policies": policies,
+                "relations": relations,
+                "tracking_columns": tracking_columns,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
         try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
@@ -1096,41 +860,34 @@ class AsyncModelsClient:
 
         Examples
         --------
+        import asyncio
+
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        await client.models.list()
+
+
+        async def main() -> None:
+            await client.models.list()
+
+
+        asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
-            method="GET",
-            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/models"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+            "api/models", method="GET", request_options=request_options
         )
-        if 200 <= _response.status_code < 300:
-            return pydantic_v1.parse_obj_as(ModelListResponseEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        if _response.status_code == 404:
-            raise NotFoundError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
         try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(ModelListResponseEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
@@ -1193,89 +950,64 @@ class AsyncModelsClient:
 
         Examples
         --------
+        import asyncio
+
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        await client.models.create(
-            configuration={"table": "public.users"},
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="Users",
-        )
-        """
-        _request: typing.Dict[str, typing.Any] = {
-            "configuration": configuration,
-            "connection_id": connection_id,
-            "name": name,
-        }
-        if additional_fields is not OMIT:
-            _request["additional_fields"] = additional_fields
-        if enricher is not OMIT:
-            _request["enricher"] = enricher
-        if fields is not OMIT:
-            _request["fields"] = fields
-        if identifier is not OMIT:
-            _request["identifier"] = identifier
-        if labels is not OMIT:
-            _request["labels"] = labels
-        if organization_id is not OMIT:
-            _request["organization_id"] = organization_id
-        if policies is not OMIT:
-            _request["policies"] = policies
-        if relations is not OMIT:
-            _request["relations"] = relations
-        if tracking_columns is not OMIT:
-            _request["tracking_columns"] = tracking_columns
-        _response = await self._client_wrapper.httpx_client.request(
-            method="POST",
-            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/models"),
-            params=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        "async": async_,
-                        **(
-                            request_options.get("additional_query_parameters", {})
-                            if request_options is not None
-                            else {}
-                        ),
-                    }
-                )
-            ),
-            json=jsonable_encoder(_request)
-            if request_options is None or request_options.get("additional_body_parameters") is None
-            else {
-                **jsonable_encoder(_request),
-                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
-            },
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
-        )
-        if 200 <= _response.status_code < 300:
-            return pydantic_v1.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 400:
-            raise BadRequestError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        if _response.status_code == 403:
-            raise ForbiddenError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 500:
-            raise InternalServerError(
-                pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+
+
+        async def main() -> None:
+            await client.models.create(
+                configuration={"table": "public.users"},
+                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                name="Users",
             )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "api/models",
+            method="POST",
+            params={"async": async_},
+            json={
+                "additional_fields": additional_fields,
+                "configuration": configuration,
+                "connection_id": connection_id,
+                "enricher": enricher,
+                "fields": fields,
+                "identifier": identifier,
+                "labels": labels,
+                "name": name,
+                "organization_id": organization_id,
+                "policies": policies,
+                "relations": relations,
+                "tracking_columns": tracking_columns,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
         try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
@@ -1301,56 +1033,43 @@ class AsyncModelsClient:
 
         Examples
         --------
+        import asyncio
+
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        await client.models.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-        )
+
+
+        async def main() -> None:
+            await client.models.get(
+                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
+            f"api/models/{jsonable_encoder(id)}",
             method="GET",
-            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"api/models/{jsonable_encoder(id)}"),
-            params=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        "async": async_,
-                        **(
-                            request_options.get("additional_query_parameters", {})
-                            if request_options is not None
-                            else {}
-                        ),
-                    }
-                )
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+            params={"async": async_},
+            request_options=request_options,
         )
-        if 200 <= _response.status_code < 300:
-            return pydantic_v1.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        if _response.status_code == 404:
-            raise NotFoundError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 500:
-            raise InternalServerError(
-                pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
-            )
         try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
@@ -1416,91 +1135,66 @@ class AsyncModelsClient:
 
         Examples
         --------
+        import asyncio
+
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        await client.models.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            async_=False,
-            configuration={"table": "public.users"},
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="Users",
-        )
-        """
-        _request: typing.Dict[str, typing.Any] = {
-            "configuration": configuration,
-            "connection_id": connection_id,
-            "name": name,
-        }
-        if additional_fields is not OMIT:
-            _request["additional_fields"] = additional_fields
-        if enricher is not OMIT:
-            _request["enricher"] = enricher
-        if fields is not OMIT:
-            _request["fields"] = fields
-        if identifier is not OMIT:
-            _request["identifier"] = identifier
-        if labels is not OMIT:
-            _request["labels"] = labels
-        if organization_id is not OMIT:
-            _request["organization_id"] = organization_id
-        if policies is not OMIT:
-            _request["policies"] = policies
-        if relations is not OMIT:
-            _request["relations"] = relations
-        if tracking_columns is not OMIT:
-            _request["tracking_columns"] = tracking_columns
-        _response = await self._client_wrapper.httpx_client.request(
-            method="PUT",
-            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"api/models/{jsonable_encoder(id)}"),
-            params=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        "async": async_,
-                        **(
-                            request_options.get("additional_query_parameters", {})
-                            if request_options is not None
-                            else {}
-                        ),
-                    }
-                )
-            ),
-            json=jsonable_encoder(_request)
-            if request_options is None or request_options.get("additional_body_parameters") is None
-            else {
-                **jsonable_encoder(_request),
-                **(jsonable_encoder(remove_none_from_dict(request_options.get("additional_body_parameters", {})))),
-            },
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
-        )
-        if 200 <= _response.status_code < 300:
-            return pydantic_v1.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 400:
-            raise BadRequestError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        if _response.status_code == 404:
-            raise NotFoundError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 500:
-            raise InternalServerError(
-                pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+
+
+        async def main() -> None:
+            await client.models.update(
+                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                async_=False,
+                configuration={"table": "public.users"},
+                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                name="Users",
             )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"api/models/{jsonable_encoder(id)}",
+            method="PUT",
+            params={"async": async_},
+            json={
+                "additional_fields": additional_fields,
+                "configuration": configuration,
+                "connection_id": connection_id,
+                "enricher": enricher,
+                "fields": fields,
+                "identifier": identifier,
+                "labels": labels,
+                "name": name,
+                "organization_id": organization_id,
+                "policies": policies,
+                "relations": relations,
+                "tracking_columns": tracking_columns,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
         try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(ModelResponseEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
@@ -1525,58 +1219,47 @@ class AsyncModelsClient:
 
         Examples
         --------
+        import asyncio
+
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        await client.models.remove(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-        )
+
+
+        async def main() -> None:
+            await client.models.remove(
+                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
+            f"api/models/{jsonable_encoder(id)}",
             method="DELETE",
-            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", f"api/models/{jsonable_encoder(id)}"),
-            params=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        "async": async_,
-                        **(
-                            request_options.get("additional_query_parameters", {})
-                            if request_options is not None
-                            else {}
-                        ),
-                    }
-                )
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+            params={"async": async_},
+            request_options=request_options,
         )
-        if 200 <= _response.status_code < 300:
-            return
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        if _response.status_code == 403:
-            raise ForbiddenError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 404:
-            raise NotFoundError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 500:
-            raise InternalServerError(
-                pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
-            )
         try:
+            if 200 <= _response.status_code < 300:
+                return
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
@@ -1604,60 +1287,47 @@ class AsyncModelsClient:
 
         Examples
         --------
+        import asyncio
+
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        await client.models.sample(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-        )
+
+
+        async def main() -> None:
+            await client.models.sample(
+                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
+            f"api/models/{jsonable_encoder(id)}/sample",
             method="GET",
-            url=urllib.parse.urljoin(
-                f"{self._client_wrapper.get_base_url()}/", f"api/models/{jsonable_encoder(id)}/sample"
-            ),
-            params=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        "async": async_,
-                        **(
-                            request_options.get("additional_query_parameters", {})
-                            if request_options is not None
-                            else {}
-                        ),
-                    }
-                )
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+            params={"async": async_},
+            request_options=request_options,
         )
-        if 200 <= _response.status_code < 300:
-            return pydantic_v1.parse_obj_as(ModelSampleResponseEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 400:
-            raise BadRequestError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        if _response.status_code == 404:
-            raise NotFoundError(pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json()))  # type: ignore
-        if _response.status_code == 500:
-            raise InternalServerError(
-                pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
-            )
         try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(ModelSampleResponseEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)

@@ -134,17 +134,20 @@ from .source import Source
 from .source_meta import SourceMeta
 from .start_model_sync_response_envelope import StartModelSyncResponseEnvelope
 from .start_model_sync_response_schema import StartModelSyncResponseSchema
+from .supported_bulk_mode import SupportedBulkMode
 from .supported_mode import SupportedMode
 from .sync_canceled_event import SyncCanceledEvent
 from .sync_completed_event import SyncCompletedEvent
 from .sync_completed_with_errors_event import SyncCompletedWithErrorsEvent
 from .sync_destination_properties import SyncDestinationProperties
 from .sync_failed_event import SyncFailedEvent
+from .sync_mode import SyncMode
 from .sync_running_event import SyncRunningEvent
 from .sync_status_envelope import SyncStatusEnvelope
 from .sync_status_response import SyncStatusResponse
 from .target import Target
 from .target_field import TargetField
+from .target_object import TargetObject
 from .target_response import TargetResponse
 from .target_response_envelope import TargetResponseEnvelope
 from .user import User
@@ -157,6 +160,7 @@ from .v_2_schema_configuration_fields_item import V2SchemaConfigurationFieldsIte
 from .v_4_query_results_envelope import V4QueryResultsEnvelope
 from .v_4_run_query_envelope import V4RunQueryEnvelope
 from .v_4_run_query_result import V4RunQueryResult
+from .v_4_target_objects_response_envelope import V4TargetObjectsResponseEnvelope
 from .webhook import Webhook
 from .webhook_envelope import WebhookEnvelope
 from .webhook_list_envelope import WebhookListEnvelope
@@ -297,17 +301,20 @@ __all__ = [
     "SourceMeta",
     "StartModelSyncResponseEnvelope",
     "StartModelSyncResponseSchema",
+    "SupportedBulkMode",
     "SupportedMode",
     "SyncCanceledEvent",
     "SyncCompletedEvent",
     "SyncCompletedWithErrorsEvent",
     "SyncDestinationProperties",
     "SyncFailedEvent",
+    "SyncMode",
     "SyncRunningEvent",
     "SyncStatusEnvelope",
     "SyncStatusResponse",
     "Target",
     "TargetField",
+    "TargetObject",
     "TargetResponse",
     "TargetResponseEnvelope",
     "User",
@@ -320,6 +327,7 @@ __all__ = [
     "V4QueryResultsEnvelope",
     "V4RunQueryEnvelope",
     "V4RunQueryResult",
+    "V4TargetObjectsResponseEnvelope",
     "Webhook",
     "WebhookEnvelope",
     "WebhookListEnvelope",

@@ -2,15 +2,12 @@
 
 import datetime as dt
 import typing
-import urllib.parse
 from json.decoder import JSONDecodeError
 
 from ..core.api_error import ApiError as core_api_error_ApiError
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.datetime_utils import serialize_datetime
-from ..core.jsonable_encoder import jsonable_encoder
 from ..core.pydantic_utilities import pydantic_v1
-from ..core.remove_none_from_dict import remove_none_from_dict
 from ..core.request_options import RequestOptions
 from ..errors.internal_server_error import InternalServerError
 from ..errors.unauthorized_error import UnauthorizedError
@@ -33,7 +30,7 @@ class EventsClient:
         starting_after: typing.Optional[dt.datetime] = None,
         ending_before: typing.Optional[dt.datetime] = None,
         limit: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
+        request_options: typing.Optional[RequestOptions] = None
     ) -> EventsEnvelope:
         """
         Parameters
@@ -77,51 +74,30 @@ class EventsClient:
         )
         """
         _response = self._client_wrapper.httpx_client.request(
+            "api/events",
             method="GET",
-            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/events"),
-            params=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        "organization_id": organization_id,
-                        "type": type,
-                        "starting_after": serialize_datetime(starting_after) if starting_after is not None else None,
-                        "ending_before": serialize_datetime(ending_before) if ending_before is not None else None,
-                        "limit": limit,
-                        **(
-                            request_options.get("additional_query_parameters", {})
-                            if request_options is not None
-                            else {}
-                        ),
-                    }
-                )
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+            params={
+                "organization_id": organization_id,
+                "type": type,
+                "starting_after": serialize_datetime(starting_after) if starting_after is not None else None,
+                "ending_before": serialize_datetime(ending_before) if ending_before is not None else None,
+                "limit": limit,
+            },
+            request_options=request_options,
         )
-        if 200 <= _response.status_code < 300:
-            return pydantic_v1.parse_obj_as(EventsEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        if _response.status_code == 422:
-            raise UnprocessableEntityError(
-                pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
-            )
-        if _response.status_code == 500:
-            raise InternalServerError(
-                pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
-            )
         try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(EventsEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
@@ -150,30 +126,13 @@ class EventsClient:
         client.events.get_types()
         """
         _response = self._client_wrapper.httpx_client.request(
-            method="GET",
-            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/events_types"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+            "api/events_types", method="GET", request_options=request_options
         )
-        if 200 <= _response.status_code < 300:
-            return pydantic_v1.parse_obj_as(EventTypesEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(EventTypesEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
@@ -192,7 +151,7 @@ class AsyncEventsClient:
         starting_after: typing.Optional[dt.datetime] = None,
         ending_before: typing.Optional[dt.datetime] = None,
         limit: typing.Optional[int] = None,
-        request_options: typing.Optional[RequestOptions] = None,
+        request_options: typing.Optional[RequestOptions] = None
     ) -> EventsEnvelope:
         """
         Parameters
@@ -217,6 +176,7 @@ class AsyncEventsClient:
 
         Examples
         --------
+        import asyncio
         import datetime
 
         from polytomic.client import AsyncPolytomic
@@ -225,62 +185,47 @@ class AsyncEventsClient:
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        await client.events.list(
-            organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            starting_after=datetime.datetime.fromisoformat(
-                "2020-01-01 00:00:00+00:00",
-            ),
-            ending_before=datetime.datetime.fromisoformat(
-                "2020-01-01 00:00:00+00:00",
-            ),
-        )
+
+
+        async def main() -> None:
+            await client.events.list(
+                organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                starting_after=datetime.datetime.fromisoformat(
+                    "2020-01-01 00:00:00+00:00",
+                ),
+                ending_before=datetime.datetime.fromisoformat(
+                    "2020-01-01 00:00:00+00:00",
+                ),
+            )
+
+
+        asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
+            "api/events",
             method="GET",
-            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/events"),
-            params=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        "organization_id": organization_id,
-                        "type": type,
-                        "starting_after": serialize_datetime(starting_after) if starting_after is not None else None,
-                        "ending_before": serialize_datetime(ending_before) if ending_before is not None else None,
-                        "limit": limit,
-                        **(
-                            request_options.get("additional_query_parameters", {})
-                            if request_options is not None
-                            else {}
-                        ),
-                    }
-                )
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+            params={
+                "organization_id": organization_id,
+                "type": type,
+                "starting_after": serialize_datetime(starting_after) if starting_after is not None else None,
+                "ending_before": serialize_datetime(ending_before) if ending_before is not None else None,
+                "limit": limit,
+            },
+            request_options=request_options,
         )
-        if 200 <= _response.status_code < 300:
-            return pydantic_v1.parse_obj_as(EventsEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
-        if _response.status_code == 422:
-            raise UnprocessableEntityError(
-                pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
-            )
-        if _response.status_code == 500:
-            raise InternalServerError(
-                pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
-            )
         try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(EventsEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
@@ -300,39 +245,30 @@ class AsyncEventsClient:
 
         Examples
         --------
+        import asyncio
+
         from polytomic.client import AsyncPolytomic
 
         client = AsyncPolytomic(
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        await client.events.get_types()
+
+
+        async def main() -> None:
+            await client.events.get_types()
+
+
+        asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
-            method="GET",
-            url=urllib.parse.urljoin(f"{self._client_wrapper.get_base_url()}/", "api/events_types"),
-            params=jsonable_encoder(
-                request_options.get("additional_query_parameters") if request_options is not None else None
-            ),
-            headers=jsonable_encoder(
-                remove_none_from_dict(
-                    {
-                        **self._client_wrapper.get_headers(),
-                        **(request_options.get("additional_headers", {}) if request_options is not None else {}),
-                    }
-                )
-            ),
-            timeout=request_options.get("timeout_in_seconds")
-            if request_options is not None and request_options.get("timeout_in_seconds") is not None
-            else self._client_wrapper.get_timeout(),
-            retries=0,
-            max_retries=request_options.get("max_retries") if request_options is not None else 0,  # type: ignore
+            "api/events_types", method="GET", request_options=request_options
         )
-        if 200 <= _response.status_code < 300:
-            return pydantic_v1.parse_obj_as(EventTypesEnvelope, _response.json())  # type: ignore
-        if _response.status_code == 401:
-            raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
         try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(EventTypesEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
             _response_json = _response.json()
         except JSONDecodeError:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)

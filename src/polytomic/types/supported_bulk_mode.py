@@ -8,22 +8,13 @@ from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 from .sync_mode import SyncMode
 
 
-class SupportedMode(pydantic_v1.BaseModel):
+class SupportedBulkMode(pydantic_v1.BaseModel):
+    description: typing.Optional[str] = None
     id: typing.Optional[SyncMode] = None
-    requires_identity: typing.Optional[bool] = pydantic_v1.Field(default=None)
-    """
-    True if the sync mode requires an identity field mapping.
-    """
-
-    supports_per_field_mode: typing.Optional[bool] = pydantic_v1.Field(default=None)
-    """
-    True if the target supports per-field sync modes.
-    """
-
-    supports_target_filters: typing.Optional[bool] = pydantic_v1.Field(default=None)
-    """
-    True if the sync mode supports target filters.
-    """
+    label: typing.Optional[str] = None
+    requires_identity: typing.Optional[bool] = None
+    supports_field_sync_mode: typing.Optional[bool] = None
+    supports_target_filters: typing.Optional[bool] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

@@ -5,24 +5,18 @@ import typing
 
 from ..core.datetime_utils import serialize_datetime
 from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
-from .sync_mode import SyncMode
+from .supported_mode import SupportedMode
 
 
-class SupportedMode(pydantic_v1.BaseModel):
-    id: typing.Optional[SyncMode] = None
-    requires_identity: typing.Optional[bool] = pydantic_v1.Field(default=None)
+class TargetObject(pydantic_v1.BaseModel):
+    id: typing.Optional[str] = pydantic_v1.Field(default=None)
     """
-    True if the sync mode requires an identity field mapping.
-    """
-
-    supports_per_field_mode: typing.Optional[bool] = pydantic_v1.Field(default=None)
-    """
-    True if the target supports per-field sync modes.
+    The identifier of the target object.
     """
 
-    supports_target_filters: typing.Optional[bool] = pydantic_v1.Field(default=None)
+    modes: typing.Optional[typing.List[SupportedMode]] = pydantic_v1.Field(default=None)
     """
-    True if the sync mode supports target filters.
+    The supported sync modes and their properties for the target object.
     """
 
     def json(self, **kwargs: typing.Any) -> str:
