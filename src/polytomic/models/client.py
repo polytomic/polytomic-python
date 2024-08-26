@@ -15,6 +15,7 @@ from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
 from ..types.api_error import ApiError as types_api_error_ApiError
 from ..types.enrichment import Enrichment
+from ..types.get_model_sync_source_meta_envelope import GetModelSyncSourceMetaEnvelope
 from ..types.model_list_response_envelope import ModelListResponseEnvelope
 from ..types.model_model_field_request import ModelModelFieldRequest
 from ..types.model_relation import ModelRelation
@@ -31,6 +32,72 @@ OMIT = typing.cast(typing.Any, ...)
 class ModelsClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
+
+    def get_enrichment_source(
+        self,
+        id: str,
+        *,
+        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> GetModelSyncSourceMetaEnvelope:
+        """
+        Parameters
+        ----------
+        id : str
+
+        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetModelSyncSourceMetaEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic.client import Polytomic
+
+        client = Polytomic(
+            version="YOUR_VERSION",
+            token="YOUR_TOKEN",
+        )
+        client.models.get_enrichment_source(
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"api/connections/{jsonable_encoder(id)}/modelsync/enrichment-source",
+            method="GET",
+            params={"params": jsonable_encoder(params)},
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(GetModelSyncSourceMetaEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     def post(
         self,
@@ -652,6 +719,80 @@ class ModelsClient:
 class AsyncModelsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
+
+    async def get_enrichment_source(
+        self,
+        id: str,
+        *,
+        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> GetModelSyncSourceMetaEnvelope:
+        """
+        Parameters
+        ----------
+        id : str
+
+        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        GetModelSyncSourceMetaEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic.client import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            version="YOUR_VERSION",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.models.get_enrichment_source(
+                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"api/connections/{jsonable_encoder(id)}/modelsync/enrichment-source",
+            method="GET",
+            params={"params": jsonable_encoder(params)},
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return pydantic_v1.parse_obj_as(GetModelSyncSourceMetaEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     async def post(
         self,

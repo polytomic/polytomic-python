@@ -30,6 +30,7 @@ from ..types.rest_err_response import RestErrResponse
 from ..types.schedule import Schedule
 from ..types.schedule_option_response_envelope import ScheduleOptionResponseEnvelope
 from ..types.start_model_sync_response_envelope import StartModelSyncResponseEnvelope
+from ..types.sync_mode import SyncMode
 from ..types.sync_status_envelope import SyncStatusEnvelope
 from ..types.target import Target
 from ..types.target_response_envelope import TargetResponseEnvelope
@@ -365,10 +366,23 @@ class ModelSyncClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ListModelSyncResponseEnvelope:
+    def list(
+        self,
+        *,
+        active: typing.Optional[bool] = None,
+        mode: typing.Optional[SyncMode] = None,
+        target_connection_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ListModelSyncResponseEnvelope:
         """
         Parameters
         ----------
+        active : typing.Optional[bool]
+
+        mode : typing.Optional[SyncMode]
+
+        target_connection_id : typing.Optional[str]
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -385,14 +399,24 @@ class ModelSyncClient:
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        client.model_sync.list()
+        client.model_sync.list(
+            active=True,
+            target_connection_id="0b155265-c537-44c9-9359-a3ceb468a4da",
+        )
         """
         _response = self._client_wrapper.httpx_client.request(
-            "api/syncs", method="GET", request_options=request_options
+            "api/syncs",
+            method="GET",
+            params={"active": active, "mode": mode, "target_connection_id": target_connection_id},
+            request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 return pydantic_v1.parse_obj_as(ListModelSyncResponseEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
             if _response.status_code == 401:
                 raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
             if _response.status_code == 404:
@@ -1375,10 +1399,23 @@ class AsyncModelSyncClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ListModelSyncResponseEnvelope:
+    async def list(
+        self,
+        *,
+        active: typing.Optional[bool] = None,
+        mode: typing.Optional[SyncMode] = None,
+        target_connection_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ListModelSyncResponseEnvelope:
         """
         Parameters
         ----------
+        active : typing.Optional[bool]
+
+        mode : typing.Optional[SyncMode]
+
+        target_connection_id : typing.Optional[str]
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -1400,17 +1437,27 @@ class AsyncModelSyncClient:
 
 
         async def main() -> None:
-            await client.model_sync.list()
+            await client.model_sync.list(
+                active=True,
+                target_connection_id="0b155265-c537-44c9-9359-a3ceb468a4da",
+            )
 
 
         asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "api/syncs", method="GET", request_options=request_options
+            "api/syncs",
+            method="GET",
+            params={"active": active, "mode": mode, "target_connection_id": target_connection_id},
+            request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 return pydantic_v1.parse_obj_as(ListModelSyncResponseEnvelope, _response.json())  # type: ignore
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
             if _response.status_code == 401:
                 raise UnauthorizedError(pydantic_v1.parse_obj_as(RestErrResponse, _response.json()))  # type: ignore
             if _response.status_code == 404:

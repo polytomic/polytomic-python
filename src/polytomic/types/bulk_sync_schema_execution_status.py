@@ -21,6 +21,7 @@ class BulkSyncSchemaExecutionStatus(pydantic_v1.BaseModel):
     started_at: typing.Optional[dt.datetime] = None
     status: typing.Optional[BulkSchemaExecutionStatus] = None
     status_message: typing.Optional[str] = None
+    warning_count: typing.Optional[int] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

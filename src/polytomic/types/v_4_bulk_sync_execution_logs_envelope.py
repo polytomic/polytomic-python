@@ -5,24 +5,11 @@ import typing
 
 from ..core.datetime_utils import serialize_datetime
 from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
-from .pick_value import PickValue
-from .schema_association import SchemaAssociation
-from .types_type import TypesType
-from .util_field_type import UtilFieldType
+from .v_4_bulk_sync_execution_logs import V4BulkSyncExecutionLogs
 
 
-class SchemaField(pydantic_v1.BaseModel):
-    association: typing.Optional[SchemaAssociation] = None
-    id: typing.Optional[str] = None
-    name: typing.Optional[str] = None
-    remote_type: typing.Optional[str] = pydantic_v1.Field(default=None)
-    """
-    The type of the field from the remote system.
-    """
-
-    type: typing.Optional[UtilFieldType] = None
-    type_spec: typing.Optional[TypesType] = None
-    values: typing.Optional[typing.List[PickValue]] = None
+class V4BulkSyncExecutionLogsEnvelope(pydantic_v1.BaseModel):
+    data: typing.Optional[V4BulkSyncExecutionLogs] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

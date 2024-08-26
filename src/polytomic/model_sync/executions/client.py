@@ -17,6 +17,7 @@ from ...types.execution_logs_response_envelope import ExecutionLogsResponseEnvel
 from ...types.get_execution_response_envelope import GetExecutionResponseEnvelope
 from ...types.list_execution_response_envelope import ListExecutionResponseEnvelope
 from ...types.rest_err_response import RestErrResponse
+from ...types.v_2_execution_log_type import V2ExecutionLogType
 
 
 class ExecutionsClient:
@@ -123,7 +124,12 @@ class ExecutionsClient:
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     def get_log_urls(
-        self, sync_id: str, id: str, type: str, *, request_options: typing.Optional[RequestOptions] = None
+        self,
+        sync_id: str,
+        id: str,
+        type: V2ExecutionLogType,
+        *,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> ExecutionLogsResponseEnvelope:
         """
         Parameters
@@ -132,7 +138,7 @@ class ExecutionsClient:
 
         id : str
 
-        type : str
+        type : V2ExecutionLogType
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -187,7 +193,7 @@ class ExecutionsClient:
         self,
         sync_id: str,
         id: str,
-        type: str,
+        type: V2ExecutionLogType,
         filename: str,
         *,
         request_options: typing.Optional[RequestOptions] = None,
@@ -199,7 +205,7 @@ class ExecutionsClient:
 
         id : str
 
-        type : str
+        type : V2ExecutionLogType
 
         filename : str
 
@@ -220,7 +226,7 @@ class ExecutionsClient:
         )
         client.model_sync.executions.get_logs(
             sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="0ecd09c1-b901-4d27-9053-f0367c427254",
             type="records",
             filename="path/to/file.json",
         )
@@ -373,7 +379,12 @@ class AsyncExecutionsClient:
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     async def get_log_urls(
-        self, sync_id: str, id: str, type: str, *, request_options: typing.Optional[RequestOptions] = None
+        self,
+        sync_id: str,
+        id: str,
+        type: V2ExecutionLogType,
+        *,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> ExecutionLogsResponseEnvelope:
         """
         Parameters
@@ -382,7 +393,7 @@ class AsyncExecutionsClient:
 
         id : str
 
-        type : str
+        type : V2ExecutionLogType
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -445,7 +456,7 @@ class AsyncExecutionsClient:
         self,
         sync_id: str,
         id: str,
-        type: str,
+        type: V2ExecutionLogType,
         filename: str,
         *,
         request_options: typing.Optional[RequestOptions] = None,
@@ -457,7 +468,7 @@ class AsyncExecutionsClient:
 
         id : str
 
-        type : str
+        type : V2ExecutionLogType
 
         filename : str
 
@@ -483,7 +494,7 @@ class AsyncExecutionsClient:
         async def main() -> None:
             await client.model_sync.executions.get_logs(
                 sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="0ecd09c1-b901-4d27-9053-f0367c427254",
                 type="records",
                 filename="path/to/file.json",
             )

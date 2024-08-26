@@ -1,6 +1,6 @@
 # Reference
 ## BulkSync
-<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">list</a>()</code></summary>
+<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">list</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -19,7 +19,9 @@ client = Polytomic(
     version="YOUR_VERSION",
     token="YOUR_TOKEN",
 )
-client.bulk_sync.list()
+client.bulk_sync.list(
+    active=True,
+)
 
 ```
 </dd>
@@ -31,6 +33,14 @@ client.bulk_sync.list()
 
 <dl>
 <dd>
+
+<dl>
+<dd>
+
+**active:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
 
 <dl>
 <dd>
@@ -1060,6 +1070,146 @@ client.bulk_sync.executions.get(
 <dd>
 
 **exec_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.bulk_sync.executions.<a href="src/polytomic/bulk_sync/executions/client.py">get_logs</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic.client import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.bulk_sync.executions.get_logs(
+    sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sync_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**execution_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.bulk_sync.executions.<a href="src/polytomic/bulk_sync/executions/client.py">export_logs</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic.client import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.bulk_sync.executions.export_logs(
+    sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sync_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**execution_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**notify:** `typing.Optional[bool]` — Send a notification to the user when the logs are ready for download.
     
 </dd>
 </dl>
@@ -2113,6 +2263,882 @@ client.query_runner.get_query(
 </dl>
 </details>
 
+## Models
+<details><summary><code>client.models.<a href="src/polytomic/models/client.py">get_enrichment_source</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic.client import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.models.get_enrichment_source(
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**params:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.models.<a href="src/polytomic/models/client.py">post</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+For a given connection and enrichment configuration, provides the valid sets of input fields.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic.client import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.models.post(
+    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**connection_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**configuration:** `typing.Optional[V2EnricherConfiguration]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.models.<a href="src/polytomic/models/client.py">preview</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic.client import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.models.preview(
+    configuration={"table": "public.users"},
+    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    name="Users",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**configuration:** `typing.Dict[str, typing.Any]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**connection_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**async_:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**additional_fields:** `typing.Optional[typing.Sequence[ModelModelFieldRequest]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**enricher:** `typing.Optional[Enrichment]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**fields:** `typing.Optional[typing.Sequence[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**identifier:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**labels:** `typing.Optional[typing.Sequence[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**organization_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**policies:** `typing.Optional[typing.Sequence[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**relations:** `typing.Optional[typing.Sequence[ModelRelation]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**tracking_columns:** `typing.Optional[typing.Sequence[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.models.<a href="src/polytomic/models/client.py">list</a>()</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic.client import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.models.list()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.models.<a href="src/polytomic/models/client.py">create</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic.client import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.models.create(
+    configuration={"table": "public.users"},
+    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    name="Users",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**configuration:** `typing.Dict[str, typing.Any]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**connection_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**async_:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**additional_fields:** `typing.Optional[typing.Sequence[ModelModelFieldRequest]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**enricher:** `typing.Optional[Enrichment]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**fields:** `typing.Optional[typing.Sequence[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**identifier:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**labels:** `typing.Optional[typing.Sequence[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**organization_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**policies:** `typing.Optional[typing.Sequence[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**relations:** `typing.Optional[typing.Sequence[ModelRelation]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**tracking_columns:** `typing.Optional[typing.Sequence[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.models.<a href="src/polytomic/models/client.py">get</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic.client import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.models.get(
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**async_:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.models.<a href="src/polytomic/models/client.py">update</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic.client import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.models.update(
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    async_=False,
+    configuration={"table": "public.users"},
+    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    name="Users",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**configuration:** `typing.Dict[str, typing.Any]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**connection_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**async_:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**additional_fields:** `typing.Optional[typing.Sequence[ModelModelFieldRequest]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**enricher:** `typing.Optional[Enrichment]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**fields:** `typing.Optional[typing.Sequence[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**identifier:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**labels:** `typing.Optional[typing.Sequence[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**organization_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**policies:** `typing.Optional[typing.Sequence[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**relations:** `typing.Optional[typing.Sequence[ModelRelation]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**tracking_columns:** `typing.Optional[typing.Sequence[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.models.<a href="src/polytomic/models/client.py">remove</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic.client import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.models.remove(
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**async_:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.models.<a href="src/polytomic/models/client.py">sample</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns sample records from the model. The first ten records that the source provides will be returned after being enriched (if applicable). Synchronous requests must complete within 10s. If either querying or enrichment exceeds 10s, please use the async option.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic.client import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.models.sample(
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**async_:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## ModelSync
 <details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">get_source</a>(...)</code></summary>
 <dl>
@@ -2441,7 +3467,7 @@ client.model_sync.get_target_objects(
 </dl>
 </details>
 
-<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">list</a>()</code></summary>
+<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">list</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -2460,7 +3486,10 @@ client = Polytomic(
     version="YOUR_VERSION",
     token="YOUR_TOKEN",
 )
-client.model_sync.list()
+client.model_sync.list(
+    active=True,
+    target_connection_id="0b155265-c537-44c9-9359-a3ceb468a4da",
+)
 
 ```
 </dd>
@@ -2472,6 +3501,30 @@ client.model_sync.list()
 
 <dl>
 <dd>
+
+<dl>
+<dd>
+
+**active:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**mode:** `typing.Optional[SyncMode]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**target_connection_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
 
 <dl>
 <dd>
@@ -3460,817 +4513,6 @@ client.schemas.get_records(
 <dd>
 
 **schema_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## Models
-<details><summary><code>client.models.<a href="src/polytomic/models/client.py">post</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-For a given connection and enrichment configuration, provides the valid sets of input fields.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from polytomic.client import Polytomic
-
-client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
-)
-client.models.post(
-    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**connection_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**configuration:** `typing.Optional[V2EnricherConfiguration]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.models.<a href="src/polytomic/models/client.py">preview</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from polytomic.client import Polytomic
-
-client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
-)
-client.models.preview(
-    configuration={"table": "public.users"},
-    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    name="Users",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**configuration:** `typing.Dict[str, typing.Any]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**connection_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**async_:** `typing.Optional[bool]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**additional_fields:** `typing.Optional[typing.Sequence[ModelModelFieldRequest]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**enricher:** `typing.Optional[Enrichment]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**fields:** `typing.Optional[typing.Sequence[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**identifier:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**labels:** `typing.Optional[typing.Sequence[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**organization_id:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**policies:** `typing.Optional[typing.Sequence[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**relations:** `typing.Optional[typing.Sequence[ModelRelation]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**tracking_columns:** `typing.Optional[typing.Sequence[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.models.<a href="src/polytomic/models/client.py">list</a>()</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from polytomic.client import Polytomic
-
-client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
-)
-client.models.list()
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.models.<a href="src/polytomic/models/client.py">create</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from polytomic.client import Polytomic
-
-client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
-)
-client.models.create(
-    configuration={"table": "public.users"},
-    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    name="Users",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**configuration:** `typing.Dict[str, typing.Any]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**connection_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**async_:** `typing.Optional[bool]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**additional_fields:** `typing.Optional[typing.Sequence[ModelModelFieldRequest]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**enricher:** `typing.Optional[Enrichment]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**fields:** `typing.Optional[typing.Sequence[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**identifier:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**labels:** `typing.Optional[typing.Sequence[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**organization_id:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**policies:** `typing.Optional[typing.Sequence[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**relations:** `typing.Optional[typing.Sequence[ModelRelation]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**tracking_columns:** `typing.Optional[typing.Sequence[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.models.<a href="src/polytomic/models/client.py">get</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from polytomic.client import Polytomic
-
-client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
-)
-client.models.get(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**async_:** `typing.Optional[bool]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.models.<a href="src/polytomic/models/client.py">update</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from polytomic.client import Polytomic
-
-client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
-)
-client.models.update(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    async_=False,
-    configuration={"table": "public.users"},
-    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    name="Users",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**configuration:** `typing.Dict[str, typing.Any]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**connection_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**async_:** `typing.Optional[bool]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**additional_fields:** `typing.Optional[typing.Sequence[ModelModelFieldRequest]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**enricher:** `typing.Optional[Enrichment]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**fields:** `typing.Optional[typing.Sequence[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**identifier:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**labels:** `typing.Optional[typing.Sequence[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**organization_id:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**policies:** `typing.Optional[typing.Sequence[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**relations:** `typing.Optional[typing.Sequence[ModelRelation]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**tracking_columns:** `typing.Optional[typing.Sequence[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.models.<a href="src/polytomic/models/client.py">remove</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from polytomic.client import Polytomic
-
-client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
-)
-client.models.remove(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**async_:** `typing.Optional[bool]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.models.<a href="src/polytomic/models/client.py">sample</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Returns sample records from the model. The first ten records that the source provides will be returned after being enriched (if applicable). Synchronous requests must complete within 10s. If either querying or enrichment exceeds 10s, please use the async option.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from polytomic.client import Polytomic
-
-client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
-)
-client.models.sample(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**async_:** `typing.Optional[bool]` 
     
 </dd>
 </dl>
@@ -6310,7 +6552,7 @@ client.model_sync.executions.get_log_urls(
 <dl>
 <dd>
 
-**type:** `str` 
+**type:** `V2ExecutionLogType` 
     
 </dd>
 </dl>
@@ -6351,7 +6593,7 @@ client = Polytomic(
 )
 client.model_sync.executions.get_logs(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    id="0ecd09c1-b901-4d27-9053-f0367c427254",
     type="records",
     filename="path/to/file.json",
 )
@@ -6386,7 +6628,7 @@ client.model_sync.executions.get_logs(
 <dl>
 <dd>
 
-**type:** `str` 
+**type:** `V2ExecutionLogType` 
     
 </dd>
 </dl>

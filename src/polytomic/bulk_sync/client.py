@@ -41,10 +41,14 @@ class BulkSyncClient:
         self.executions = ExecutionsClient(client_wrapper=self._client_wrapper)
         self.schemas = SchemasClient(client_wrapper=self._client_wrapper)
 
-    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> BulkSyncListEnvelope:
+    def list(
+        self, *, active: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
+    ) -> BulkSyncListEnvelope:
         """
         Parameters
         ----------
+        active : typing.Optional[bool]
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -61,10 +65,12 @@ class BulkSyncClient:
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        client.bulk_sync.list()
+        client.bulk_sync.list(
+            active=True,
+        )
         """
         _response = self._client_wrapper.httpx_client.request(
-            "api/bulk/syncs", method="GET", request_options=request_options
+            "api/bulk/syncs", method="GET", params={"active": active}, request_options=request_options
         )
         try:
             if 200 <= _response.status_code < 300:
@@ -756,10 +762,14 @@ class AsyncBulkSyncClient:
         self.executions = AsyncExecutionsClient(client_wrapper=self._client_wrapper)
         self.schemas = AsyncSchemasClient(client_wrapper=self._client_wrapper)
 
-    async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> BulkSyncListEnvelope:
+    async def list(
+        self, *, active: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
+    ) -> BulkSyncListEnvelope:
         """
         Parameters
         ----------
+        active : typing.Optional[bool]
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -781,13 +791,15 @@ class AsyncBulkSyncClient:
 
 
         async def main() -> None:
-            await client.bulk_sync.list()
+            await client.bulk_sync.list(
+                active=True,
+            )
 
 
         asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "api/bulk/syncs", method="GET", request_options=request_options
+            "api/bulk/syncs", method="GET", params={"active": active}, request_options=request_options
         )
         try:
             if 200 <= _response.status_code < 300:
