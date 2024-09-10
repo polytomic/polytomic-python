@@ -2967,6 +2967,14 @@ client.models.update(
 <dl>
 <dd>
 
+**refresh:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **relations:** `typing.Optional[typing.Sequence[ModelRelation]]` 
     
 </dd>

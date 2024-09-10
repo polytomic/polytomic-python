@@ -496,6 +496,7 @@ class ModelsClient:
         labels: typing.Optional[typing.Sequence[str]] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
+        refresh: typing.Optional[bool] = OMIT,
         relations: typing.Optional[typing.Sequence[ModelRelation]] = OMIT,
         tracking_columns: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
@@ -526,6 +527,8 @@ class ModelsClient:
         organization_id : typing.Optional[str]
 
         policies : typing.Optional[typing.Sequence[str]]
+
+        refresh : typing.Optional[bool]
 
         relations : typing.Optional[typing.Sequence[ModelRelation]]
 
@@ -570,6 +573,7 @@ class ModelsClient:
                 "name": name,
                 "organization_id": organization_id,
                 "policies": policies,
+                "refresh": refresh,
                 "relations": relations,
                 "tracking_columns": tracking_columns,
             },
@@ -1231,6 +1235,7 @@ class AsyncModelsClient:
         labels: typing.Optional[typing.Sequence[str]] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
+        refresh: typing.Optional[bool] = OMIT,
         relations: typing.Optional[typing.Sequence[ModelRelation]] = OMIT,
         tracking_columns: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
@@ -1261,6 +1266,8 @@ class AsyncModelsClient:
         organization_id : typing.Optional[str]
 
         policies : typing.Optional[typing.Sequence[str]]
+
+        refresh : typing.Optional[bool]
 
         relations : typing.Optional[typing.Sequence[ModelRelation]]
 
@@ -1313,6 +1320,7 @@ class AsyncModelsClient:
                 "name": name,
                 "organization_id": organization_id,
                 "policies": policies,
+                "refresh": refresh,
                 "relations": relations,
                 "tracking_columns": tracking_columns,
             },
