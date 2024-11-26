@@ -8,8 +8,9 @@ from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
 
 
 class ApiError(pydantic_v1.BaseModel):
+    key: typing.Optional[str] = None
     message: typing.Optional[str] = None
-    metadata: typing.Optional[typing.Any] = None
+    metadata: typing.Optional[typing.Dict[str, typing.Any]] = None
     status: typing.Optional[int] = None
 
     def json(self, **kwargs: typing.Any) -> str:

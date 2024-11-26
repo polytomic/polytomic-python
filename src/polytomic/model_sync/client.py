@@ -9,6 +9,7 @@ from ..core.jsonable_encoder import jsonable_encoder
 from ..core.pydantic_utilities import pydantic_v1
 from ..core.request_options import RequestOptions
 from ..errors.bad_request_error import BadRequestError
+from ..errors.conflict_error import ConflictError
 from ..errors.forbidden_error import ForbiddenError
 from ..errors.internal_server_error import InternalServerError
 from ..errors.not_found_error import NotFoundError
@@ -113,12 +114,18 @@ class ModelSyncClient:
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     def get_source_fields(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self,
+        id: str,
+        *,
+        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> ModelFieldResponse:
         """
         Parameters
         ----------
         id : str
+
+        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -143,6 +150,7 @@ class ModelSyncClient:
         _response = self._client_wrapper.httpx_client.request(
             f"api/connections/{jsonable_encoder(id)}/modelsync/source/fields",
             method="GET",
+            params={"params": jsonable_encoder(params)},
             request_options=request_options,
         )
         try:
@@ -977,6 +985,10 @@ class ModelSyncClient:
                 raise NotFoundError(
                     pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
             if _response.status_code == 500:
                 raise InternalServerError(
                     pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
@@ -1114,12 +1126,18 @@ class AsyncModelSyncClient:
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     async def get_source_fields(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self,
+        id: str,
+        *,
+        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> ModelFieldResponse:
         """
         Parameters
         ----------
         id : str
+
+        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1152,6 +1170,7 @@ class AsyncModelSyncClient:
         _response = await self._client_wrapper.httpx_client.request(
             f"api/connections/{jsonable_encoder(id)}/modelsync/source/fields",
             method="GET",
+            params={"params": jsonable_encoder(params)},
             request_options=request_options,
         )
         try:
@@ -2074,6 +2093,10 @@ class AsyncModelSyncClient:
                 )
             if _response.status_code == 404:
                 raise NotFoundError(
+                    pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
                     pydantic_v1.parse_obj_as(types_api_error_ApiError, _response.json())  # type: ignore
                 )
             if _response.status_code == 500:

@@ -19,6 +19,10 @@ class Schedule(pydantic_v1.BaseModel):
     minute: typing.Optional[str] = None
     month: typing.Optional[str] = None
     run_after: typing.Optional[RunAfter] = None
+    run_after_success_only: typing.Optional[bool] = pydantic_v1.Field(default=None)
+    """
+    If true, the sync will only run if the dependent syncs completed successfully.
+    """
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

@@ -5,6 +5,7 @@ import typing
 
 from ..core.datetime_utils import serialize_datetime
 from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
+from .common_output_actor import CommonOutputActor
 from .filter import Filter
 from .identity import Identity
 from .model_sync_field import ModelSyncField
@@ -15,6 +16,8 @@ from .target import Target
 
 class ModelSyncResponse(pydantic_v1.BaseModel):
     active: typing.Optional[bool] = None
+    created_at: typing.Optional[dt.datetime] = None
+    created_by: typing.Optional[CommonOutputActor] = None
     fields: typing.Optional[typing.List[ModelSyncField]] = None
     filter_logic: typing.Optional[str] = None
     filters: typing.Optional[typing.List[Filter]] = None
@@ -29,6 +32,8 @@ class ModelSyncResponse(pydantic_v1.BaseModel):
     schedule: typing.Optional[Schedule] = None
     sync_all_records: typing.Optional[bool] = None
     target: typing.Optional[Target] = None
+    updated_at: typing.Optional[dt.datetime] = None
+    updated_by: typing.Optional[CommonOutputActor] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

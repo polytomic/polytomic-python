@@ -10,6 +10,12 @@ from .v_2_schema_configuration_fields_item import V2SchemaConfigurationFieldsIte
 
 
 class SchemaConfiguration(pydantic_v1.BaseModel):
+    data_cutoff_timestamp: typing.Optional[dt.datetime] = None
+    disable_data_cutoff: typing.Optional[bool] = pydantic_v1.Field(default=None)
+    """
+    Whether data cutoff is disabled for this schema.
+    """
+
     enabled: typing.Optional[bool] = pydantic_v1.Field(default=None)
     """
     Whether the schema is enabled for syncing.
@@ -18,8 +24,8 @@ class SchemaConfiguration(pydantic_v1.BaseModel):
     fields: typing.Optional[typing.List[V2SchemaConfigurationFieldsItem]] = None
     filters: typing.Optional[typing.List[BulkFilter]] = None
     id: typing.Optional[str] = None
-    partition_key: typing.Optional[str] = pydantic_v1.Field(alias="partitionKey", default=None)
-    tracking_field: typing.Optional[str] = pydantic_v1.Field(alias="trackingField", default=None)
+    partition_key: typing.Optional[str] = None
+    tracking_field: typing.Optional[str] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}
@@ -36,7 +42,5 @@ class SchemaConfiguration(pydantic_v1.BaseModel):
     class Config:
         frozen = True
         smart_union = True
-        allow_population_by_field_name = True
-        populate_by_name = True
         extra = pydantic_v1.Extra.allow
         json_encoders = {dt.datetime: serialize_datetime}

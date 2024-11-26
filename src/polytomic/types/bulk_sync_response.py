@@ -5,18 +5,27 @@ import typing
 
 from ..core.datetime_utils import serialize_datetime
 from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
+from .bulk_discover import BulkDiscover
 from .bulk_schedule import BulkSchedule
 
 
 class BulkSyncResponse(pydantic_v1.BaseModel):
     active: typing.Optional[bool] = None
+    automatically_add_new_fields: typing.Optional[BulkDiscover] = None
+    automatically_add_new_objects: typing.Optional[BulkDiscover] = None
+    data_cutoff_timestamp: typing.Optional[dt.datetime] = None
     destination_configuration: typing.Optional[typing.Dict[str, typing.Any]] = pydantic_v1.Field(default=None)
     """
     Destination-specific bulk sync configuration. e.g. output schema name, s3 file format, etc.
     """
 
     destination_connection_id: typing.Optional[str] = None
-    discover: typing.Optional[bool] = None
+    disable_record_timestamps: typing.Optional[bool] = None
+    discover: typing.Optional[bool] = pydantic_v1.Field(default=None)
+    """
+    DEPRECATED: Use automatically_add_new_objects/automatically_add_new_fields instead
+    """
+
     id: typing.Optional[str] = None
     mode: typing.Optional[str] = None
     name: typing.Optional[str] = pydantic_v1.Field(default=None)

@@ -156,6 +156,14 @@ client.bulk_sync.create(
 <dl>
 <dd>
 
+**data_cutoff_timestamp:** `typing.Optional[dt.datetime]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **destination_configuration:** `typing.Optional[typing.Dict[str, typing.Any]]` 
     
 </dd>
@@ -415,6 +423,14 @@ client.bulk_sync.update(
 <dd>
 
 **automatically_add_new_objects:** `typing.Optional[BulkDiscover]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**data_cutoff_timestamp:** `typing.Optional[dt.datetime]` 
     
 </dd>
 </dl>
@@ -1473,6 +1489,22 @@ client.bulk_sync.schemas.update(
 <dd>
 
 **schema_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**data_cutoff_timestamp:** `typing.Optional[dt.datetime]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**disable_data_cutoff:** `typing.Optional[bool]` 
     
 </dd>
 </dl>
@@ -3251,6 +3283,14 @@ client.model_sync.get_source_fields(
 <dd>
 
 **id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**params:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]` 
     
 </dd>
 </dl>

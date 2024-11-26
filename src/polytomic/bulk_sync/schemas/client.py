@@ -1,5 +1,6 @@
 # This file was auto-generated from our API Definition.
 
+import datetime as dt
 import typing
 from json.decoder import JSONDecodeError
 
@@ -205,6 +206,8 @@ class SchemasClient:
         id: str,
         schema_id: str,
         *,
+        data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
+        disable_data_cutoff: typing.Optional[bool] = OMIT,
         enabled: typing.Optional[bool] = OMIT,
         fields: typing.Optional[typing.Sequence[BulkField]] = OMIT,
         filters: typing.Optional[typing.Sequence[BulkFilter]] = OMIT,
@@ -217,6 +220,10 @@ class SchemasClient:
         id : str
 
         schema_id : str
+
+        data_cutoff_timestamp : typing.Optional[dt.datetime]
+
+        disable_data_cutoff : typing.Optional[bool]
 
         enabled : typing.Optional[bool]
 
@@ -250,7 +257,14 @@ class SchemasClient:
         _response = self._client_wrapper.httpx_client.request(
             f"api/bulk/syncs/{jsonable_encoder(id)}/schemas/{jsonable_encoder(schema_id)}",
             method="PUT",
-            json={"enabled": enabled, "fields": fields, "filters": filters, "partition_key": partition_key},
+            json={
+                "data_cutoff_timestamp": data_cutoff_timestamp,
+                "disable_data_cutoff": disable_data_cutoff,
+                "enabled": enabled,
+                "fields": fields,
+                "filters": filters,
+                "partition_key": partition_key,
+            },
             request_options=request_options,
             omit=OMIT,
         )
@@ -481,6 +495,8 @@ class AsyncSchemasClient:
         id: str,
         schema_id: str,
         *,
+        data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
+        disable_data_cutoff: typing.Optional[bool] = OMIT,
         enabled: typing.Optional[bool] = OMIT,
         fields: typing.Optional[typing.Sequence[BulkField]] = OMIT,
         filters: typing.Optional[typing.Sequence[BulkFilter]] = OMIT,
@@ -493,6 +509,10 @@ class AsyncSchemasClient:
         id : str
 
         schema_id : str
+
+        data_cutoff_timestamp : typing.Optional[dt.datetime]
+
+        disable_data_cutoff : typing.Optional[bool]
 
         enabled : typing.Optional[bool]
 
@@ -534,7 +554,14 @@ class AsyncSchemasClient:
         _response = await self._client_wrapper.httpx_client.request(
             f"api/bulk/syncs/{jsonable_encoder(id)}/schemas/{jsonable_encoder(schema_id)}",
             method="PUT",
-            json={"enabled": enabled, "fields": fields, "filters": filters, "partition_key": partition_key},
+            json={
+                "data_cutoff_timestamp": data_cutoff_timestamp,
+                "disable_data_cutoff": disable_data_cutoff,
+                "enabled": enabled,
+                "fields": fields,
+                "filters": filters,
+                "partition_key": partition_key,
+            },
             request_options=request_options,
             omit=OMIT,
         )

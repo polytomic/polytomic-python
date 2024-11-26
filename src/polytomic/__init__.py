@@ -40,6 +40,7 @@ from .types import (
     BulkSyncSourceStatusEnvelope,
     BulkSyncStatusEnvelope,
     BulkSyncStatusResponse,
+    CommonOutputActor,
     ConfigurationValue,
     ConnectCardResponse,
     ConnectCardResponseEnvelope,
@@ -176,6 +177,7 @@ from .types import (
 )
 from .errors import (
     BadRequestError,
+    ConflictError,
     ForbiddenError,
     InternalServerError,
     NotFoundError,
@@ -242,7 +244,9 @@ __all__ = [
     "BulkSyncSourceStatusEnvelope",
     "BulkSyncStatusEnvelope",
     "BulkSyncStatusResponse",
+    "CommonOutputActor",
     "ConfigurationValue",
+    "ConflictError",
     "ConnectCardResponse",
     "ConnectCardResponseEnvelope",
     "ConnectionListResponseEnvelope",

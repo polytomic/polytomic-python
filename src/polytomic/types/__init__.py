@@ -40,6 +40,7 @@ from .bulk_sync_source_status import BulkSyncSourceStatus
 from .bulk_sync_source_status_envelope import BulkSyncSourceStatusEnvelope
 from .bulk_sync_status_envelope import BulkSyncStatusEnvelope
 from .bulk_sync_status_response import BulkSyncStatusResponse
+from .common_output_actor import CommonOutputActor
 from .configuration_value import ConfigurationValue
 from .connect_card_response import ConnectCardResponse
 from .connect_card_response_envelope import ConnectCardResponseEnvelope
@@ -213,6 +214,7 @@ __all__ = [
     "BulkSyncSourceStatusEnvelope",
     "BulkSyncStatusEnvelope",
     "BulkSyncStatusResponse",
+    "CommonOutputActor",
     "ConfigurationValue",
     "ConnectCardResponse",
     "ConnectCardResponseEnvelope",

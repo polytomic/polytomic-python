@@ -5,20 +5,12 @@ import typing
 
 from ..core.datetime_utils import serialize_datetime
 from ..core.pydantic_utilities import deep_union_pydantic_dicts, pydantic_v1
-from .bulk_field import BulkField
-from .bulk_filter import BulkFilter
 
 
-class BulkSchema(pydantic_v1.BaseModel):
-    data_cutoff_timestamp: typing.Optional[dt.datetime] = None
-    disable_data_cutoff: typing.Optional[bool] = None
-    enabled: typing.Optional[bool] = None
-    fields: typing.Optional[typing.List[BulkField]] = None
-    filters: typing.Optional[typing.List[BulkFilter]] = None
+class CommonOutputActor(pydantic_v1.BaseModel):
     id: typing.Optional[str] = None
-    output_name: typing.Optional[str] = None
-    partition_key: typing.Optional[str] = None
-    tracking_field: typing.Optional[str] = None
+    name: typing.Optional[str] = None
+    type: typing.Optional[str] = None
 
     def json(self, **kwargs: typing.Any) -> str:
         kwargs_with_defaults: typing.Any = {"by_alias": True, "exclude_unset": True, **kwargs}

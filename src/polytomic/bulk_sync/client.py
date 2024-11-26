@@ -1,5 +1,6 @@
 # This file was auto-generated from our API Definition.
 
+import datetime as dt
 import typing
 from json.decoder import JSONDecodeError
 
@@ -96,6 +97,7 @@ class BulkSyncClient:
         active: typing.Optional[bool] = OMIT,
         automatically_add_new_fields: typing.Optional[BulkDiscover] = OMIT,
         automatically_add_new_objects: typing.Optional[BulkDiscover] = OMIT,
+        data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
         destination_configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
         discover: typing.Optional[bool] = OMIT,
@@ -122,6 +124,8 @@ class BulkSyncClient:
         automatically_add_new_fields : typing.Optional[BulkDiscover]
 
         automatically_add_new_objects : typing.Optional[BulkDiscover]
+
+        data_cutoff_timestamp : typing.Optional[dt.datetime]
 
         destination_configuration : typing.Optional[typing.Dict[str, typing.Any]]
 
@@ -174,6 +178,7 @@ class BulkSyncClient:
                 "active": active,
                 "automatically_add_new_fields": automatically_add_new_fields,
                 "automatically_add_new_objects": automatically_add_new_objects,
+                "data_cutoff_timestamp": data_cutoff_timestamp,
                 "destination_configuration": destination_configuration,
                 "destination_connection_id": destination_connection_id,
                 "disable_record_timestamps": disable_record_timestamps,
@@ -282,6 +287,7 @@ class BulkSyncClient:
         active: typing.Optional[bool] = OMIT,
         automatically_add_new_fields: typing.Optional[BulkDiscover] = OMIT,
         automatically_add_new_objects: typing.Optional[BulkDiscover] = OMIT,
+        data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
         destination_configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
         discover: typing.Optional[bool] = OMIT,
@@ -314,6 +320,8 @@ class BulkSyncClient:
         automatically_add_new_fields : typing.Optional[BulkDiscover]
 
         automatically_add_new_objects : typing.Optional[BulkDiscover]
+
+        data_cutoff_timestamp : typing.Optional[dt.datetime]
 
         destination_configuration : typing.Optional[typing.Dict[str, typing.Any]]
 
@@ -367,6 +375,7 @@ class BulkSyncClient:
                 "active": active,
                 "automatically_add_new_fields": automatically_add_new_fields,
                 "automatically_add_new_objects": automatically_add_new_objects,
+                "data_cutoff_timestamp": data_cutoff_timestamp,
                 "destination_configuration": destination_configuration,
                 "destination_connection_id": destination_connection_id,
                 "disable_record_timestamps": disable_record_timestamps,
@@ -825,6 +834,7 @@ class AsyncBulkSyncClient:
         active: typing.Optional[bool] = OMIT,
         automatically_add_new_fields: typing.Optional[BulkDiscover] = OMIT,
         automatically_add_new_objects: typing.Optional[BulkDiscover] = OMIT,
+        data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
         destination_configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
         discover: typing.Optional[bool] = OMIT,
@@ -851,6 +861,8 @@ class AsyncBulkSyncClient:
         automatically_add_new_fields : typing.Optional[BulkDiscover]
 
         automatically_add_new_objects : typing.Optional[BulkDiscover]
+
+        data_cutoff_timestamp : typing.Optional[dt.datetime]
 
         destination_configuration : typing.Optional[typing.Dict[str, typing.Any]]
 
@@ -911,6 +923,7 @@ class AsyncBulkSyncClient:
                 "active": active,
                 "automatically_add_new_fields": automatically_add_new_fields,
                 "automatically_add_new_objects": automatically_add_new_objects,
+                "data_cutoff_timestamp": data_cutoff_timestamp,
                 "destination_configuration": destination_configuration,
                 "destination_connection_id": destination_connection_id,
                 "disable_record_timestamps": disable_record_timestamps,
@@ -1027,6 +1040,7 @@ class AsyncBulkSyncClient:
         active: typing.Optional[bool] = OMIT,
         automatically_add_new_fields: typing.Optional[BulkDiscover] = OMIT,
         automatically_add_new_objects: typing.Optional[BulkDiscover] = OMIT,
+        data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
         destination_configuration: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
         discover: typing.Optional[bool] = OMIT,
@@ -1059,6 +1073,8 @@ class AsyncBulkSyncClient:
         automatically_add_new_fields : typing.Optional[BulkDiscover]
 
         automatically_add_new_objects : typing.Optional[BulkDiscover]
+
+        data_cutoff_timestamp : typing.Optional[dt.datetime]
 
         destination_configuration : typing.Optional[typing.Dict[str, typing.Any]]
 
@@ -1120,6 +1136,7 @@ class AsyncBulkSyncClient:
                 "active": active,
                 "automatically_add_new_fields": automatically_add_new_fields,
                 "automatically_add_new_objects": automatically_add_new_objects,
+                "data_cutoff_timestamp": data_cutoff_timestamp,
                 "destination_configuration": destination_configuration,
                 "destination_connection_id": destination_connection_id,
                 "disable_record_timestamps": disable_record_timestamps,

@@ -26,6 +26,8 @@ FilterFunction = typing.Union[
         "ArrayContains",
         "ArrayDoesNotContain",
         "InTheLast",
+        "RelativeOnOrBefore",
+        "RelativeOnOrAfter",
         "StringLike",
         "StringNotLike",
         "StringMatchesTrimmed",
