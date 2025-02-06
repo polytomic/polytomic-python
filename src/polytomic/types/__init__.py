@@ -9,6 +9,7 @@ from .api_key_response import ApiKeyResponse
 from .api_key_response_envelope import ApiKeyResponseEnvelope
 from .bulk_discover import BulkDiscover
 from .bulk_execution_status import BulkExecutionStatus
+from .bulk_fetch_mode import BulkFetchMode
 from .bulk_field import BulkField
 from .bulk_filter import BulkFilter
 from .bulk_itemized_schedule import BulkItemizedSchedule
@@ -81,7 +82,9 @@ from .identity import Identity
 from .identity_function import IdentityFunction
 from .job_response import JobResponse
 from .job_response_envelope import JobResponseEnvelope
+from .jsonschema_definitions import JsonschemaDefinitions
 from .jsonschema_form import JsonschemaForm
+from .jsonschema_schema import JsonschemaSchema
 from .label_label import LabelLabel
 from .list_bulk_schema import ListBulkSchema
 from .list_bulk_sync_execution_status_envelope import ListBulkSyncExecutionStatusEnvelope
@@ -159,6 +162,9 @@ from .v_2_enricher_configuration import V2EnricherConfiguration
 from .v_2_enricher_mapping import V2EnricherMapping
 from .v_2_execution_log_type import V2ExecutionLogType
 from .v_2_get_enrichment_input_fields_response_envelope import V2GetEnrichmentInputFieldsResponseEnvelope
+from .v_2_ordered_map_string_github_com_invopop_jsonschema_schema import (
+    V2OrderedMapStringGithubComInvopopJsonschemaSchema,
+)
 from .v_2_sample_record import V2SampleRecord
 from .v_2_schema_configuration_fields_item import V2SchemaConfigurationFieldsItem
 from .v_4_bulk_sync_execution_logs import V4BulkSyncExecutionLogs
@@ -183,6 +189,7 @@ __all__ = [
     "ApiKeyResponseEnvelope",
     "BulkDiscover",
     "BulkExecutionStatus",
+    "BulkFetchMode",
     "BulkField",
     "BulkFilter",
     "BulkItemizedSchedule",
@@ -255,7 +262,9 @@ __all__ = [
     "IdentityFunction",
     "JobResponse",
     "JobResponseEnvelope",
+    "JsonschemaDefinitions",
     "JsonschemaForm",
+    "JsonschemaSchema",
     "LabelLabel",
     "ListBulkSchema",
     "ListBulkSyncExecutionStatusEnvelope",
@@ -334,6 +343,7 @@ __all__ = [
     "V2EnricherMapping",
     "V2ExecutionLogType",
     "V2GetEnrichmentInputFieldsResponseEnvelope",
+    "V2OrderedMapStringGithubComInvopopJsonschemaSchema",
     "V2SampleRecord",
     "V2SchemaConfigurationFieldsItem",
     "V4BulkSyncExecutionLogs",
