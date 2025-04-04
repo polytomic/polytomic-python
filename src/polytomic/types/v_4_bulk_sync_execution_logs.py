@@ -2,4 +2,4 @@
 
 import typing
 
-V4BulkSyncExecutionLogs = typing.Dict[str, typing.Any]
+V4BulkSyncExecutionLogs = typing.Dict[str, typing.Optional[typing.Any]]

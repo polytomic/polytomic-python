@@ -2,4 +2,4 @@
 
 import typing
 
-LabelLabel = typing.Dict[str, typing.Any]
+LabelLabel = typing.Dict[str, typing.Optional[typing.Any]]

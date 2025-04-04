@@ -2,4 +2,4 @@
 
 import typing
 
-V2SampleRecord = typing.Dict[str, typing.Dict[str, typing.Any]]
+V2SampleRecord = typing.Dict[str, typing.Dict[str, typing.Optional[typing.Any]]]

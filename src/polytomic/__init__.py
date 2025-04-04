@@ -204,6 +204,7 @@ from . import (
     webhooks,
 )
 from .bulk_sync import V2CreateBulkSyncRequestSchemasItem, V2UpdateBulkSyncRequestSchemasItem
+from .client import AsyncPolytomic, Polytomic
 from .environment import PolytomicEnvironment
 from .version import __version__
 
@@ -214,6 +215,7 @@ __all__ = [
     "ApiError",
     "ApiKeyResponse",
     "ApiKeyResponseEnvelope",
+    "AsyncPolytomic",
     "BadRequestError",
     "BulkDiscover",
     "BulkExecutionStatus",
@@ -329,6 +331,7 @@ __all__ = [
     "PolicyAction",
     "PolicyResponse",
     "PolicyResponseEnvelope",
+    "Polytomic",
     "PolytomicEnvironment",
     "Relation",
     "RelationTo",
