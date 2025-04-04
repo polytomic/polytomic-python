@@ -2,4 +2,4 @@
 
 import typing
 
-V2EnricherConfiguration = typing.Dict[str, typing.Any]
+V2EnricherConfiguration = typing.Dict[str, typing.Optional[typing.Any]]

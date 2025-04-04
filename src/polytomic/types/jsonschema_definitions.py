@@ -2,6 +2,6 @@
 
 import typing
 
-from .jsonschema_schema import JsonschemaSchema
+JsonschemaDefinitions = typing.Dict[str, "JsonschemaSchema"]
 
-JsonschemaDefinitions = typing.Dict[str, JsonschemaSchema]
+from .jsonschema_schema import JsonschemaSchema

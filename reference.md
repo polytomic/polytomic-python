@@ -13,7 +13,7 @@
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -70,8 +70,7 @@ client.bulk_sync.list(
 <dd>
 
 ```python
-from polytomic import BulkSchedule
-from polytomic.client import Polytomic
+from polytomic import BulkSchedule, Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -164,7 +163,7 @@ client.bulk_sync.create(
 <dl>
 <dd>
 
-**destination_configuration:** `typing.Optional[typing.Dict[str, typing.Any]]` 
+**destination_configuration:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` 
     
 </dd>
 </dl>
@@ -220,7 +219,7 @@ client.bulk_sync.create(
 <dl>
 <dd>
 
-**source_configuration:** `typing.Optional[typing.Dict[str, typing.Any]]` 
+**source_configuration:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` 
     
 </dd>
 </dl>
@@ -253,7 +252,7 @@ client.bulk_sync.create(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -335,8 +334,7 @@ client.bulk_sync.get(
 <dd>
 
 ```python
-from polytomic import BulkSchedule
-from polytomic.client import Polytomic
+from polytomic import BulkSchedule, Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -438,7 +436,7 @@ client.bulk_sync.update(
 <dl>
 <dd>
 
-**destination_configuration:** `typing.Optional[typing.Dict[str, typing.Any]]` 
+**destination_configuration:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` 
     
 </dd>
 </dl>
@@ -494,7 +492,7 @@ client.bulk_sync.update(
 <dl>
 <dd>
 
-**source_configuration:** `typing.Optional[typing.Dict[str, typing.Any]]` 
+**source_configuration:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` 
     
 </dd>
 </dl>
@@ -527,7 +525,7 @@ client.bulk_sync.update(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -593,7 +591,7 @@ client.bulk_sync.remove(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -659,7 +657,7 @@ client.bulk_sync.activate(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -748,7 +746,7 @@ client.bulk_sync.start(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -805,7 +803,7 @@ client.bulk_sync.get_status(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -871,7 +869,7 @@ client.bulk_sync.get_source(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -929,7 +927,7 @@ client.bulk_sync.get_destination(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -976,7 +974,7 @@ client.connections.get_types()
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -1033,7 +1031,7 @@ client.connections.get_connection_type_schema(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -1080,7 +1078,7 @@ client.connections.list()
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -1112,7 +1110,7 @@ client.connections.create(
 <dl>
 <dd>
 
-**configuration:** `typing.Dict[str, typing.Any]` 
+**configuration:** `typing.Dict[str, typing.Optional[typing.Any]]` 
     
 </dd>
 </dl>
@@ -1193,7 +1191,7 @@ client.connections.create(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -1218,7 +1216,7 @@ client.connections.connect(
 <dl>
 <dd>
 
-**name:** `str` 
+**name:** `str` — Name of the new connection.
     
 </dd>
 </dl>
@@ -1226,7 +1224,7 @@ client.connections.connect(
 <dl>
 <dd>
 
-**redirect_url:** `str` 
+**redirect_url:** `str` — URL to redirect to after connection is created.
     
 </dd>
 </dl>
@@ -1242,6 +1240,14 @@ client.connections.connect(
 <dl>
 <dd>
 
+**dark:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **organization_id:** `typing.Optional[str]` 
     
 </dd>
@@ -1250,7 +1256,7 @@ client.connections.connect(
 <dl>
 <dd>
 
-**type:** `typing.Optional[str]` 
+**type:** `typing.Optional[str]` — Connection type to create.
     
 </dd>
 </dl>
@@ -1258,7 +1264,7 @@ client.connections.connect(
 <dl>
 <dd>
 
-**whitelist:** `typing.Optional[typing.Sequence[str]]` 
+**whitelist:** `typing.Optional[typing.Sequence[str]]` — List of connection types which are allowed to be created. Ignored if type is set.
     
 </dd>
 </dl>
@@ -1291,7 +1297,7 @@ client.connections.connect(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -1348,7 +1354,7 @@ client.connections.get(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -1388,7 +1394,7 @@ client.connections.update(
 <dl>
 <dd>
 
-**configuration:** `typing.Dict[str, typing.Any]` 
+**configuration:** `typing.Dict[str, typing.Optional[typing.Any]]` 
     
 </dd>
 </dl>
@@ -1469,7 +1475,7 @@ client.connections.update(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -1535,7 +1541,7 @@ client.connections.remove(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -1593,7 +1599,7 @@ client.connections.get_parameter_values(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -1659,7 +1665,7 @@ client.query_runner.run_query(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -1725,7 +1731,7 @@ client.query_runner.get_query(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -1804,7 +1810,7 @@ For a given connection and enrichment configuration, provides the valid sets of 
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -1869,7 +1875,7 @@ client.models.post(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -1895,7 +1901,7 @@ client.models.preview(
 <dl>
 <dd>
 
-**configuration:** `typing.Dict[str, typing.Any]` 
+**configuration:** `typing.Dict[str, typing.Optional[typing.Any]]` 
     
 </dd>
 </dl>
@@ -2024,7 +2030,7 @@ client.models.preview(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -2071,7 +2077,7 @@ client.models.list()
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -2097,7 +2103,7 @@ client.models.create(
 <dl>
 <dd>
 
-**configuration:** `typing.Dict[str, typing.Any]` 
+**configuration:** `typing.Dict[str, typing.Optional[typing.Any]]` 
     
 </dd>
 </dl>
@@ -2226,7 +2232,7 @@ client.models.create(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -2291,7 +2297,7 @@ client.models.get(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -2327,7 +2333,7 @@ client.models.update(
 <dl>
 <dd>
 
-**configuration:** `typing.Dict[str, typing.Any]` 
+**configuration:** `typing.Dict[str, typing.Optional[typing.Any]]` 
     
 </dd>
 </dl>
@@ -2464,7 +2470,7 @@ client.models.update(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -2543,7 +2549,7 @@ Returns sample records from the model. The first ten records that the source pro
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -2609,7 +2615,7 @@ client.models.sample(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -2674,7 +2680,7 @@ client.model_sync.get_source(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -2739,7 +2745,7 @@ client.model_sync.get_source_fields(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -2812,7 +2818,7 @@ client.model_sync.get_target(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -2887,7 +2893,7 @@ client.model_sync.get_target_fields(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -2944,7 +2950,7 @@ client.model_sync.get_target_objects(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -3018,8 +3024,7 @@ client.model_sync.list(
 <dd>
 
 ```python
-from polytomic import ModelSyncField, Schedule, Target
-from polytomic.client import Polytomic
+from polytomic import ModelSyncField, Polytomic, Schedule, Target
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -3134,6 +3139,14 @@ client.model_sync.create(
 <dl>
 <dd>
 
+**only_enrich_updates:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **organization_id:** `typing.Optional[str]` 
     
 </dd>
@@ -3159,6 +3172,14 @@ client.model_sync.create(
 <dd>
 
 **policies:** `typing.Optional[typing.Sequence[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**skip_initial_backfill:** `typing.Optional[bool]` 
     
 </dd>
 </dl>
@@ -3199,7 +3220,7 @@ client.model_sync.create(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -3246,7 +3267,7 @@ client.model_sync.get_schedule_options()
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -3303,8 +3324,7 @@ client.model_sync.get(
 <dd>
 
 ```python
-from polytomic import ModelSyncField, Schedule, Target
-from polytomic.client import Polytomic
+from polytomic import ModelSyncField, Polytomic, Schedule, Target
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -3428,6 +3448,14 @@ client.model_sync.update(
 <dl>
 <dd>
 
+**only_enrich_updates:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **organization_id:** `typing.Optional[str]` 
     
 </dd>
@@ -3453,6 +3481,14 @@ client.model_sync.update(
 <dd>
 
 **policies:** `typing.Optional[typing.Sequence[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**skip_initial_backfill:** `typing.Optional[bool]` 
     
 </dd>
 </dl>
@@ -3493,7 +3529,7 @@ client.model_sync.update(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -3550,7 +3586,7 @@ client.model_sync.remove(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -3632,7 +3668,7 @@ client.model_sync.activate(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -3705,7 +3741,7 @@ client.model_sync.start(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -3763,7 +3799,7 @@ client.model_sync.get_status(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -3820,7 +3856,7 @@ client.schemas.refresh(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -3877,7 +3913,7 @@ client.schemas.get_status(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -3943,7 +3979,7 @@ client.schemas.get(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -4012,7 +4048,7 @@ client.schemas.get_records(
 ```python
 import datetime
 
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -4107,7 +4143,7 @@ client.events.list(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -4155,7 +4191,7 @@ client.events.get_types()
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -4222,7 +4258,7 @@ client.jobs.get(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -4286,7 +4322,7 @@ client.identity.get()
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -4349,7 +4385,7 @@ client.organization.list()
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -4462,7 +4498,7 @@ client.organization.create(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -4535,7 +4571,7 @@ client.organization.get(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -4657,7 +4693,7 @@ client.organization.update(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -4731,7 +4767,7 @@ client.organization.remove(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -4804,7 +4840,7 @@ client.users.list(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -4894,7 +4930,7 @@ client.users.create(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -4976,7 +5012,7 @@ client.users.get(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -5075,7 +5111,7 @@ client.users.update(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -5157,7 +5193,7 @@ client.users.remove(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -5251,7 +5287,7 @@ Consult the [Events documentation](https://apidocs.polytomic.com/getting-started
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -5316,7 +5352,7 @@ Consult the [Events documentation](https://apidocs.polytomic.com/getting-started
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -5408,7 +5444,7 @@ Consult the [Events documentation](https://apidocs.polytomic.com/getting-started
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -5483,7 +5519,7 @@ Consult the [Events documentation](https://apidocs.polytomic.com/getting-started
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -5566,7 +5602,7 @@ client.webhooks.update(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -5624,7 +5660,7 @@ client.webhooks.remove(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -5698,7 +5734,7 @@ client.bulk_sync.executions.list_status(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -5755,7 +5791,7 @@ client.bulk_sync.executions.list(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -5821,7 +5857,7 @@ client.bulk_sync.executions.get(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -5887,7 +5923,7 @@ client.bulk_sync.executions.get_logs(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -5962,7 +5998,7 @@ client.bulk_sync.executions.export_logs(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -6027,7 +6063,7 @@ client.bulk_sync.schemas.list(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -6092,7 +6128,7 @@ client.bulk_sync.schemas.patch(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -6158,7 +6194,7 @@ client.bulk_sync.schemas.get(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -6273,7 +6309,7 @@ client.bulk_sync.schemas.update(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -6330,7 +6366,7 @@ client.model_sync.executions.list(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -6396,7 +6432,7 @@ client.model_sync.executions.get(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -6471,7 +6507,7 @@ client.model_sync.executions.get_log_urls(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -6556,7 +6592,7 @@ client.model_sync.executions.get_logs(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -6603,7 +6639,7 @@ client.permissions.policies.list()
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -6676,7 +6712,7 @@ client.permissions.policies.create(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -6733,7 +6769,7 @@ client.permissions.policies.get(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -6815,7 +6851,7 @@ client.permissions.policies.update(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -6873,7 +6909,7 @@ client.permissions.policies.remove(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -6920,7 +6956,7 @@ client.permissions.roles.list()
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -6985,7 +7021,7 @@ client.permissions.roles.create(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -7042,7 +7078,7 @@ client.permissions.roles.get(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",
@@ -7116,7 +7152,7 @@ client.permissions.roles.update(
 <dd>
 
 ```python
-from polytomic.client import Polytomic
+from polytomic import Polytomic
 
 client = Polytomic(
     version="YOUR_VERSION",

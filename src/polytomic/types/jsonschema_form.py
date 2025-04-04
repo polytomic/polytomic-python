@@ -2,4 +2,4 @@
 
 import typing
 
-JsonschemaForm = typing.Dict[str, typing.Any]
+JsonschemaForm = typing.Dict[str, typing.Optional[typing.Any]]

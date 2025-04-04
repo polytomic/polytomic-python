@@ -2,4 +2,4 @@
 
 import typing
 
-TypesType = typing.Any
+TypesType = typing.Optional[typing.Any]

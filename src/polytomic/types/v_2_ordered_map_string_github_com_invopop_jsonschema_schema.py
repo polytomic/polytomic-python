@@ -2,4 +2,4 @@
 
 import typing
 
-V2OrderedMapStringGithubComInvopopJsonschemaSchema = typing.Dict[str, typing.Any]
+V2OrderedMapStringGithubComInvopopJsonschemaSchema = typing.Dict[str, typing.Optional[typing.Any]]
