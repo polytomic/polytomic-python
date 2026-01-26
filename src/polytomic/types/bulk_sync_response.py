@@ -6,8 +6,11 @@ from .bulk_multi_schedule_configuration import BulkMultiScheduleConfiguration
 from .bulk_schedule import BulkSchedule
 import typing
 from .bulk_discover import BulkDiscover
-import datetime as dt
 import pydantic
+import datetime as dt
+from .common_output_actor import CommonOutputActor
+from .bulk_sync_mode import BulkSyncMode
+from .bulk_normalize_names import BulkNormalizeNames
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
@@ -15,6 +18,13 @@ class BulkSyncResponse(UniversalBaseModel):
     active: typing.Optional[bool] = None
     automatically_add_new_fields: typing.Optional[BulkDiscover] = None
     automatically_add_new_objects: typing.Optional[BulkDiscover] = None
+    concurrency_limit: typing.Optional[int] = pydantic.Field(default=None)
+    """
+    Per-sync concurrency limit override.
+    """
+
+    created_at: typing.Optional[dt.datetime] = None
+    created_by: typing.Optional[CommonOutputActor] = None
     data_cutoff_timestamp: typing.Optional[dt.datetime] = None
     destination_configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = pydantic.Field(
         default=None
@@ -31,16 +41,22 @@ class BulkSyncResponse(UniversalBaseModel):
     """
 
     id: typing.Optional[str] = None
-    mode: typing.Optional[str] = None
+    mode: typing.Optional[BulkSyncMode] = None
     name: typing.Optional[str] = pydantic.Field(default=None)
     """
     Name of the bulk sync
     """
 
+    normalize_names: typing.Optional[BulkNormalizeNames] = None
     organization_id: typing.Optional[str] = None
     policies: typing.Optional[typing.List[str]] = pydantic.Field(default=None)
     """
     List of permissions policies applied to the bulk sync.
+    """
+
+    resync_concurrency_limit: typing.Optional[int] = pydantic.Field(default=None)
+    """
+    Per-sync resync concurrency limit override.
     """
 
     schedule: typing.Optional[BulkSchedule] = None
@@ -50,6 +66,8 @@ class BulkSyncResponse(UniversalBaseModel):
     """
 
     source_connection_id: typing.Optional[str] = None
+    updated_at: typing.Optional[dt.datetime] = None
+    updated_by: typing.Optional[CommonOutputActor] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

@@ -2,19 +2,47 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
+from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
 class GetIdentityResponseSchema(UniversalBaseModel):
-    email: typing.Optional[str] = None
-    id: typing.Optional[str] = None
-    is_organization: typing.Optional[bool] = None
-    is_partner: typing.Optional[bool] = None
+    email: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    The email of the caller.
+    """
+
+    id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    The ID of the caller; this will be omitted for non-user callers.
+    """
+
+    is_organization: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    Whether the caller is using an organization key.
+    """
+
+    is_partner: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    Whether the caller is using a partner key.
+    """
+
     is_system: typing.Optional[bool] = None
-    is_user: typing.Optional[bool] = None
-    organization_id: typing.Optional[str] = None
-    organization_name: typing.Optional[str] = None
+    is_user: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    Whether the caller is a user.
+    """
+
+    organization_id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    The ID of the organization the caller belongs to.
+    """
+
+    organization_name: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    The name of the organization the caller belongs to.
+    """
+
     role: typing.Optional[str] = None
 
     if IS_PYDANTIC_V2:

@@ -8,6 +8,11 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
 class ModelSyncField(UniversalBaseModel):
+    encryption_enabled: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    Whether the field should be encrypted.
+    """
+
     new: typing.Optional[bool] = pydantic.Field(default=None)
     """
     New is set to true if the target field should be created by Polytomic. This is not supported by all backends.

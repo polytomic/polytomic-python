@@ -11,6 +11,7 @@ class TargetField(UniversalBaseModel):
     association: typing.Optional[bool] = None
     createable: typing.Optional[bool] = None
     description: typing.Optional[str] = None
+    encryptable: typing.Optional[bool] = None
     filterable: typing.Optional[bool] = None
     id: typing.Optional[str] = None
     identity_functions: typing.Optional[typing.List[IdentityFunction]] = None

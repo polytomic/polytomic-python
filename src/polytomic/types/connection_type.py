@@ -3,17 +3,27 @@
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing_extensions
 import typing
+from .v_2_connection_form import V2ConnectionForm
 from ..core.serialization import FieldMetadata
+from .backend_o_auth_prompt import BackendOAuthPrompt
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
 class ConnectionType(UniversalBaseModel):
+    configuration_form: typing_extensions.Annotated[
+        typing.Optional[V2ConnectionForm], FieldMetadata(alias="configurationForm")
+    ] = None
     env_config: typing_extensions.Annotated[
         typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]], FieldMetadata(alias="envConfig")
     ] = None
     id: typing.Optional[str] = None
+    initial_configuration: typing_extensions.Annotated[
+        typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]], FieldMetadata(alias="initialConfiguration")
+    ] = None
+    logo_url: typing.Optional[str] = None
     name: typing.Optional[str] = None
+    oauth_prompt: typing.Optional[BackendOAuthPrompt] = None
     use_oauth: typing.Optional[bool] = None
 
     if IS_PYDANTIC_V2:

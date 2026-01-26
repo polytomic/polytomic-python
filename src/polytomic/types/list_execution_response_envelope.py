@@ -3,12 +3,14 @@
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 from .get_execution_response_schema import GetExecutionResponseSchema
+from .pagination_details import PaginationDetails
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
 class ListExecutionResponseEnvelope(UniversalBaseModel):
     data: typing.Optional[typing.List[GetExecutionResponseSchema]] = None
+    pagination: typing.Optional[PaginationDetails] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

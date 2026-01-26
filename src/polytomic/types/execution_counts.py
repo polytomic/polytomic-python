@@ -12,6 +12,8 @@ class ExecutionCounts(UniversalBaseModel):
     insert: typing.Optional[int] = None
     total: typing.Optional[int] = None
     update: typing.Optional[int] = None
+    upserts: typing.Optional[int] = None
+    warnings: typing.Optional[int] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

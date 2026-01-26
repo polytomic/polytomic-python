@@ -31,7 +31,7 @@ class WebhooksClient:
         webhook may be created per organization. The webhook will be called for events
         in that organization.
 
-        Consult the [Events documentation](https://apidocs.polytomic.com/getting-started/events) for more information.
+        Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
 
         Parameters
         ----------
@@ -105,7 +105,7 @@ class WebhooksClient:
         webhook may be created per organization. The webhook will be called for events
         in that organization.
 
-        Consult the [Events documentation](https://apidocs.polytomic.com/getting-started/events) for more information.
+        Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
 
         Parameters
         ----------
@@ -200,7 +200,7 @@ class WebhooksClient:
         webhook may be created per organization. The webhook will be called for events
         in that organization.
 
-        Consult the [Events documentation](https://apidocs.polytomic.com/getting-started/events) for more information.
+        Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
 
         Parameters
         ----------
@@ -279,7 +279,7 @@ class WebhooksClient:
         webhook may be created per organization. The webhook will be called for events
         in that organization.
 
-        Consult the [Events documentation](https://apidocs.polytomic.com/getting-started/events) for more information.
+        Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
 
         Parameters
         ----------
@@ -439,6 +439,156 @@ class WebhooksClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
+    def disable(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookEnvelope:
+        """
+        Parameters
+        ----------
+        id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        WebhookEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            version="YOUR_VERSION",
+            token="YOUR_TOKEN",
+        )
+        client.webhooks.disable(
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"api/webhooks/{jsonable_encoder(id)}/disable",
+            method="POST",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    WebhookEnvelope,
+                    parse_obj_as(
+                        type_=WebhookEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        RestErrResponse,
+                        parse_obj_as(
+                            type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
+    def enable(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookEnvelope:
+        """
+        Parameters
+        ----------
+        id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        WebhookEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            version="YOUR_VERSION",
+            token="YOUR_TOKEN",
+        )
+        client.webhooks.enable(
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"api/webhooks/{jsonable_encoder(id)}/enable",
+            method="POST",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    WebhookEnvelope,
+                    parse_obj_as(
+                        type_=WebhookEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        RestErrResponse,
+                        parse_obj_as(
+                            type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
 
 class AsyncWebhooksClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -450,7 +600,7 @@ class AsyncWebhooksClient:
         webhook may be created per organization. The webhook will be called for events
         in that organization.
 
-        Consult the [Events documentation](https://apidocs.polytomic.com/getting-started/events) for more information.
+        Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
 
         Parameters
         ----------
@@ -532,7 +682,7 @@ class AsyncWebhooksClient:
         webhook may be created per organization. The webhook will be called for events
         in that organization.
 
-        Consult the [Events documentation](https://apidocs.polytomic.com/getting-started/events) for more information.
+        Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
 
         Parameters
         ----------
@@ -635,7 +785,7 @@ class AsyncWebhooksClient:
         webhook may be created per organization. The webhook will be called for events
         in that organization.
 
-        Consult the [Events documentation](https://apidocs.polytomic.com/getting-started/events) for more information.
+        Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
 
         Parameters
         ----------
@@ -722,7 +872,7 @@ class AsyncWebhooksClient:
         webhook may be created per organization. The webhook will be called for events
         in that organization.
 
-        Consult the [Events documentation](https://apidocs.polytomic.com/getting-started/events) for more information.
+        Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
 
         Parameters
         ----------
@@ -863,6 +1013,172 @@ class AsyncWebhooksClient:
         try:
             if 200 <= _response.status_code < 300:
                 return
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        RestErrResponse,
+                        parse_obj_as(
+                            type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def disable(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookEnvelope:
+        """
+        Parameters
+        ----------
+        id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        WebhookEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            version="YOUR_VERSION",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.webhooks.disable(
+                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"api/webhooks/{jsonable_encoder(id)}/disable",
+            method="POST",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    WebhookEnvelope,
+                    parse_obj_as(
+                        type_=WebhookEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        RestErrResponse,
+                        parse_obj_as(
+                            type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def enable(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookEnvelope:
+        """
+        Parameters
+        ----------
+        id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        WebhookEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            version="YOUR_VERSION",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.webhooks.enable(
+                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"api/webhooks/{jsonable_encoder(id)}/enable",
+            method="POST",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    WebhookEnvelope,
+                    parse_obj_as(
+                        type_=WebhookEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
             if _response.status_code == 401:
                 raise UnauthorizedError(
                     typing.cast(

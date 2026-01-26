@@ -12,12 +12,15 @@ import pydantic
 
 class BulkSyncSchemaExecution(UniversalBaseModel):
     completed_at: typing.Optional[dt.datetime] = None
+    created_at: typing.Optional[dt.datetime] = None
     error_count: typing.Optional[int] = None
+    output_name: typing.Optional[str] = None
     record_count: typing.Optional[int] = None
     schema_: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="schema")] = None
     started_at: typing.Optional[dt.datetime] = None
     status: typing.Optional[BulkSchemaExecutionStatus] = None
     status_message: typing.Optional[str] = None
+    updated_at: typing.Optional[dt.datetime] = None
     warning_count: typing.Optional[int] = None
 
     if IS_PYDANTIC_V2:

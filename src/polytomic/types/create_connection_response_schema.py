@@ -19,10 +19,16 @@ class CreateConnectionResponseSchema(UniversalBaseModel):
     """
 
     configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = None
+    healthcheck_interval: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Interval for connection health checking.
+    """
+
     id: typing.Optional[str] = None
     name: typing.Optional[str] = None
     organization_id: typing.Optional[str] = None
     policies: typing.Optional[typing.List[str]] = None
+    saved: typing.Optional[bool] = None
     status: typing.Optional[str] = None
     status_error: typing.Optional[str] = None
     type: typing.Optional[ConnectionTypeSchema] = None

@@ -61,6 +61,45 @@ client.bulk_sync.list(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create a new Bulk Sync from a source to a destination (data warehouse, database, or cloud storage bucket like S3).
+
+Bulk Syncs are used for the ELT pattern (Extract, Load, and Transform), where you want to sync un-transformed data to your data warehouses, databases, or cloud storage buckets like S3.
+
+All of the functionality described in [the product
+documentation](https://docs.polytomic.com/docs/bulk-syncs) is configurable via
+the API.
+
+Sample code examples:
+
+- [Bulk sync (ELT) from Salesforce to S3](https://apidocs.polytomic.com/guides/code-examples/bulk-sync-elt-from-salesforce-to-s-3)
+- [Bulk sync (ELT) from Salesforce to Snowflake](https://apidocs.polytomic.com/guides/code-examples/bulk-sync-elt-from-salesforce-to-snowflake)
+- [Bulk sync (ELT) from HubSpot to PostgreSQL](https://apidocs.polytomic.com/guides/code-examples/bulk-sync-elt-from-hub-spot-to-postgre-sql)
+
+## Connection specific configuration
+
+The `destination_configuration` is integration-specific configuration for the
+selected bulk sync destination. This includes settings such as the output schema
+and is required when creating a new sync.
+
+The `source_configuration` is optional. It allows configuration for how
+Polytomic reads data from the source connection. This will not be available for
+integrations that do not support additional configuration.
+
+Consult the [connection configurations](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/overview)
+to see configurations for particular integrations (for example, [here](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/connections/postgre-sql#source-1) is the available source configuration for the PostgreSQL bulk sync source).
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -77,6 +116,7 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.bulk_sync.create(
+    destination_configuration={"schema": "my_schema"},
     destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     name="My Bulk Sync",
     schedule=BulkSchedule(
@@ -95,6 +135,14 @@ client.bulk_sync.create(
 
 <dl>
 <dd>
+
+<dl>
+<dd>
+
+**destination_configuration:** `typing.Dict[str, typing.Optional[typing.Any]]` 
+    
+</dd>
+</dl>
 
 <dl>
 <dd>
@@ -155,7 +203,7 @@ client.bulk_sync.create(
 <dl>
 <dd>
 
-**data_cutoff_timestamp:** `typing.Optional[dt.datetime]` 
+**concurrency_limit:** `typing.Optional[int]` — Override the default concurrency limit for this sync.
     
 </dd>
 </dl>
@@ -163,7 +211,7 @@ client.bulk_sync.create(
 <dl>
 <dd>
 
-**destination_configuration:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` 
+**data_cutoff_timestamp:** `typing.Optional[dt.datetime]` 
     
 </dd>
 </dl>
@@ -187,7 +235,15 @@ client.bulk_sync.create(
 <dl>
 <dd>
 
-**mode:** `typing.Optional[SyncMode]` 
+**mode:** `typing.Optional[BulkSyncMode]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**normalize_names:** `typing.Optional[BulkNormalizeNames]` 
     
 </dd>
 </dl>
@@ -204,6 +260,14 @@ client.bulk_sync.create(
 <dd>
 
 **policies:** `typing.Optional[typing.Sequence[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**resync_concurrency_limit:** `typing.Optional[int]` — Override the default resync concurrency limit for this sync.
     
 </dd>
 </dl>
@@ -342,6 +406,7 @@ client = Polytomic(
 )
 client.bulk_sync.update(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    destination_configuration={"schema": "my_schema"},
     destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     name="My Bulk Sync",
     schedule=BulkSchedule(
@@ -365,6 +430,14 @@ client.bulk_sync.update(
 <dd>
 
 **id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**destination_configuration:** `typing.Dict[str, typing.Optional[typing.Any]]` 
     
 </dd>
 </dl>
@@ -428,7 +501,7 @@ client.bulk_sync.update(
 <dl>
 <dd>
 
-**data_cutoff_timestamp:** `typing.Optional[dt.datetime]` 
+**concurrency_limit:** `typing.Optional[int]` — Override the default concurrency limit for this sync.
     
 </dd>
 </dl>
@@ -436,7 +509,7 @@ client.bulk_sync.update(
 <dl>
 <dd>
 
-**destination_configuration:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` 
+**data_cutoff_timestamp:** `typing.Optional[dt.datetime]` 
     
 </dd>
 </dl>
@@ -460,7 +533,15 @@ client.bulk_sync.update(
 <dl>
 <dd>
 
-**mode:** `typing.Optional[SyncMode]` 
+**mode:** `typing.Optional[BulkSyncMode]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**normalize_names:** `typing.Optional[BulkNormalizeNames]` 
     
 </dd>
 </dl>
@@ -477,6 +558,14 @@ client.bulk_sync.update(
 <dd>
 
 **policies:** `typing.Optional[typing.Sequence[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**resync_concurrency_limit:** `typing.Optional[int]` — Override the default resync concurrency limit for this sync.
     
 </dd>
 </dl>
@@ -1088,7 +1177,7 @@ client.connections.create(
     configuration={
         "database": "example",
         "hostname": "postgres.example.com",
-        "password": "password",
+        "password": "********",
         "port": 5432,
         "username": "user",
     },
@@ -1127,6 +1216,14 @@ client.connections.create(
 <dd>
 
 **type:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**healthcheck_interval:** `typing.Optional[str]` — Override interval for connection health checking.
     
 </dd>
 </dl>
@@ -1182,6 +1279,28 @@ client.connections.create(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Creates a new request for [Polytomic Connect](https://www.polytomic.com/connect).
+
+This endpoint configures a Polytomic Connect request and returns the URL to
+redirect users to. This allows embedding Polytomic connection authorization in
+other applications.
+
+See also:
+
+- [Embedding authentication](https://apidocs.polytomic.com/2024-02-08/guides/embedding-authentication), a guide to using Polytomic Connect.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -1216,7 +1335,7 @@ client.connections.connect(
 <dl>
 <dd>
 
-**name:** `str` — Name of the new connection.
+**name:** `str` — Name of the new connection. Must be unique per organization.
     
 </dd>
 </dl>
@@ -1232,7 +1351,7 @@ client.connections.connect(
 <dl>
 <dd>
 
-**connection:** `typing.Optional[str]` 
+**connection:** `typing.Optional[str]` — The id of an existing connection to update.
     
 </dd>
 </dl>
@@ -1240,7 +1359,7 @@ client.connections.connect(
 <dl>
 <dd>
 
-**dark:** `typing.Optional[bool]` 
+**dark:** `typing.Optional[bool]` — Whether to use the dark theme for the Connect modal.
     
 </dd>
 </dl>
@@ -1265,6 +1384,100 @@ client.connections.connect(
 <dd>
 
 **whitelist:** `typing.Optional[typing.Sequence[str]]` — List of connection types which are allowed to be created. Ignored if type is set.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">test_connection</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Tests a connection configuration.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.connections.test_connection(
+    configuration={
+        "database": "example",
+        "hostname": "postgres.example.com",
+        "password": "password",
+        "port": 5432,
+        "username": "user",
+    },
+    type="postgresql",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**configuration:** `typing.Dict[str, typing.Optional[typing.Any]]` — Connection configuration to test.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**type:** `str` — The type of connection to test.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**connection_id:** `typing.Optional[str]` — Optional existing connection ID to use as a base for testing. The provided configuration will be merged over the stored configuration for this connection before testing.
     
 </dd>
 </dl>
@@ -1365,7 +1578,7 @@ client.connections.update(
     configuration={
         "database": "example",
         "hostname": "postgres.example.com",
-        "password": "password",
+        "password": "********",
         "port": 5432,
         "username": "user",
     },
@@ -1403,6 +1616,14 @@ client.connections.update(
 <dd>
 
 **name:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**healthcheck_interval:** `typing.Optional[str]` — Override interval for connection health checking.
     
 </dd>
 </dl>
@@ -1698,6 +1919,556 @@ client.query_runner.get_query(
 <dd>
 
 **page:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Schemas
+<details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">upsert_field</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.schemas.upsert_field(
+    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    schema_id="public.users",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**connection_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**schema_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**fields:** `typing.Optional[typing.Sequence[V4UserFieldRequest]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">delete_field</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.schemas.delete_field(
+    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    schema_id="public.users",
+    field_id="first_name",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**connection_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**schema_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**field_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">set_primary_keys</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.schemas.set_primary_keys(
+    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    schema_id="public.users",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**connection_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**schema_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**fields:** `typing.Optional[typing.Sequence[SchemaPrimaryKeyOverrideInput]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">reset_primary_keys</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete all primary key overrides for a schema. After this call the schema will use the primary keys detected from the source connection, if any.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.schemas.reset_primary_keys(
+    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    schema_id="public.users",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**connection_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**schema_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">refresh</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.schemas.refresh(
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">get_status</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.schemas.get_status(
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">get</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.schemas.get(
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    schema_id="public.users",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**schema_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">get_records</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.schemas.get_records(
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    schema_id="public.users",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**schema_id:** `str` 
     
 </dd>
 </dl>
@@ -2732,211 +3503,6 @@ client.model_sync.get_source_fields(
 </dl>
 </details>
 
-<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">get_target</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from polytomic import Polytomic
-
-client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
-)
-client.model_sync.get_target(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**type:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**search:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">get_target_fields</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from polytomic import Polytomic
-
-client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
-)
-client.model_sync.get_target_fields(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    target="database.table",
-    refresh=False,
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**target:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**refresh:** `typing.Optional[bool]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">get_target_objects</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from polytomic import Polytomic
-
-client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
-)
-client.model_sync.get_target_objects(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
 <details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">list</a>(...)</code></summary>
 <dl>
 <dd>
@@ -2983,7 +3549,7 @@ client.model_sync.list(
 <dl>
 <dd>
 
-**mode:** `typing.Optional[SyncMode]` 
+**mode:** `typing.Optional[ModelSyncMode]` 
     
 </dd>
 </dl>
@@ -3015,6 +3581,75 @@ client.model_sync.list(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create a new sync from one or more models to a destination.
+
+All of the functionality described in [the product
+documentation](https://docs.polytomic.com/docs/sync-destinations) is
+configurable via the API.
+
+Guides:
+
+- [Model sync (Reverse ETL) from Snowflake query to Salesforce](https://apidocs.polytomic.com/2024-02-08/guides/code-examples/model-sync-reverse-etl-from-snowflake-query-to-salesforce)
+- [Joined model sync from Postgres, Airtable, and Stripe to Hubspot](https://apidocs.polytomic.com/2024-02-08/guides/code-examples/joined-model-sync-from-postgres-airtable-and-stripe-to-hubspot)
+
+## Targets (Destinations)
+
+Polytomic refers to a model sync's destination as the "target object", or
+target. Target objects are identified by a connection ID and an object ID. You
+can retrieve a list of all target objects for a connection using the [Get Target
+Objects](./targets/list) endpoint.
+
+The `target` object in the request specifies information about the sync destination.
+
+```json
+"target": {
+    "connection_id": "248df4b7-aa70-47b8-a036-33ac447e668d",
+    "object": "Users",
+},
+```
+
+Some connections support additional configuration for targets. For example,
+[Salesforce
+connections](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/connections/salesforce#target)
+support optionally specifying the ingestion API to use. The target specific
+options are passed as `configuration`; consult the [integration
+guides](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/overview)
+for details about specific connection configurations.
+
+### Creating a new target
+
+Some integrations support creating a new target when creating a model sync. For
+example, an ad audience or database table.
+
+When creating a new target, `object` is omitted and `create` is specified
+instead. The `create` property is an object containing integration specific
+configuration for the new target.
+
+```json
+"target": {
+    "connection_id": "248df4b7-aa70-47b8-a036-33ac447e668d",
+    "create": {
+        "name": "New audience",
+        "type": "user_audience"
+    }
+},
+```
+
+The [Get Target List](./targets/list) endpoint returns information about whether
+a connection supports target creation.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -3041,7 +3676,6 @@ client.model_sync.create(
     schedule=Schedule(),
     target=Target(
         connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-        object="Users",
     ),
 )
 
@@ -3059,7 +3693,7 @@ client.model_sync.create(
 <dl>
 <dd>
 
-**fields:** `typing.Sequence[ModelSyncField]` — Fields to sync from source to target.
+**fields:** `typing.Sequence[ModelSyncField]` — Fields to sync from source to destination.
     
 </dd>
 </dl>
@@ -3067,7 +3701,7 @@ client.model_sync.create(
 <dl>
 <dd>
 
-**mode:** `str` 
+**mode:** `ModelSyncMode` 
     
 </dd>
 </dl>
@@ -3099,7 +3733,7 @@ client.model_sync.create(
 <dl>
 <dd>
 
-**active:** `typing.Optional[bool]` 
+**active:** `typing.Optional[bool]` — Whether the sync is enabled and scheduled.
     
 </dd>
 </dl>
@@ -3107,7 +3741,7 @@ client.model_sync.create(
 <dl>
 <dd>
 
-**enricher:** `typing.Optional[Enrichment]` 
+**encryption_passphrase:** `typing.Optional[str]` — Passphrase for encrypting the sync data.
     
 </dd>
 </dl>
@@ -3115,7 +3749,7 @@ client.model_sync.create(
 <dl>
 <dd>
 
-**filter_logic:** `typing.Optional[str]` 
+**filter_logic:** `typing.Optional[str]` — Logical expression to combine filters.
     
 </dd>
 </dl>
@@ -3123,7 +3757,7 @@ client.model_sync.create(
 <dl>
 <dd>
 
-**filters:** `typing.Optional[typing.Sequence[Filter]]` 
+**filters:** `typing.Optional[typing.Sequence[Filter]]` — Filters to apply to the source data.
     
 </dd>
 </dl>
@@ -3139,7 +3773,7 @@ client.model_sync.create(
 <dl>
 <dd>
 
-**only_enrich_updates:** `typing.Optional[bool]` 
+**only_enrich_updates:** `typing.Optional[bool]` — Whether to use enrichment models as a source of possible changes to sync. If true, only changes to the base models will cause a record to sync.
     
 </dd>
 </dl>
@@ -3147,7 +3781,7 @@ client.model_sync.create(
 <dl>
 <dd>
 
-**organization_id:** `typing.Optional[str]` 
+**organization_id:** `typing.Optional[str]` — Organization ID for the sync; read-only with a partner key.
     
 </dd>
 </dl>
@@ -3179,7 +3813,7 @@ client.model_sync.create(
 <dl>
 <dd>
 
-**skip_initial_backfill:** `typing.Optional[bool]` 
+**skip_initial_backfill:** `typing.Optional[bool]` — Whether to skip the initial backfill of records; if true only records seen after the sync is enabled will be synced.
     
 </dd>
 </dl>
@@ -3187,7 +3821,7 @@ client.model_sync.create(
 <dl>
 <dd>
 
-**sync_all_records:** `typing.Optional[bool]` 
+**sync_all_records:** `typing.Optional[bool]` — Whether to sync all records from the source, regardless of whether they've changed since the previous execution.
     
 </dd>
 </dl>
@@ -3342,7 +3976,6 @@ client.model_sync.update(
     schedule=Schedule(),
     target=Target(
         connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-        object="Users",
     ),
 )
 
@@ -3368,7 +4001,7 @@ client.model_sync.update(
 <dl>
 <dd>
 
-**fields:** `typing.Sequence[ModelSyncField]` — Fields to sync from source to target.
+**fields:** `typing.Sequence[ModelSyncField]` — Fields to sync from source to destination.
     
 </dd>
 </dl>
@@ -3376,7 +4009,7 @@ client.model_sync.update(
 <dl>
 <dd>
 
-**mode:** `str` 
+**mode:** `ModelSyncMode` 
     
 </dd>
 </dl>
@@ -3408,7 +4041,7 @@ client.model_sync.update(
 <dl>
 <dd>
 
-**active:** `typing.Optional[bool]` 
+**active:** `typing.Optional[bool]` — Whether the sync is enabled and scheduled.
     
 </dd>
 </dl>
@@ -3416,7 +4049,7 @@ client.model_sync.update(
 <dl>
 <dd>
 
-**enricher:** `typing.Optional[Enrichment]` 
+**encryption_passphrase:** `typing.Optional[str]` — Passphrase for encrypting the sync data.
     
 </dd>
 </dl>
@@ -3424,7 +4057,7 @@ client.model_sync.update(
 <dl>
 <dd>
 
-**filter_logic:** `typing.Optional[str]` 
+**filter_logic:** `typing.Optional[str]` — Logical expression to combine filters.
     
 </dd>
 </dl>
@@ -3432,7 +4065,7 @@ client.model_sync.update(
 <dl>
 <dd>
 
-**filters:** `typing.Optional[typing.Sequence[Filter]]` 
+**filters:** `typing.Optional[typing.Sequence[Filter]]` — Filters to apply to the source data.
     
 </dd>
 </dl>
@@ -3448,7 +4081,7 @@ client.model_sync.update(
 <dl>
 <dd>
 
-**only_enrich_updates:** `typing.Optional[bool]` 
+**only_enrich_updates:** `typing.Optional[bool]` — Whether to use enrichment models as a source of possible changes to sync. If true, only changes to the base models will cause a record to sync.
     
 </dd>
 </dl>
@@ -3456,7 +4089,7 @@ client.model_sync.update(
 <dl>
 <dd>
 
-**organization_id:** `typing.Optional[str]` 
+**organization_id:** `typing.Optional[str]` — Organization ID for the sync; read-only with a partner key.
     
 </dd>
 </dl>
@@ -3488,7 +4121,7 @@ client.model_sync.update(
 <dl>
 <dd>
 
-**skip_initial_backfill:** `typing.Optional[bool]` 
+**skip_initial_backfill:** `typing.Optional[bool]` — Whether to skip the initial backfill of records; if true only records seen after the sync is enabled will be synced.
     
 </dd>
 </dl>
@@ -3496,7 +4129,7 @@ client.model_sync.update(
 <dl>
 <dd>
 
-**sync_all_records:** `typing.Optional[bool]` 
+**sync_all_records:** `typing.Optional[bool]` — Whether to sync all records from the source, regardless of whether they've changed since the previous execution.
     
 </dd>
 </dl>
@@ -3639,6 +4272,63 @@ client.model_sync.activate(
 </dl>
 </details>
 
+<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">cancel</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.model_sync.cancel(
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` — The active execution of this sync ID will be cancelled.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">start</a>(...)</code></summary>
 <dl>
 <dd>
@@ -3716,6 +4406,14 @@ client.model_sync.start(
 <dl>
 <dd>
 
+**test:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -3766,253 +4464,6 @@ client.model_sync.get_status(
 <dd>
 
 **id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## Schemas
-<details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">refresh</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from polytomic import Polytomic
-
-client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
-)
-client.schemas.refresh(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">get_status</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from polytomic import Polytomic
-
-client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
-)
-client.schemas.get_status(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">get</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from polytomic import Polytomic
-
-client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
-)
-client.schemas.get(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    schema_id="public.users",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**schema_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">get_records</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from polytomic import Polytomic
-
-client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
-)
-client.schemas.get_records(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    schema_id="public.users",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**schema_id:** `str` 
     
 </dd>
 </dl>
@@ -4248,6 +4699,20 @@ client.jobs.get(
 <details><summary><code>client.identity.<a href="src/polytomic/identity/client.py">get</a>()</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns information about the caller's identity.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -5272,7 +5737,7 @@ Webooks can be set up using the webhook API endpoints. Currently, only one
 webhook may be created per organization. The webhook will be called for events
 in that organization.
 
-Consult the [Events documentation](https://apidocs.polytomic.com/getting-started/events) for more information.
+Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
 </dd>
 </dl>
 </dd>
@@ -5337,7 +5802,7 @@ Webooks can be set up using the webhook API endpoints. Currently, only one
 webhook may be created per organization. The webhook will be called for events
 in that organization.
 
-Consult the [Events documentation](https://apidocs.polytomic.com/getting-started/events) for more information.
+Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
 </dd>
 </dl>
 </dd>
@@ -5429,7 +5894,7 @@ Webooks can be set up using the webhook API endpoints. Currently, only one
 webhook may be created per organization. The webhook will be called for events
 in that organization.
 
-Consult the [Events documentation](https://apidocs.polytomic.com/getting-started/events) for more information.
+Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
 </dd>
 </dl>
 </dd>
@@ -5504,7 +5969,7 @@ Webooks can be set up using the webhook API endpoints. Currently, only one
 webhook may be created per organization. The webhook will be called for events
 in that organization.
 
-Consult the [Events documentation](https://apidocs.polytomic.com/getting-started/events) for more information.
+Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
 </dd>
 </dl>
 </dd>
@@ -5646,6 +6111,120 @@ client.webhooks.remove(
 </dl>
 </details>
 
+<details><summary><code>client.webhooks.<a href="src/polytomic/webhooks/client.py">disable</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.webhooks.disable(
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.webhooks.<a href="src/polytomic/webhooks/client.py">enable</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.webhooks.enable(
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## BulkSync Executions
 <details><summary><code>client.bulk_sync.executions.<a href="src/polytomic/bulk_sync/executions/client.py">list_status</a>(...)</code></summary>
 <dl>
@@ -5742,6 +6321,10 @@ client = Polytomic(
 )
 client.bulk_sync.executions.list(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    page_token="AmkYh8v0jR5B3kls2Qcc9y8MjrPmvR4CvaK7H0F4rEwqvg76K==",
+    only_terminal=True,
+    ascending=True,
+    limit=100,
 )
 
 ```
@@ -5759,6 +6342,38 @@ client.bulk_sync.executions.list(
 <dd>
 
 **id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page_token:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**only_terminal:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**ascending:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
     
 </dd>
 </dl>
@@ -6259,7 +6874,7 @@ client.bulk_sync.schemas.update(
 <dl>
 <dd>
 
-**fields:** `typing.Optional[typing.Sequence[BulkField]]` 
+**fields:** `typing.Optional[typing.Sequence[UpdateBulkField]]` 
     
 </dd>
 </dl>
@@ -6276,6 +6891,702 @@ client.bulk_sync.schemas.update(
 <dd>
 
 **partition_key:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**tracking_field:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**user_output_name:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## BulkSync Schedules
+<details><summary><code>client.bulk_sync.schedules.<a href="src/polytomic/bulk_sync/schedules/client.py">list</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.bulk_sync.schedules.list(
+    sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sync_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.bulk_sync.schedules.<a href="src/polytomic/bulk_sync/schedules/client.py">create</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic, V4BulkSyncScheduleApi
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.bulk_sync.schedules.create(
+    sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    schedule=V4BulkSyncScheduleApi(
+        frequency="manual",
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sync_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**schedule:** `V4BulkSyncScheduleApi` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.bulk_sync.schedules.<a href="src/polytomic/bulk_sync/schedules/client.py">get</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.bulk_sync.schedules.get(
+    sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    schedule_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sync_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**schedule_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.bulk_sync.schedules.<a href="src/polytomic/bulk_sync/schedules/client.py">update</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic, V4BulkSyncScheduleApi
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.bulk_sync.schedules.update(
+    sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    schedule_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    schedule=V4BulkSyncScheduleApi(
+        frequency="manual",
+    ),
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sync_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**schedule_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**schedule:** `V4BulkSyncScheduleApi` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.bulk_sync.schedules.<a href="src/polytomic/bulk_sync/schedules/client.py">delete</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.bulk_sync.schedules.delete(
+    sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    schedule_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sync_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**schedule_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## ModelSync Targets
+<details><summary><code>client.model_sync.targets.<a href="src/polytomic/model_sync/targets/client.py">get_target</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.model_sync.targets.get_target(
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**type:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**search:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.model_sync.targets.<a href="src/polytomic/model_sync/targets/client.py">get_target_fields</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.model_sync.targets.get_target_fields(
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    target="database.table",
+    refresh=False,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**target:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**refresh:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.model_sync.targets.<a href="src/polytomic/model_sync/targets/client.py">list</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns available model sync destinations for a connection.
+
+If the connection supports creating new destinations, the `target_creation`
+object will contain information on what properties are required to create the
+target.
+
+Target creation properties are all string values; the `enum` flag indicates if
+the property has a fixed set of valid values. When `enum` is `true`, the [Target
+Creation Property
+Values](https://apidocs.polytomic.com/2024-02-08/api-reference/model-sync/targets/get-create-property)
+endpoint can be used to retrieve the valid values.
+
+## Sync modes
+
+The sync mode determines which records are written to the destination for a
+model sync. The `modes` array for a target object defines the `id` along with
+what operations the mode supports.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.model_sync.targets.list(
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.model_sync.targets.<a href="src/polytomic/model_sync/targets/client.py">get_create_property</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Connections which support creating new sync target objects (destinations) will
+return `target_creation` with their [target object list](./list). This endpoint
+will return possible values for properties where `enum` is `true`.
+
+If the connection does not support creating new target objects, an HTTP 404 will
+be returned.
+
+The `values` array lists the valid options (and labels) for the property. Each
+member of the `values` array has a `label` and `value`. For exaample,
+
+```json
+{
+  "data": [
+    {
+      "id": "account",
+      "title": "Account ID",
+      "enum": true,
+      "values": [
+        {
+          "value": "1234567::urn:li:organization:987654",
+          "label": "Polytomic Inc. (1234567)"
+        }
+      ]
+    }
+  ]
+}
+```
+
+The `value` for the selected option should be passed when [creating a
+sync](https://apidocs.polytomic.com/2024-02-08/api-reference/model-sync/create).
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.model_sync.targets.get_create_property(
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    property="property",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**property:** `str` 
     
 </dd>
 </dl>
@@ -6317,6 +7628,9 @@ client = Polytomic(
 )
 client.model_sync.executions.list(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    page_token="AmkYh8v0jR5B3kls2Qcc9y8MjrPmvR4CvaK7H0F4rEwqvg76K==",
+    only_completed=True,
+    ascending=True,
 )
 
 ```
@@ -6334,6 +7648,30 @@ client.model_sync.executions.list(
 <dd>
 
 **sync_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page_token:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**only_completed:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**ascending:** `typing.Optional[bool]` 
     
 </dd>
 </dl>
@@ -6400,6 +7738,81 @@ client.model_sync.executions.get(
 <dd>
 
 **id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.model_sync.executions.<a href="src/polytomic/model_sync/executions/client.py">update</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.model_sync.executions.update(
+    sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    status="created",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**sync_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**id:** `str` — The ID of the execution to update.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**status:** `ExecutionStatus` 
     
 </dd>
 </dl>

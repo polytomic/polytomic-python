@@ -111,12 +111,27 @@ class ExecutionsClient:
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     def list(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self,
+        id: str,
+        *,
+        page_token: typing.Optional[str] = None,
+        only_terminal: typing.Optional[bool] = None,
+        ascending: typing.Optional[bool] = None,
+        limit: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> ListBulkSyncExecutionsEnvelope:
         """
         Parameters
         ----------
         id : str
+
+        page_token : typing.Optional[str]
+
+        only_terminal : typing.Optional[bool]
+
+        ascending : typing.Optional[bool]
+
+        limit : typing.Optional[int]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -136,11 +151,21 @@ class ExecutionsClient:
         )
         client.bulk_sync.executions.list(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            page_token="AmkYh8v0jR5B3kls2Qcc9y8MjrPmvR4CvaK7H0F4rEwqvg76K==",
+            only_terminal=True,
+            ascending=True,
+            limit=100,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
             f"api/bulk/syncs/{jsonable_encoder(id)}/executions",
             method="GET",
+            params={
+                "page_token": page_token,
+                "only_terminal": only_terminal,
+                "ascending": ascending,
+                "limit": limit,
+            },
             request_options=request_options,
         )
         try:
@@ -517,12 +542,27 @@ class AsyncExecutionsClient:
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     async def list(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self,
+        id: str,
+        *,
+        page_token: typing.Optional[str] = None,
+        only_terminal: typing.Optional[bool] = None,
+        ascending: typing.Optional[bool] = None,
+        limit: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> ListBulkSyncExecutionsEnvelope:
         """
         Parameters
         ----------
         id : str
+
+        page_token : typing.Optional[str]
+
+        only_terminal : typing.Optional[bool]
+
+        ascending : typing.Optional[bool]
+
+        limit : typing.Optional[int]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -547,6 +587,10 @@ class AsyncExecutionsClient:
         async def main() -> None:
             await client.bulk_sync.executions.list(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                page_token="AmkYh8v0jR5B3kls2Qcc9y8MjrPmvR4CvaK7H0F4rEwqvg76K==",
+                only_terminal=True,
+                ascending=True,
+                limit=100,
             )
 
 
@@ -555,6 +599,12 @@ class AsyncExecutionsClient:
         _response = await self._client_wrapper.httpx_client.request(
             f"api/bulk/syncs/{jsonable_encoder(id)}/executions",
             method="GET",
+            params={
+                "page_token": page_token,
+                "only_terminal": only_terminal,
+                "ascending": ascending,
+                "limit": limit,
+            },
             request_options=request_options,
         )
         try:

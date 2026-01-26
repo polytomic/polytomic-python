@@ -3,5 +3,6 @@
 import typing
 
 BulkSchemaExecutionStatus = typing.Union[
-    typing.Literal["created", "scheduled", "running", "exporting", "canceled", "completed", "failed"], typing.Any
+    typing.Literal["created", "scheduled", "running", "exporting", "canceled", "completed", "failed", "interrupted"],
+    typing.Any,
 ]

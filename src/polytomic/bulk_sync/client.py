@@ -4,6 +4,7 @@ import typing
 from ..core.client_wrapper import SyncClientWrapper
 from .executions.client import ExecutionsClient
 from .schemas.client import SchemasClient
+from .schedules.client import SchedulesClient
 from ..core.request_options import RequestOptions
 from ..types.bulk_sync_list_envelope import BulkSyncListEnvelope
 from ..core.pydantic_utilities import parse_obj_as
@@ -16,7 +17,8 @@ from ..core.api_error import ApiError as core_api_error_ApiError
 from ..types.bulk_schedule import BulkSchedule
 from ..types.bulk_discover import BulkDiscover
 import datetime as dt
-from ..types.sync_mode import SyncMode
+from ..types.bulk_sync_mode import BulkSyncMode
+from ..types.bulk_normalize_names import BulkNormalizeNames
 from .types.v_2_create_bulk_sync_request_schemas_item import V2CreateBulkSyncRequestSchemasItem
 from ..types.bulk_sync_response_envelope import BulkSyncResponseEnvelope
 from ..core.serialization import convert_and_respect_annotation_metadata
@@ -36,6 +38,7 @@ from ..types.bulk_sync_dest_envelope import BulkSyncDestEnvelope
 from ..core.client_wrapper import AsyncClientWrapper
 from .executions.client import AsyncExecutionsClient
 from .schemas.client import AsyncSchemasClient
+from .schedules.client import AsyncSchedulesClient
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -46,6 +49,7 @@ class BulkSyncClient:
         self._client_wrapper = client_wrapper
         self.executions = ExecutionsClient(client_wrapper=self._client_wrapper)
         self.schemas = SchemasClient(client_wrapper=self._client_wrapper)
+        self.schedules = SchedulesClient(client_wrapper=self._client_wrapper)
 
     def list(
         self, *, active: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
@@ -120,6 +124,7 @@ class BulkSyncClient:
     def create(
         self,
         *,
+        destination_configuration: typing.Dict[str, typing.Optional[typing.Any]],
         destination_connection_id: str,
         name: str,
         schedule: BulkSchedule,
@@ -127,20 +132,51 @@ class BulkSyncClient:
         active: typing.Optional[bool] = OMIT,
         automatically_add_new_fields: typing.Optional[BulkDiscover] = OMIT,
         automatically_add_new_objects: typing.Optional[BulkDiscover] = OMIT,
+        concurrency_limit: typing.Optional[int] = OMIT,
         data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
-        destination_configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
         discover: typing.Optional[bool] = OMIT,
-        mode: typing.Optional[SyncMode] = OMIT,
+        mode: typing.Optional[BulkSyncMode] = OMIT,
+        normalize_names: typing.Optional[BulkNormalizeNames] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
+        resync_concurrency_limit: typing.Optional[int] = OMIT,
         schemas: typing.Optional[typing.Sequence[V2CreateBulkSyncRequestSchemasItem]] = OMIT,
         source_configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BulkSyncResponseEnvelope:
         """
+        Create a new Bulk Sync from a source to a destination (data warehouse, database, or cloud storage bucket like S3).
+
+        Bulk Syncs are used for the ELT pattern (Extract, Load, and Transform), where you want to sync un-transformed data to your data warehouses, databases, or cloud storage buckets like S3.
+
+        All of the functionality described in [the product
+        documentation](https://docs.polytomic.com/docs/bulk-syncs) is configurable via
+        the API.
+
+        Sample code examples:
+
+        - [Bulk sync (ELT) from Salesforce to S3](https://apidocs.polytomic.com/guides/code-examples/bulk-sync-elt-from-salesforce-to-s-3)
+        - [Bulk sync (ELT) from Salesforce to Snowflake](https://apidocs.polytomic.com/guides/code-examples/bulk-sync-elt-from-salesforce-to-snowflake)
+        - [Bulk sync (ELT) from HubSpot to PostgreSQL](https://apidocs.polytomic.com/guides/code-examples/bulk-sync-elt-from-hub-spot-to-postgre-sql)
+
+        ## Connection specific configuration
+
+        The `destination_configuration` is integration-specific configuration for the
+        selected bulk sync destination. This includes settings such as the output schema
+        and is required when creating a new sync.
+
+        The `source_configuration` is optional. It allows configuration for how
+        Polytomic reads data from the source connection. This will not be available for
+        integrations that do not support additional configuration.
+
+        Consult the [connection configurations](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/overview)
+        to see configurations for particular integrations (for example, [here](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/connections/postgre-sql#source-1) is the available source configuration for the PostgreSQL bulk sync source).
+
         Parameters
         ----------
+        destination_configuration : typing.Dict[str, typing.Optional[typing.Any]]
+
         destination_connection_id : str
 
         name : str
@@ -155,20 +191,26 @@ class BulkSyncClient:
 
         automatically_add_new_objects : typing.Optional[BulkDiscover]
 
-        data_cutoff_timestamp : typing.Optional[dt.datetime]
+        concurrency_limit : typing.Optional[int]
+            Override the default concurrency limit for this sync.
 
-        destination_configuration : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
+        data_cutoff_timestamp : typing.Optional[dt.datetime]
 
         disable_record_timestamps : typing.Optional[bool]
 
         discover : typing.Optional[bool]
             DEPRECATED: Use automatically_add_new_objects/automatically_add_new_fields instead
 
-        mode : typing.Optional[SyncMode]
+        mode : typing.Optional[BulkSyncMode]
+
+        normalize_names : typing.Optional[BulkNormalizeNames]
 
         organization_id : typing.Optional[str]
 
         policies : typing.Optional[typing.Sequence[str]]
+
+        resync_concurrency_limit : typing.Optional[int]
+            Override the default resync concurrency limit for this sync.
 
         schemas : typing.Optional[typing.Sequence[V2CreateBulkSyncRequestSchemasItem]]
             List of schemas to sync; if omitted, all schemas will be selected for syncing.
@@ -192,6 +234,7 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.create(
+            destination_configuration={"schema": "my_schema"},
             destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="My Bulk Sync",
             schedule=BulkSchedule(
@@ -207,6 +250,7 @@ class BulkSyncClient:
                 "active": active,
                 "automatically_add_new_fields": automatically_add_new_fields,
                 "automatically_add_new_objects": automatically_add_new_objects,
+                "concurrency_limit": concurrency_limit,
                 "data_cutoff_timestamp": data_cutoff_timestamp,
                 "destination_configuration": destination_configuration,
                 "destination_connection_id": destination_connection_id,
@@ -214,8 +258,10 @@ class BulkSyncClient:
                 "discover": discover,
                 "mode": mode,
                 "name": name,
+                "normalize_names": normalize_names,
                 "organization_id": organization_id,
                 "policies": policies,
+                "resync_concurrency_limit": resync_concurrency_limit,
                 "schedule": convert_and_respect_annotation_metadata(
                     object_=schedule, annotation=BulkSchedule, direction="write"
                 ),
@@ -376,6 +422,7 @@ class BulkSyncClient:
         self,
         id: str,
         *,
+        destination_configuration: typing.Dict[str, typing.Optional[typing.Any]],
         destination_connection_id: str,
         name: str,
         schedule: BulkSchedule,
@@ -383,13 +430,15 @@ class BulkSyncClient:
         active: typing.Optional[bool] = OMIT,
         automatically_add_new_fields: typing.Optional[BulkDiscover] = OMIT,
         automatically_add_new_objects: typing.Optional[BulkDiscover] = OMIT,
+        concurrency_limit: typing.Optional[int] = OMIT,
         data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
-        destination_configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
         discover: typing.Optional[bool] = OMIT,
-        mode: typing.Optional[SyncMode] = OMIT,
+        mode: typing.Optional[BulkSyncMode] = OMIT,
+        normalize_names: typing.Optional[BulkNormalizeNames] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
+        resync_concurrency_limit: typing.Optional[int] = OMIT,
         schemas: typing.Optional[typing.Sequence[V2UpdateBulkSyncRequestSchemasItem]] = OMIT,
         source_configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
@@ -402,6 +451,8 @@ class BulkSyncClient:
         Parameters
         ----------
         id : str
+
+        destination_configuration : typing.Dict[str, typing.Optional[typing.Any]]
 
         destination_connection_id : str
 
@@ -417,20 +468,26 @@ class BulkSyncClient:
 
         automatically_add_new_objects : typing.Optional[BulkDiscover]
 
-        data_cutoff_timestamp : typing.Optional[dt.datetime]
+        concurrency_limit : typing.Optional[int]
+            Override the default concurrency limit for this sync.
 
-        destination_configuration : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
+        data_cutoff_timestamp : typing.Optional[dt.datetime]
 
         disable_record_timestamps : typing.Optional[bool]
 
         discover : typing.Optional[bool]
             DEPRECATED: Use automatically_add_new_objects/automatically_add_new_fields instead
 
-        mode : typing.Optional[SyncMode]
+        mode : typing.Optional[BulkSyncMode]
+
+        normalize_names : typing.Optional[BulkNormalizeNames]
 
         organization_id : typing.Optional[str]
 
         policies : typing.Optional[typing.Sequence[str]]
+
+        resync_concurrency_limit : typing.Optional[int]
+            Override the default resync concurrency limit for this sync.
 
         schemas : typing.Optional[typing.Sequence[V2UpdateBulkSyncRequestSchemasItem]]
             List of schemas to sync; if omitted, all schemas will be selected for syncing.
@@ -455,6 +512,7 @@ class BulkSyncClient:
         )
         client.bulk_sync.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            destination_configuration={"schema": "my_schema"},
             destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="My Bulk Sync",
             schedule=BulkSchedule(
@@ -470,6 +528,7 @@ class BulkSyncClient:
                 "active": active,
                 "automatically_add_new_fields": automatically_add_new_fields,
                 "automatically_add_new_objects": automatically_add_new_objects,
+                "concurrency_limit": concurrency_limit,
                 "data_cutoff_timestamp": data_cutoff_timestamp,
                 "destination_configuration": destination_configuration,
                 "destination_connection_id": destination_connection_id,
@@ -477,8 +536,10 @@ class BulkSyncClient:
                 "discover": discover,
                 "mode": mode,
                 "name": name,
+                "normalize_names": normalize_names,
                 "organization_id": organization_id,
                 "policies": policies,
+                "resync_concurrency_limit": resync_concurrency_limit,
                 "schedule": convert_and_respect_annotation_metadata(
                     object_=schedule, annotation=BulkSchedule, direction="write"
                 ),
@@ -1109,6 +1170,7 @@ class AsyncBulkSyncClient:
         self._client_wrapper = client_wrapper
         self.executions = AsyncExecutionsClient(client_wrapper=self._client_wrapper)
         self.schemas = AsyncSchemasClient(client_wrapper=self._client_wrapper)
+        self.schedules = AsyncSchedulesClient(client_wrapper=self._client_wrapper)
 
     async def list(
         self, *, active: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
@@ -1191,6 +1253,7 @@ class AsyncBulkSyncClient:
     async def create(
         self,
         *,
+        destination_configuration: typing.Dict[str, typing.Optional[typing.Any]],
         destination_connection_id: str,
         name: str,
         schedule: BulkSchedule,
@@ -1198,20 +1261,51 @@ class AsyncBulkSyncClient:
         active: typing.Optional[bool] = OMIT,
         automatically_add_new_fields: typing.Optional[BulkDiscover] = OMIT,
         automatically_add_new_objects: typing.Optional[BulkDiscover] = OMIT,
+        concurrency_limit: typing.Optional[int] = OMIT,
         data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
-        destination_configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
         discover: typing.Optional[bool] = OMIT,
-        mode: typing.Optional[SyncMode] = OMIT,
+        mode: typing.Optional[BulkSyncMode] = OMIT,
+        normalize_names: typing.Optional[BulkNormalizeNames] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
+        resync_concurrency_limit: typing.Optional[int] = OMIT,
         schemas: typing.Optional[typing.Sequence[V2CreateBulkSyncRequestSchemasItem]] = OMIT,
         source_configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BulkSyncResponseEnvelope:
         """
+        Create a new Bulk Sync from a source to a destination (data warehouse, database, or cloud storage bucket like S3).
+
+        Bulk Syncs are used for the ELT pattern (Extract, Load, and Transform), where you want to sync un-transformed data to your data warehouses, databases, or cloud storage buckets like S3.
+
+        All of the functionality described in [the product
+        documentation](https://docs.polytomic.com/docs/bulk-syncs) is configurable via
+        the API.
+
+        Sample code examples:
+
+        - [Bulk sync (ELT) from Salesforce to S3](https://apidocs.polytomic.com/guides/code-examples/bulk-sync-elt-from-salesforce-to-s-3)
+        - [Bulk sync (ELT) from Salesforce to Snowflake](https://apidocs.polytomic.com/guides/code-examples/bulk-sync-elt-from-salesforce-to-snowflake)
+        - [Bulk sync (ELT) from HubSpot to PostgreSQL](https://apidocs.polytomic.com/guides/code-examples/bulk-sync-elt-from-hub-spot-to-postgre-sql)
+
+        ## Connection specific configuration
+
+        The `destination_configuration` is integration-specific configuration for the
+        selected bulk sync destination. This includes settings such as the output schema
+        and is required when creating a new sync.
+
+        The `source_configuration` is optional. It allows configuration for how
+        Polytomic reads data from the source connection. This will not be available for
+        integrations that do not support additional configuration.
+
+        Consult the [connection configurations](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/overview)
+        to see configurations for particular integrations (for example, [here](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/connections/postgre-sql#source-1) is the available source configuration for the PostgreSQL bulk sync source).
+
         Parameters
         ----------
+        destination_configuration : typing.Dict[str, typing.Optional[typing.Any]]
+
         destination_connection_id : str
 
         name : str
@@ -1226,20 +1320,26 @@ class AsyncBulkSyncClient:
 
         automatically_add_new_objects : typing.Optional[BulkDiscover]
 
-        data_cutoff_timestamp : typing.Optional[dt.datetime]
+        concurrency_limit : typing.Optional[int]
+            Override the default concurrency limit for this sync.
 
-        destination_configuration : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
+        data_cutoff_timestamp : typing.Optional[dt.datetime]
 
         disable_record_timestamps : typing.Optional[bool]
 
         discover : typing.Optional[bool]
             DEPRECATED: Use automatically_add_new_objects/automatically_add_new_fields instead
 
-        mode : typing.Optional[SyncMode]
+        mode : typing.Optional[BulkSyncMode]
+
+        normalize_names : typing.Optional[BulkNormalizeNames]
 
         organization_id : typing.Optional[str]
 
         policies : typing.Optional[typing.Sequence[str]]
+
+        resync_concurrency_limit : typing.Optional[int]
+            Override the default resync concurrency limit for this sync.
 
         schemas : typing.Optional[typing.Sequence[V2CreateBulkSyncRequestSchemasItem]]
             List of schemas to sync; if omitted, all schemas will be selected for syncing.
@@ -1268,6 +1368,7 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.create(
+                destination_configuration={"schema": "my_schema"},
                 destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 name="My Bulk Sync",
                 schedule=BulkSchedule(
@@ -1286,6 +1387,7 @@ class AsyncBulkSyncClient:
                 "active": active,
                 "automatically_add_new_fields": automatically_add_new_fields,
                 "automatically_add_new_objects": automatically_add_new_objects,
+                "concurrency_limit": concurrency_limit,
                 "data_cutoff_timestamp": data_cutoff_timestamp,
                 "destination_configuration": destination_configuration,
                 "destination_connection_id": destination_connection_id,
@@ -1293,8 +1395,10 @@ class AsyncBulkSyncClient:
                 "discover": discover,
                 "mode": mode,
                 "name": name,
+                "normalize_names": normalize_names,
                 "organization_id": organization_id,
                 "policies": policies,
+                "resync_concurrency_limit": resync_concurrency_limit,
                 "schedule": convert_and_respect_annotation_metadata(
                     object_=schedule, annotation=BulkSchedule, direction="write"
                 ),
@@ -1463,6 +1567,7 @@ class AsyncBulkSyncClient:
         self,
         id: str,
         *,
+        destination_configuration: typing.Dict[str, typing.Optional[typing.Any]],
         destination_connection_id: str,
         name: str,
         schedule: BulkSchedule,
@@ -1470,13 +1575,15 @@ class AsyncBulkSyncClient:
         active: typing.Optional[bool] = OMIT,
         automatically_add_new_fields: typing.Optional[BulkDiscover] = OMIT,
         automatically_add_new_objects: typing.Optional[BulkDiscover] = OMIT,
+        concurrency_limit: typing.Optional[int] = OMIT,
         data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
-        destination_configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
         discover: typing.Optional[bool] = OMIT,
-        mode: typing.Optional[SyncMode] = OMIT,
+        mode: typing.Optional[BulkSyncMode] = OMIT,
+        normalize_names: typing.Optional[BulkNormalizeNames] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
+        resync_concurrency_limit: typing.Optional[int] = OMIT,
         schemas: typing.Optional[typing.Sequence[V2UpdateBulkSyncRequestSchemasItem]] = OMIT,
         source_configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
@@ -1489,6 +1596,8 @@ class AsyncBulkSyncClient:
         Parameters
         ----------
         id : str
+
+        destination_configuration : typing.Dict[str, typing.Optional[typing.Any]]
 
         destination_connection_id : str
 
@@ -1504,20 +1613,26 @@ class AsyncBulkSyncClient:
 
         automatically_add_new_objects : typing.Optional[BulkDiscover]
 
-        data_cutoff_timestamp : typing.Optional[dt.datetime]
+        concurrency_limit : typing.Optional[int]
+            Override the default concurrency limit for this sync.
 
-        destination_configuration : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
+        data_cutoff_timestamp : typing.Optional[dt.datetime]
 
         disable_record_timestamps : typing.Optional[bool]
 
         discover : typing.Optional[bool]
             DEPRECATED: Use automatically_add_new_objects/automatically_add_new_fields instead
 
-        mode : typing.Optional[SyncMode]
+        mode : typing.Optional[BulkSyncMode]
+
+        normalize_names : typing.Optional[BulkNormalizeNames]
 
         organization_id : typing.Optional[str]
 
         policies : typing.Optional[typing.Sequence[str]]
+
+        resync_concurrency_limit : typing.Optional[int]
+            Override the default resync concurrency limit for this sync.
 
         schemas : typing.Optional[typing.Sequence[V2UpdateBulkSyncRequestSchemasItem]]
             List of schemas to sync; if omitted, all schemas will be selected for syncing.
@@ -1547,6 +1662,7 @@ class AsyncBulkSyncClient:
         async def main() -> None:
             await client.bulk_sync.update(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                destination_configuration={"schema": "my_schema"},
                 destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 name="My Bulk Sync",
                 schedule=BulkSchedule(
@@ -1565,6 +1681,7 @@ class AsyncBulkSyncClient:
                 "active": active,
                 "automatically_add_new_fields": automatically_add_new_fields,
                 "automatically_add_new_objects": automatically_add_new_objects,
+                "concurrency_limit": concurrency_limit,
                 "data_cutoff_timestamp": data_cutoff_timestamp,
                 "destination_configuration": destination_configuration,
                 "destination_connection_id": destination_connection_id,
@@ -1572,8 +1689,10 @@ class AsyncBulkSyncClient:
                 "discover": discover,
                 "mode": mode,
                 "name": name,
+                "normalize_names": normalize_names,
                 "organization_id": organization_id,
                 "policies": policies,
+                "resync_concurrency_limit": resync_concurrency_limit,
                 "schedule": convert_and_respect_annotation_metadata(
                     object_=schedule, annotation=BulkSchedule, direction="write"
                 ),

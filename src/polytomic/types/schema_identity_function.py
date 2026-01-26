@@ -2,4 +2,6 @@
 
 import typing
 
-SchemaIdentityFunction = typing.Union[typing.Literal["Equality", "ISubstring", "OneOf"], typing.Any]
+SchemaIdentityFunction = typing.Union[
+    typing.Literal["Equality", "ISubstring", "OneOf", "DomainMatch", "HostnameMatch"], typing.Any
+]

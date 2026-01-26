@@ -7,23 +7,30 @@ from .common_output_actor import CommonOutputActor
 from .model_sync_field import ModelSyncField
 from .filter import Filter
 from .identity import Identity
+from .model_sync_mode import ModelSyncMode
+import pydantic
 from .override import Override
 from .schedule import Schedule
 from .target import Target
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
-import pydantic
 
 
 class ModelSyncResponse(UniversalBaseModel):
     active: typing.Optional[bool] = None
     created_at: typing.Optional[dt.datetime] = None
     created_by: typing.Optional[CommonOutputActor] = None
+    encryption_passphrase: typing.Optional[str] = None
     fields: typing.Optional[typing.List[ModelSyncField]] = None
     filter_logic: typing.Optional[str] = None
     filters: typing.Optional[typing.List[Filter]] = None
     id: typing.Optional[str] = None
     identity: typing.Optional[Identity] = None
-    mode: typing.Optional[str] = None
+    mode: typing.Optional[ModelSyncMode] = None
+    model_ids: typing.Optional[typing.List[str]] = pydantic.Field(default=None)
+    """
+    Model IDs used in the sync.
+    """
+
     name: typing.Optional[str] = None
     only_enrich_updates: typing.Optional[bool] = None
     organization_id: typing.Optional[str] = None

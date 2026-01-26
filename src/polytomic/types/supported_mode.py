@@ -2,13 +2,13 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .sync_mode import SyncMode
+from .model_sync_mode import ModelSyncMode
 import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
 class SupportedMode(UniversalBaseModel):
-    id: typing.Optional[SyncMode] = None
+    id: typing.Optional[ModelSyncMode] = None
     requires_identity: typing.Optional[bool] = pydantic.Field(default=None)
     """
     True if the sync mode requires an identity field mapping.

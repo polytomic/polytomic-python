@@ -2,14 +2,14 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .sync_mode import SyncMode
+from .bulk_sync_mode import BulkSyncMode
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
 class SupportedBulkMode(UniversalBaseModel):
     description: typing.Optional[str] = None
-    id: typing.Optional[SyncMode] = None
+    id: typing.Optional[BulkSyncMode] = None
     label: typing.Optional[str] = None
     requires_identity: typing.Optional[bool] = None
     supports_field_sync_mode: typing.Optional[bool] = None

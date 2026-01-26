@@ -7,9 +7,9 @@ from .core.client_wrapper import SyncClientWrapper
 from .bulk_sync.client import BulkSyncClient
 from .connections.client import ConnectionsClient
 from .query_runner.client import QueryRunnerClient
+from .schemas.client import SchemasClient
 from .models.client import ModelsClient
 from .model_sync.client import ModelSyncClient
-from .schemas.client import SchemasClient
 from .events.client import EventsClient
 from .jobs.client import JobsClient
 from .identity.client import IdentityClient
@@ -21,9 +21,9 @@ from .core.client_wrapper import AsyncClientWrapper
 from .bulk_sync.client import AsyncBulkSyncClient
 from .connections.client import AsyncConnectionsClient
 from .query_runner.client import AsyncQueryRunnerClient
+from .schemas.client import AsyncSchemasClient
 from .models.client import AsyncModelsClient
 from .model_sync.client import AsyncModelSyncClient
-from .schemas.client import AsyncSchemasClient
 from .events.client import AsyncEventsClient
 from .jobs.client import AsyncJobsClient
 from .identity.client import AsyncIdentityClient
@@ -83,9 +83,7 @@ class Polytomic:
         follow_redirects: typing.Optional[bool] = True,
         httpx_client: typing.Optional[httpx.Client] = None,
     ):
-        _defaulted_timeout = (
-            timeout if timeout is not None else 60 if httpx_client is None else httpx_client.timeout.read
-        )
+        _defaulted_timeout = timeout if timeout is not None else 60 if httpx_client is None else None
         self._client_wrapper = SyncClientWrapper(
             base_url=_get_base_url(base_url=base_url, environment=environment),
             version=version,
@@ -100,9 +98,9 @@ class Polytomic:
         self.bulk_sync = BulkSyncClient(client_wrapper=self._client_wrapper)
         self.connections = ConnectionsClient(client_wrapper=self._client_wrapper)
         self.query_runner = QueryRunnerClient(client_wrapper=self._client_wrapper)
+        self.schemas = SchemasClient(client_wrapper=self._client_wrapper)
         self.models = ModelsClient(client_wrapper=self._client_wrapper)
         self.model_sync = ModelSyncClient(client_wrapper=self._client_wrapper)
-        self.schemas = SchemasClient(client_wrapper=self._client_wrapper)
         self.events = EventsClient(client_wrapper=self._client_wrapper)
         self.jobs = JobsClient(client_wrapper=self._client_wrapper)
         self.identity = IdentityClient(client_wrapper=self._client_wrapper)
@@ -162,9 +160,7 @@ class AsyncPolytomic:
         follow_redirects: typing.Optional[bool] = True,
         httpx_client: typing.Optional[httpx.AsyncClient] = None,
     ):
-        _defaulted_timeout = (
-            timeout if timeout is not None else 60 if httpx_client is None else httpx_client.timeout.read
-        )
+        _defaulted_timeout = timeout if timeout is not None else 60 if httpx_client is None else None
         self._client_wrapper = AsyncClientWrapper(
             base_url=_get_base_url(base_url=base_url, environment=environment),
             version=version,
@@ -179,9 +175,9 @@ class AsyncPolytomic:
         self.bulk_sync = AsyncBulkSyncClient(client_wrapper=self._client_wrapper)
         self.connections = AsyncConnectionsClient(client_wrapper=self._client_wrapper)
         self.query_runner = AsyncQueryRunnerClient(client_wrapper=self._client_wrapper)
+        self.schemas = AsyncSchemasClient(client_wrapper=self._client_wrapper)
         self.models = AsyncModelsClient(client_wrapper=self._client_wrapper)
         self.model_sync = AsyncModelSyncClient(client_wrapper=self._client_wrapper)
-        self.schemas = AsyncSchemasClient(client_wrapper=self._client_wrapper)
         self.events = AsyncEventsClient(client_wrapper=self._client_wrapper)
         self.jobs = AsyncJobsClient(client_wrapper=self._client_wrapper)
         self.identity = AsyncIdentityClient(client_wrapper=self._client_wrapper)

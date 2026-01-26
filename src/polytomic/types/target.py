@@ -2,16 +2,25 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
+from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
 class Target(UniversalBaseModel):
     configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = None
     connection_id: str
+    create: typing.Optional[typing.Dict[str, str]] = pydantic.Field(default=None)
+    """
+    Create a new target object with these properties.
+    """
+
     filter_logic: typing.Optional[str] = None
-    new_name: typing.Optional[str] = None
-    object: str
+    new_name: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Name for a new target object.
+    """
+
+    object: typing.Optional[str] = None
     search_values: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = None
 
     if IS_PYDANTIC_V2:

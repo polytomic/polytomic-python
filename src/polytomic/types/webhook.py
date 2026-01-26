@@ -9,6 +9,7 @@ import pydantic
 
 class Webhook(UniversalBaseModel):
     created_at: typing.Optional[dt.datetime] = None
+    disabled: typing.Optional[bool] = None
     endpoint: typing.Optional[str] = None
     id: typing.Optional[str] = None
     organization_id: typing.Optional[str] = None

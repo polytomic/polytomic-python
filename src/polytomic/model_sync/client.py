@@ -2,6 +2,7 @@
 
 import typing
 from ..core.client_wrapper import SyncClientWrapper
+from .targets.client import TargetsClient
 from .executions.client import ExecutionsClient
 from ..core.request_options import RequestOptions
 from ..types.get_model_sync_source_meta_envelope import GetModelSyncSourceMetaEnvelope
@@ -17,15 +18,11 @@ from ..errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError as core_api_error_ApiError
 from ..types.model_field_response import ModelFieldResponse
-from ..types.get_connection_meta_envelope import GetConnectionMetaEnvelope
-from ..types.target_response_envelope import TargetResponseEnvelope
-from ..types.v_4_target_objects_response_envelope import V4TargetObjectsResponseEnvelope
-from ..types.sync_mode import SyncMode
+from ..types.model_sync_mode import ModelSyncMode
 from ..types.list_model_sync_response_envelope import ListModelSyncResponseEnvelope
 from ..types.model_sync_field import ModelSyncField
 from ..types.schedule import Schedule
 from ..types.target import Target
-from ..types.enrichment import Enrichment
 from ..types.filter import Filter
 from ..types.identity import Identity
 from ..types.override import Override
@@ -33,11 +30,13 @@ from ..types.model_sync_response_envelope import ModelSyncResponseEnvelope
 from ..core.serialization import convert_and_respect_annotation_metadata
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.schedule_option_response_envelope import ScheduleOptionResponseEnvelope
-from ..types.activate_sync_envelope import ActivateSyncEnvelope
-from ..types.start_model_sync_response_envelope import StartModelSyncResponseEnvelope
 from ..errors.conflict_error import ConflictError
+from ..types.activate_sync_envelope import ActivateSyncEnvelope
+from ..types.cancel_model_sync_response_envelope import CancelModelSyncResponseEnvelope
+from ..types.start_model_sync_response_envelope import StartModelSyncResponseEnvelope
 from ..types.sync_status_envelope import SyncStatusEnvelope
 from ..core.client_wrapper import AsyncClientWrapper
+from .targets.client import AsyncTargetsClient
 from .executions.client import AsyncExecutionsClient
 
 # this is used as the default value for optional parameters
@@ -47,6 +46,7 @@ OMIT = typing.cast(typing.Any, ...)
 class ModelSyncClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
+        self.targets = TargetsClient(client_wrapper=self._client_wrapper)
         self.executions = ExecutionsClient(client_wrapper=self._client_wrapper)
 
     def get_source(
@@ -261,320 +261,11 @@ class ModelSyncClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get_target(
-        self,
-        id: str,
-        *,
-        type: typing.Optional[str] = None,
-        search: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> GetConnectionMetaEnvelope:
-        """
-        Parameters
-        ----------
-        id : str
-
-        type : typing.Optional[str]
-
-        search : typing.Optional[str]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        GetConnectionMetaEnvelope
-            OK
-
-        Examples
-        --------
-        from polytomic import Polytomic
-
-        client = Polytomic(
-            version="YOUR_VERSION",
-            token="YOUR_TOKEN",
-        )
-        client.model_sync.get_target(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-        )
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"api/connections/{jsonable_encoder(id)}/modelsync/target",
-            method="GET",
-            params={
-                "type": type,
-                "search": search,
-            },
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return typing.cast(
-                    GetConnectionMetaEnvelope,
-                    parse_obj_as(
-                        type_=GetConnectionMetaEnvelope,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    typing.cast(
-                        RestErrResponse,
-                        parse_obj_as(
-                            type_=RestErrResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
-        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
-
-    def get_target_fields(
-        self,
-        id: str,
-        *,
-        target: str,
-        refresh: typing.Optional[bool] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> TargetResponseEnvelope:
-        """
-        Parameters
-        ----------
-        id : str
-
-        target : str
-
-        refresh : typing.Optional[bool]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        TargetResponseEnvelope
-            OK
-
-        Examples
-        --------
-        from polytomic import Polytomic
-
-        client = Polytomic(
-            version="YOUR_VERSION",
-            token="YOUR_TOKEN",
-        )
-        client.model_sync.get_target_fields(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            target="database.table",
-            refresh=False,
-        )
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"api/connections/{jsonable_encoder(id)}/modelsync/target/fields",
-            method="GET",
-            params={
-                "target": target,
-                "refresh": refresh,
-            },
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return typing.cast(
-                    TargetResponseEnvelope,
-                    parse_obj_as(
-                        type_=TargetResponseEnvelope,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    typing.cast(
-                        RestErrResponse,
-                        parse_obj_as(
-                            type_=RestErrResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
-        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
-
-    def get_target_objects(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> V4TargetObjectsResponseEnvelope:
-        """
-        Parameters
-        ----------
-        id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        V4TargetObjectsResponseEnvelope
-            OK
-
-        Examples
-        --------
-        from polytomic import Polytomic
-
-        client = Polytomic(
-            version="YOUR_VERSION",
-            token="YOUR_TOKEN",
-        )
-        client.model_sync.get_target_objects(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-        )
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"api/connections/{jsonable_encoder(id)}/modelsync/targetobjects",
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return typing.cast(
-                    V4TargetObjectsResponseEnvelope,
-                    parse_obj_as(
-                        type_=V4TargetObjectsResponseEnvelope,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    typing.cast(
-                        RestErrResponse,
-                        parse_obj_as(
-                            type_=RestErrResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
-        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
-
     def list(
         self,
         *,
         active: typing.Optional[bool] = None,
-        mode: typing.Optional[SyncMode] = None,
+        mode: typing.Optional[ModelSyncMode] = None,
         target_connection_id: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListModelSyncResponseEnvelope:
@@ -583,7 +274,7 @@ class ModelSyncClient:
         ----------
         active : typing.Optional[bool]
 
-        mode : typing.Optional[SyncMode]
+        mode : typing.Optional[ModelSyncMode]
 
         target_connection_id : typing.Optional[str]
 
@@ -676,12 +367,12 @@ class ModelSyncClient:
         self,
         *,
         fields: typing.Sequence[ModelSyncField],
-        mode: str,
+        mode: ModelSyncMode,
         name: str,
         schedule: Schedule,
         target: Target,
         active: typing.Optional[bool] = OMIT,
-        enricher: typing.Optional[Enrichment] = OMIT,
+        encryption_passphrase: typing.Optional[str] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
         identity: typing.Optional[Identity] = OMIT,
@@ -695,12 +386,69 @@ class ModelSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ModelSyncResponseEnvelope:
         """
+        Create a new sync from one or more models to a destination.
+
+        All of the functionality described in [the product
+        documentation](https://docs.polytomic.com/docs/sync-destinations) is
+        configurable via the API.
+
+        Guides:
+
+        - [Model sync (Reverse ETL) from Snowflake query to Salesforce](https://apidocs.polytomic.com/2024-02-08/guides/code-examples/model-sync-reverse-etl-from-snowflake-query-to-salesforce)
+        - [Joined model sync from Postgres, Airtable, and Stripe to Hubspot](https://apidocs.polytomic.com/2024-02-08/guides/code-examples/joined-model-sync-from-postgres-airtable-and-stripe-to-hubspot)
+
+        ## Targets (Destinations)
+
+        Polytomic refers to a model sync's destination as the "target object", or
+        target. Target objects are identified by a connection ID and an object ID. You
+        can retrieve a list of all target objects for a connection using the [Get Target
+        Objects](./targets/list) endpoint.
+
+        The `target` object in the request specifies information about the sync destination.
+
+        ```json
+        "target": {
+            "connection_id": "248df4b7-aa70-47b8-a036-33ac447e668d",
+            "object": "Users",
+        },
+        ```
+
+        Some connections support additional configuration for targets. For example,
+        [Salesforce
+        connections](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/connections/salesforce#target)
+        support optionally specifying the ingestion API to use. The target specific
+        options are passed as `configuration`; consult the [integration
+        guides](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/overview)
+        for details about specific connection configurations.
+
+        ### Creating a new target
+
+        Some integrations support creating a new target when creating a model sync. For
+        example, an ad audience or database table.
+
+        When creating a new target, `object` is omitted and `create` is specified
+        instead. The `create` property is an object containing integration specific
+        configuration for the new target.
+
+        ```json
+        "target": {
+            "connection_id": "248df4b7-aa70-47b8-a036-33ac447e668d",
+            "create": {
+                "name": "New audience",
+                "type": "user_audience"
+            }
+        },
+        ```
+
+        The [Get Target List](./targets/list) endpoint returns information about whether
+        a connection supports target creation.
+
         Parameters
         ----------
         fields : typing.Sequence[ModelSyncField]
-            Fields to sync from source to target.
+            Fields to sync from source to destination.
 
-        mode : str
+        mode : ModelSyncMode
 
         name : str
 
@@ -709,18 +457,24 @@ class ModelSyncClient:
         target : Target
 
         active : typing.Optional[bool]
+            Whether the sync is enabled and scheduled.
 
-        enricher : typing.Optional[Enrichment]
+        encryption_passphrase : typing.Optional[str]
+            Passphrase for encrypting the sync data.
 
         filter_logic : typing.Optional[str]
+            Logical expression to combine filters.
 
         filters : typing.Optional[typing.Sequence[Filter]]
+            Filters to apply to the source data.
 
         identity : typing.Optional[Identity]
 
         only_enrich_updates : typing.Optional[bool]
+            Whether to use enrichment models as a source of possible changes to sync. If true, only changes to the base models will cause a record to sync.
 
         organization_id : typing.Optional[str]
+            Organization ID for the sync; read-only with a partner key.
 
         override_fields : typing.Optional[typing.Sequence[ModelSyncField]]
             Values to set in the target unconditionally.
@@ -731,8 +485,10 @@ class ModelSyncClient:
         policies : typing.Optional[typing.Sequence[str]]
 
         skip_initial_backfill : typing.Optional[bool]
+            Whether to skip the initial backfill of records; if true only records seen after the sync is enabled will be synced.
 
         sync_all_records : typing.Optional[bool]
+            Whether to sync all records from the source, regardless of whether they've changed since the previous execution.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -761,7 +517,6 @@ class ModelSyncClient:
             schedule=Schedule(),
             target=Target(
                 connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                object="Users",
             ),
         )
         """
@@ -770,9 +525,7 @@ class ModelSyncClient:
             method="POST",
             json={
                 "active": active,
-                "enricher": convert_and_respect_annotation_metadata(
-                    object_=enricher, annotation=Enrichment, direction="write"
-                ),
+                "encryption_passphrase": encryption_passphrase,
                 "fields": convert_and_respect_annotation_metadata(
                     object_=fields, annotation=typing.Sequence[ModelSyncField], direction="write"
                 ),
@@ -1014,12 +767,12 @@ class ModelSyncClient:
         id: str,
         *,
         fields: typing.Sequence[ModelSyncField],
-        mode: str,
+        mode: ModelSyncMode,
         name: str,
         schedule: Schedule,
         target: Target,
         active: typing.Optional[bool] = OMIT,
-        enricher: typing.Optional[Enrichment] = OMIT,
+        encryption_passphrase: typing.Optional[str] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
         identity: typing.Optional[Identity] = OMIT,
@@ -1038,9 +791,9 @@ class ModelSyncClient:
         id : str
 
         fields : typing.Sequence[ModelSyncField]
-            Fields to sync from source to target.
+            Fields to sync from source to destination.
 
-        mode : str
+        mode : ModelSyncMode
 
         name : str
 
@@ -1049,18 +802,24 @@ class ModelSyncClient:
         target : Target
 
         active : typing.Optional[bool]
+            Whether the sync is enabled and scheduled.
 
-        enricher : typing.Optional[Enrichment]
+        encryption_passphrase : typing.Optional[str]
+            Passphrase for encrypting the sync data.
 
         filter_logic : typing.Optional[str]
+            Logical expression to combine filters.
 
         filters : typing.Optional[typing.Sequence[Filter]]
+            Filters to apply to the source data.
 
         identity : typing.Optional[Identity]
 
         only_enrich_updates : typing.Optional[bool]
+            Whether to use enrichment models as a source of possible changes to sync. If true, only changes to the base models will cause a record to sync.
 
         organization_id : typing.Optional[str]
+            Organization ID for the sync; read-only with a partner key.
 
         override_fields : typing.Optional[typing.Sequence[ModelSyncField]]
             Values to set in the target unconditionally.
@@ -1071,8 +830,10 @@ class ModelSyncClient:
         policies : typing.Optional[typing.Sequence[str]]
 
         skip_initial_backfill : typing.Optional[bool]
+            Whether to skip the initial backfill of records; if true only records seen after the sync is enabled will be synced.
 
         sync_all_records : typing.Optional[bool]
+            Whether to sync all records from the source, regardless of whether they've changed since the previous execution.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1102,7 +863,6 @@ class ModelSyncClient:
             schedule=Schedule(),
             target=Target(
                 connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                object="Users",
             ),
         )
         """
@@ -1111,9 +871,7 @@ class ModelSyncClient:
             method="PUT",
             json={
                 "active": active,
-                "enricher": convert_and_respect_annotation_metadata(
-                    object_=enricher, annotation=Enrichment, direction="write"
-                ),
+                "encryption_passphrase": encryption_passphrase,
                 "fields": convert_and_respect_annotation_metadata(
                     object_=fields, annotation=typing.Sequence[ModelSyncField], direction="write"
                 ),
@@ -1285,6 +1043,16 @@ class ModelSyncClient:
                         ),
                     )
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             if _response.status_code == 500:
                 raise InternalServerError(
                     typing.cast(
@@ -1394,12 +1162,101 @@ class ModelSyncClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
+    def cancel(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> CancelModelSyncResponseEnvelope:
+        """
+        Parameters
+        ----------
+        id : str
+            The active execution of this sync ID will be cancelled.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CancelModelSyncResponseEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            version="YOUR_VERSION",
+            token="YOUR_TOKEN",
+        )
+        client.model_sync.cancel(
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"api/syncs/{jsonable_encoder(id)}/cancel",
+            method="POST",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    CancelModelSyncResponseEnvelope,
+                    parse_obj_as(
+                        type_=CancelModelSyncResponseEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        RestErrResponse,
+                        parse_obj_as(
+                            type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
     def start(
         self,
         id: str,
         *,
         identities: typing.Optional[typing.Sequence[str]] = OMIT,
         resync: typing.Optional[bool] = OMIT,
+        test: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> StartModelSyncResponseEnvelope:
         """
@@ -1414,6 +1271,8 @@ class ModelSyncClient:
         identities : typing.Optional[typing.Sequence[str]]
 
         resync : typing.Optional[bool]
+
+        test : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1441,6 +1300,7 @@ class ModelSyncClient:
             json={
                 "identities": identities,
                 "resync": resync,
+                "test": test,
             },
             headers={
                 "content-type": "application/json",
@@ -1601,6 +1461,7 @@ class ModelSyncClient:
 class AsyncModelSyncClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
+        self.targets = AsyncTargetsClient(client_wrapper=self._client_wrapper)
         self.executions = AsyncExecutionsClient(client_wrapper=self._client_wrapper)
 
     async def get_source(
@@ -1831,344 +1692,11 @@ class AsyncModelSyncClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get_target(
-        self,
-        id: str,
-        *,
-        type: typing.Optional[str] = None,
-        search: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> GetConnectionMetaEnvelope:
-        """
-        Parameters
-        ----------
-        id : str
-
-        type : typing.Optional[str]
-
-        search : typing.Optional[str]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        GetConnectionMetaEnvelope
-            OK
-
-        Examples
-        --------
-        import asyncio
-
-        from polytomic import AsyncPolytomic
-
-        client = AsyncPolytomic(
-            version="YOUR_VERSION",
-            token="YOUR_TOKEN",
-        )
-
-
-        async def main() -> None:
-            await client.model_sync.get_target(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"api/connections/{jsonable_encoder(id)}/modelsync/target",
-            method="GET",
-            params={
-                "type": type,
-                "search": search,
-            },
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return typing.cast(
-                    GetConnectionMetaEnvelope,
-                    parse_obj_as(
-                        type_=GetConnectionMetaEnvelope,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    typing.cast(
-                        RestErrResponse,
-                        parse_obj_as(
-                            type_=RestErrResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
-        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
-
-    async def get_target_fields(
-        self,
-        id: str,
-        *,
-        target: str,
-        refresh: typing.Optional[bool] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> TargetResponseEnvelope:
-        """
-        Parameters
-        ----------
-        id : str
-
-        target : str
-
-        refresh : typing.Optional[bool]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        TargetResponseEnvelope
-            OK
-
-        Examples
-        --------
-        import asyncio
-
-        from polytomic import AsyncPolytomic
-
-        client = AsyncPolytomic(
-            version="YOUR_VERSION",
-            token="YOUR_TOKEN",
-        )
-
-
-        async def main() -> None:
-            await client.model_sync.get_target_fields(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                target="database.table",
-                refresh=False,
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"api/connections/{jsonable_encoder(id)}/modelsync/target/fields",
-            method="GET",
-            params={
-                "target": target,
-                "refresh": refresh,
-            },
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return typing.cast(
-                    TargetResponseEnvelope,
-                    parse_obj_as(
-                        type_=TargetResponseEnvelope,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    typing.cast(
-                        RestErrResponse,
-                        parse_obj_as(
-                            type_=RestErrResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
-        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
-
-    async def get_target_objects(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> V4TargetObjectsResponseEnvelope:
-        """
-        Parameters
-        ----------
-        id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        V4TargetObjectsResponseEnvelope
-            OK
-
-        Examples
-        --------
-        import asyncio
-
-        from polytomic import AsyncPolytomic
-
-        client = AsyncPolytomic(
-            version="YOUR_VERSION",
-            token="YOUR_TOKEN",
-        )
-
-
-        async def main() -> None:
-            await client.model_sync.get_target_objects(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"api/connections/{jsonable_encoder(id)}/modelsync/targetobjects",
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return typing.cast(
-                    V4TargetObjectsResponseEnvelope,
-                    parse_obj_as(
-                        type_=V4TargetObjectsResponseEnvelope,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    typing.cast(
-                        RestErrResponse,
-                        parse_obj_as(
-                            type_=RestErrResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
-        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
-
     async def list(
         self,
         *,
         active: typing.Optional[bool] = None,
-        mode: typing.Optional[SyncMode] = None,
+        mode: typing.Optional[ModelSyncMode] = None,
         target_connection_id: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListModelSyncResponseEnvelope:
@@ -2177,7 +1705,7 @@ class AsyncModelSyncClient:
         ----------
         active : typing.Optional[bool]
 
-        mode : typing.Optional[SyncMode]
+        mode : typing.Optional[ModelSyncMode]
 
         target_connection_id : typing.Optional[str]
 
@@ -2278,12 +1806,12 @@ class AsyncModelSyncClient:
         self,
         *,
         fields: typing.Sequence[ModelSyncField],
-        mode: str,
+        mode: ModelSyncMode,
         name: str,
         schedule: Schedule,
         target: Target,
         active: typing.Optional[bool] = OMIT,
-        enricher: typing.Optional[Enrichment] = OMIT,
+        encryption_passphrase: typing.Optional[str] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
         identity: typing.Optional[Identity] = OMIT,
@@ -2297,12 +1825,69 @@ class AsyncModelSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ModelSyncResponseEnvelope:
         """
+        Create a new sync from one or more models to a destination.
+
+        All of the functionality described in [the product
+        documentation](https://docs.polytomic.com/docs/sync-destinations) is
+        configurable via the API.
+
+        Guides:
+
+        - [Model sync (Reverse ETL) from Snowflake query to Salesforce](https://apidocs.polytomic.com/2024-02-08/guides/code-examples/model-sync-reverse-etl-from-snowflake-query-to-salesforce)
+        - [Joined model sync from Postgres, Airtable, and Stripe to Hubspot](https://apidocs.polytomic.com/2024-02-08/guides/code-examples/joined-model-sync-from-postgres-airtable-and-stripe-to-hubspot)
+
+        ## Targets (Destinations)
+
+        Polytomic refers to a model sync's destination as the "target object", or
+        target. Target objects are identified by a connection ID and an object ID. You
+        can retrieve a list of all target objects for a connection using the [Get Target
+        Objects](./targets/list) endpoint.
+
+        The `target` object in the request specifies information about the sync destination.
+
+        ```json
+        "target": {
+            "connection_id": "248df4b7-aa70-47b8-a036-33ac447e668d",
+            "object": "Users",
+        },
+        ```
+
+        Some connections support additional configuration for targets. For example,
+        [Salesforce
+        connections](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/connections/salesforce#target)
+        support optionally specifying the ingestion API to use. The target specific
+        options are passed as `configuration`; consult the [integration
+        guides](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/overview)
+        for details about specific connection configurations.
+
+        ### Creating a new target
+
+        Some integrations support creating a new target when creating a model sync. For
+        example, an ad audience or database table.
+
+        When creating a new target, `object` is omitted and `create` is specified
+        instead. The `create` property is an object containing integration specific
+        configuration for the new target.
+
+        ```json
+        "target": {
+            "connection_id": "248df4b7-aa70-47b8-a036-33ac447e668d",
+            "create": {
+                "name": "New audience",
+                "type": "user_audience"
+            }
+        },
+        ```
+
+        The [Get Target List](./targets/list) endpoint returns information about whether
+        a connection supports target creation.
+
         Parameters
         ----------
         fields : typing.Sequence[ModelSyncField]
-            Fields to sync from source to target.
+            Fields to sync from source to destination.
 
-        mode : str
+        mode : ModelSyncMode
 
         name : str
 
@@ -2311,18 +1896,24 @@ class AsyncModelSyncClient:
         target : Target
 
         active : typing.Optional[bool]
+            Whether the sync is enabled and scheduled.
 
-        enricher : typing.Optional[Enrichment]
+        encryption_passphrase : typing.Optional[str]
+            Passphrase for encrypting the sync data.
 
         filter_logic : typing.Optional[str]
+            Logical expression to combine filters.
 
         filters : typing.Optional[typing.Sequence[Filter]]
+            Filters to apply to the source data.
 
         identity : typing.Optional[Identity]
 
         only_enrich_updates : typing.Optional[bool]
+            Whether to use enrichment models as a source of possible changes to sync. If true, only changes to the base models will cause a record to sync.
 
         organization_id : typing.Optional[str]
+            Organization ID for the sync; read-only with a partner key.
 
         override_fields : typing.Optional[typing.Sequence[ModelSyncField]]
             Values to set in the target unconditionally.
@@ -2333,8 +1924,10 @@ class AsyncModelSyncClient:
         policies : typing.Optional[typing.Sequence[str]]
 
         skip_initial_backfill : typing.Optional[bool]
+            Whether to skip the initial backfill of records; if true only records seen after the sync is enabled will be synced.
 
         sync_all_records : typing.Optional[bool]
+            Whether to sync all records from the source, regardless of whether they've changed since the previous execution.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -2368,7 +1961,6 @@ class AsyncModelSyncClient:
                 schedule=Schedule(),
                 target=Target(
                     connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                    object="Users",
                 ),
             )
 
@@ -2380,9 +1972,7 @@ class AsyncModelSyncClient:
             method="POST",
             json={
                 "active": active,
-                "enricher": convert_and_respect_annotation_metadata(
-                    object_=enricher, annotation=Enrichment, direction="write"
-                ),
+                "encryption_passphrase": encryption_passphrase,
                 "fields": convert_and_respect_annotation_metadata(
                     object_=fields, annotation=typing.Sequence[ModelSyncField], direction="write"
                 ),
@@ -2642,12 +2232,12 @@ class AsyncModelSyncClient:
         id: str,
         *,
         fields: typing.Sequence[ModelSyncField],
-        mode: str,
+        mode: ModelSyncMode,
         name: str,
         schedule: Schedule,
         target: Target,
         active: typing.Optional[bool] = OMIT,
-        enricher: typing.Optional[Enrichment] = OMIT,
+        encryption_passphrase: typing.Optional[str] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
         identity: typing.Optional[Identity] = OMIT,
@@ -2666,9 +2256,9 @@ class AsyncModelSyncClient:
         id : str
 
         fields : typing.Sequence[ModelSyncField]
-            Fields to sync from source to target.
+            Fields to sync from source to destination.
 
-        mode : str
+        mode : ModelSyncMode
 
         name : str
 
@@ -2677,18 +2267,24 @@ class AsyncModelSyncClient:
         target : Target
 
         active : typing.Optional[bool]
+            Whether the sync is enabled and scheduled.
 
-        enricher : typing.Optional[Enrichment]
+        encryption_passphrase : typing.Optional[str]
+            Passphrase for encrypting the sync data.
 
         filter_logic : typing.Optional[str]
+            Logical expression to combine filters.
 
         filters : typing.Optional[typing.Sequence[Filter]]
+            Filters to apply to the source data.
 
         identity : typing.Optional[Identity]
 
         only_enrich_updates : typing.Optional[bool]
+            Whether to use enrichment models as a source of possible changes to sync. If true, only changes to the base models will cause a record to sync.
 
         organization_id : typing.Optional[str]
+            Organization ID for the sync; read-only with a partner key.
 
         override_fields : typing.Optional[typing.Sequence[ModelSyncField]]
             Values to set in the target unconditionally.
@@ -2699,8 +2295,10 @@ class AsyncModelSyncClient:
         policies : typing.Optional[typing.Sequence[str]]
 
         skip_initial_backfill : typing.Optional[bool]
+            Whether to skip the initial backfill of records; if true only records seen after the sync is enabled will be synced.
 
         sync_all_records : typing.Optional[bool]
+            Whether to sync all records from the source, regardless of whether they've changed since the previous execution.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -2735,7 +2333,6 @@ class AsyncModelSyncClient:
                 schedule=Schedule(),
                 target=Target(
                     connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                    object="Users",
                 ),
             )
 
@@ -2747,9 +2344,7 @@ class AsyncModelSyncClient:
             method="PUT",
             json={
                 "active": active,
-                "enricher": convert_and_respect_annotation_metadata(
-                    object_=enricher, annotation=Enrichment, direction="write"
-                ),
+                "encryption_passphrase": encryption_passphrase,
                 "fields": convert_and_respect_annotation_metadata(
                     object_=fields, annotation=typing.Sequence[ModelSyncField], direction="write"
                 ),
@@ -2929,6 +2524,16 @@ class AsyncModelSyncClient:
                         ),
                     )
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             if _response.status_code == 500:
                 raise InternalServerError(
                     typing.cast(
@@ -3046,12 +2651,109 @@ class AsyncModelSyncClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
+    async def cancel(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> CancelModelSyncResponseEnvelope:
+        """
+        Parameters
+        ----------
+        id : str
+            The active execution of this sync ID will be cancelled.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CancelModelSyncResponseEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            version="YOUR_VERSION",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.model_sync.cancel(
+                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"api/syncs/{jsonable_encoder(id)}/cancel",
+            method="POST",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    CancelModelSyncResponseEnvelope,
+                    parse_obj_as(
+                        type_=CancelModelSyncResponseEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        RestErrResponse,
+                        parse_obj_as(
+                            type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
     async def start(
         self,
         id: str,
         *,
         identities: typing.Optional[typing.Sequence[str]] = OMIT,
         resync: typing.Optional[bool] = OMIT,
+        test: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> StartModelSyncResponseEnvelope:
         """
@@ -3066,6 +2768,8 @@ class AsyncModelSyncClient:
         identities : typing.Optional[typing.Sequence[str]]
 
         resync : typing.Optional[bool]
+
+        test : typing.Optional[bool]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -3101,6 +2805,7 @@ class AsyncModelSyncClient:
             json={
                 "identities": identities,
                 "resync": resync,
+                "test": test,
             },
             headers={
                 "content-type": "application/json",

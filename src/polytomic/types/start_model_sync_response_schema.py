@@ -3,14 +3,18 @@
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 import datetime as dt
+import pydantic
 from .execution_status import ExecutionStatus
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
-import pydantic
 
 
 class StartModelSyncResponseSchema(UniversalBaseModel):
     created_at: typing.Optional[dt.datetime] = None
-    id: typing.Optional[str] = None
+    id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Execution ID
+    """
+
     status: typing.Optional[ExecutionStatus] = None
 
     if IS_PYDANTIC_V2:

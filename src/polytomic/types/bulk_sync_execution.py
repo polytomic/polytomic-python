@@ -13,14 +13,20 @@ import pydantic
 class BulkSyncExecution(UniversalBaseModel):
     completed_at: typing.Optional[dt.datetime] = None
     created_at: typing.Optional[dt.datetime] = None
+    error_count: typing.Optional[int] = None
     fetch_mode: typing.Optional[BulkFetchMode] = None
     id: typing.Optional[str] = None
+    is_partial: typing.Optional[bool] = None
     is_resync: typing.Optional[bool] = None
     is_test: typing.Optional[bool] = None
+    record_count: typing.Optional[int] = None
     schemas: typing.Optional[typing.List[BulkSyncSchemaExecution]] = None
     started_at: typing.Optional[dt.datetime] = None
     status: typing.Optional[BulkExecutionStatus] = None
+    status_message: typing.Optional[str] = None
     type: typing.Optional[str] = None
+    updated_at: typing.Optional[dt.datetime] = None
+    warning_count: typing.Optional[int] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

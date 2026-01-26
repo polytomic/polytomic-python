@@ -3,6 +3,8 @@
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 import pydantic
+import datetime as dt
+from .common_output_actor import CommonOutputActor
 from .connection_type_schema import ConnectionTypeSchema
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
@@ -14,13 +16,18 @@ class ConnectionResponseSchema(UniversalBaseModel):
     """
 
     configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = None
+    created_at: typing.Optional[dt.datetime] = None
+    created_by: typing.Optional[CommonOutputActor] = None
     id: typing.Optional[str] = None
     name: typing.Optional[str] = None
     organization_id: typing.Optional[str] = None
     policies: typing.Optional[typing.List[str]] = None
+    saved: typing.Optional[bool] = None
     status: typing.Optional[str] = None
     status_error: typing.Optional[str] = None
     type: typing.Optional[ConnectionTypeSchema] = None
+    updated_at: typing.Optional[dt.datetime] = None
+    updated_by: typing.Optional[CommonOutputActor] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

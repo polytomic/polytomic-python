@@ -19,7 +19,7 @@ from ...errors.forbidden_error import ForbiddenError
 from ...errors.internal_server_error import InternalServerError
 from ...types.bulk_schema_envelope import BulkSchemaEnvelope
 import datetime as dt
-from ...types.bulk_field import BulkField
+from ...types.update_bulk_field import UpdateBulkField
 from ...types.bulk_filter import BulkFilter
 from ...core.client_wrapper import AsyncClientWrapper
 
@@ -297,9 +297,11 @@ class SchemasClient:
         data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
         disable_data_cutoff: typing.Optional[bool] = OMIT,
         enabled: typing.Optional[bool] = OMIT,
-        fields: typing.Optional[typing.Sequence[BulkField]] = OMIT,
+        fields: typing.Optional[typing.Sequence[UpdateBulkField]] = OMIT,
         filters: typing.Optional[typing.Sequence[BulkFilter]] = OMIT,
         partition_key: typing.Optional[str] = OMIT,
+        tracking_field: typing.Optional[str] = OMIT,
+        user_output_name: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BulkSchemaEnvelope:
         """
@@ -315,11 +317,15 @@ class SchemasClient:
 
         enabled : typing.Optional[bool]
 
-        fields : typing.Optional[typing.Sequence[BulkField]]
+        fields : typing.Optional[typing.Sequence[UpdateBulkField]]
 
         filters : typing.Optional[typing.Sequence[BulkFilter]]
 
         partition_key : typing.Optional[str]
+
+        tracking_field : typing.Optional[str]
+
+        user_output_name : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -350,12 +356,14 @@ class SchemasClient:
                 "disable_data_cutoff": disable_data_cutoff,
                 "enabled": enabled,
                 "fields": convert_and_respect_annotation_metadata(
-                    object_=fields, annotation=typing.Sequence[BulkField], direction="write"
+                    object_=fields, annotation=typing.Sequence[UpdateBulkField], direction="write"
                 ),
                 "filters": convert_and_respect_annotation_metadata(
                     object_=filters, annotation=typing.Sequence[BulkFilter], direction="write"
                 ),
                 "partition_key": partition_key,
+                "tracking_field": tracking_field,
+                "user_output_name": user_output_name,
             },
             headers={
                 "content-type": "application/json",
@@ -712,9 +720,11 @@ class AsyncSchemasClient:
         data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
         disable_data_cutoff: typing.Optional[bool] = OMIT,
         enabled: typing.Optional[bool] = OMIT,
-        fields: typing.Optional[typing.Sequence[BulkField]] = OMIT,
+        fields: typing.Optional[typing.Sequence[UpdateBulkField]] = OMIT,
         filters: typing.Optional[typing.Sequence[BulkFilter]] = OMIT,
         partition_key: typing.Optional[str] = OMIT,
+        tracking_field: typing.Optional[str] = OMIT,
+        user_output_name: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BulkSchemaEnvelope:
         """
@@ -730,11 +740,15 @@ class AsyncSchemasClient:
 
         enabled : typing.Optional[bool]
 
-        fields : typing.Optional[typing.Sequence[BulkField]]
+        fields : typing.Optional[typing.Sequence[UpdateBulkField]]
 
         filters : typing.Optional[typing.Sequence[BulkFilter]]
 
         partition_key : typing.Optional[str]
+
+        tracking_field : typing.Optional[str]
+
+        user_output_name : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -773,12 +787,14 @@ class AsyncSchemasClient:
                 "disable_data_cutoff": disable_data_cutoff,
                 "enabled": enabled,
                 "fields": convert_and_respect_annotation_metadata(
-                    object_=fields, annotation=typing.Sequence[BulkField], direction="write"
+                    object_=fields, annotation=typing.Sequence[UpdateBulkField], direction="write"
                 ),
                 "filters": convert_and_respect_annotation_metadata(
                     object_=filters, annotation=typing.Sequence[BulkFilter], direction="write"
                 ),
                 "partition_key": partition_key,
+                "tracking_field": tracking_field,
+                "user_output_name": user_output_name,
             },
             headers={
                 "content-type": "application/json",

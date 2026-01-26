@@ -7,6 +7,8 @@ from .activate_sync_output import ActivateSyncOutput
 from .api_error import ApiError
 from .api_key_response import ApiKeyResponse
 from .api_key_response_envelope import ApiKeyResponseEnvelope
+from .backend_o_auth_prompt import BackendOAuthPrompt
+from .bulk_bulk_sync_schedule import BulkBulkSyncSchedule
 from .bulk_discover import BulkDiscover
 from .bulk_execution_status import BulkExecutionStatus
 from .bulk_fetch_mode import BulkFetchMode
@@ -14,6 +16,7 @@ from .bulk_field import BulkField
 from .bulk_filter import BulkFilter
 from .bulk_itemized_schedule import BulkItemizedSchedule
 from .bulk_multi_schedule_configuration import BulkMultiScheduleConfiguration
+from .bulk_normalize_names import BulkNormalizeNames
 from .bulk_schedule import BulkSchedule
 from .bulk_schema import BulkSchema
 from .bulk_schema_envelope import BulkSchemaEnvelope
@@ -29,6 +32,7 @@ from .bulk_sync_execution_envelope import BulkSyncExecutionEnvelope
 from .bulk_sync_execution_status import BulkSyncExecutionStatus
 from .bulk_sync_failed_event import BulkSyncFailedEvent
 from .bulk_sync_list_envelope import BulkSyncListEnvelope
+from .bulk_sync_mode import BulkSyncMode
 from .bulk_sync_response import BulkSyncResponse
 from .bulk_sync_response_envelope import BulkSyncResponseEnvelope
 from .bulk_sync_running_event import BulkSyncRunningEvent
@@ -41,6 +45,8 @@ from .bulk_sync_source_status import BulkSyncSourceStatus
 from .bulk_sync_source_status_envelope import BulkSyncSourceStatusEnvelope
 from .bulk_sync_status_envelope import BulkSyncStatusEnvelope
 from .bulk_sync_status_response import BulkSyncStatusResponse
+from .cancel_model_sync_response import CancelModelSyncResponse
+from .cancel_model_sync_response_envelope import CancelModelSyncResponseEnvelope
 from .common_output_actor import CommonOutputActor
 from .configuration_value import ConfigurationValue
 from .connect_card_response import ConnectCardResponse
@@ -105,6 +111,7 @@ from .model_response_envelope import ModelResponseEnvelope
 from .model_sample import ModelSample
 from .model_sample_response_envelope import ModelSampleResponseEnvelope
 from .model_sync_field import ModelSyncField
+from .model_sync_mode import ModelSyncMode
 from .model_sync_response import ModelSyncResponse
 from .model_sync_response_envelope import ModelSyncResponseEnvelope
 from .model_sync_source_meta_response import ModelSyncSourceMetaResponse
@@ -113,6 +120,7 @@ from .organization_envelope import OrganizationEnvelope
 from .organizations_envelope import OrganizationsEnvelope
 from .override import Override
 from .pagination import Pagination
+from .pagination_details import PaginationDetails
 from .pick_value import PickValue
 from .policy_action import PolicyAction
 from .policy_response import PolicyResponse
@@ -125,15 +133,18 @@ from .role_response import RoleResponse
 from .role_response_envelope import RoleResponseEnvelope
 from .run_after import RunAfter
 from .schedule import Schedule
+from .schedule_envelope import ScheduleEnvelope
 from .schedule_frequency import ScheduleFrequency
 from .schedule_option_response import ScheduleOptionResponse
 from .schedule_option_response_envelope import ScheduleOptionResponseEnvelope
 from .schedule_schedule_option import ScheduleScheduleOption
+from .schedules_envelope import SchedulesEnvelope
 from .schema import Schema
 from .schema_association import SchemaAssociation
 from .schema_configuration import SchemaConfiguration
 from .schema_field import SchemaField
 from .schema_identity_function import SchemaIdentityFunction
+from .schema_primary_key_override_input import SchemaPrimaryKeyOverrideInput
 from .schema_records_response_envelope import SchemaRecordsResponseEnvelope
 from .source import Source
 from .source_meta import SourceMeta
@@ -146,18 +157,21 @@ from .sync_completed_event import SyncCompletedEvent
 from .sync_completed_with_errors_event import SyncCompletedWithErrorsEvent
 from .sync_destination_properties import SyncDestinationProperties
 from .sync_failed_event import SyncFailedEvent
-from .sync_mode import SyncMode
 from .sync_running_event import SyncRunningEvent
 from .sync_status_envelope import SyncStatusEnvelope
 from .sync_status_response import SyncStatusResponse
 from .target import Target
+from .target_create_input import TargetCreateInput
 from .target_field import TargetField
 from .target_object import TargetObject
 from .target_response import TargetResponse
 from .target_response_envelope import TargetResponseEnvelope
+from .update_bulk_field import UpdateBulkField
 from .user import User
 from .user_envelope import UserEnvelope
+from .util_enum_value import UtilEnumValue
 from .util_field_type import UtilFieldType
+from .v_2_connection_form import V2ConnectionForm
 from .v_2_enricher_configuration import V2EnricherConfiguration
 from .v_2_enricher_mapping import V2EnricherMapping
 from .v_2_execution_log_type import V2ExecutionLogType
@@ -169,12 +183,17 @@ from .v_2_sample_record import V2SampleRecord
 from .v_2_schema_configuration_fields_item import V2SchemaConfigurationFieldsItem
 from .v_4_bulk_sync_execution_logs import V4BulkSyncExecutionLogs
 from .v_4_bulk_sync_execution_logs_envelope import V4BulkSyncExecutionLogsEnvelope
+from .v_4_bulk_sync_schedule_api import V4BulkSyncScheduleApi
 from .v_4_export_sync_logs_envelope import V4ExportSyncLogsEnvelope
 from .v_4_export_sync_logs_response import V4ExportSyncLogsResponse
 from .v_4_query_results_envelope import V4QueryResultsEnvelope
 from .v_4_run_query_envelope import V4RunQueryEnvelope
 from .v_4_run_query_result import V4RunQueryResult
+from .v_4_target_creator import V4TargetCreator
 from .v_4_target_objects_response_envelope import V4TargetObjectsResponseEnvelope
+from .v_4_target_property_values import V4TargetPropertyValues
+from .v_4_target_property_values_envelope import V4TargetPropertyValuesEnvelope
+from .v_4_user_field_request import V4UserFieldRequest
 from .webhook import Webhook
 from .webhook_envelope import WebhookEnvelope
 from .webhook_list_envelope import WebhookListEnvelope
@@ -187,6 +206,8 @@ __all__ = [
     "ApiError",
     "ApiKeyResponse",
     "ApiKeyResponseEnvelope",
+    "BackendOAuthPrompt",
+    "BulkBulkSyncSchedule",
     "BulkDiscover",
     "BulkExecutionStatus",
     "BulkFetchMode",
@@ -194,6 +215,7 @@ __all__ = [
     "BulkFilter",
     "BulkItemizedSchedule",
     "BulkMultiScheduleConfiguration",
+    "BulkNormalizeNames",
     "BulkSchedule",
     "BulkSchema",
     "BulkSchemaEnvelope",
@@ -209,6 +231,7 @@ __all__ = [
     "BulkSyncExecutionStatus",
     "BulkSyncFailedEvent",
     "BulkSyncListEnvelope",
+    "BulkSyncMode",
     "BulkSyncResponse",
     "BulkSyncResponseEnvelope",
     "BulkSyncRunningEvent",
@@ -221,6 +244,8 @@ __all__ = [
     "BulkSyncSourceStatusEnvelope",
     "BulkSyncStatusEnvelope",
     "BulkSyncStatusResponse",
+    "CancelModelSyncResponse",
+    "CancelModelSyncResponseEnvelope",
     "CommonOutputActor",
     "ConfigurationValue",
     "ConnectCardResponse",
@@ -285,6 +310,7 @@ __all__ = [
     "ModelSample",
     "ModelSampleResponseEnvelope",
     "ModelSyncField",
+    "ModelSyncMode",
     "ModelSyncResponse",
     "ModelSyncResponseEnvelope",
     "ModelSyncSourceMetaResponse",
@@ -293,6 +319,7 @@ __all__ = [
     "OrganizationsEnvelope",
     "Override",
     "Pagination",
+    "PaginationDetails",
     "PickValue",
     "PolicyAction",
     "PolicyResponse",
@@ -305,15 +332,18 @@ __all__ = [
     "RoleResponseEnvelope",
     "RunAfter",
     "Schedule",
+    "ScheduleEnvelope",
     "ScheduleFrequency",
     "ScheduleOptionResponse",
     "ScheduleOptionResponseEnvelope",
     "ScheduleScheduleOption",
+    "SchedulesEnvelope",
     "Schema",
     "SchemaAssociation",
     "SchemaConfiguration",
     "SchemaField",
     "SchemaIdentityFunction",
+    "SchemaPrimaryKeyOverrideInput",
     "SchemaRecordsResponseEnvelope",
     "Source",
     "SourceMeta",
@@ -326,19 +356,22 @@ __all__ = [
     "SyncCompletedWithErrorsEvent",
     "SyncDestinationProperties",
     "SyncFailedEvent",
-    "SyncMode",
     "SyncRunningEvent",
     "SyncStatusEnvelope",
     "SyncStatusResponse",
     "Target",
+    "TargetCreateInput",
     "TargetField",
     "TargetObject",
     "TargetResponse",
     "TargetResponseEnvelope",
     "TypesType",
+    "UpdateBulkField",
     "User",
     "UserEnvelope",
+    "UtilEnumValue",
     "UtilFieldType",
+    "V2ConnectionForm",
     "V2EnricherConfiguration",
     "V2EnricherMapping",
     "V2ExecutionLogType",
@@ -348,12 +381,17 @@ __all__ = [
     "V2SchemaConfigurationFieldsItem",
     "V4BulkSyncExecutionLogs",
     "V4BulkSyncExecutionLogsEnvelope",
+    "V4BulkSyncScheduleApi",
     "V4ExportSyncLogsEnvelope",
     "V4ExportSyncLogsResponse",
     "V4QueryResultsEnvelope",
     "V4RunQueryEnvelope",
     "V4RunQueryResult",
+    "V4TargetCreator",
     "V4TargetObjectsResponseEnvelope",
+    "V4TargetPropertyValues",
+    "V4TargetPropertyValuesEnvelope",
+    "V4UserFieldRequest",
     "Webhook",
     "WebhookEnvelope",
     "WebhookListEnvelope",

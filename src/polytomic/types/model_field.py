@@ -2,11 +2,15 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
+import datetime as dt
+from .common_output_actor import CommonOutputActor
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
 class ModelField(UniversalBaseModel):
+    created_at: typing.Optional[dt.datetime] = None
+    created_by: typing.Optional[CommonOutputActor] = None
     description: typing.Optional[str] = None
     example: typing.Optional[typing.Optional[typing.Any]] = None
     id: typing.Optional[str] = None
@@ -15,6 +19,7 @@ class ModelField(UniversalBaseModel):
     remote_type: typing.Optional[str] = None
     type: typing.Optional[str] = None
     unique: typing.Optional[bool] = None
+    updated_at: typing.Optional[dt.datetime] = None
     user_added: typing.Optional[bool] = None
 
     if IS_PYDANTIC_V2:

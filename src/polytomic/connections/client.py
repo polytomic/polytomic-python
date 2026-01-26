@@ -237,6 +237,7 @@ class ConnectionsClient:
         configuration: typing.Dict[str, typing.Optional[typing.Any]],
         name: str,
         type: str,
+        healthcheck_interval: typing.Optional[str] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         redirect_url: typing.Optional[str] = OMIT,
@@ -251,6 +252,9 @@ class ConnectionsClient:
         name : str
 
         type : str
+
+        healthcheck_interval : typing.Optional[str]
+            Override interval for connection health checking.
 
         organization_id : typing.Optional[str]
 
@@ -282,7 +286,7 @@ class ConnectionsClient:
             configuration={
                 "database": "example",
                 "hostname": "postgres.example.com",
-                "password": "password",
+                "password": "********",
                 "port": 5432,
                 "username": "user",
             },
@@ -295,6 +299,7 @@ class ConnectionsClient:
             method="POST",
             json={
                 "configuration": configuration,
+                "healthcheck_interval": healthcheck_interval,
                 "name": name,
                 "organization_id": organization_id,
                 "policies": policies,
@@ -385,17 +390,29 @@ class ConnectionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ConnectCardResponseEnvelope:
         """
+        Creates a new request for [Polytomic Connect](https://www.polytomic.com/connect).
+
+        This endpoint configures a Polytomic Connect request and returns the URL to
+        redirect users to. This allows embedding Polytomic connection authorization in
+        other applications.
+
+        See also:
+
+        - [Embedding authentication](https://apidocs.polytomic.com/2024-02-08/guides/embedding-authentication), a guide to using Polytomic Connect.
+
         Parameters
         ----------
         name : str
-            Name of the new connection.
+            Name of the new connection. Must be unique per organization.
 
         redirect_url : str
             URL to redirect to after connection is created.
 
         connection : typing.Optional[str]
+            The id of an existing connection to update.
 
         dark : typing.Optional[bool]
+            Whether to use the dark theme for the Connect modal.
 
         organization_id : typing.Optional[str]
 
@@ -475,6 +492,116 @@ class ConnectionsClient:
                 )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
+    def test_connection(
+        self,
+        *,
+        configuration: typing.Dict[str, typing.Optional[typing.Any]],
+        type: str,
+        connection_id: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> None:
+        """
+        Tests a connection configuration.
+
+        Parameters
+        ----------
+        configuration : typing.Dict[str, typing.Optional[typing.Any]]
+            Connection configuration to test.
+
+        type : str
+            The type of connection to test.
+
+        connection_id : typing.Optional[str]
+            Optional existing connection ID to use as a base for testing. The provided configuration will be merged over the stored configuration for this connection before testing.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            version="YOUR_VERSION",
+            token="YOUR_TOKEN",
+        )
+        client.connections.test_connection(
+            configuration={
+                "database": "example",
+                "hostname": "postgres.example.com",
+                "password": "password",
+                "port": 5432,
+                "username": "user",
+            },
+            type="postgresql",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "api/connections/test",
+            method="POST",
+            json={
+                "configuration": configuration,
+                "connection_id": connection_id,
+                "type": type,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        RestErrResponse,
+                        parse_obj_as(
+                            type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
                     typing.cast(
                         types_api_error_ApiError,
                         parse_obj_as(
@@ -579,6 +706,7 @@ class ConnectionsClient:
         *,
         configuration: typing.Dict[str, typing.Optional[typing.Any]],
         name: str,
+        healthcheck_interval: typing.Optional[str] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         reconnect: typing.Optional[bool] = OMIT,
@@ -594,6 +722,9 @@ class ConnectionsClient:
         configuration : typing.Dict[str, typing.Optional[typing.Any]]
 
         name : str
+
+        healthcheck_interval : typing.Optional[str]
+            Override interval for connection health checking.
 
         organization_id : typing.Optional[str]
 
@@ -627,7 +758,7 @@ class ConnectionsClient:
             configuration={
                 "database": "example",
                 "hostname": "postgres.example.com",
-                "password": "password",
+                "password": "********",
                 "port": 5432,
                 "username": "user",
             },
@@ -639,6 +770,7 @@ class ConnectionsClient:
             method="PUT",
             json={
                 "configuration": configuration,
+                "healthcheck_interval": healthcheck_interval,
                 "name": name,
                 "organization_id": organization_id,
                 "policies": policies,
@@ -1135,6 +1267,7 @@ class AsyncConnectionsClient:
         configuration: typing.Dict[str, typing.Optional[typing.Any]],
         name: str,
         type: str,
+        healthcheck_interval: typing.Optional[str] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         redirect_url: typing.Optional[str] = OMIT,
@@ -1149,6 +1282,9 @@ class AsyncConnectionsClient:
         name : str
 
         type : str
+
+        healthcheck_interval : typing.Optional[str]
+            Override interval for connection health checking.
 
         organization_id : typing.Optional[str]
 
@@ -1185,7 +1321,7 @@ class AsyncConnectionsClient:
                 configuration={
                     "database": "example",
                     "hostname": "postgres.example.com",
-                    "password": "password",
+                    "password": "********",
                     "port": 5432,
                     "username": "user",
                 },
@@ -1201,6 +1337,7 @@ class AsyncConnectionsClient:
             method="POST",
             json={
                 "configuration": configuration,
+                "healthcheck_interval": healthcheck_interval,
                 "name": name,
                 "organization_id": organization_id,
                 "policies": policies,
@@ -1291,17 +1428,29 @@ class AsyncConnectionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ConnectCardResponseEnvelope:
         """
+        Creates a new request for [Polytomic Connect](https://www.polytomic.com/connect).
+
+        This endpoint configures a Polytomic Connect request and returns the URL to
+        redirect users to. This allows embedding Polytomic connection authorization in
+        other applications.
+
+        See also:
+
+        - [Embedding authentication](https://apidocs.polytomic.com/2024-02-08/guides/embedding-authentication), a guide to using Polytomic Connect.
+
         Parameters
         ----------
         name : str
-            Name of the new connection.
+            Name of the new connection. Must be unique per organization.
 
         redirect_url : str
             URL to redirect to after connection is created.
 
         connection : typing.Optional[str]
+            The id of an existing connection to update.
 
         dark : typing.Optional[bool]
+            Whether to use the dark theme for the Connect modal.
 
         organization_id : typing.Optional[str]
 
@@ -1389,6 +1538,124 @@ class AsyncConnectionsClient:
                 )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def test_connection(
+        self,
+        *,
+        configuration: typing.Dict[str, typing.Optional[typing.Any]],
+        type: str,
+        connection_id: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> None:
+        """
+        Tests a connection configuration.
+
+        Parameters
+        ----------
+        configuration : typing.Dict[str, typing.Optional[typing.Any]]
+            Connection configuration to test.
+
+        type : str
+            The type of connection to test.
+
+        connection_id : typing.Optional[str]
+            Optional existing connection ID to use as a base for testing. The provided configuration will be merged over the stored configuration for this connection before testing.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            version="YOUR_VERSION",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.connections.test_connection(
+                configuration={
+                    "database": "example",
+                    "hostname": "postgres.example.com",
+                    "password": "password",
+                    "port": 5432,
+                    "username": "user",
+                },
+                type="postgresql",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "api/connections/test",
+            method="POST",
+            json={
+                "configuration": configuration,
+                "connection_id": connection_id,
+                "type": type,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        RestErrResponse,
+                        parse_obj_as(
+                            type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
                     typing.cast(
                         types_api_error_ApiError,
                         parse_obj_as(
@@ -1503,6 +1770,7 @@ class AsyncConnectionsClient:
         *,
         configuration: typing.Dict[str, typing.Optional[typing.Any]],
         name: str,
+        healthcheck_interval: typing.Optional[str] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         reconnect: typing.Optional[bool] = OMIT,
@@ -1518,6 +1786,9 @@ class AsyncConnectionsClient:
         configuration : typing.Dict[str, typing.Optional[typing.Any]]
 
         name : str
+
+        healthcheck_interval : typing.Optional[str]
+            Override interval for connection health checking.
 
         organization_id : typing.Optional[str]
 
@@ -1556,7 +1827,7 @@ class AsyncConnectionsClient:
                 configuration={
                     "database": "example",
                     "hostname": "postgres.example.com",
-                    "password": "password",
+                    "password": "********",
                     "port": 5432,
                     "username": "user",
                 },
@@ -1571,6 +1842,7 @@ class AsyncConnectionsClient:
             method="PUT",
             json={
                 "configuration": configuration,
+                "healthcheck_interval": healthcheck_interval,
                 "name": name,
                 "organization_id": organization_id,
                 "policies": policies,

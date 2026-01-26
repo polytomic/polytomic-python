@@ -14,6 +14,7 @@ class SyncDestinationProperties(UniversalBaseModel):
     primary_metadata_object: typing.Optional[str] = None
     requires_configuration: typing.Optional[bool] = None
     supports_field_creation: typing.Optional[bool] = None
+    supports_field_encryption: typing.Optional[bool] = None
     supports_field_type_selection: typing.Optional[bool] = None
     supports_identity_field_creation: typing.Optional[bool] = None
     supports_target_filters: typing.Optional[bool] = None

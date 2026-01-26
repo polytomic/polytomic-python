@@ -20,6 +20,8 @@ class IdentityClient:
 
     def get(self, *, request_options: typing.Optional[RequestOptions] = None) -> GetIdentityResponseEnvelope:
         """
+        Returns information about the caller's identity.
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
@@ -86,6 +88,8 @@ class AsyncIdentityClient:
 
     async def get(self, *, request_options: typing.Optional[RequestOptions] = None) -> GetIdentityResponseEnvelope:
         """
+        Returns information about the caller's identity.
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
