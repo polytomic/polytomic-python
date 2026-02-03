@@ -13,6 +13,11 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 class SchemaField(UniversalBaseModel):
     association: typing.Optional[SchemaAssociation] = None
     id: typing.Optional[str] = None
+    is_primary_key: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    Whether this field is part of the schema's primary key.
+    """
+
     name: typing.Optional[str] = None
     remote_type: typing.Optional[str] = pydantic.Field(default=None)
     """

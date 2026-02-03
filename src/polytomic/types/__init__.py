@@ -7,6 +7,7 @@ from .activate_sync_output import ActivateSyncOutput
 from .api_error import ApiError
 from .api_key_response import ApiKeyResponse
 from .api_key_response_envelope import ApiKeyResponseEnvelope
+from .backend_connection_capabilities import BackendConnectionCapabilities
 from .backend_o_auth_prompt import BackendOAuthPrompt
 from .bulk_bulk_sync_schedule import BulkBulkSyncSchedule
 from .bulk_discover import BulkDiscover
@@ -206,6 +207,7 @@ __all__ = [
     "ApiError",
     "ApiKeyResponse",
     "ApiKeyResponseEnvelope",
+    "BackendConnectionCapabilities",
     "BackendOAuthPrompt",
     "BulkBulkSyncSchedule",
     "BulkDiscover",

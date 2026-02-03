@@ -486,6 +486,8 @@ class SchemasClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> BulkSyncSourceStatusEnvelope:
         """
+        Polytomic periodically inspects the schemas for connections to discover new fields and update metadata. This endpoint returns the current inspection status.
+
         Parameters
         ----------
         id : str
@@ -1260,6 +1262,8 @@ class AsyncSchemasClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> BulkSyncSourceStatusEnvelope:
         """
+        Polytomic periodically inspects the schemas for connections to discover new fields and update metadata. This endpoint returns the current inspection status.
+
         Parameters
         ----------
         id : str
