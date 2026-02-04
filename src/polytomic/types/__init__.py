@@ -187,6 +187,7 @@ from .v_4_bulk_sync_execution_logs_envelope import V4BulkSyncExecutionLogsEnvelo
 from .v_4_bulk_sync_schedule_api import V4BulkSyncScheduleApi
 from .v_4_export_sync_logs_envelope import V4ExportSyncLogsEnvelope
 from .v_4_export_sync_logs_response import V4ExportSyncLogsResponse
+from .v_4_global_error_subscribers_response import V4GlobalErrorSubscribersResponse
 from .v_4_query_results_envelope import V4QueryResultsEnvelope
 from .v_4_run_query_envelope import V4RunQueryEnvelope
 from .v_4_run_query_result import V4RunQueryResult
@@ -386,6 +387,7 @@ __all__ = [
     "V4BulkSyncScheduleApi",
     "V4ExportSyncLogsEnvelope",
     "V4ExportSyncLogsResponse",
+    "V4GlobalErrorSubscribersResponse",
     "V4QueryResultsEnvelope",
     "V4RunQueryEnvelope",
     "V4RunQueryResult",

@@ -13,6 +13,7 @@ from .model_sync.client import ModelSyncClient
 from .events.client import EventsClient
 from .jobs.client import JobsClient
 from .identity.client import IdentityClient
+from .notifications.client import NotificationsClient
 from .organization.client import OrganizationClient
 from .users.client import UsersClient
 from .webhooks.client import WebhooksClient
@@ -27,6 +28,7 @@ from .model_sync.client import AsyncModelSyncClient
 from .events.client import AsyncEventsClient
 from .jobs.client import AsyncJobsClient
 from .identity.client import AsyncIdentityClient
+from .notifications.client import AsyncNotificationsClient
 from .organization.client import AsyncOrganizationClient
 from .users.client import AsyncUsersClient
 from .webhooks.client import AsyncWebhooksClient
@@ -104,6 +106,7 @@ class Polytomic:
         self.events = EventsClient(client_wrapper=self._client_wrapper)
         self.jobs = JobsClient(client_wrapper=self._client_wrapper)
         self.identity = IdentityClient(client_wrapper=self._client_wrapper)
+        self.notifications = NotificationsClient(client_wrapper=self._client_wrapper)
         self.organization = OrganizationClient(client_wrapper=self._client_wrapper)
         self.users = UsersClient(client_wrapper=self._client_wrapper)
         self.webhooks = WebhooksClient(client_wrapper=self._client_wrapper)
@@ -181,6 +184,7 @@ class AsyncPolytomic:
         self.events = AsyncEventsClient(client_wrapper=self._client_wrapper)
         self.jobs = AsyncJobsClient(client_wrapper=self._client_wrapper)
         self.identity = AsyncIdentityClient(client_wrapper=self._client_wrapper)
+        self.notifications = AsyncNotificationsClient(client_wrapper=self._client_wrapper)
         self.organization = AsyncOrganizationClient(client_wrapper=self._client_wrapper)
         self.users = AsyncUsersClient(client_wrapper=self._client_wrapper)
         self.webhooks = AsyncWebhooksClient(client_wrapper=self._client_wrapper)
