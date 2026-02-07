@@ -3,7 +3,7 @@ name = "polytomic"
 
 [tool.poetry]
 name = "polytomic"
-version = "1.15.2"
+version = "1.15.3"
 description = ""
 readme = "README.md"
 authors = []
