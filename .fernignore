@@ -2,3 +2,4 @@
 
 README.md
 src/polytomic/types/jsonschema_definitions.py
+.github/workflows/ci.yml
