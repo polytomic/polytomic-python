@@ -35,7 +35,7 @@ class SchemasClient:
         self,
         id: str,
         *,
-        filters: typing.Optional[typing.Dict[str, typing.Optional[str]]] = None,
+        filters: typing.Optional[typing.Dict[str, str]] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListBulkSchema:
         """
@@ -43,7 +43,7 @@ class SchemasClient:
         ----------
         id : str
 
-        filters : typing.Optional[typing.Dict[str, typing.Optional[str]]]
+        filters : typing.Optional[typing.Dict[str, str]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -62,7 +62,7 @@ class SchemasClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.schemas.list(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -138,7 +138,7 @@ class SchemasClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.schemas.patch(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -246,8 +246,8 @@ class SchemasClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.schemas.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schema_id="Contact",
+            id="id",
+            schema_id="schema_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -344,8 +344,8 @@ class SchemasClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.schemas.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schema_id="contact",
+            id="id",
+            schema_id="schema_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -434,7 +434,7 @@ class AsyncSchemasClient:
         self,
         id: str,
         *,
-        filters: typing.Optional[typing.Dict[str, typing.Optional[str]]] = None,
+        filters: typing.Optional[typing.Dict[str, str]] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListBulkSchema:
         """
@@ -442,7 +442,7 @@ class AsyncSchemasClient:
         ----------
         id : str
 
-        filters : typing.Optional[typing.Dict[str, typing.Optional[str]]]
+        filters : typing.Optional[typing.Dict[str, str]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -466,7 +466,7 @@ class AsyncSchemasClient:
 
         async def main() -> None:
             await client.bulk_sync.schemas.list(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -550,7 +550,7 @@ class AsyncSchemasClient:
 
         async def main() -> None:
             await client.bulk_sync.schemas.patch(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -666,8 +666,8 @@ class AsyncSchemasClient:
 
         async def main() -> None:
             await client.bulk_sync.schemas.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                schema_id="Contact",
+                id="id",
+                schema_id="schema_id",
             )
 
 
@@ -772,8 +772,8 @@ class AsyncSchemasClient:
 
         async def main() -> None:
             await client.bulk_sync.schemas.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                schema_id="contact",
+                id="id",
+                schema_id="schema_id",
             )
 
 
