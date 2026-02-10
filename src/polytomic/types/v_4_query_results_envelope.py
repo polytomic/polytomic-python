@@ -3,14 +3,14 @@
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 from .v_4_run_query_result import V4RunQueryResult
-from .pagination import Pagination
+from .v_4_run_query_pagination import V4RunQueryPagination
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
 class V4QueryResultsEnvelope(UniversalBaseModel):
     data: typing.Optional[V4RunQueryResult] = None
-    links: typing.Optional[Pagination] = None
+    links: typing.Optional[V4RunQueryPagination] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

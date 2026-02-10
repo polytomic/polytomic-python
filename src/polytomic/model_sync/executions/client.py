@@ -3,7 +3,7 @@
 import typing
 from ...core.client_wrapper import SyncClientWrapper
 from ...core.request_options import RequestOptions
-from ...types.list_execution_response_envelope import ListExecutionResponseEnvelope
+from ...types.v_2_list_execution_response_envelope import V2ListExecutionResponseEnvelope
 from ...core.jsonable_encoder import jsonable_encoder
 from ...core.pydantic_utilities import parse_obj_as
 from ...errors.unauthorized_error import UnauthorizedError
@@ -12,13 +12,13 @@ from ...errors.not_found_error import NotFoundError
 from ...types.api_error import ApiError as types_api_error_ApiError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError as core_api_error_ApiError
-from ...types.get_execution_response_envelope import GetExecutionResponseEnvelope
+from ...types.v_2_get_execution_response_envelope import V2GetExecutionResponseEnvelope
 from ...errors.internal_server_error import InternalServerError
-from ...types.execution_status import ExecutionStatus
+from ...types.util_execution_status import UtilExecutionStatus
 from ...errors.bad_request_error import BadRequestError
 from ...errors.forbidden_error import ForbiddenError
 from ...types.v_2_execution_log_type import V2ExecutionLogType
-from ...types.execution_logs_response_envelope import ExecutionLogsResponseEnvelope
+from ...types.v_2_execution_logs_response_envelope import V2ExecutionLogsResponseEnvelope
 from ...core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -37,7 +37,7 @@ class ExecutionsClient:
         only_completed: typing.Optional[bool] = None,
         ascending: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ListExecutionResponseEnvelope:
+    ) -> V2ListExecutionResponseEnvelope:
         """
         Parameters
         ----------
@@ -54,7 +54,7 @@ class ExecutionsClient:
 
         Returns
         -------
-        ListExecutionResponseEnvelope
+        V2ListExecutionResponseEnvelope
             OK
 
         Examples
@@ -66,10 +66,7 @@ class ExecutionsClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.executions.list(
-            sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            page_token="AmkYh8v0jR5B3kls2Qcc9y8MjrPmvR4CvaK7H0F4rEwqvg76K==",
-            only_completed=True,
-            ascending=True,
+            sync_id="sync_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -85,9 +82,9 @@ class ExecutionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ListExecutionResponseEnvelope,
+                    V2ListExecutionResponseEnvelope,
                     parse_obj_as(
-                        type_=ListExecutionResponseEnvelope,  # type: ignore
+                        type_=V2ListExecutionResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -118,7 +115,7 @@ class ExecutionsClient:
 
     def get(
         self, sync_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetExecutionResponseEnvelope:
+    ) -> V2GetExecutionResponseEnvelope:
         """
         Parameters
         ----------
@@ -131,7 +128,7 @@ class ExecutionsClient:
 
         Returns
         -------
-        GetExecutionResponseEnvelope
+        V2GetExecutionResponseEnvelope
             OK
 
         Examples
@@ -143,8 +140,8 @@ class ExecutionsClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.executions.get(
-            sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            sync_id="sync_id",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -155,9 +152,9 @@ class ExecutionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    GetExecutionResponseEnvelope,
+                    V2GetExecutionResponseEnvelope,
                     parse_obj_as(
-                        type_=GetExecutionResponseEnvelope,  # type: ignore
+                        type_=V2GetExecutionResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -197,8 +194,13 @@ class ExecutionsClient:
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     def update(
-        self, sync_id: str, id: str, *, status: ExecutionStatus, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetExecutionResponseEnvelope:
+        self,
+        sync_id: str,
+        id: str,
+        *,
+        status: UtilExecutionStatus,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> V2GetExecutionResponseEnvelope:
         """
         Parameters
         ----------
@@ -207,14 +209,14 @@ class ExecutionsClient:
         id : str
             The ID of the execution to update.
 
-        status : ExecutionStatus
+        status : UtilExecutionStatus
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        GetExecutionResponseEnvelope
+        V2GetExecutionResponseEnvelope
             OK
 
         Examples
@@ -226,8 +228,8 @@ class ExecutionsClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.executions.update(
-            sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            sync_id="sync_id",
+            id="id",
             status="created",
         )
         """
@@ -246,9 +248,9 @@ class ExecutionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    GetExecutionResponseEnvelope,
+                    V2GetExecutionResponseEnvelope,
                     parse_obj_as(
-                        type_=GetExecutionResponseEnvelope,  # type: ignore
+                        type_=V2GetExecutionResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -314,7 +316,7 @@ class ExecutionsClient:
         type: V2ExecutionLogType,
         *,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ExecutionLogsResponseEnvelope:
+    ) -> V2ExecutionLogsResponseEnvelope:
         """
         Parameters
         ----------
@@ -329,7 +331,7 @@ class ExecutionsClient:
 
         Returns
         -------
-        ExecutionLogsResponseEnvelope
+        V2ExecutionLogsResponseEnvelope
             OK
 
         Examples
@@ -341,8 +343,8 @@ class ExecutionsClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.executions.get_log_urls(
-            sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            sync_id="sync_id",
+            id="id",
             type="records",
         )
         """
@@ -354,9 +356,9 @@ class ExecutionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ExecutionLogsResponseEnvelope,
+                    V2ExecutionLogsResponseEnvelope,
                     parse_obj_as(
-                        type_=ExecutionLogsResponseEnvelope,  # type: ignore
+                        type_=V2ExecutionLogsResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -441,10 +443,10 @@ class ExecutionsClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.executions.get_logs(
-            sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            id="0ecd09c1-b901-4d27-9053-f0367c427254",
+            sync_id="sync_id",
+            id="id",
             type="records",
-            filename="path/to/file.json",
+            filename="filename",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -513,7 +515,7 @@ class AsyncExecutionsClient:
         only_completed: typing.Optional[bool] = None,
         ascending: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ListExecutionResponseEnvelope:
+    ) -> V2ListExecutionResponseEnvelope:
         """
         Parameters
         ----------
@@ -530,7 +532,7 @@ class AsyncExecutionsClient:
 
         Returns
         -------
-        ListExecutionResponseEnvelope
+        V2ListExecutionResponseEnvelope
             OK
 
         Examples
@@ -547,10 +549,7 @@ class AsyncExecutionsClient:
 
         async def main() -> None:
             await client.model_sync.executions.list(
-                sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                page_token="AmkYh8v0jR5B3kls2Qcc9y8MjrPmvR4CvaK7H0F4rEwqvg76K==",
-                only_completed=True,
-                ascending=True,
+                sync_id="sync_id",
             )
 
 
@@ -569,9 +568,9 @@ class AsyncExecutionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ListExecutionResponseEnvelope,
+                    V2ListExecutionResponseEnvelope,
                     parse_obj_as(
-                        type_=ListExecutionResponseEnvelope,  # type: ignore
+                        type_=V2ListExecutionResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -602,7 +601,7 @@ class AsyncExecutionsClient:
 
     async def get(
         self, sync_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetExecutionResponseEnvelope:
+    ) -> V2GetExecutionResponseEnvelope:
         """
         Parameters
         ----------
@@ -615,7 +614,7 @@ class AsyncExecutionsClient:
 
         Returns
         -------
-        GetExecutionResponseEnvelope
+        V2GetExecutionResponseEnvelope
             OK
 
         Examples
@@ -632,8 +631,8 @@ class AsyncExecutionsClient:
 
         async def main() -> None:
             await client.model_sync.executions.get(
-                sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                sync_id="sync_id",
+                id="id",
             )
 
 
@@ -647,9 +646,9 @@ class AsyncExecutionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    GetExecutionResponseEnvelope,
+                    V2GetExecutionResponseEnvelope,
                     parse_obj_as(
-                        type_=GetExecutionResponseEnvelope,  # type: ignore
+                        type_=V2GetExecutionResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -689,8 +688,13 @@ class AsyncExecutionsClient:
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     async def update(
-        self, sync_id: str, id: str, *, status: ExecutionStatus, request_options: typing.Optional[RequestOptions] = None
-    ) -> GetExecutionResponseEnvelope:
+        self,
+        sync_id: str,
+        id: str,
+        *,
+        status: UtilExecutionStatus,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> V2GetExecutionResponseEnvelope:
         """
         Parameters
         ----------
@@ -699,14 +703,14 @@ class AsyncExecutionsClient:
         id : str
             The ID of the execution to update.
 
-        status : ExecutionStatus
+        status : UtilExecutionStatus
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        GetExecutionResponseEnvelope
+        V2GetExecutionResponseEnvelope
             OK
 
         Examples
@@ -723,8 +727,8 @@ class AsyncExecutionsClient:
 
         async def main() -> None:
             await client.model_sync.executions.update(
-                sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                sync_id="sync_id",
+                id="id",
                 status="created",
             )
 
@@ -746,9 +750,9 @@ class AsyncExecutionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    GetExecutionResponseEnvelope,
+                    V2GetExecutionResponseEnvelope,
                     parse_obj_as(
-                        type_=GetExecutionResponseEnvelope,  # type: ignore
+                        type_=V2GetExecutionResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -814,7 +818,7 @@ class AsyncExecutionsClient:
         type: V2ExecutionLogType,
         *,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ExecutionLogsResponseEnvelope:
+    ) -> V2ExecutionLogsResponseEnvelope:
         """
         Parameters
         ----------
@@ -829,7 +833,7 @@ class AsyncExecutionsClient:
 
         Returns
         -------
-        ExecutionLogsResponseEnvelope
+        V2ExecutionLogsResponseEnvelope
             OK
 
         Examples
@@ -846,8 +850,8 @@ class AsyncExecutionsClient:
 
         async def main() -> None:
             await client.model_sync.executions.get_log_urls(
-                sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                sync_id="sync_id",
+                id="id",
                 type="records",
             )
 
@@ -862,9 +866,9 @@ class AsyncExecutionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ExecutionLogsResponseEnvelope,
+                    V2ExecutionLogsResponseEnvelope,
                     parse_obj_as(
-                        type_=ExecutionLogsResponseEnvelope,  # type: ignore
+                        type_=V2ExecutionLogsResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -954,10 +958,10 @@ class AsyncExecutionsClient:
 
         async def main() -> None:
             await client.model_sync.executions.get_logs(
-                sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                id="0ecd09c1-b901-4d27-9053-f0367c427254",
+                sync_id="sync_id",
+                id="id",
                 type="records",
-                filename="path/to/file.json",
+                filename="filename",
             )
 
 

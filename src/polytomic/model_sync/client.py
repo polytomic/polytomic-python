@@ -5,7 +5,7 @@ from ..core.client_wrapper import SyncClientWrapper
 from .targets.client import TargetsClient
 from .executions.client import ExecutionsClient
 from ..core.request_options import RequestOptions
-from ..types.get_model_sync_source_meta_envelope import GetModelSyncSourceMetaEnvelope
+from ..types.v_4_get_sync_source_meta_envelope import V4GetSyncSourceMetaEnvelope
 from ..core.jsonable_encoder import jsonable_encoder
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.bad_request_error import BadRequestError
@@ -17,24 +17,24 @@ from ..errors.not_found_error import NotFoundError
 from ..errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError as core_api_error_ApiError
-from ..types.model_field_response import ModelFieldResponse
-from ..types.model_sync_mode import ModelSyncMode
-from ..types.list_model_sync_response_envelope import ListModelSyncResponseEnvelope
-from ..types.model_sync_field import ModelSyncField
-from ..types.schedule import Schedule
-from ..types.target import Target
-from ..types.filter import Filter
-from ..types.identity import Identity
-from ..types.override import Override
-from ..types.model_sync_response_envelope import ModelSyncResponseEnvelope
+from ..types.v_2_model_field_response import V2ModelFieldResponse
+from ..types.modelsync_sync_target_mode import ModelsyncSyncTargetMode
+from ..types.v_2_list_sync_response_envelope import V2ListSyncResponseEnvelope
+from ..types.v_2_sync_field import V2SyncField
+from ..types.v_2_schedule import V2Schedule
+from ..types.v_2_target import V2Target
+from ..types.v_2_filter import V2Filter
+from ..types.v_2_identity import V2Identity
+from ..types.v_2_override import V2Override
+from ..types.v_2_sync_response_envelope import V2SyncResponseEnvelope
 from ..core.serialization import convert_and_respect_annotation_metadata
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
-from ..types.schedule_option_response_envelope import ScheduleOptionResponseEnvelope
+from ..types.v_2_schedule_option_response_envelope import V2ScheduleOptionResponseEnvelope
 from ..errors.conflict_error import ConflictError
-from ..types.activate_sync_envelope import ActivateSyncEnvelope
-from ..types.cancel_model_sync_response_envelope import CancelModelSyncResponseEnvelope
-from ..types.start_model_sync_response_envelope import StartModelSyncResponseEnvelope
-from ..types.sync_status_envelope import SyncStatusEnvelope
+from ..types.v_2_activate_sync_envelope import V2ActivateSyncEnvelope
+from ..types.v_2_cancel_sync_response_envelope import V2CancelSyncResponseEnvelope
+from ..types.v_2_start_sync_response_envelope import V2StartSyncResponseEnvelope
+from ..types.v_2_sync_status_envelope import V2SyncStatusEnvelope
 from ..core.client_wrapper import AsyncClientWrapper
 from .targets.client import AsyncTargetsClient
 from .executions.client import AsyncExecutionsClient
@@ -53,22 +53,22 @@ class ModelSyncClient:
         self,
         id: str,
         *,
-        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        params: typing.Optional[typing.Dict[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> GetModelSyncSourceMetaEnvelope:
+    ) -> V4GetSyncSourceMetaEnvelope:
         """
         Parameters
         ----------
         id : str
 
-        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+        params : typing.Optional[typing.Dict[str, typing.Sequence[str]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        GetModelSyncSourceMetaEnvelope
+        V4GetSyncSourceMetaEnvelope
             OK
 
         Examples
@@ -80,7 +80,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.get_source(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -94,9 +94,9 @@ class ModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    GetModelSyncSourceMetaEnvelope,
+                    V4GetSyncSourceMetaEnvelope,
                     parse_obj_as(
-                        type_=GetModelSyncSourceMetaEnvelope,  # type: ignore
+                        type_=V4GetSyncSourceMetaEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -159,22 +159,22 @@ class ModelSyncClient:
         self,
         id: str,
         *,
-        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        params: typing.Optional[typing.Dict[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ModelFieldResponse:
+    ) -> V2ModelFieldResponse:
         """
         Parameters
         ----------
         id : str
 
-        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+        params : typing.Optional[typing.Dict[str, typing.Sequence[str]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        ModelFieldResponse
+        V2ModelFieldResponse
             OK
 
         Examples
@@ -186,7 +186,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.get_source_fields(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -200,9 +200,9 @@ class ModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ModelFieldResponse,
+                    V2ModelFieldResponse,
                     parse_obj_as(
-                        type_=ModelFieldResponse,  # type: ignore
+                        type_=V2ModelFieldResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -265,16 +265,16 @@ class ModelSyncClient:
         self,
         *,
         active: typing.Optional[bool] = None,
-        mode: typing.Optional[ModelSyncMode] = None,
+        mode: typing.Optional[ModelsyncSyncTargetMode] = None,
         target_connection_id: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ListModelSyncResponseEnvelope:
+    ) -> V2ListSyncResponseEnvelope:
         """
         Parameters
         ----------
         active : typing.Optional[bool]
 
-        mode : typing.Optional[ModelSyncMode]
+        mode : typing.Optional[ModelsyncSyncTargetMode]
 
         target_connection_id : typing.Optional[str]
 
@@ -283,7 +283,7 @@ class ModelSyncClient:
 
         Returns
         -------
-        ListModelSyncResponseEnvelope
+        V2ListSyncResponseEnvelope
             OK
 
         Examples
@@ -294,10 +294,7 @@ class ModelSyncClient:
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        client.model_sync.list(
-            active=True,
-            target_connection_id="0b155265-c537-44c9-9359-a3ceb468a4da",
-        )
+        client.model_sync.list()
         """
         _response = self._client_wrapper.httpx_client.request(
             "api/syncs",
@@ -312,9 +309,9 @@ class ModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ListModelSyncResponseEnvelope,
+                    V2ListSyncResponseEnvelope,
                     parse_obj_as(
-                        type_=ListModelSyncResponseEnvelope,  # type: ignore
+                        type_=V2ListSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -366,25 +363,25 @@ class ModelSyncClient:
     def create(
         self,
         *,
-        fields: typing.Sequence[ModelSyncField],
-        mode: ModelSyncMode,
+        fields: typing.Sequence[V2SyncField],
+        mode: ModelsyncSyncTargetMode,
         name: str,
-        schedule: Schedule,
-        target: Target,
+        schedule: V2Schedule,
+        target: V2Target,
         active: typing.Optional[bool] = OMIT,
         encryption_passphrase: typing.Optional[str] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
-        filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
-        identity: typing.Optional[Identity] = OMIT,
+        filters: typing.Optional[typing.Sequence[V2Filter]] = OMIT,
+        identity: typing.Optional[V2Identity] = OMIT,
         only_enrich_updates: typing.Optional[bool] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
-        override_fields: typing.Optional[typing.Sequence[ModelSyncField]] = OMIT,
-        overrides: typing.Optional[typing.Sequence[Override]] = OMIT,
+        override_fields: typing.Optional[typing.Sequence[V2SyncField]] = OMIT,
+        overrides: typing.Optional[typing.Sequence[V2Override]] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         skip_initial_backfill: typing.Optional[bool] = OMIT,
         sync_all_records: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ModelSyncResponseEnvelope:
+    ) -> V2SyncResponseEnvelope:
         """
         Create a new sync from one or more models to a destination.
 
@@ -445,16 +442,16 @@ class ModelSyncClient:
 
         Parameters
         ----------
-        fields : typing.Sequence[ModelSyncField]
+        fields : typing.Sequence[V2SyncField]
             Fields to sync from source to destination.
 
-        mode : ModelSyncMode
+        mode : ModelsyncSyncTargetMode
 
         name : str
 
-        schedule : Schedule
+        schedule : V2Schedule
 
-        target : Target
+        target : V2Target
 
         active : typing.Optional[bool]
             Whether the sync is enabled and scheduled.
@@ -465,10 +462,10 @@ class ModelSyncClient:
         filter_logic : typing.Optional[str]
             Logical expression to combine filters.
 
-        filters : typing.Optional[typing.Sequence[Filter]]
+        filters : typing.Optional[typing.Sequence[V2Filter]]
             Filters to apply to the source data.
 
-        identity : typing.Optional[Identity]
+        identity : typing.Optional[V2Identity]
 
         only_enrich_updates : typing.Optional[bool]
             Whether to use enrichment models as a source of possible changes to sync. If true, only changes to the base models will cause a record to sync.
@@ -476,10 +473,10 @@ class ModelSyncClient:
         organization_id : typing.Optional[str]
             Organization ID for the sync; read-only with a partner key.
 
-        override_fields : typing.Optional[typing.Sequence[ModelSyncField]]
+        override_fields : typing.Optional[typing.Sequence[V2SyncField]]
             Values to set in the target unconditionally.
 
-        overrides : typing.Optional[typing.Sequence[Override]]
+        overrides : typing.Optional[typing.Sequence[V2Override]]
             Conditional value replacement for fields.
 
         policies : typing.Optional[typing.Sequence[str]]
@@ -495,12 +492,12 @@ class ModelSyncClient:
 
         Returns
         -------
-        ModelSyncResponseEnvelope
+        V2SyncResponseEnvelope
             OK
 
         Examples
         --------
-        from polytomic import ModelSyncField, Polytomic, Schedule, Target
+        from polytomic import Polytomic, V2Schedule, V2SyncField, V2Target
 
         client = Polytomic(
             version="YOUR_VERSION",
@@ -508,15 +505,18 @@ class ModelSyncClient:
         )
         client.model_sync.create(
             fields=[
-                ModelSyncField(
-                    target="name",
-                )
+                V2SyncField(
+                    target="target",
+                ),
+                V2SyncField(
+                    target="target",
+                ),
             ],
             mode="create",
-            name="Users Sync",
-            schedule=Schedule(),
-            target=Target(
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            name="name",
+            schedule=V2Schedule(),
+            target=V2Target(
+                connection_id="connection_id",
             ),
         )
         """
@@ -527,32 +527,34 @@ class ModelSyncClient:
                 "active": active,
                 "encryption_passphrase": encryption_passphrase,
                 "fields": convert_and_respect_annotation_metadata(
-                    object_=fields, annotation=typing.Sequence[ModelSyncField], direction="write"
+                    object_=fields, annotation=typing.Sequence[V2SyncField], direction="write"
                 ),
                 "filter_logic": filter_logic,
                 "filters": convert_and_respect_annotation_metadata(
-                    object_=filters, annotation=typing.Sequence[Filter], direction="write"
+                    object_=filters, annotation=typing.Sequence[V2Filter], direction="write"
                 ),
                 "identity": convert_and_respect_annotation_metadata(
-                    object_=identity, annotation=Identity, direction="write"
+                    object_=identity, annotation=V2Identity, direction="write"
                 ),
                 "mode": mode,
                 "name": name,
                 "only_enrich_updates": only_enrich_updates,
                 "organization_id": organization_id,
                 "override_fields": convert_and_respect_annotation_metadata(
-                    object_=override_fields, annotation=typing.Sequence[ModelSyncField], direction="write"
+                    object_=override_fields, annotation=typing.Sequence[V2SyncField], direction="write"
                 ),
                 "overrides": convert_and_respect_annotation_metadata(
-                    object_=overrides, annotation=typing.Sequence[Override], direction="write"
+                    object_=overrides, annotation=typing.Sequence[V2Override], direction="write"
                 ),
                 "policies": policies,
                 "schedule": convert_and_respect_annotation_metadata(
-                    object_=schedule, annotation=Schedule, direction="write"
+                    object_=schedule, annotation=V2Schedule, direction="write"
                 ),
                 "skip_initial_backfill": skip_initial_backfill,
                 "sync_all_records": sync_all_records,
-                "target": convert_and_respect_annotation_metadata(object_=target, annotation=Target, direction="write"),
+                "target": convert_and_respect_annotation_metadata(
+                    object_=target, annotation=V2Target, direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -563,9 +565,9 @@ class ModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ModelSyncResponseEnvelope,
+                    V2SyncResponseEnvelope,
                     parse_obj_as(
-                        type_=ModelSyncResponseEnvelope,  # type: ignore
+                        type_=V2SyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -626,7 +628,7 @@ class ModelSyncClient:
 
     def get_schedule_options(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> ScheduleOptionResponseEnvelope:
+    ) -> V2ScheduleOptionResponseEnvelope:
         """
         Parameters
         ----------
@@ -635,7 +637,7 @@ class ModelSyncClient:
 
         Returns
         -------
-        ScheduleOptionResponseEnvelope
+        V2ScheduleOptionResponseEnvelope
             OK
 
         Examples
@@ -656,9 +658,9 @@ class ModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ScheduleOptionResponseEnvelope,
+                    V2ScheduleOptionResponseEnvelope,
                     parse_obj_as(
-                        type_=ScheduleOptionResponseEnvelope,  # type: ignore
+                        type_=V2ScheduleOptionResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -687,7 +689,7 @@ class ModelSyncClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> ModelSyncResponseEnvelope:
+    def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> V2SyncResponseEnvelope:
         """
         Parameters
         ----------
@@ -698,7 +700,7 @@ class ModelSyncClient:
 
         Returns
         -------
-        ModelSyncResponseEnvelope
+        V2SyncResponseEnvelope
             OK
 
         Examples
@@ -710,7 +712,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -721,9 +723,9 @@ class ModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ModelSyncResponseEnvelope,
+                    V2SyncResponseEnvelope,
                     parse_obj_as(
-                        type_=ModelSyncResponseEnvelope,  # type: ignore
+                        type_=V2SyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -766,40 +768,40 @@ class ModelSyncClient:
         self,
         id: str,
         *,
-        fields: typing.Sequence[ModelSyncField],
-        mode: ModelSyncMode,
+        fields: typing.Sequence[V2SyncField],
+        mode: ModelsyncSyncTargetMode,
         name: str,
-        schedule: Schedule,
-        target: Target,
+        schedule: V2Schedule,
+        target: V2Target,
         active: typing.Optional[bool] = OMIT,
         encryption_passphrase: typing.Optional[str] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
-        filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
-        identity: typing.Optional[Identity] = OMIT,
+        filters: typing.Optional[typing.Sequence[V2Filter]] = OMIT,
+        identity: typing.Optional[V2Identity] = OMIT,
         only_enrich_updates: typing.Optional[bool] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
-        override_fields: typing.Optional[typing.Sequence[ModelSyncField]] = OMIT,
-        overrides: typing.Optional[typing.Sequence[Override]] = OMIT,
+        override_fields: typing.Optional[typing.Sequence[V2SyncField]] = OMIT,
+        overrides: typing.Optional[typing.Sequence[V2Override]] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         skip_initial_backfill: typing.Optional[bool] = OMIT,
         sync_all_records: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ModelSyncResponseEnvelope:
+    ) -> V2SyncResponseEnvelope:
         """
         Parameters
         ----------
         id : str
 
-        fields : typing.Sequence[ModelSyncField]
+        fields : typing.Sequence[V2SyncField]
             Fields to sync from source to destination.
 
-        mode : ModelSyncMode
+        mode : ModelsyncSyncTargetMode
 
         name : str
 
-        schedule : Schedule
+        schedule : V2Schedule
 
-        target : Target
+        target : V2Target
 
         active : typing.Optional[bool]
             Whether the sync is enabled and scheduled.
@@ -810,10 +812,10 @@ class ModelSyncClient:
         filter_logic : typing.Optional[str]
             Logical expression to combine filters.
 
-        filters : typing.Optional[typing.Sequence[Filter]]
+        filters : typing.Optional[typing.Sequence[V2Filter]]
             Filters to apply to the source data.
 
-        identity : typing.Optional[Identity]
+        identity : typing.Optional[V2Identity]
 
         only_enrich_updates : typing.Optional[bool]
             Whether to use enrichment models as a source of possible changes to sync. If true, only changes to the base models will cause a record to sync.
@@ -821,10 +823,10 @@ class ModelSyncClient:
         organization_id : typing.Optional[str]
             Organization ID for the sync; read-only with a partner key.
 
-        override_fields : typing.Optional[typing.Sequence[ModelSyncField]]
+        override_fields : typing.Optional[typing.Sequence[V2SyncField]]
             Values to set in the target unconditionally.
 
-        overrides : typing.Optional[typing.Sequence[Override]]
+        overrides : typing.Optional[typing.Sequence[V2Override]]
             Conditional value replacement for fields.
 
         policies : typing.Optional[typing.Sequence[str]]
@@ -840,29 +842,32 @@ class ModelSyncClient:
 
         Returns
         -------
-        ModelSyncResponseEnvelope
+        V2SyncResponseEnvelope
             OK
 
         Examples
         --------
-        from polytomic import ModelSyncField, Polytomic, Schedule, Target
+        from polytomic import Polytomic, V2Schedule, V2SyncField, V2Target
 
         client = Polytomic(
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
         client.model_sync.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
             fields=[
-                ModelSyncField(
-                    target="name",
-                )
+                V2SyncField(
+                    target="target",
+                ),
+                V2SyncField(
+                    target="target",
+                ),
             ],
             mode="create",
-            name="Users Sync",
-            schedule=Schedule(),
-            target=Target(
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            name="name",
+            schedule=V2Schedule(),
+            target=V2Target(
+                connection_id="connection_id",
             ),
         )
         """
@@ -873,32 +878,34 @@ class ModelSyncClient:
                 "active": active,
                 "encryption_passphrase": encryption_passphrase,
                 "fields": convert_and_respect_annotation_metadata(
-                    object_=fields, annotation=typing.Sequence[ModelSyncField], direction="write"
+                    object_=fields, annotation=typing.Sequence[V2SyncField], direction="write"
                 ),
                 "filter_logic": filter_logic,
                 "filters": convert_and_respect_annotation_metadata(
-                    object_=filters, annotation=typing.Sequence[Filter], direction="write"
+                    object_=filters, annotation=typing.Sequence[V2Filter], direction="write"
                 ),
                 "identity": convert_and_respect_annotation_metadata(
-                    object_=identity, annotation=Identity, direction="write"
+                    object_=identity, annotation=V2Identity, direction="write"
                 ),
                 "mode": mode,
                 "name": name,
                 "only_enrich_updates": only_enrich_updates,
                 "organization_id": organization_id,
                 "override_fields": convert_and_respect_annotation_metadata(
-                    object_=override_fields, annotation=typing.Sequence[ModelSyncField], direction="write"
+                    object_=override_fields, annotation=typing.Sequence[V2SyncField], direction="write"
                 ),
                 "overrides": convert_and_respect_annotation_metadata(
-                    object_=overrides, annotation=typing.Sequence[Override], direction="write"
+                    object_=overrides, annotation=typing.Sequence[V2Override], direction="write"
                 ),
                 "policies": policies,
                 "schedule": convert_and_respect_annotation_metadata(
-                    object_=schedule, annotation=Schedule, direction="write"
+                    object_=schedule, annotation=V2Schedule, direction="write"
                 ),
                 "skip_initial_backfill": skip_initial_backfill,
                 "sync_all_records": sync_all_records,
-                "target": convert_and_respect_annotation_metadata(object_=target, annotation=Target, direction="write"),
+                "target": convert_and_respect_annotation_metadata(
+                    object_=target, annotation=V2Target, direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -909,9 +916,9 @@ class ModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ModelSyncResponseEnvelope,
+                    V2SyncResponseEnvelope,
                     parse_obj_as(
-                        type_=ModelSyncResponseEnvelope,  # type: ignore
+                        type_=V2SyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1002,7 +1009,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.remove(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1070,7 +1077,7 @@ class ModelSyncClient:
 
     def activate(
         self, id: str, *, active: bool, request_options: typing.Optional[RequestOptions] = None
-    ) -> ActivateSyncEnvelope:
+    ) -> V2ActivateSyncEnvelope:
         """
         Parameters
         ----------
@@ -1083,7 +1090,7 @@ class ModelSyncClient:
 
         Returns
         -------
-        ActivateSyncEnvelope
+        V2ActivateSyncEnvelope
             OK
 
         Examples
@@ -1095,7 +1102,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.activate(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
             active=True,
         )
         """
@@ -1111,9 +1118,9 @@ class ModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ActivateSyncEnvelope,
+                    V2ActivateSyncEnvelope,
                     parse_obj_as(
-                        type_=ActivateSyncEnvelope,  # type: ignore
+                        type_=V2ActivateSyncEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1164,7 +1171,7 @@ class ModelSyncClient:
 
     def cancel(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> CancelModelSyncResponseEnvelope:
+    ) -> V2CancelSyncResponseEnvelope:
         """
         Parameters
         ----------
@@ -1176,7 +1183,7 @@ class ModelSyncClient:
 
         Returns
         -------
-        CancelModelSyncResponseEnvelope
+        V2CancelSyncResponseEnvelope
             OK
 
         Examples
@@ -1188,7 +1195,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.cancel(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1199,9 +1206,9 @@ class ModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    CancelModelSyncResponseEnvelope,
+                    V2CancelSyncResponseEnvelope,
                     parse_obj_as(
-                        type_=CancelModelSyncResponseEnvelope,  # type: ignore
+                        type_=V2CancelSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1258,7 +1265,7 @@ class ModelSyncClient:
         resync: typing.Optional[bool] = OMIT,
         test: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> StartModelSyncResponseEnvelope:
+    ) -> V2StartSyncResponseEnvelope:
         """
         > 🚧 Force full resync
         >
@@ -1279,7 +1286,7 @@ class ModelSyncClient:
 
         Returns
         -------
-        StartModelSyncResponseEnvelope
+        V2StartSyncResponseEnvelope
             OK
 
         Examples
@@ -1291,7 +1298,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.start(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1311,9 +1318,9 @@ class ModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    StartModelSyncResponseEnvelope,
+                    V2StartSyncResponseEnvelope,
                     parse_obj_as(
-                        type_=StartModelSyncResponseEnvelope,  # type: ignore
+                        type_=V2StartSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1382,7 +1389,7 @@ class ModelSyncClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get_status(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> SyncStatusEnvelope:
+    def get_status(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> V2SyncStatusEnvelope:
         """
         Parameters
         ----------
@@ -1393,7 +1400,7 @@ class ModelSyncClient:
 
         Returns
         -------
-        SyncStatusEnvelope
+        V2SyncStatusEnvelope
             OK
 
         Examples
@@ -1405,7 +1412,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.get_status(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1416,9 +1423,9 @@ class ModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    SyncStatusEnvelope,
+                    V2SyncStatusEnvelope,
                     parse_obj_as(
-                        type_=SyncStatusEnvelope,  # type: ignore
+                        type_=V2SyncStatusEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1468,22 +1475,22 @@ class AsyncModelSyncClient:
         self,
         id: str,
         *,
-        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        params: typing.Optional[typing.Dict[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> GetModelSyncSourceMetaEnvelope:
+    ) -> V4GetSyncSourceMetaEnvelope:
         """
         Parameters
         ----------
         id : str
 
-        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+        params : typing.Optional[typing.Dict[str, typing.Sequence[str]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        GetModelSyncSourceMetaEnvelope
+        V4GetSyncSourceMetaEnvelope
             OK
 
         Examples
@@ -1500,7 +1507,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.get_source(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -1517,9 +1524,9 @@ class AsyncModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    GetModelSyncSourceMetaEnvelope,
+                    V4GetSyncSourceMetaEnvelope,
                     parse_obj_as(
-                        type_=GetModelSyncSourceMetaEnvelope,  # type: ignore
+                        type_=V4GetSyncSourceMetaEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1582,22 +1589,22 @@ class AsyncModelSyncClient:
         self,
         id: str,
         *,
-        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        params: typing.Optional[typing.Dict[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ModelFieldResponse:
+    ) -> V2ModelFieldResponse:
         """
         Parameters
         ----------
         id : str
 
-        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+        params : typing.Optional[typing.Dict[str, typing.Sequence[str]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        ModelFieldResponse
+        V2ModelFieldResponse
             OK
 
         Examples
@@ -1614,7 +1621,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.get_source_fields(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -1631,9 +1638,9 @@ class AsyncModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ModelFieldResponse,
+                    V2ModelFieldResponse,
                     parse_obj_as(
-                        type_=ModelFieldResponse,  # type: ignore
+                        type_=V2ModelFieldResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1696,16 +1703,16 @@ class AsyncModelSyncClient:
         self,
         *,
         active: typing.Optional[bool] = None,
-        mode: typing.Optional[ModelSyncMode] = None,
+        mode: typing.Optional[ModelsyncSyncTargetMode] = None,
         target_connection_id: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ListModelSyncResponseEnvelope:
+    ) -> V2ListSyncResponseEnvelope:
         """
         Parameters
         ----------
         active : typing.Optional[bool]
 
-        mode : typing.Optional[ModelSyncMode]
+        mode : typing.Optional[ModelsyncSyncTargetMode]
 
         target_connection_id : typing.Optional[str]
 
@@ -1714,7 +1721,7 @@ class AsyncModelSyncClient:
 
         Returns
         -------
-        ListModelSyncResponseEnvelope
+        V2ListSyncResponseEnvelope
             OK
 
         Examples
@@ -1730,10 +1737,7 @@ class AsyncModelSyncClient:
 
 
         async def main() -> None:
-            await client.model_sync.list(
-                active=True,
-                target_connection_id="0b155265-c537-44c9-9359-a3ceb468a4da",
-            )
+            await client.model_sync.list()
 
 
         asyncio.run(main())
@@ -1751,9 +1755,9 @@ class AsyncModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ListModelSyncResponseEnvelope,
+                    V2ListSyncResponseEnvelope,
                     parse_obj_as(
-                        type_=ListModelSyncResponseEnvelope,  # type: ignore
+                        type_=V2ListSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1805,25 +1809,25 @@ class AsyncModelSyncClient:
     async def create(
         self,
         *,
-        fields: typing.Sequence[ModelSyncField],
-        mode: ModelSyncMode,
+        fields: typing.Sequence[V2SyncField],
+        mode: ModelsyncSyncTargetMode,
         name: str,
-        schedule: Schedule,
-        target: Target,
+        schedule: V2Schedule,
+        target: V2Target,
         active: typing.Optional[bool] = OMIT,
         encryption_passphrase: typing.Optional[str] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
-        filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
-        identity: typing.Optional[Identity] = OMIT,
+        filters: typing.Optional[typing.Sequence[V2Filter]] = OMIT,
+        identity: typing.Optional[V2Identity] = OMIT,
         only_enrich_updates: typing.Optional[bool] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
-        override_fields: typing.Optional[typing.Sequence[ModelSyncField]] = OMIT,
-        overrides: typing.Optional[typing.Sequence[Override]] = OMIT,
+        override_fields: typing.Optional[typing.Sequence[V2SyncField]] = OMIT,
+        overrides: typing.Optional[typing.Sequence[V2Override]] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         skip_initial_backfill: typing.Optional[bool] = OMIT,
         sync_all_records: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ModelSyncResponseEnvelope:
+    ) -> V2SyncResponseEnvelope:
         """
         Create a new sync from one or more models to a destination.
 
@@ -1884,16 +1888,16 @@ class AsyncModelSyncClient:
 
         Parameters
         ----------
-        fields : typing.Sequence[ModelSyncField]
+        fields : typing.Sequence[V2SyncField]
             Fields to sync from source to destination.
 
-        mode : ModelSyncMode
+        mode : ModelsyncSyncTargetMode
 
         name : str
 
-        schedule : Schedule
+        schedule : V2Schedule
 
-        target : Target
+        target : V2Target
 
         active : typing.Optional[bool]
             Whether the sync is enabled and scheduled.
@@ -1904,10 +1908,10 @@ class AsyncModelSyncClient:
         filter_logic : typing.Optional[str]
             Logical expression to combine filters.
 
-        filters : typing.Optional[typing.Sequence[Filter]]
+        filters : typing.Optional[typing.Sequence[V2Filter]]
             Filters to apply to the source data.
 
-        identity : typing.Optional[Identity]
+        identity : typing.Optional[V2Identity]
 
         only_enrich_updates : typing.Optional[bool]
             Whether to use enrichment models as a source of possible changes to sync. If true, only changes to the base models will cause a record to sync.
@@ -1915,10 +1919,10 @@ class AsyncModelSyncClient:
         organization_id : typing.Optional[str]
             Organization ID for the sync; read-only with a partner key.
 
-        override_fields : typing.Optional[typing.Sequence[ModelSyncField]]
+        override_fields : typing.Optional[typing.Sequence[V2SyncField]]
             Values to set in the target unconditionally.
 
-        overrides : typing.Optional[typing.Sequence[Override]]
+        overrides : typing.Optional[typing.Sequence[V2Override]]
             Conditional value replacement for fields.
 
         policies : typing.Optional[typing.Sequence[str]]
@@ -1934,14 +1938,14 @@ class AsyncModelSyncClient:
 
         Returns
         -------
-        ModelSyncResponseEnvelope
+        V2SyncResponseEnvelope
             OK
 
         Examples
         --------
         import asyncio
 
-        from polytomic import AsyncPolytomic, ModelSyncField, Schedule, Target
+        from polytomic import AsyncPolytomic, V2Schedule, V2SyncField, V2Target
 
         client = AsyncPolytomic(
             version="YOUR_VERSION",
@@ -1952,15 +1956,18 @@ class AsyncModelSyncClient:
         async def main() -> None:
             await client.model_sync.create(
                 fields=[
-                    ModelSyncField(
-                        target="name",
-                    )
+                    V2SyncField(
+                        target="target",
+                    ),
+                    V2SyncField(
+                        target="target",
+                    ),
                 ],
                 mode="create",
-                name="Users Sync",
-                schedule=Schedule(),
-                target=Target(
-                    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                name="name",
+                schedule=V2Schedule(),
+                target=V2Target(
+                    connection_id="connection_id",
                 ),
             )
 
@@ -1974,32 +1981,34 @@ class AsyncModelSyncClient:
                 "active": active,
                 "encryption_passphrase": encryption_passphrase,
                 "fields": convert_and_respect_annotation_metadata(
-                    object_=fields, annotation=typing.Sequence[ModelSyncField], direction="write"
+                    object_=fields, annotation=typing.Sequence[V2SyncField], direction="write"
                 ),
                 "filter_logic": filter_logic,
                 "filters": convert_and_respect_annotation_metadata(
-                    object_=filters, annotation=typing.Sequence[Filter], direction="write"
+                    object_=filters, annotation=typing.Sequence[V2Filter], direction="write"
                 ),
                 "identity": convert_and_respect_annotation_metadata(
-                    object_=identity, annotation=Identity, direction="write"
+                    object_=identity, annotation=V2Identity, direction="write"
                 ),
                 "mode": mode,
                 "name": name,
                 "only_enrich_updates": only_enrich_updates,
                 "organization_id": organization_id,
                 "override_fields": convert_and_respect_annotation_metadata(
-                    object_=override_fields, annotation=typing.Sequence[ModelSyncField], direction="write"
+                    object_=override_fields, annotation=typing.Sequence[V2SyncField], direction="write"
                 ),
                 "overrides": convert_and_respect_annotation_metadata(
-                    object_=overrides, annotation=typing.Sequence[Override], direction="write"
+                    object_=overrides, annotation=typing.Sequence[V2Override], direction="write"
                 ),
                 "policies": policies,
                 "schedule": convert_and_respect_annotation_metadata(
-                    object_=schedule, annotation=Schedule, direction="write"
+                    object_=schedule, annotation=V2Schedule, direction="write"
                 ),
                 "skip_initial_backfill": skip_initial_backfill,
                 "sync_all_records": sync_all_records,
-                "target": convert_and_respect_annotation_metadata(object_=target, annotation=Target, direction="write"),
+                "target": convert_and_respect_annotation_metadata(
+                    object_=target, annotation=V2Target, direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -2010,9 +2019,9 @@ class AsyncModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ModelSyncResponseEnvelope,
+                    V2SyncResponseEnvelope,
                     parse_obj_as(
-                        type_=ModelSyncResponseEnvelope,  # type: ignore
+                        type_=V2SyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -2073,7 +2082,7 @@ class AsyncModelSyncClient:
 
     async def get_schedule_options(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> ScheduleOptionResponseEnvelope:
+    ) -> V2ScheduleOptionResponseEnvelope:
         """
         Parameters
         ----------
@@ -2082,7 +2091,7 @@ class AsyncModelSyncClient:
 
         Returns
         -------
-        ScheduleOptionResponseEnvelope
+        V2ScheduleOptionResponseEnvelope
             OK
 
         Examples
@@ -2111,9 +2120,9 @@ class AsyncModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ScheduleOptionResponseEnvelope,
+                    V2ScheduleOptionResponseEnvelope,
                     parse_obj_as(
-                        type_=ScheduleOptionResponseEnvelope,  # type: ignore
+                        type_=V2ScheduleOptionResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -2142,9 +2151,7 @@ class AsyncModelSyncClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> ModelSyncResponseEnvelope:
+    async def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> V2SyncResponseEnvelope:
         """
         Parameters
         ----------
@@ -2155,7 +2162,7 @@ class AsyncModelSyncClient:
 
         Returns
         -------
-        ModelSyncResponseEnvelope
+        V2SyncResponseEnvelope
             OK
 
         Examples
@@ -2172,7 +2179,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2186,9 +2193,9 @@ class AsyncModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ModelSyncResponseEnvelope,
+                    V2SyncResponseEnvelope,
                     parse_obj_as(
-                        type_=ModelSyncResponseEnvelope,  # type: ignore
+                        type_=V2SyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -2231,40 +2238,40 @@ class AsyncModelSyncClient:
         self,
         id: str,
         *,
-        fields: typing.Sequence[ModelSyncField],
-        mode: ModelSyncMode,
+        fields: typing.Sequence[V2SyncField],
+        mode: ModelsyncSyncTargetMode,
         name: str,
-        schedule: Schedule,
-        target: Target,
+        schedule: V2Schedule,
+        target: V2Target,
         active: typing.Optional[bool] = OMIT,
         encryption_passphrase: typing.Optional[str] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
-        filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
-        identity: typing.Optional[Identity] = OMIT,
+        filters: typing.Optional[typing.Sequence[V2Filter]] = OMIT,
+        identity: typing.Optional[V2Identity] = OMIT,
         only_enrich_updates: typing.Optional[bool] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
-        override_fields: typing.Optional[typing.Sequence[ModelSyncField]] = OMIT,
-        overrides: typing.Optional[typing.Sequence[Override]] = OMIT,
+        override_fields: typing.Optional[typing.Sequence[V2SyncField]] = OMIT,
+        overrides: typing.Optional[typing.Sequence[V2Override]] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         skip_initial_backfill: typing.Optional[bool] = OMIT,
         sync_all_records: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ModelSyncResponseEnvelope:
+    ) -> V2SyncResponseEnvelope:
         """
         Parameters
         ----------
         id : str
 
-        fields : typing.Sequence[ModelSyncField]
+        fields : typing.Sequence[V2SyncField]
             Fields to sync from source to destination.
 
-        mode : ModelSyncMode
+        mode : ModelsyncSyncTargetMode
 
         name : str
 
-        schedule : Schedule
+        schedule : V2Schedule
 
-        target : Target
+        target : V2Target
 
         active : typing.Optional[bool]
             Whether the sync is enabled and scheduled.
@@ -2275,10 +2282,10 @@ class AsyncModelSyncClient:
         filter_logic : typing.Optional[str]
             Logical expression to combine filters.
 
-        filters : typing.Optional[typing.Sequence[Filter]]
+        filters : typing.Optional[typing.Sequence[V2Filter]]
             Filters to apply to the source data.
 
-        identity : typing.Optional[Identity]
+        identity : typing.Optional[V2Identity]
 
         only_enrich_updates : typing.Optional[bool]
             Whether to use enrichment models as a source of possible changes to sync. If true, only changes to the base models will cause a record to sync.
@@ -2286,10 +2293,10 @@ class AsyncModelSyncClient:
         organization_id : typing.Optional[str]
             Organization ID for the sync; read-only with a partner key.
 
-        override_fields : typing.Optional[typing.Sequence[ModelSyncField]]
+        override_fields : typing.Optional[typing.Sequence[V2SyncField]]
             Values to set in the target unconditionally.
 
-        overrides : typing.Optional[typing.Sequence[Override]]
+        overrides : typing.Optional[typing.Sequence[V2Override]]
             Conditional value replacement for fields.
 
         policies : typing.Optional[typing.Sequence[str]]
@@ -2305,14 +2312,14 @@ class AsyncModelSyncClient:
 
         Returns
         -------
-        ModelSyncResponseEnvelope
+        V2SyncResponseEnvelope
             OK
 
         Examples
         --------
         import asyncio
 
-        from polytomic import AsyncPolytomic, ModelSyncField, Schedule, Target
+        from polytomic import AsyncPolytomic, V2Schedule, V2SyncField, V2Target
 
         client = AsyncPolytomic(
             version="YOUR_VERSION",
@@ -2322,17 +2329,20 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
                 fields=[
-                    ModelSyncField(
-                        target="name",
-                    )
+                    V2SyncField(
+                        target="target",
+                    ),
+                    V2SyncField(
+                        target="target",
+                    ),
                 ],
                 mode="create",
-                name="Users Sync",
-                schedule=Schedule(),
-                target=Target(
-                    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                name="name",
+                schedule=V2Schedule(),
+                target=V2Target(
+                    connection_id="connection_id",
                 ),
             )
 
@@ -2346,32 +2356,34 @@ class AsyncModelSyncClient:
                 "active": active,
                 "encryption_passphrase": encryption_passphrase,
                 "fields": convert_and_respect_annotation_metadata(
-                    object_=fields, annotation=typing.Sequence[ModelSyncField], direction="write"
+                    object_=fields, annotation=typing.Sequence[V2SyncField], direction="write"
                 ),
                 "filter_logic": filter_logic,
                 "filters": convert_and_respect_annotation_metadata(
-                    object_=filters, annotation=typing.Sequence[Filter], direction="write"
+                    object_=filters, annotation=typing.Sequence[V2Filter], direction="write"
                 ),
                 "identity": convert_and_respect_annotation_metadata(
-                    object_=identity, annotation=Identity, direction="write"
+                    object_=identity, annotation=V2Identity, direction="write"
                 ),
                 "mode": mode,
                 "name": name,
                 "only_enrich_updates": only_enrich_updates,
                 "organization_id": organization_id,
                 "override_fields": convert_and_respect_annotation_metadata(
-                    object_=override_fields, annotation=typing.Sequence[ModelSyncField], direction="write"
+                    object_=override_fields, annotation=typing.Sequence[V2SyncField], direction="write"
                 ),
                 "overrides": convert_and_respect_annotation_metadata(
-                    object_=overrides, annotation=typing.Sequence[Override], direction="write"
+                    object_=overrides, annotation=typing.Sequence[V2Override], direction="write"
                 ),
                 "policies": policies,
                 "schedule": convert_and_respect_annotation_metadata(
-                    object_=schedule, annotation=Schedule, direction="write"
+                    object_=schedule, annotation=V2Schedule, direction="write"
                 ),
                 "skip_initial_backfill": skip_initial_backfill,
                 "sync_all_records": sync_all_records,
-                "target": convert_and_respect_annotation_metadata(object_=target, annotation=Target, direction="write"),
+                "target": convert_and_respect_annotation_metadata(
+                    object_=target, annotation=V2Target, direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -2382,9 +2394,9 @@ class AsyncModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ModelSyncResponseEnvelope,
+                    V2SyncResponseEnvelope,
                     parse_obj_as(
-                        type_=ModelSyncResponseEnvelope,  # type: ignore
+                        type_=V2SyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -2480,7 +2492,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.remove(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2551,7 +2563,7 @@ class AsyncModelSyncClient:
 
     async def activate(
         self, id: str, *, active: bool, request_options: typing.Optional[RequestOptions] = None
-    ) -> ActivateSyncEnvelope:
+    ) -> V2ActivateSyncEnvelope:
         """
         Parameters
         ----------
@@ -2564,7 +2576,7 @@ class AsyncModelSyncClient:
 
         Returns
         -------
-        ActivateSyncEnvelope
+        V2ActivateSyncEnvelope
             OK
 
         Examples
@@ -2581,7 +2593,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.activate(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
                 active=True,
             )
 
@@ -2600,9 +2612,9 @@ class AsyncModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ActivateSyncEnvelope,
+                    V2ActivateSyncEnvelope,
                     parse_obj_as(
-                        type_=ActivateSyncEnvelope,  # type: ignore
+                        type_=V2ActivateSyncEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -2653,7 +2665,7 @@ class AsyncModelSyncClient:
 
     async def cancel(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> CancelModelSyncResponseEnvelope:
+    ) -> V2CancelSyncResponseEnvelope:
         """
         Parameters
         ----------
@@ -2665,7 +2677,7 @@ class AsyncModelSyncClient:
 
         Returns
         -------
-        CancelModelSyncResponseEnvelope
+        V2CancelSyncResponseEnvelope
             OK
 
         Examples
@@ -2682,7 +2694,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.cancel(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2696,9 +2708,9 @@ class AsyncModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    CancelModelSyncResponseEnvelope,
+                    V2CancelSyncResponseEnvelope,
                     parse_obj_as(
-                        type_=CancelModelSyncResponseEnvelope,  # type: ignore
+                        type_=V2CancelSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -2755,7 +2767,7 @@ class AsyncModelSyncClient:
         resync: typing.Optional[bool] = OMIT,
         test: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> StartModelSyncResponseEnvelope:
+    ) -> V2StartSyncResponseEnvelope:
         """
         > 🚧 Force full resync
         >
@@ -2776,7 +2788,7 @@ class AsyncModelSyncClient:
 
         Returns
         -------
-        StartModelSyncResponseEnvelope
+        V2StartSyncResponseEnvelope
             OK
 
         Examples
@@ -2793,7 +2805,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.start(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2816,9 +2828,9 @@ class AsyncModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    StartModelSyncResponseEnvelope,
+                    V2StartSyncResponseEnvelope,
                     parse_obj_as(
-                        type_=StartModelSyncResponseEnvelope,  # type: ignore
+                        type_=V2StartSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -2889,7 +2901,7 @@ class AsyncModelSyncClient:
 
     async def get_status(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> SyncStatusEnvelope:
+    ) -> V2SyncStatusEnvelope:
         """
         Parameters
         ----------
@@ -2900,7 +2912,7 @@ class AsyncModelSyncClient:
 
         Returns
         -------
-        SyncStatusEnvelope
+        V2SyncStatusEnvelope
             OK
 
         Examples
@@ -2917,7 +2929,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.get_status(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2931,9 +2943,9 @@ class AsyncModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    SyncStatusEnvelope,
+                    V2SyncStatusEnvelope,
                     parse_obj_as(
-                        type_=SyncStatusEnvelope,  # type: ignore
+                        type_=V2SyncStatusEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

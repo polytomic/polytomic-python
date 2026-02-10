@@ -2,14 +2,14 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .target_object import TargetObject
+from .v_4_target_object import V4TargetObject
 from .v_4_target_creator import V4TargetCreator
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
 class V4TargetObjectsResponseEnvelope(UniversalBaseModel):
-    data: typing.Optional[typing.List[TargetObject]] = None
+    data: typing.Optional[typing.List[V4TargetObject]] = None
     target_creation: typing.Optional[V4TargetCreator] = None
 
     if IS_PYDANTIC_V2:

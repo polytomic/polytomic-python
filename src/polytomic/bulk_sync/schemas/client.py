@@ -3,7 +3,7 @@
 import typing
 from ...core.client_wrapper import SyncClientWrapper
 from ...core.request_options import RequestOptions
-from ...types.list_bulk_schema import ListBulkSchema
+from ...types.v_3_list_bulk_schema_envelope import V3ListBulkSchemaEnvelope
 from ...core.jsonable_encoder import jsonable_encoder
 from ...core.pydantic_utilities import parse_obj_as
 from ...errors.unauthorized_error import UnauthorizedError
@@ -12,15 +12,15 @@ from ...errors.not_found_error import NotFoundError
 from ...types.api_error import ApiError as types_api_error_ApiError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError as core_api_error_ApiError
-from ...types.bulk_schema import BulkSchema
+from ...types.v_3_bulk_schema import V3BulkSchema
 from ...core.serialization import convert_and_respect_annotation_metadata
 from ...errors.bad_request_error import BadRequestError
 from ...errors.forbidden_error import ForbiddenError
 from ...errors.internal_server_error import InternalServerError
-from ...types.bulk_schema_envelope import BulkSchemaEnvelope
+from ...types.v_3_bulk_schema_envelope import V3BulkSchemaEnvelope
 import datetime as dt
-from ...types.update_bulk_field import UpdateBulkField
-from ...types.bulk_filter import BulkFilter
+from ...types.v_3_update_bulk_field import V3UpdateBulkField
+from ...types.v_3_bulk_filter import V3BulkFilter
 from ...core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -35,22 +35,22 @@ class SchemasClient:
         self,
         id: str,
         *,
-        filters: typing.Optional[typing.Dict[str, typing.Optional[str]]] = None,
+        filters: typing.Optional[typing.Dict[str, str]] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ListBulkSchema:
+    ) -> V3ListBulkSchemaEnvelope:
         """
         Parameters
         ----------
         id : str
 
-        filters : typing.Optional[typing.Dict[str, typing.Optional[str]]]
+        filters : typing.Optional[typing.Dict[str, str]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        ListBulkSchema
+        V3ListBulkSchemaEnvelope
             OK
 
         Examples
@@ -62,7 +62,7 @@ class SchemasClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.schemas.list(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -76,9 +76,9 @@ class SchemasClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ListBulkSchema,
+                    V3ListBulkSchemaEnvelope,
                     parse_obj_as(
-                        type_=ListBulkSchema,  # type: ignore
+                        type_=V3ListBulkSchemaEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -111,22 +111,22 @@ class SchemasClient:
         self,
         id: str,
         *,
-        schemas: typing.Optional[typing.Sequence[BulkSchema]] = OMIT,
+        schemas: typing.Optional[typing.Sequence[V3BulkSchema]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ListBulkSchema:
+    ) -> V3ListBulkSchemaEnvelope:
         """
         Parameters
         ----------
         id : str
 
-        schemas : typing.Optional[typing.Sequence[BulkSchema]]
+        schemas : typing.Optional[typing.Sequence[V3BulkSchema]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        ListBulkSchema
+        V3ListBulkSchemaEnvelope
             OK
 
         Examples
@@ -138,7 +138,7 @@ class SchemasClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.schemas.patch(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -146,7 +146,7 @@ class SchemasClient:
             method="PATCH",
             json={
                 "schemas": convert_and_respect_annotation_metadata(
-                    object_=schemas, annotation=typing.Sequence[BulkSchema], direction="write"
+                    object_=schemas, annotation=typing.Sequence[V3BulkSchema], direction="write"
                 ),
             },
             headers={
@@ -158,9 +158,9 @@ class SchemasClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ListBulkSchema,
+                    V3ListBulkSchemaEnvelope,
                     parse_obj_as(
-                        type_=ListBulkSchema,  # type: ignore
+                        type_=V3ListBulkSchemaEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -221,7 +221,7 @@ class SchemasClient:
 
     def get(
         self, id: str, schema_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> BulkSchemaEnvelope:
+    ) -> V3BulkSchemaEnvelope:
         """
         Parameters
         ----------
@@ -234,7 +234,7 @@ class SchemasClient:
 
         Returns
         -------
-        BulkSchemaEnvelope
+        V3BulkSchemaEnvelope
             OK
 
         Examples
@@ -246,8 +246,8 @@ class SchemasClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.schemas.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schema_id="Contact",
+            id="id",
+            schema_id="schema_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -258,9 +258,9 @@ class SchemasClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSchemaEnvelope,
+                    V3BulkSchemaEnvelope,
                     parse_obj_as(
-                        type_=BulkSchemaEnvelope,  # type: ignore
+                        type_=V3BulkSchemaEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -297,13 +297,13 @@ class SchemasClient:
         data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
         disable_data_cutoff: typing.Optional[bool] = OMIT,
         enabled: typing.Optional[bool] = OMIT,
-        fields: typing.Optional[typing.Sequence[UpdateBulkField]] = OMIT,
-        filters: typing.Optional[typing.Sequence[BulkFilter]] = OMIT,
+        fields: typing.Optional[typing.Sequence[V3UpdateBulkField]] = OMIT,
+        filters: typing.Optional[typing.Sequence[V3BulkFilter]] = OMIT,
         partition_key: typing.Optional[str] = OMIT,
         tracking_field: typing.Optional[str] = OMIT,
         user_output_name: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> BulkSchemaEnvelope:
+    ) -> V3BulkSchemaEnvelope:
         """
         Parameters
         ----------
@@ -317,9 +317,9 @@ class SchemasClient:
 
         enabled : typing.Optional[bool]
 
-        fields : typing.Optional[typing.Sequence[UpdateBulkField]]
+        fields : typing.Optional[typing.Sequence[V3UpdateBulkField]]
 
-        filters : typing.Optional[typing.Sequence[BulkFilter]]
+        filters : typing.Optional[typing.Sequence[V3BulkFilter]]
 
         partition_key : typing.Optional[str]
 
@@ -332,7 +332,7 @@ class SchemasClient:
 
         Returns
         -------
-        BulkSchemaEnvelope
+        V3BulkSchemaEnvelope
             OK
 
         Examples
@@ -344,8 +344,8 @@ class SchemasClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.schemas.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schema_id="contact",
+            id="id",
+            schema_id="schema_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -356,10 +356,10 @@ class SchemasClient:
                 "disable_data_cutoff": disable_data_cutoff,
                 "enabled": enabled,
                 "fields": convert_and_respect_annotation_metadata(
-                    object_=fields, annotation=typing.Sequence[UpdateBulkField], direction="write"
+                    object_=fields, annotation=typing.Sequence[V3UpdateBulkField], direction="write"
                 ),
                 "filters": convert_and_respect_annotation_metadata(
-                    object_=filters, annotation=typing.Sequence[BulkFilter], direction="write"
+                    object_=filters, annotation=typing.Sequence[V3BulkFilter], direction="write"
                 ),
                 "partition_key": partition_key,
                 "tracking_field": tracking_field,
@@ -374,9 +374,9 @@ class SchemasClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSchemaEnvelope,
+                    V3BulkSchemaEnvelope,
                     parse_obj_as(
-                        type_=BulkSchemaEnvelope,  # type: ignore
+                        type_=V3BulkSchemaEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -434,22 +434,22 @@ class AsyncSchemasClient:
         self,
         id: str,
         *,
-        filters: typing.Optional[typing.Dict[str, typing.Optional[str]]] = None,
+        filters: typing.Optional[typing.Dict[str, str]] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ListBulkSchema:
+    ) -> V3ListBulkSchemaEnvelope:
         """
         Parameters
         ----------
         id : str
 
-        filters : typing.Optional[typing.Dict[str, typing.Optional[str]]]
+        filters : typing.Optional[typing.Dict[str, str]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        ListBulkSchema
+        V3ListBulkSchemaEnvelope
             OK
 
         Examples
@@ -466,7 +466,7 @@ class AsyncSchemasClient:
 
         async def main() -> None:
             await client.bulk_sync.schemas.list(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -483,9 +483,9 @@ class AsyncSchemasClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ListBulkSchema,
+                    V3ListBulkSchemaEnvelope,
                     parse_obj_as(
-                        type_=ListBulkSchema,  # type: ignore
+                        type_=V3ListBulkSchemaEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -518,22 +518,22 @@ class AsyncSchemasClient:
         self,
         id: str,
         *,
-        schemas: typing.Optional[typing.Sequence[BulkSchema]] = OMIT,
+        schemas: typing.Optional[typing.Sequence[V3BulkSchema]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ListBulkSchema:
+    ) -> V3ListBulkSchemaEnvelope:
         """
         Parameters
         ----------
         id : str
 
-        schemas : typing.Optional[typing.Sequence[BulkSchema]]
+        schemas : typing.Optional[typing.Sequence[V3BulkSchema]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        ListBulkSchema
+        V3ListBulkSchemaEnvelope
             OK
 
         Examples
@@ -550,7 +550,7 @@ class AsyncSchemasClient:
 
         async def main() -> None:
             await client.bulk_sync.schemas.patch(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -561,7 +561,7 @@ class AsyncSchemasClient:
             method="PATCH",
             json={
                 "schemas": convert_and_respect_annotation_metadata(
-                    object_=schemas, annotation=typing.Sequence[BulkSchema], direction="write"
+                    object_=schemas, annotation=typing.Sequence[V3BulkSchema], direction="write"
                 ),
             },
             headers={
@@ -573,9 +573,9 @@ class AsyncSchemasClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ListBulkSchema,
+                    V3ListBulkSchemaEnvelope,
                     parse_obj_as(
-                        type_=ListBulkSchema,  # type: ignore
+                        type_=V3ListBulkSchemaEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -636,7 +636,7 @@ class AsyncSchemasClient:
 
     async def get(
         self, id: str, schema_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> BulkSchemaEnvelope:
+    ) -> V3BulkSchemaEnvelope:
         """
         Parameters
         ----------
@@ -649,7 +649,7 @@ class AsyncSchemasClient:
 
         Returns
         -------
-        BulkSchemaEnvelope
+        V3BulkSchemaEnvelope
             OK
 
         Examples
@@ -666,8 +666,8 @@ class AsyncSchemasClient:
 
         async def main() -> None:
             await client.bulk_sync.schemas.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                schema_id="Contact",
+                id="id",
+                schema_id="schema_id",
             )
 
 
@@ -681,9 +681,9 @@ class AsyncSchemasClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSchemaEnvelope,
+                    V3BulkSchemaEnvelope,
                     parse_obj_as(
-                        type_=BulkSchemaEnvelope,  # type: ignore
+                        type_=V3BulkSchemaEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -720,13 +720,13 @@ class AsyncSchemasClient:
         data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
         disable_data_cutoff: typing.Optional[bool] = OMIT,
         enabled: typing.Optional[bool] = OMIT,
-        fields: typing.Optional[typing.Sequence[UpdateBulkField]] = OMIT,
-        filters: typing.Optional[typing.Sequence[BulkFilter]] = OMIT,
+        fields: typing.Optional[typing.Sequence[V3UpdateBulkField]] = OMIT,
+        filters: typing.Optional[typing.Sequence[V3BulkFilter]] = OMIT,
         partition_key: typing.Optional[str] = OMIT,
         tracking_field: typing.Optional[str] = OMIT,
         user_output_name: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> BulkSchemaEnvelope:
+    ) -> V3BulkSchemaEnvelope:
         """
         Parameters
         ----------
@@ -740,9 +740,9 @@ class AsyncSchemasClient:
 
         enabled : typing.Optional[bool]
 
-        fields : typing.Optional[typing.Sequence[UpdateBulkField]]
+        fields : typing.Optional[typing.Sequence[V3UpdateBulkField]]
 
-        filters : typing.Optional[typing.Sequence[BulkFilter]]
+        filters : typing.Optional[typing.Sequence[V3BulkFilter]]
 
         partition_key : typing.Optional[str]
 
@@ -755,7 +755,7 @@ class AsyncSchemasClient:
 
         Returns
         -------
-        BulkSchemaEnvelope
+        V3BulkSchemaEnvelope
             OK
 
         Examples
@@ -772,8 +772,8 @@ class AsyncSchemasClient:
 
         async def main() -> None:
             await client.bulk_sync.schemas.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                schema_id="contact",
+                id="id",
+                schema_id="schema_id",
             )
 
 
@@ -787,10 +787,10 @@ class AsyncSchemasClient:
                 "disable_data_cutoff": disable_data_cutoff,
                 "enabled": enabled,
                 "fields": convert_and_respect_annotation_metadata(
-                    object_=fields, annotation=typing.Sequence[UpdateBulkField], direction="write"
+                    object_=fields, annotation=typing.Sequence[V3UpdateBulkField], direction="write"
                 ),
                 "filters": convert_and_respect_annotation_metadata(
-                    object_=filters, annotation=typing.Sequence[BulkFilter], direction="write"
+                    object_=filters, annotation=typing.Sequence[V3BulkFilter], direction="write"
                 ),
                 "partition_key": partition_key,
                 "tracking_field": tracking_field,
@@ -805,9 +805,9 @@ class AsyncSchemasClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSchemaEnvelope,
+                    V3BulkSchemaEnvelope,
                     parse_obj_as(
-                        type_=BulkSchemaEnvelope,  # type: ignore
+                        type_=V3BulkSchemaEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

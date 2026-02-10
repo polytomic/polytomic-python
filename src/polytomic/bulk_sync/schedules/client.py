@@ -3,7 +3,7 @@
 import typing
 from ...core.client_wrapper import SyncClientWrapper
 from ...core.request_options import RequestOptions
-from ...types.schedules_envelope import SchedulesEnvelope
+from ...types.v_4_schedules_envelope import V4SchedulesEnvelope
 from ...core.jsonable_encoder import jsonable_encoder
 from ...core.pydantic_utilities import parse_obj_as
 from ...errors.unauthorized_error import UnauthorizedError
@@ -15,7 +15,7 @@ from ...errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError as core_api_error_ApiError
 from ...types.v_4_bulk_sync_schedule_api import V4BulkSyncScheduleApi
-from ...types.schedule_envelope import ScheduleEnvelope
+from ...types.v_4_schedule_envelope import V4ScheduleEnvelope
 from ...core.serialization import convert_and_respect_annotation_metadata
 from ...errors.bad_request_error import BadRequestError
 from ...core.client_wrapper import AsyncClientWrapper
@@ -28,7 +28,7 @@ class SchedulesClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list(self, sync_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> SchedulesEnvelope:
+    def list(self, sync_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> V4SchedulesEnvelope:
         """
         Parameters
         ----------
@@ -39,7 +39,7 @@ class SchedulesClient:
 
         Returns
         -------
-        SchedulesEnvelope
+        V4SchedulesEnvelope
             OK
 
         Examples
@@ -51,7 +51,7 @@ class SchedulesClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.schedules.list(
-            sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            sync_id="sync_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -62,9 +62,9 @@ class SchedulesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    SchedulesEnvelope,
+                    V4SchedulesEnvelope,
                     parse_obj_as(
-                        type_=SchedulesEnvelope,  # type: ignore
+                        type_=V4SchedulesEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -115,7 +115,7 @@ class SchedulesClient:
 
     def create(
         self, sync_id: str, *, schedule: V4BulkSyncScheduleApi, request_options: typing.Optional[RequestOptions] = None
-    ) -> ScheduleEnvelope:
+    ) -> V4ScheduleEnvelope:
         """
         Parameters
         ----------
@@ -128,7 +128,7 @@ class SchedulesClient:
 
         Returns
         -------
-        ScheduleEnvelope
+        V4ScheduleEnvelope
             OK
 
         Examples
@@ -140,7 +140,7 @@ class SchedulesClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.schedules.create(
-            sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            sync_id="sync_id",
             schedule=V4BulkSyncScheduleApi(
                 frequency="manual",
             ),
@@ -163,9 +163,9 @@ class SchedulesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ScheduleEnvelope,
+                    V4ScheduleEnvelope,
                     parse_obj_as(
-                        type_=ScheduleEnvelope,  # type: ignore
+                        type_=V4ScheduleEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -226,7 +226,7 @@ class SchedulesClient:
 
     def get(
         self, sync_id: str, schedule_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> ScheduleEnvelope:
+    ) -> V4ScheduleEnvelope:
         """
         Parameters
         ----------
@@ -239,7 +239,7 @@ class SchedulesClient:
 
         Returns
         -------
-        ScheduleEnvelope
+        V4ScheduleEnvelope
             OK
 
         Examples
@@ -251,8 +251,8 @@ class SchedulesClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.schedules.get(
-            sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schedule_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            sync_id="sync_id",
+            schedule_id="schedule_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -263,9 +263,9 @@ class SchedulesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ScheduleEnvelope,
+                    V4ScheduleEnvelope,
                     parse_obj_as(
-                        type_=ScheduleEnvelope,  # type: ignore
+                        type_=V4ScheduleEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -321,7 +321,7 @@ class SchedulesClient:
         *,
         schedule: V4BulkSyncScheduleApi,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ScheduleEnvelope:
+    ) -> V4ScheduleEnvelope:
         """
         Parameters
         ----------
@@ -336,7 +336,7 @@ class SchedulesClient:
 
         Returns
         -------
-        ScheduleEnvelope
+        V4ScheduleEnvelope
             OK
 
         Examples
@@ -348,8 +348,8 @@ class SchedulesClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.schedules.update(
-            sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schedule_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            sync_id="sync_id",
+            schedule_id="schedule_id",
             schedule=V4BulkSyncScheduleApi(
                 frequency="manual",
             ),
@@ -372,9 +372,9 @@ class SchedulesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ScheduleEnvelope,
+                    V4ScheduleEnvelope,
                     parse_obj_as(
-                        type_=ScheduleEnvelope,  # type: ignore
+                        type_=V4ScheduleEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -459,8 +459,8 @@ class SchedulesClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.schedules.delete(
-            sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schedule_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            sync_id="sync_id",
+            schedule_id="schedule_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -521,7 +521,9 @@ class AsyncSchedulesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list(self, sync_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> SchedulesEnvelope:
+    async def list(
+        self, sync_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> V4SchedulesEnvelope:
         """
         Parameters
         ----------
@@ -532,7 +534,7 @@ class AsyncSchedulesClient:
 
         Returns
         -------
-        SchedulesEnvelope
+        V4SchedulesEnvelope
             OK
 
         Examples
@@ -549,7 +551,7 @@ class AsyncSchedulesClient:
 
         async def main() -> None:
             await client.bulk_sync.schedules.list(
-                sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                sync_id="sync_id",
             )
 
 
@@ -563,9 +565,9 @@ class AsyncSchedulesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    SchedulesEnvelope,
+                    V4SchedulesEnvelope,
                     parse_obj_as(
-                        type_=SchedulesEnvelope,  # type: ignore
+                        type_=V4SchedulesEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -616,7 +618,7 @@ class AsyncSchedulesClient:
 
     async def create(
         self, sync_id: str, *, schedule: V4BulkSyncScheduleApi, request_options: typing.Optional[RequestOptions] = None
-    ) -> ScheduleEnvelope:
+    ) -> V4ScheduleEnvelope:
         """
         Parameters
         ----------
@@ -629,7 +631,7 @@ class AsyncSchedulesClient:
 
         Returns
         -------
-        ScheduleEnvelope
+        V4ScheduleEnvelope
             OK
 
         Examples
@@ -646,7 +648,7 @@ class AsyncSchedulesClient:
 
         async def main() -> None:
             await client.bulk_sync.schedules.create(
-                sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                sync_id="sync_id",
                 schedule=V4BulkSyncScheduleApi(
                     frequency="manual",
                 ),
@@ -672,9 +674,9 @@ class AsyncSchedulesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ScheduleEnvelope,
+                    V4ScheduleEnvelope,
                     parse_obj_as(
-                        type_=ScheduleEnvelope,  # type: ignore
+                        type_=V4ScheduleEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -735,7 +737,7 @@ class AsyncSchedulesClient:
 
     async def get(
         self, sync_id: str, schedule_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> ScheduleEnvelope:
+    ) -> V4ScheduleEnvelope:
         """
         Parameters
         ----------
@@ -748,7 +750,7 @@ class AsyncSchedulesClient:
 
         Returns
         -------
-        ScheduleEnvelope
+        V4ScheduleEnvelope
             OK
 
         Examples
@@ -765,8 +767,8 @@ class AsyncSchedulesClient:
 
         async def main() -> None:
             await client.bulk_sync.schedules.get(
-                sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                schedule_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                sync_id="sync_id",
+                schedule_id="schedule_id",
             )
 
 
@@ -780,9 +782,9 @@ class AsyncSchedulesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ScheduleEnvelope,
+                    V4ScheduleEnvelope,
                     parse_obj_as(
-                        type_=ScheduleEnvelope,  # type: ignore
+                        type_=V4ScheduleEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -838,7 +840,7 @@ class AsyncSchedulesClient:
         *,
         schedule: V4BulkSyncScheduleApi,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ScheduleEnvelope:
+    ) -> V4ScheduleEnvelope:
         """
         Parameters
         ----------
@@ -853,7 +855,7 @@ class AsyncSchedulesClient:
 
         Returns
         -------
-        ScheduleEnvelope
+        V4ScheduleEnvelope
             OK
 
         Examples
@@ -870,8 +872,8 @@ class AsyncSchedulesClient:
 
         async def main() -> None:
             await client.bulk_sync.schedules.update(
-                sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                schedule_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                sync_id="sync_id",
+                schedule_id="schedule_id",
                 schedule=V4BulkSyncScheduleApi(
                     frequency="manual",
                 ),
@@ -897,9 +899,9 @@ class AsyncSchedulesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ScheduleEnvelope,
+                    V4ScheduleEnvelope,
                     parse_obj_as(
-                        type_=ScheduleEnvelope,  # type: ignore
+                        type_=V4ScheduleEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -989,8 +991,8 @@ class AsyncSchedulesClient:
 
         async def main() -> None:
             await client.bulk_sync.schedules.delete(
-                sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                schedule_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                sync_id="sync_id",
+                schedule_id="schedule_id",
             )
 
 

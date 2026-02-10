@@ -3,7 +3,7 @@
 import typing
 from ..core.client_wrapper import SyncClientWrapper
 from ..core.request_options import RequestOptions
-from ..types.get_model_sync_source_meta_envelope import GetModelSyncSourceMetaEnvelope
+from ..types.v_4_get_sync_source_meta_envelope import V4GetSyncSourceMetaEnvelope
 from ..core.jsonable_encoder import jsonable_encoder
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.bad_request_error import BadRequestError
@@ -18,12 +18,12 @@ from ..core.api_error import ApiError as core_api_error_ApiError
 from ..types.v_2_enricher_configuration import V2EnricherConfiguration
 from ..types.v_2_get_enrichment_input_fields_response_envelope import V2GetEnrichmentInputFieldsResponseEnvelope
 from ..types.model_model_field_request import ModelModelFieldRequest
-from ..types.enrichment import Enrichment
+from ..types.v_2_enrichment import V2Enrichment
 from ..types.model_relation import ModelRelation
-from ..types.model_response_envelope import ModelResponseEnvelope
+from ..types.v_2_model_response_envelope import V2ModelResponseEnvelope
 from ..core.serialization import convert_and_respect_annotation_metadata
-from ..types.model_list_response_envelope import ModelListResponseEnvelope
-from ..types.model_sample_response_envelope import ModelSampleResponseEnvelope
+from ..types.v_2_model_list_response_envelope import V2ModelListResponseEnvelope
+from ..types.v_2_model_sample_response_envelope import V2ModelSampleResponseEnvelope
 from ..core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -38,22 +38,22 @@ class ModelsClient:
         self,
         id: str,
         *,
-        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        params: typing.Optional[typing.Dict[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> GetModelSyncSourceMetaEnvelope:
+    ) -> V4GetSyncSourceMetaEnvelope:
         """
         Parameters
         ----------
         id : str
 
-        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+        params : typing.Optional[typing.Dict[str, typing.Sequence[str]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        GetModelSyncSourceMetaEnvelope
+        V4GetSyncSourceMetaEnvelope
             OK
 
         Examples
@@ -65,7 +65,7 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.get_enrichment_source(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -79,9 +79,9 @@ class ModelsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    GetModelSyncSourceMetaEnvelope,
+                    V4GetSyncSourceMetaEnvelope,
                     parse_obj_as(
-                        type_=GetModelSyncSourceMetaEnvelope,  # type: ignore
+                        type_=V4GetSyncSourceMetaEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -173,7 +173,7 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.post(
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            connection_id="connection_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -250,7 +250,7 @@ class ModelsClient:
         name: str,
         async_: typing.Optional[bool] = None,
         additional_fields: typing.Optional[typing.Sequence[ModelModelFieldRequest]] = OMIT,
-        enricher: typing.Optional[Enrichment] = OMIT,
+        enricher: typing.Optional[V2Enrichment] = OMIT,
         fields: typing.Optional[typing.Sequence[str]] = OMIT,
         identifier: typing.Optional[str] = OMIT,
         labels: typing.Optional[typing.Sequence[str]] = OMIT,
@@ -259,7 +259,7 @@ class ModelsClient:
         relations: typing.Optional[typing.Sequence[ModelRelation]] = OMIT,
         tracking_columns: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ModelResponseEnvelope:
+    ) -> V2ModelResponseEnvelope:
         """
         Parameters
         ----------
@@ -273,7 +273,7 @@ class ModelsClient:
 
         additional_fields : typing.Optional[typing.Sequence[ModelModelFieldRequest]]
 
-        enricher : typing.Optional[Enrichment]
+        enricher : typing.Optional[V2Enrichment]
 
         fields : typing.Optional[typing.Sequence[str]]
 
@@ -294,7 +294,7 @@ class ModelsClient:
 
         Returns
         -------
-        ModelResponseEnvelope
+        V2ModelResponseEnvelope
             OK
 
         Examples
@@ -306,9 +306,9 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.preview(
-            configuration={"table": "public.users"},
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="Users",
+            configuration={"configuration": {"key": "value"}},
+            connection_id="connection_id",
+            name="name",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -324,7 +324,7 @@ class ModelsClient:
                 "configuration": configuration,
                 "connection_id": connection_id,
                 "enricher": convert_and_respect_annotation_metadata(
-                    object_=enricher, annotation=Enrichment, direction="write"
+                    object_=enricher, annotation=V2Enrichment, direction="write"
                 ),
                 "fields": fields,
                 "identifier": identifier,
@@ -343,9 +343,9 @@ class ModelsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ModelResponseEnvelope,
+                    V2ModelResponseEnvelope,
                     parse_obj_as(
-                        type_=ModelResponseEnvelope,  # type: ignore
+                        type_=V2ModelResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -394,7 +394,7 @@ class ModelsClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ModelListResponseEnvelope:
+    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> V2ModelListResponseEnvelope:
         """
         Parameters
         ----------
@@ -403,7 +403,7 @@ class ModelsClient:
 
         Returns
         -------
-        ModelListResponseEnvelope
+        V2ModelListResponseEnvelope
             OK
 
         Examples
@@ -424,9 +424,9 @@ class ModelsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ModelListResponseEnvelope,
+                    V2ModelListResponseEnvelope,
                     parse_obj_as(
-                        type_=ModelListResponseEnvelope,  # type: ignore
+                        type_=V2ModelListResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -463,7 +463,7 @@ class ModelsClient:
         name: str,
         async_: typing.Optional[bool] = None,
         additional_fields: typing.Optional[typing.Sequence[ModelModelFieldRequest]] = OMIT,
-        enricher: typing.Optional[Enrichment] = OMIT,
+        enricher: typing.Optional[V2Enrichment] = OMIT,
         fields: typing.Optional[typing.Sequence[str]] = OMIT,
         identifier: typing.Optional[str] = OMIT,
         labels: typing.Optional[typing.Sequence[str]] = OMIT,
@@ -472,7 +472,7 @@ class ModelsClient:
         relations: typing.Optional[typing.Sequence[ModelRelation]] = OMIT,
         tracking_columns: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ModelResponseEnvelope:
+    ) -> V2ModelResponseEnvelope:
         """
         Parameters
         ----------
@@ -486,7 +486,7 @@ class ModelsClient:
 
         additional_fields : typing.Optional[typing.Sequence[ModelModelFieldRequest]]
 
-        enricher : typing.Optional[Enrichment]
+        enricher : typing.Optional[V2Enrichment]
 
         fields : typing.Optional[typing.Sequence[str]]
 
@@ -507,7 +507,7 @@ class ModelsClient:
 
         Returns
         -------
-        ModelResponseEnvelope
+        V2ModelResponseEnvelope
             OK
 
         Examples
@@ -519,9 +519,9 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.create(
-            configuration={"table": "public.users"},
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="Users",
+            configuration={"configuration": {"key": "value"}},
+            connection_id="connection_id",
+            name="name",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -537,7 +537,7 @@ class ModelsClient:
                 "configuration": configuration,
                 "connection_id": connection_id,
                 "enricher": convert_and_respect_annotation_metadata(
-                    object_=enricher, annotation=Enrichment, direction="write"
+                    object_=enricher, annotation=V2Enrichment, direction="write"
                 ),
                 "fields": fields,
                 "identifier": identifier,
@@ -556,9 +556,9 @@ class ModelsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ModelResponseEnvelope,
+                    V2ModelResponseEnvelope,
                     parse_obj_as(
-                        type_=ModelResponseEnvelope,  # type: ignore
+                        type_=V2ModelResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -609,7 +609,7 @@ class ModelsClient:
 
     def get(
         self, id: str, *, async_: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
-    ) -> ModelResponseEnvelope:
+    ) -> V2ModelResponseEnvelope:
         """
         Parameters
         ----------
@@ -622,7 +622,7 @@ class ModelsClient:
 
         Returns
         -------
-        ModelResponseEnvelope
+        V2ModelResponseEnvelope
             OK
 
         Examples
@@ -634,7 +634,7 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -648,9 +648,9 @@ class ModelsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ModelResponseEnvelope,
+                    V2ModelResponseEnvelope,
                     parse_obj_as(
-                        type_=ModelResponseEnvelope,  # type: ignore
+                        type_=V2ModelResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -698,7 +698,7 @@ class ModelsClient:
         name: str,
         async_: typing.Optional[bool] = None,
         additional_fields: typing.Optional[typing.Sequence[ModelModelFieldRequest]] = OMIT,
-        enricher: typing.Optional[Enrichment] = OMIT,
+        enricher: typing.Optional[V2Enrichment] = OMIT,
         fields: typing.Optional[typing.Sequence[str]] = OMIT,
         identifier: typing.Optional[str] = OMIT,
         labels: typing.Optional[typing.Sequence[str]] = OMIT,
@@ -708,7 +708,7 @@ class ModelsClient:
         relations: typing.Optional[typing.Sequence[ModelRelation]] = OMIT,
         tracking_columns: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ModelResponseEnvelope:
+    ) -> V2ModelResponseEnvelope:
         """
         Parameters
         ----------
@@ -724,7 +724,7 @@ class ModelsClient:
 
         additional_fields : typing.Optional[typing.Sequence[ModelModelFieldRequest]]
 
-        enricher : typing.Optional[Enrichment]
+        enricher : typing.Optional[V2Enrichment]
 
         fields : typing.Optional[typing.Sequence[str]]
 
@@ -747,7 +747,7 @@ class ModelsClient:
 
         Returns
         -------
-        ModelResponseEnvelope
+        V2ModelResponseEnvelope
             OK
 
         Examples
@@ -759,11 +759,10 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            async_=False,
-            configuration={"table": "public.users"},
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="Users",
+            id="id",
+            configuration={"configuration": {"key": "value"}},
+            connection_id="connection_id",
+            name="name",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -779,7 +778,7 @@ class ModelsClient:
                 "configuration": configuration,
                 "connection_id": connection_id,
                 "enricher": convert_and_respect_annotation_metadata(
-                    object_=enricher, annotation=Enrichment, direction="write"
+                    object_=enricher, annotation=V2Enrichment, direction="write"
                 ),
                 "fields": fields,
                 "identifier": identifier,
@@ -802,9 +801,9 @@ class ModelsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ModelResponseEnvelope,
+                    V2ModelResponseEnvelope,
                     parse_obj_as(
-                        type_=ModelResponseEnvelope,  # type: ignore
+                        type_=V2ModelResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -879,7 +878,7 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.remove(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -940,7 +939,7 @@ class ModelsClient:
 
     def sample(
         self, id: str, *, async_: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
-    ) -> ModelSampleResponseEnvelope:
+    ) -> V2ModelSampleResponseEnvelope:
         """
         Returns sample records from the model. The first ten records that the source provides will be returned after being enriched (if applicable). Synchronous requests must complete within 10s. If either querying or enrichment exceeds 10s, please use the async option.
 
@@ -955,7 +954,7 @@ class ModelsClient:
 
         Returns
         -------
-        ModelSampleResponseEnvelope
+        V2ModelSampleResponseEnvelope
             OK
 
         Examples
@@ -967,7 +966,7 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.sample(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -981,9 +980,9 @@ class ModelsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ModelSampleResponseEnvelope,
+                    V2ModelSampleResponseEnvelope,
                     parse_obj_as(
-                        type_=ModelSampleResponseEnvelope,  # type: ignore
+                        type_=V2ModelSampleResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1041,22 +1040,22 @@ class AsyncModelsClient:
         self,
         id: str,
         *,
-        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        params: typing.Optional[typing.Dict[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> GetModelSyncSourceMetaEnvelope:
+    ) -> V4GetSyncSourceMetaEnvelope:
         """
         Parameters
         ----------
         id : str
 
-        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+        params : typing.Optional[typing.Dict[str, typing.Sequence[str]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        GetModelSyncSourceMetaEnvelope
+        V4GetSyncSourceMetaEnvelope
             OK
 
         Examples
@@ -1073,7 +1072,7 @@ class AsyncModelsClient:
 
         async def main() -> None:
             await client.models.get_enrichment_source(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -1090,9 +1089,9 @@ class AsyncModelsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    GetModelSyncSourceMetaEnvelope,
+                    V4GetSyncSourceMetaEnvelope,
                     parse_obj_as(
-                        type_=GetModelSyncSourceMetaEnvelope,  # type: ignore
+                        type_=V4GetSyncSourceMetaEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1189,7 +1188,7 @@ class AsyncModelsClient:
 
         async def main() -> None:
             await client.models.post(
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                connection_id="connection_id",
             )
 
 
@@ -1269,7 +1268,7 @@ class AsyncModelsClient:
         name: str,
         async_: typing.Optional[bool] = None,
         additional_fields: typing.Optional[typing.Sequence[ModelModelFieldRequest]] = OMIT,
-        enricher: typing.Optional[Enrichment] = OMIT,
+        enricher: typing.Optional[V2Enrichment] = OMIT,
         fields: typing.Optional[typing.Sequence[str]] = OMIT,
         identifier: typing.Optional[str] = OMIT,
         labels: typing.Optional[typing.Sequence[str]] = OMIT,
@@ -1278,7 +1277,7 @@ class AsyncModelsClient:
         relations: typing.Optional[typing.Sequence[ModelRelation]] = OMIT,
         tracking_columns: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ModelResponseEnvelope:
+    ) -> V2ModelResponseEnvelope:
         """
         Parameters
         ----------
@@ -1292,7 +1291,7 @@ class AsyncModelsClient:
 
         additional_fields : typing.Optional[typing.Sequence[ModelModelFieldRequest]]
 
-        enricher : typing.Optional[Enrichment]
+        enricher : typing.Optional[V2Enrichment]
 
         fields : typing.Optional[typing.Sequence[str]]
 
@@ -1313,7 +1312,7 @@ class AsyncModelsClient:
 
         Returns
         -------
-        ModelResponseEnvelope
+        V2ModelResponseEnvelope
             OK
 
         Examples
@@ -1330,9 +1329,9 @@ class AsyncModelsClient:
 
         async def main() -> None:
             await client.models.preview(
-                configuration={"table": "public.users"},
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                name="Users",
+                configuration={"configuration": {"key": "value"}},
+                connection_id="connection_id",
+                name="name",
             )
 
 
@@ -1351,7 +1350,7 @@ class AsyncModelsClient:
                 "configuration": configuration,
                 "connection_id": connection_id,
                 "enricher": convert_and_respect_annotation_metadata(
-                    object_=enricher, annotation=Enrichment, direction="write"
+                    object_=enricher, annotation=V2Enrichment, direction="write"
                 ),
                 "fields": fields,
                 "identifier": identifier,
@@ -1370,9 +1369,9 @@ class AsyncModelsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ModelResponseEnvelope,
+                    V2ModelResponseEnvelope,
                     parse_obj_as(
-                        type_=ModelResponseEnvelope,  # type: ignore
+                        type_=V2ModelResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1421,7 +1420,7 @@ class AsyncModelsClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ModelListResponseEnvelope:
+    async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> V2ModelListResponseEnvelope:
         """
         Parameters
         ----------
@@ -1430,7 +1429,7 @@ class AsyncModelsClient:
 
         Returns
         -------
-        ModelListResponseEnvelope
+        V2ModelListResponseEnvelope
             OK
 
         Examples
@@ -1459,9 +1458,9 @@ class AsyncModelsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ModelListResponseEnvelope,
+                    V2ModelListResponseEnvelope,
                     parse_obj_as(
-                        type_=ModelListResponseEnvelope,  # type: ignore
+                        type_=V2ModelListResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1498,7 +1497,7 @@ class AsyncModelsClient:
         name: str,
         async_: typing.Optional[bool] = None,
         additional_fields: typing.Optional[typing.Sequence[ModelModelFieldRequest]] = OMIT,
-        enricher: typing.Optional[Enrichment] = OMIT,
+        enricher: typing.Optional[V2Enrichment] = OMIT,
         fields: typing.Optional[typing.Sequence[str]] = OMIT,
         identifier: typing.Optional[str] = OMIT,
         labels: typing.Optional[typing.Sequence[str]] = OMIT,
@@ -1507,7 +1506,7 @@ class AsyncModelsClient:
         relations: typing.Optional[typing.Sequence[ModelRelation]] = OMIT,
         tracking_columns: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ModelResponseEnvelope:
+    ) -> V2ModelResponseEnvelope:
         """
         Parameters
         ----------
@@ -1521,7 +1520,7 @@ class AsyncModelsClient:
 
         additional_fields : typing.Optional[typing.Sequence[ModelModelFieldRequest]]
 
-        enricher : typing.Optional[Enrichment]
+        enricher : typing.Optional[V2Enrichment]
 
         fields : typing.Optional[typing.Sequence[str]]
 
@@ -1542,7 +1541,7 @@ class AsyncModelsClient:
 
         Returns
         -------
-        ModelResponseEnvelope
+        V2ModelResponseEnvelope
             OK
 
         Examples
@@ -1559,9 +1558,9 @@ class AsyncModelsClient:
 
         async def main() -> None:
             await client.models.create(
-                configuration={"table": "public.users"},
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                name="Users",
+                configuration={"configuration": {"key": "value"}},
+                connection_id="connection_id",
+                name="name",
             )
 
 
@@ -1580,7 +1579,7 @@ class AsyncModelsClient:
                 "configuration": configuration,
                 "connection_id": connection_id,
                 "enricher": convert_and_respect_annotation_metadata(
-                    object_=enricher, annotation=Enrichment, direction="write"
+                    object_=enricher, annotation=V2Enrichment, direction="write"
                 ),
                 "fields": fields,
                 "identifier": identifier,
@@ -1599,9 +1598,9 @@ class AsyncModelsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ModelResponseEnvelope,
+                    V2ModelResponseEnvelope,
                     parse_obj_as(
-                        type_=ModelResponseEnvelope,  # type: ignore
+                        type_=V2ModelResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1652,7 +1651,7 @@ class AsyncModelsClient:
 
     async def get(
         self, id: str, *, async_: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
-    ) -> ModelResponseEnvelope:
+    ) -> V2ModelResponseEnvelope:
         """
         Parameters
         ----------
@@ -1665,7 +1664,7 @@ class AsyncModelsClient:
 
         Returns
         -------
-        ModelResponseEnvelope
+        V2ModelResponseEnvelope
             OK
 
         Examples
@@ -1682,7 +1681,7 @@ class AsyncModelsClient:
 
         async def main() -> None:
             await client.models.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -1699,9 +1698,9 @@ class AsyncModelsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ModelResponseEnvelope,
+                    V2ModelResponseEnvelope,
                     parse_obj_as(
-                        type_=ModelResponseEnvelope,  # type: ignore
+                        type_=V2ModelResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1749,7 +1748,7 @@ class AsyncModelsClient:
         name: str,
         async_: typing.Optional[bool] = None,
         additional_fields: typing.Optional[typing.Sequence[ModelModelFieldRequest]] = OMIT,
-        enricher: typing.Optional[Enrichment] = OMIT,
+        enricher: typing.Optional[V2Enrichment] = OMIT,
         fields: typing.Optional[typing.Sequence[str]] = OMIT,
         identifier: typing.Optional[str] = OMIT,
         labels: typing.Optional[typing.Sequence[str]] = OMIT,
@@ -1759,7 +1758,7 @@ class AsyncModelsClient:
         relations: typing.Optional[typing.Sequence[ModelRelation]] = OMIT,
         tracking_columns: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ModelResponseEnvelope:
+    ) -> V2ModelResponseEnvelope:
         """
         Parameters
         ----------
@@ -1775,7 +1774,7 @@ class AsyncModelsClient:
 
         additional_fields : typing.Optional[typing.Sequence[ModelModelFieldRequest]]
 
-        enricher : typing.Optional[Enrichment]
+        enricher : typing.Optional[V2Enrichment]
 
         fields : typing.Optional[typing.Sequence[str]]
 
@@ -1798,7 +1797,7 @@ class AsyncModelsClient:
 
         Returns
         -------
-        ModelResponseEnvelope
+        V2ModelResponseEnvelope
             OK
 
         Examples
@@ -1815,11 +1814,10 @@ class AsyncModelsClient:
 
         async def main() -> None:
             await client.models.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                async_=False,
-                configuration={"table": "public.users"},
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                name="Users",
+                id="id",
+                configuration={"configuration": {"key": "value"}},
+                connection_id="connection_id",
+                name="name",
             )
 
 
@@ -1838,7 +1836,7 @@ class AsyncModelsClient:
                 "configuration": configuration,
                 "connection_id": connection_id,
                 "enricher": convert_and_respect_annotation_metadata(
-                    object_=enricher, annotation=Enrichment, direction="write"
+                    object_=enricher, annotation=V2Enrichment, direction="write"
                 ),
                 "fields": fields,
                 "identifier": identifier,
@@ -1861,9 +1859,9 @@ class AsyncModelsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ModelResponseEnvelope,
+                    V2ModelResponseEnvelope,
                     parse_obj_as(
-                        type_=ModelResponseEnvelope,  # type: ignore
+                        type_=V2ModelResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1943,7 +1941,7 @@ class AsyncModelsClient:
 
         async def main() -> None:
             await client.models.remove(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2007,7 +2005,7 @@ class AsyncModelsClient:
 
     async def sample(
         self, id: str, *, async_: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
-    ) -> ModelSampleResponseEnvelope:
+    ) -> V2ModelSampleResponseEnvelope:
         """
         Returns sample records from the model. The first ten records that the source provides will be returned after being enriched (if applicable). Synchronous requests must complete within 10s. If either querying or enrichment exceeds 10s, please use the async option.
 
@@ -2022,7 +2020,7 @@ class AsyncModelsClient:
 
         Returns
         -------
-        ModelSampleResponseEnvelope
+        V2ModelSampleResponseEnvelope
             OK
 
         Examples
@@ -2039,7 +2037,7 @@ class AsyncModelsClient:
 
         async def main() -> None:
             await client.models.sample(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2056,9 +2054,9 @@ class AsyncModelsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ModelSampleResponseEnvelope,
+                    V2ModelSampleResponseEnvelope,
                     parse_obj_as(
-                        type_=ModelSampleResponseEnvelope,  # type: ignore
+                        type_=V2ModelSampleResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

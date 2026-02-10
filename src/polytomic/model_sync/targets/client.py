@@ -3,7 +3,7 @@
 from ...core.client_wrapper import SyncClientWrapper
 import typing
 from ...core.request_options import RequestOptions
-from ...types.get_connection_meta_envelope import GetConnectionMetaEnvelope
+from ...types.v_2_get_connection_meta_envelope import V2GetConnectionMetaEnvelope
 from ...core.jsonable_encoder import jsonable_encoder
 from ...core.pydantic_utilities import parse_obj_as
 from ...errors.bad_request_error import BadRequestError
@@ -15,7 +15,7 @@ from ...errors.not_found_error import NotFoundError
 from ...errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError as core_api_error_ApiError
-from ...types.target_response_envelope import TargetResponseEnvelope
+from ...types.v_2_target_response_envelope import V2TargetResponseEnvelope
 from ...types.v_4_target_objects_response_envelope import V4TargetObjectsResponseEnvelope
 from ...types.v_4_target_property_values_envelope import V4TargetPropertyValuesEnvelope
 from ...core.client_wrapper import AsyncClientWrapper
@@ -32,7 +32,7 @@ class TargetsClient:
         type: typing.Optional[str] = None,
         search: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> GetConnectionMetaEnvelope:
+    ) -> V2GetConnectionMetaEnvelope:
         """
         Parameters
         ----------
@@ -47,7 +47,7 @@ class TargetsClient:
 
         Returns
         -------
-        GetConnectionMetaEnvelope
+        V2GetConnectionMetaEnvelope
             OK
 
         Examples
@@ -59,7 +59,7 @@ class TargetsClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.targets.get_target(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -74,9 +74,9 @@ class TargetsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    GetConnectionMetaEnvelope,
+                    V2GetConnectionMetaEnvelope,
                     parse_obj_as(
-                        type_=GetConnectionMetaEnvelope,  # type: ignore
+                        type_=V2GetConnectionMetaEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -142,7 +142,7 @@ class TargetsClient:
         target: str,
         refresh: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> TargetResponseEnvelope:
+    ) -> V2TargetResponseEnvelope:
         """
         Parameters
         ----------
@@ -157,7 +157,7 @@ class TargetsClient:
 
         Returns
         -------
-        TargetResponseEnvelope
+        V2TargetResponseEnvelope
             OK
 
         Examples
@@ -169,9 +169,8 @@ class TargetsClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.targets.get_target_fields(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            target="database.table",
-            refresh=False,
+            id="id",
+            target="target",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -186,9 +185,9 @@ class TargetsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    TargetResponseEnvelope,
+                    V2TargetResponseEnvelope,
                     parse_obj_as(
-                        type_=TargetResponseEnvelope,  # type: ignore
+                        type_=V2TargetResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -280,7 +279,7 @@ class TargetsClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.targets.list(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -410,7 +409,7 @@ class TargetsClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.targets.get_create_property(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
             property="property",
         )
         """
@@ -495,7 +494,7 @@ class AsyncTargetsClient:
         type: typing.Optional[str] = None,
         search: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> GetConnectionMetaEnvelope:
+    ) -> V2GetConnectionMetaEnvelope:
         """
         Parameters
         ----------
@@ -510,7 +509,7 @@ class AsyncTargetsClient:
 
         Returns
         -------
-        GetConnectionMetaEnvelope
+        V2GetConnectionMetaEnvelope
             OK
 
         Examples
@@ -527,7 +526,7 @@ class AsyncTargetsClient:
 
         async def main() -> None:
             await client.model_sync.targets.get_target(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -545,9 +544,9 @@ class AsyncTargetsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    GetConnectionMetaEnvelope,
+                    V2GetConnectionMetaEnvelope,
                     parse_obj_as(
-                        type_=GetConnectionMetaEnvelope,  # type: ignore
+                        type_=V2GetConnectionMetaEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -613,7 +612,7 @@ class AsyncTargetsClient:
         target: str,
         refresh: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> TargetResponseEnvelope:
+    ) -> V2TargetResponseEnvelope:
         """
         Parameters
         ----------
@@ -628,7 +627,7 @@ class AsyncTargetsClient:
 
         Returns
         -------
-        TargetResponseEnvelope
+        V2TargetResponseEnvelope
             OK
 
         Examples
@@ -645,9 +644,8 @@ class AsyncTargetsClient:
 
         async def main() -> None:
             await client.model_sync.targets.get_target_fields(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                target="database.table",
-                refresh=False,
+                id="id",
+                target="target",
             )
 
 
@@ -665,9 +663,9 @@ class AsyncTargetsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    TargetResponseEnvelope,
+                    V2TargetResponseEnvelope,
                     parse_obj_as(
-                        type_=TargetResponseEnvelope,  # type: ignore
+                        type_=V2TargetResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -764,7 +762,7 @@ class AsyncTargetsClient:
 
         async def main() -> None:
             await client.model_sync.targets.list(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -902,7 +900,7 @@ class AsyncTargetsClient:
 
         async def main() -> None:
             await client.model_sync.targets.get_create_property(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
                 property="property",
             )
 

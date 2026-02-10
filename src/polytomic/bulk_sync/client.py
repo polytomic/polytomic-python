@@ -6,7 +6,7 @@ from .executions.client import ExecutionsClient
 from .schemas.client import SchemasClient
 from .schedules.client import SchedulesClient
 from ..core.request_options import RequestOptions
-from ..types.bulk_sync_list_envelope import BulkSyncListEnvelope
+from ..types.v_2_bulk_sync_list_envelope import V2BulkSyncListEnvelope
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.unauthorized_error import UnauthorizedError
 from ..types.rest_err_response import RestErrResponse
@@ -17,10 +17,10 @@ from ..core.api_error import ApiError as core_api_error_ApiError
 from ..types.bulk_schedule import BulkSchedule
 from ..types.bulk_discover import BulkDiscover
 import datetime as dt
-from ..types.bulk_sync_mode import BulkSyncMode
+from ..types.bulk_sync_target_mode import BulkSyncTargetMode
 from ..types.bulk_normalize_names import BulkNormalizeNames
 from .types.v_2_create_bulk_sync_request_schemas_item import V2CreateBulkSyncRequestSchemasItem
-from ..types.bulk_sync_response_envelope import BulkSyncResponseEnvelope
+from ..types.v_2_bulk_sync_response_envelope import V2BulkSyncResponseEnvelope
 from ..core.serialization import convert_and_respect_annotation_metadata
 from ..errors.bad_request_error import BadRequestError
 from ..errors.forbidden_error import ForbiddenError
@@ -28,13 +28,13 @@ from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..core.jsonable_encoder import jsonable_encoder
 from ..errors.not_found_error import NotFoundError
 from .types.v_2_update_bulk_sync_request_schemas_item import V2UpdateBulkSyncRequestSchemasItem
-from ..types.activate_sync_envelope import ActivateSyncEnvelope
-from ..types.bulk_fetch_mode import BulkFetchMode
-from ..types.bulk_sync_execution_envelope import BulkSyncExecutionEnvelope
+from ..types.v_2_activate_sync_envelope import V2ActivateSyncEnvelope
+from ..types.v_3_bulk_fetch_mode import V3BulkFetchMode
+from ..types.v_3_bulk_sync_execution_envelope import V3BulkSyncExecutionEnvelope
 from ..errors.conflict_error import ConflictError
-from ..types.bulk_sync_status_envelope import BulkSyncStatusEnvelope
-from ..types.bulk_sync_source_envelope import BulkSyncSourceEnvelope
-from ..types.bulk_sync_dest_envelope import BulkSyncDestEnvelope
+from ..types.v_3_bulk_sync_status_envelope import V3BulkSyncStatusEnvelope
+from ..types.v_3_bulk_sync_source_envelope import V3BulkSyncSourceEnvelope
+from ..types.v_2_bulk_sync_dest_envelope import V2BulkSyncDestEnvelope
 from ..core.client_wrapper import AsyncClientWrapper
 from .executions.client import AsyncExecutionsClient
 from .schemas.client import AsyncSchemasClient
@@ -53,7 +53,7 @@ class BulkSyncClient:
 
     def list(
         self, *, active: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
-    ) -> BulkSyncListEnvelope:
+    ) -> V2BulkSyncListEnvelope:
         """
         Parameters
         ----------
@@ -64,7 +64,7 @@ class BulkSyncClient:
 
         Returns
         -------
-        BulkSyncListEnvelope
+        V2BulkSyncListEnvelope
             OK
 
         Examples
@@ -75,9 +75,7 @@ class BulkSyncClient:
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        client.bulk_sync.list(
-            active=True,
-        )
+        client.bulk_sync.list()
         """
         _response = self._client_wrapper.httpx_client.request(
             "api/bulk/syncs",
@@ -90,9 +88,9 @@ class BulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncListEnvelope,
+                    V2BulkSyncListEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncListEnvelope,  # type: ignore
+                        type_=V2BulkSyncListEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -136,7 +134,7 @@ class BulkSyncClient:
         data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
         discover: typing.Optional[bool] = OMIT,
-        mode: typing.Optional[BulkSyncMode] = OMIT,
+        mode: typing.Optional[BulkSyncTargetMode] = OMIT,
         normalize_names: typing.Optional[BulkNormalizeNames] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
@@ -144,7 +142,7 @@ class BulkSyncClient:
         schemas: typing.Optional[typing.Sequence[V2CreateBulkSyncRequestSchemasItem]] = OMIT,
         source_configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> BulkSyncResponseEnvelope:
+    ) -> V2BulkSyncResponseEnvelope:
         """
         Create a new Bulk Sync from a source to a destination (data warehouse, database, or cloud storage bucket like S3).
 
@@ -201,7 +199,7 @@ class BulkSyncClient:
         discover : typing.Optional[bool]
             DEPRECATED: Use automatically_add_new_objects/automatically_add_new_fields instead
 
-        mode : typing.Optional[BulkSyncMode]
+        mode : typing.Optional[BulkSyncTargetMode]
 
         normalize_names : typing.Optional[BulkNormalizeNames]
 
@@ -222,7 +220,7 @@ class BulkSyncClient:
 
         Returns
         -------
-        BulkSyncResponseEnvelope
+        V2BulkSyncResponseEnvelope
             OK
 
         Examples
@@ -234,13 +232,13 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.create(
-            destination_configuration={"schema": "my_schema"},
-            destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="My Bulk Sync",
+            destination_configuration={"destination_configuration": {"key": "value"}},
+            destination_connection_id="destination_connection_id",
+            name="name",
             schedule=BulkSchedule(
                 frequency="manual",
             ),
-            source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            source_connection_id="source_connection_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -280,9 +278,9 @@ class BulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncResponseEnvelope,
+                    V2BulkSyncResponseEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncResponseEnvelope,  # type: ignore
+                        type_=V2BulkSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -347,7 +345,7 @@ class BulkSyncClient:
         *,
         refresh_schemas: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> BulkSyncResponseEnvelope:
+    ) -> V2BulkSyncResponseEnvelope:
         """
         Parameters
         ----------
@@ -360,7 +358,7 @@ class BulkSyncClient:
 
         Returns
         -------
-        BulkSyncResponseEnvelope
+        V2BulkSyncResponseEnvelope
             OK
 
         Examples
@@ -372,8 +370,7 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            refresh_schemas=True,
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -387,9 +384,9 @@ class BulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncResponseEnvelope,
+                    V2BulkSyncResponseEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncResponseEnvelope,  # type: ignore
+                        type_=V2BulkSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -434,7 +431,7 @@ class BulkSyncClient:
         data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
         discover: typing.Optional[bool] = OMIT,
-        mode: typing.Optional[BulkSyncMode] = OMIT,
+        mode: typing.Optional[BulkSyncTargetMode] = OMIT,
         normalize_names: typing.Optional[BulkNormalizeNames] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
@@ -442,7 +439,7 @@ class BulkSyncClient:
         schemas: typing.Optional[typing.Sequence[V2UpdateBulkSyncRequestSchemasItem]] = OMIT,
         source_configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> BulkSyncResponseEnvelope:
+    ) -> V2BulkSyncResponseEnvelope:
         """
         > 📘 Updating schemas
         >
@@ -478,7 +475,7 @@ class BulkSyncClient:
         discover : typing.Optional[bool]
             DEPRECATED: Use automatically_add_new_objects/automatically_add_new_fields instead
 
-        mode : typing.Optional[BulkSyncMode]
+        mode : typing.Optional[BulkSyncTargetMode]
 
         normalize_names : typing.Optional[BulkNormalizeNames]
 
@@ -499,7 +496,7 @@ class BulkSyncClient:
 
         Returns
         -------
-        BulkSyncResponseEnvelope
+        V2BulkSyncResponseEnvelope
             OK
 
         Examples
@@ -511,14 +508,14 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            destination_configuration={"schema": "my_schema"},
-            destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="My Bulk Sync",
+            id="id",
+            destination_configuration={"destination_configuration": {"key": "value"}},
+            destination_connection_id="destination_connection_id",
+            name="name",
             schedule=BulkSchedule(
                 frequency="manual",
             ),
-            source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            source_connection_id="source_connection_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -558,9 +555,9 @@ class BulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncResponseEnvelope,
+                    V2BulkSyncResponseEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncResponseEnvelope,  # type: ignore
+                        type_=V2BulkSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -649,8 +646,7 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.remove(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            refresh_schemas=True,
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -711,7 +707,7 @@ class BulkSyncClient:
 
     def activate(
         self, id: str, *, active: bool, request_options: typing.Optional[RequestOptions] = None
-    ) -> ActivateSyncEnvelope:
+    ) -> V2ActivateSyncEnvelope:
         """
         Parameters
         ----------
@@ -724,7 +720,7 @@ class BulkSyncClient:
 
         Returns
         -------
-        ActivateSyncEnvelope
+        V2ActivateSyncEnvelope
             OK
 
         Examples
@@ -736,7 +732,7 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.activate(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
             active=True,
         )
         """
@@ -752,9 +748,9 @@ class BulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ActivateSyncEnvelope,
+                    V2ActivateSyncEnvelope,
                     parse_obj_as(
-                        type_=ActivateSyncEnvelope,  # type: ignore
+                        type_=V2ActivateSyncEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -807,18 +803,18 @@ class BulkSyncClient:
         self,
         id: str,
         *,
-        fetch_mode: typing.Optional[BulkFetchMode] = OMIT,
+        fetch_mode: typing.Optional[V3BulkFetchMode] = OMIT,
         resync: typing.Optional[bool] = OMIT,
         schemas: typing.Optional[typing.Sequence[str]] = OMIT,
         test: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> BulkSyncExecutionEnvelope:
+    ) -> V3BulkSyncExecutionEnvelope:
         """
         Parameters
         ----------
         id : str
 
-        fetch_mode : typing.Optional[BulkFetchMode]
+        fetch_mode : typing.Optional[V3BulkFetchMode]
 
         resync : typing.Optional[bool]
 
@@ -831,7 +827,7 @@ class BulkSyncClient:
 
         Returns
         -------
-        BulkSyncExecutionEnvelope
+        V3BulkSyncExecutionEnvelope
             OK
 
         Examples
@@ -843,7 +839,7 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.start(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -864,9 +860,9 @@ class BulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncExecutionEnvelope,
+                    V3BulkSyncExecutionEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncExecutionEnvelope,  # type: ignore
+                        type_=V3BulkSyncExecutionEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -905,7 +901,9 @@ class BulkSyncClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get_status(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> BulkSyncStatusEnvelope:
+    def get_status(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> V3BulkSyncStatusEnvelope:
         """
         Parameters
         ----------
@@ -916,7 +914,7 @@ class BulkSyncClient:
 
         Returns
         -------
-        BulkSyncStatusEnvelope
+        V3BulkSyncStatusEnvelope
             OK
 
         Examples
@@ -928,7 +926,7 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.get_status(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -939,9 +937,9 @@ class BulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncStatusEnvelope,
+                    V3BulkSyncStatusEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncStatusEnvelope,  # type: ignore
+                        type_=V3BulkSyncStatusEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -986,7 +984,7 @@ class BulkSyncClient:
         *,
         include_fields: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> BulkSyncSourceEnvelope:
+    ) -> V3BulkSyncSourceEnvelope:
         """
         Parameters
         ----------
@@ -999,7 +997,7 @@ class BulkSyncClient:
 
         Returns
         -------
-        BulkSyncSourceEnvelope
+        V3BulkSyncSourceEnvelope
             OK
 
         Examples
@@ -1011,8 +1009,7 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.get_source(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            include_fields=True,
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1026,9 +1023,9 @@ class BulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncSourceEnvelope,
+                    V3BulkSyncSourceEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncSourceEnvelope,  # type: ignore
+                        type_=V3BulkSyncSourceEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1079,7 +1076,7 @@ class BulkSyncClient:
 
     def get_destination(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> BulkSyncDestEnvelope:
+    ) -> V2BulkSyncDestEnvelope:
         """
         Parameters
         ----------
@@ -1090,7 +1087,7 @@ class BulkSyncClient:
 
         Returns
         -------
-        BulkSyncDestEnvelope
+        V2BulkSyncDestEnvelope
             OK
 
         Examples
@@ -1102,7 +1099,7 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.get_destination(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1113,9 +1110,9 @@ class BulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncDestEnvelope,
+                    V2BulkSyncDestEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncDestEnvelope,  # type: ignore
+                        type_=V2BulkSyncDestEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1174,7 +1171,7 @@ class AsyncBulkSyncClient:
 
     async def list(
         self, *, active: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
-    ) -> BulkSyncListEnvelope:
+    ) -> V2BulkSyncListEnvelope:
         """
         Parameters
         ----------
@@ -1185,7 +1182,7 @@ class AsyncBulkSyncClient:
 
         Returns
         -------
-        BulkSyncListEnvelope
+        V2BulkSyncListEnvelope
             OK
 
         Examples
@@ -1201,9 +1198,7 @@ class AsyncBulkSyncClient:
 
 
         async def main() -> None:
-            await client.bulk_sync.list(
-                active=True,
-            )
+            await client.bulk_sync.list()
 
 
         asyncio.run(main())
@@ -1219,9 +1214,9 @@ class AsyncBulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncListEnvelope,
+                    V2BulkSyncListEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncListEnvelope,  # type: ignore
+                        type_=V2BulkSyncListEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1265,7 +1260,7 @@ class AsyncBulkSyncClient:
         data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
         discover: typing.Optional[bool] = OMIT,
-        mode: typing.Optional[BulkSyncMode] = OMIT,
+        mode: typing.Optional[BulkSyncTargetMode] = OMIT,
         normalize_names: typing.Optional[BulkNormalizeNames] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
@@ -1273,7 +1268,7 @@ class AsyncBulkSyncClient:
         schemas: typing.Optional[typing.Sequence[V2CreateBulkSyncRequestSchemasItem]] = OMIT,
         source_configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> BulkSyncResponseEnvelope:
+    ) -> V2BulkSyncResponseEnvelope:
         """
         Create a new Bulk Sync from a source to a destination (data warehouse, database, or cloud storage bucket like S3).
 
@@ -1330,7 +1325,7 @@ class AsyncBulkSyncClient:
         discover : typing.Optional[bool]
             DEPRECATED: Use automatically_add_new_objects/automatically_add_new_fields instead
 
-        mode : typing.Optional[BulkSyncMode]
+        mode : typing.Optional[BulkSyncTargetMode]
 
         normalize_names : typing.Optional[BulkNormalizeNames]
 
@@ -1351,7 +1346,7 @@ class AsyncBulkSyncClient:
 
         Returns
         -------
-        BulkSyncResponseEnvelope
+        V2BulkSyncResponseEnvelope
             OK
 
         Examples
@@ -1368,13 +1363,15 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.create(
-                destination_configuration={"schema": "my_schema"},
-                destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                name="My Bulk Sync",
+                destination_configuration={
+                    "destination_configuration": {"key": "value"}
+                },
+                destination_connection_id="destination_connection_id",
+                name="name",
                 schedule=BulkSchedule(
                     frequency="manual",
                 ),
-                source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                source_connection_id="source_connection_id",
             )
 
 
@@ -1417,9 +1414,9 @@ class AsyncBulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncResponseEnvelope,
+                    V2BulkSyncResponseEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncResponseEnvelope,  # type: ignore
+                        type_=V2BulkSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1484,7 +1481,7 @@ class AsyncBulkSyncClient:
         *,
         refresh_schemas: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> BulkSyncResponseEnvelope:
+    ) -> V2BulkSyncResponseEnvelope:
         """
         Parameters
         ----------
@@ -1497,7 +1494,7 @@ class AsyncBulkSyncClient:
 
         Returns
         -------
-        BulkSyncResponseEnvelope
+        V2BulkSyncResponseEnvelope
             OK
 
         Examples
@@ -1514,8 +1511,7 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                refresh_schemas=True,
+                id="id",
             )
 
 
@@ -1532,9 +1528,9 @@ class AsyncBulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncResponseEnvelope,
+                    V2BulkSyncResponseEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncResponseEnvelope,  # type: ignore
+                        type_=V2BulkSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1579,7 +1575,7 @@ class AsyncBulkSyncClient:
         data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
         discover: typing.Optional[bool] = OMIT,
-        mode: typing.Optional[BulkSyncMode] = OMIT,
+        mode: typing.Optional[BulkSyncTargetMode] = OMIT,
         normalize_names: typing.Optional[BulkNormalizeNames] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
@@ -1587,7 +1583,7 @@ class AsyncBulkSyncClient:
         schemas: typing.Optional[typing.Sequence[V2UpdateBulkSyncRequestSchemasItem]] = OMIT,
         source_configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> BulkSyncResponseEnvelope:
+    ) -> V2BulkSyncResponseEnvelope:
         """
         > 📘 Updating schemas
         >
@@ -1623,7 +1619,7 @@ class AsyncBulkSyncClient:
         discover : typing.Optional[bool]
             DEPRECATED: Use automatically_add_new_objects/automatically_add_new_fields instead
 
-        mode : typing.Optional[BulkSyncMode]
+        mode : typing.Optional[BulkSyncTargetMode]
 
         normalize_names : typing.Optional[BulkNormalizeNames]
 
@@ -1644,7 +1640,7 @@ class AsyncBulkSyncClient:
 
         Returns
         -------
-        BulkSyncResponseEnvelope
+        V2BulkSyncResponseEnvelope
             OK
 
         Examples
@@ -1661,14 +1657,16 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                destination_configuration={"schema": "my_schema"},
-                destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                name="My Bulk Sync",
+                id="id",
+                destination_configuration={
+                    "destination_configuration": {"key": "value"}
+                },
+                destination_connection_id="destination_connection_id",
+                name="name",
                 schedule=BulkSchedule(
                     frequency="manual",
                 ),
-                source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                source_connection_id="source_connection_id",
             )
 
 
@@ -1711,9 +1709,9 @@ class AsyncBulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncResponseEnvelope,
+                    V2BulkSyncResponseEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncResponseEnvelope,  # type: ignore
+                        type_=V2BulkSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1807,8 +1805,7 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.remove(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                refresh_schemas=True,
+                id="id",
             )
 
 
@@ -1872,7 +1869,7 @@ class AsyncBulkSyncClient:
 
     async def activate(
         self, id: str, *, active: bool, request_options: typing.Optional[RequestOptions] = None
-    ) -> ActivateSyncEnvelope:
+    ) -> V2ActivateSyncEnvelope:
         """
         Parameters
         ----------
@@ -1885,7 +1882,7 @@ class AsyncBulkSyncClient:
 
         Returns
         -------
-        ActivateSyncEnvelope
+        V2ActivateSyncEnvelope
             OK
 
         Examples
@@ -1902,7 +1899,7 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.activate(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
                 active=True,
             )
 
@@ -1921,9 +1918,9 @@ class AsyncBulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ActivateSyncEnvelope,
+                    V2ActivateSyncEnvelope,
                     parse_obj_as(
-                        type_=ActivateSyncEnvelope,  # type: ignore
+                        type_=V2ActivateSyncEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1976,18 +1973,18 @@ class AsyncBulkSyncClient:
         self,
         id: str,
         *,
-        fetch_mode: typing.Optional[BulkFetchMode] = OMIT,
+        fetch_mode: typing.Optional[V3BulkFetchMode] = OMIT,
         resync: typing.Optional[bool] = OMIT,
         schemas: typing.Optional[typing.Sequence[str]] = OMIT,
         test: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> BulkSyncExecutionEnvelope:
+    ) -> V3BulkSyncExecutionEnvelope:
         """
         Parameters
         ----------
         id : str
 
-        fetch_mode : typing.Optional[BulkFetchMode]
+        fetch_mode : typing.Optional[V3BulkFetchMode]
 
         resync : typing.Optional[bool]
 
@@ -2000,7 +1997,7 @@ class AsyncBulkSyncClient:
 
         Returns
         -------
-        BulkSyncExecutionEnvelope
+        V3BulkSyncExecutionEnvelope
             OK
 
         Examples
@@ -2017,7 +2014,7 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.start(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2041,9 +2038,9 @@ class AsyncBulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncExecutionEnvelope,
+                    V3BulkSyncExecutionEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncExecutionEnvelope,  # type: ignore
+                        type_=V3BulkSyncExecutionEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -2084,7 +2081,7 @@ class AsyncBulkSyncClient:
 
     async def get_status(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> BulkSyncStatusEnvelope:
+    ) -> V3BulkSyncStatusEnvelope:
         """
         Parameters
         ----------
@@ -2095,7 +2092,7 @@ class AsyncBulkSyncClient:
 
         Returns
         -------
-        BulkSyncStatusEnvelope
+        V3BulkSyncStatusEnvelope
             OK
 
         Examples
@@ -2112,7 +2109,7 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.get_status(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2126,9 +2123,9 @@ class AsyncBulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncStatusEnvelope,
+                    V3BulkSyncStatusEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncStatusEnvelope,  # type: ignore
+                        type_=V3BulkSyncStatusEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -2173,7 +2170,7 @@ class AsyncBulkSyncClient:
         *,
         include_fields: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> BulkSyncSourceEnvelope:
+    ) -> V3BulkSyncSourceEnvelope:
         """
         Parameters
         ----------
@@ -2186,7 +2183,7 @@ class AsyncBulkSyncClient:
 
         Returns
         -------
-        BulkSyncSourceEnvelope
+        V3BulkSyncSourceEnvelope
             OK
 
         Examples
@@ -2203,8 +2200,7 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.get_source(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                include_fields=True,
+                id="id",
             )
 
 
@@ -2221,9 +2217,9 @@ class AsyncBulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncSourceEnvelope,
+                    V3BulkSyncSourceEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncSourceEnvelope,  # type: ignore
+                        type_=V3BulkSyncSourceEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -2274,7 +2270,7 @@ class AsyncBulkSyncClient:
 
     async def get_destination(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> BulkSyncDestEnvelope:
+    ) -> V2BulkSyncDestEnvelope:
         """
         Parameters
         ----------
@@ -2285,7 +2281,7 @@ class AsyncBulkSyncClient:
 
         Returns
         -------
-        BulkSyncDestEnvelope
+        V2BulkSyncDestEnvelope
             OK
 
         Examples
@@ -2302,7 +2298,7 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.get_destination(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2316,9 +2312,9 @@ class AsyncBulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncDestEnvelope,
+                    V2BulkSyncDestEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncDestEnvelope,  # type: ignore
+                        type_=V2BulkSyncDestEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

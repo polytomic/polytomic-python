@@ -3,7 +3,7 @@
 from ..core.client_wrapper import SyncClientWrapper
 import typing
 from ..core.request_options import RequestOptions
-from ..types.get_identity_response_envelope import GetIdentityResponseEnvelope
+from ..types.v_2_get_identity_response_envelope import V2GetIdentityResponseEnvelope
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.unauthorized_error import UnauthorizedError
 from ..types.rest_err_response import RestErrResponse
@@ -18,7 +18,7 @@ class IdentityClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def get(self, *, request_options: typing.Optional[RequestOptions] = None) -> GetIdentityResponseEnvelope:
+    def get(self, *, request_options: typing.Optional[RequestOptions] = None) -> V2GetIdentityResponseEnvelope:
         """
         Returns information about the caller's identity.
 
@@ -29,7 +29,7 @@ class IdentityClient:
 
         Returns
         -------
-        GetIdentityResponseEnvelope
+        V2GetIdentityResponseEnvelope
             OK
 
         Examples
@@ -50,9 +50,9 @@ class IdentityClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    GetIdentityResponseEnvelope,
+                    V2GetIdentityResponseEnvelope,
                     parse_obj_as(
-                        type_=GetIdentityResponseEnvelope,  # type: ignore
+                        type_=V2GetIdentityResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -86,7 +86,7 @@ class AsyncIdentityClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def get(self, *, request_options: typing.Optional[RequestOptions] = None) -> GetIdentityResponseEnvelope:
+    async def get(self, *, request_options: typing.Optional[RequestOptions] = None) -> V2GetIdentityResponseEnvelope:
         """
         Returns information about the caller's identity.
 
@@ -97,7 +97,7 @@ class AsyncIdentityClient:
 
         Returns
         -------
-        GetIdentityResponseEnvelope
+        V2GetIdentityResponseEnvelope
             OK
 
         Examples
@@ -126,9 +126,9 @@ class AsyncIdentityClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    GetIdentityResponseEnvelope,
+                    V2GetIdentityResponseEnvelope,
                     parse_obj_as(
-                        type_=GetIdentityResponseEnvelope,  # type: ignore
+                        type_=V2GetIdentityResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

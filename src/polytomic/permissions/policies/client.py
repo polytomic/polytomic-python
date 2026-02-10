@@ -3,7 +3,7 @@
 import typing
 from ...core.client_wrapper import SyncClientWrapper
 from ...core.request_options import RequestOptions
-from ...types.list_policies_response_envelope import ListPoliciesResponseEnvelope
+from ...types.v_2_list_policies_response_envelope import V2ListPoliciesResponseEnvelope
 from ...core.pydantic_utilities import parse_obj_as
 from ...errors.unauthorized_error import UnauthorizedError
 from ...types.rest_err_response import RestErrResponse
@@ -11,8 +11,8 @@ from ...errors.internal_server_error import InternalServerError
 from ...types.api_error import ApiError as types_api_error_ApiError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError as core_api_error_ApiError
-from ...types.policy_action import PolicyAction
-from ...types.policy_response_envelope import PolicyResponseEnvelope
+from ...types.v_2_policy_action import V2PolicyAction
+from ...types.v_2_policy_response_envelope import V2PolicyResponseEnvelope
 from ...core.serialization import convert_and_respect_annotation_metadata
 from ...errors.bad_request_error import BadRequestError
 from ...errors.forbidden_error import ForbiddenError
@@ -28,7 +28,7 @@ class PoliciesClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ListPoliciesResponseEnvelope:
+    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> V2ListPoliciesResponseEnvelope:
         """
         Parameters
         ----------
@@ -37,7 +37,7 @@ class PoliciesClient:
 
         Returns
         -------
-        ListPoliciesResponseEnvelope
+        V2ListPoliciesResponseEnvelope
             OK
 
         Examples
@@ -58,9 +58,9 @@ class PoliciesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ListPoliciesResponseEnvelope,
+                    V2ListPoliciesResponseEnvelope,
                     parse_obj_as(
-                        type_=ListPoliciesResponseEnvelope,  # type: ignore
+                        type_=V2ListPoliciesResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -94,9 +94,9 @@ class PoliciesClient:
         *,
         name: str,
         organization_id: typing.Optional[str] = OMIT,
-        policy_actions: typing.Optional[typing.Sequence[PolicyAction]] = OMIT,
+        policy_actions: typing.Optional[typing.Sequence[V2PolicyAction]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PolicyResponseEnvelope:
+    ) -> V2PolicyResponseEnvelope:
         """
         Parameters
         ----------
@@ -104,14 +104,14 @@ class PoliciesClient:
 
         organization_id : typing.Optional[str]
 
-        policy_actions : typing.Optional[typing.Sequence[PolicyAction]]
+        policy_actions : typing.Optional[typing.Sequence[V2PolicyAction]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        PolicyResponseEnvelope
+        V2PolicyResponseEnvelope
             OK
 
         Examples
@@ -123,7 +123,7 @@ class PoliciesClient:
             token="YOUR_TOKEN",
         )
         client.permissions.policies.create(
-            name="Custom",
+            name="name",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -133,7 +133,7 @@ class PoliciesClient:
                 "name": name,
                 "organization_id": organization_id,
                 "policy_actions": convert_and_respect_annotation_metadata(
-                    object_=policy_actions, annotation=typing.Sequence[PolicyAction], direction="write"
+                    object_=policy_actions, annotation=typing.Sequence[V2PolicyAction], direction="write"
                 ),
             },
             headers={
@@ -145,9 +145,9 @@ class PoliciesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    PolicyResponseEnvelope,
+                    V2PolicyResponseEnvelope,
                     parse_obj_as(
-                        type_=PolicyResponseEnvelope,  # type: ignore
+                        type_=V2PolicyResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -206,7 +206,7 @@ class PoliciesClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> PolicyResponseEnvelope:
+    def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> V2PolicyResponseEnvelope:
         """
         Parameters
         ----------
@@ -217,7 +217,7 @@ class PoliciesClient:
 
         Returns
         -------
-        PolicyResponseEnvelope
+        V2PolicyResponseEnvelope
             OK
 
         Examples
@@ -229,7 +229,7 @@ class PoliciesClient:
             token="YOUR_TOKEN",
         )
         client.permissions.policies.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -240,9 +240,9 @@ class PoliciesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    PolicyResponseEnvelope,
+                    V2PolicyResponseEnvelope,
                     parse_obj_as(
-                        type_=PolicyResponseEnvelope,  # type: ignore
+                        type_=V2PolicyResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -287,9 +287,9 @@ class PoliciesClient:
         *,
         name: str,
         organization_id: typing.Optional[str] = OMIT,
-        policy_actions: typing.Optional[typing.Sequence[PolicyAction]] = OMIT,
+        policy_actions: typing.Optional[typing.Sequence[V2PolicyAction]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PolicyResponseEnvelope:
+    ) -> V2PolicyResponseEnvelope:
         """
         Parameters
         ----------
@@ -299,14 +299,14 @@ class PoliciesClient:
 
         organization_id : typing.Optional[str]
 
-        policy_actions : typing.Optional[typing.Sequence[PolicyAction]]
+        policy_actions : typing.Optional[typing.Sequence[V2PolicyAction]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        PolicyResponseEnvelope
+        V2PolicyResponseEnvelope
             OK
 
         Examples
@@ -318,8 +318,8 @@ class PoliciesClient:
             token="YOUR_TOKEN",
         )
         client.permissions.policies.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="Custom",
+            id="id",
+            name="name",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -329,7 +329,7 @@ class PoliciesClient:
                 "name": name,
                 "organization_id": organization_id,
                 "policy_actions": convert_and_respect_annotation_metadata(
-                    object_=policy_actions, annotation=typing.Sequence[PolicyAction], direction="write"
+                    object_=policy_actions, annotation=typing.Sequence[V2PolicyAction], direction="write"
                 ),
             },
             headers={
@@ -341,9 +341,9 @@ class PoliciesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    PolicyResponseEnvelope,
+                    V2PolicyResponseEnvelope,
                     parse_obj_as(
-                        type_=PolicyResponseEnvelope,  # type: ignore
+                        type_=V2PolicyResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -424,7 +424,7 @@ class PoliciesClient:
             token="YOUR_TOKEN",
         )
         client.permissions.policies.remove(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -485,7 +485,7 @@ class AsyncPoliciesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ListPoliciesResponseEnvelope:
+    async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> V2ListPoliciesResponseEnvelope:
         """
         Parameters
         ----------
@@ -494,7 +494,7 @@ class AsyncPoliciesClient:
 
         Returns
         -------
-        ListPoliciesResponseEnvelope
+        V2ListPoliciesResponseEnvelope
             OK
 
         Examples
@@ -523,9 +523,9 @@ class AsyncPoliciesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ListPoliciesResponseEnvelope,
+                    V2ListPoliciesResponseEnvelope,
                     parse_obj_as(
-                        type_=ListPoliciesResponseEnvelope,  # type: ignore
+                        type_=V2ListPoliciesResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -559,9 +559,9 @@ class AsyncPoliciesClient:
         *,
         name: str,
         organization_id: typing.Optional[str] = OMIT,
-        policy_actions: typing.Optional[typing.Sequence[PolicyAction]] = OMIT,
+        policy_actions: typing.Optional[typing.Sequence[V2PolicyAction]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PolicyResponseEnvelope:
+    ) -> V2PolicyResponseEnvelope:
         """
         Parameters
         ----------
@@ -569,14 +569,14 @@ class AsyncPoliciesClient:
 
         organization_id : typing.Optional[str]
 
-        policy_actions : typing.Optional[typing.Sequence[PolicyAction]]
+        policy_actions : typing.Optional[typing.Sequence[V2PolicyAction]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        PolicyResponseEnvelope
+        V2PolicyResponseEnvelope
             OK
 
         Examples
@@ -593,7 +593,7 @@ class AsyncPoliciesClient:
 
         async def main() -> None:
             await client.permissions.policies.create(
-                name="Custom",
+                name="name",
             )
 
 
@@ -606,7 +606,7 @@ class AsyncPoliciesClient:
                 "name": name,
                 "organization_id": organization_id,
                 "policy_actions": convert_and_respect_annotation_metadata(
-                    object_=policy_actions, annotation=typing.Sequence[PolicyAction], direction="write"
+                    object_=policy_actions, annotation=typing.Sequence[V2PolicyAction], direction="write"
                 ),
             },
             headers={
@@ -618,9 +618,9 @@ class AsyncPoliciesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    PolicyResponseEnvelope,
+                    V2PolicyResponseEnvelope,
                     parse_obj_as(
-                        type_=PolicyResponseEnvelope,  # type: ignore
+                        type_=V2PolicyResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -679,7 +679,9 @@ class AsyncPoliciesClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> PolicyResponseEnvelope:
+    async def get(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> V2PolicyResponseEnvelope:
         """
         Parameters
         ----------
@@ -690,7 +692,7 @@ class AsyncPoliciesClient:
 
         Returns
         -------
-        PolicyResponseEnvelope
+        V2PolicyResponseEnvelope
             OK
 
         Examples
@@ -707,7 +709,7 @@ class AsyncPoliciesClient:
 
         async def main() -> None:
             await client.permissions.policies.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -721,9 +723,9 @@ class AsyncPoliciesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    PolicyResponseEnvelope,
+                    V2PolicyResponseEnvelope,
                     parse_obj_as(
-                        type_=PolicyResponseEnvelope,  # type: ignore
+                        type_=V2PolicyResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -768,9 +770,9 @@ class AsyncPoliciesClient:
         *,
         name: str,
         organization_id: typing.Optional[str] = OMIT,
-        policy_actions: typing.Optional[typing.Sequence[PolicyAction]] = OMIT,
+        policy_actions: typing.Optional[typing.Sequence[V2PolicyAction]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> PolicyResponseEnvelope:
+    ) -> V2PolicyResponseEnvelope:
         """
         Parameters
         ----------
@@ -780,14 +782,14 @@ class AsyncPoliciesClient:
 
         organization_id : typing.Optional[str]
 
-        policy_actions : typing.Optional[typing.Sequence[PolicyAction]]
+        policy_actions : typing.Optional[typing.Sequence[V2PolicyAction]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        PolicyResponseEnvelope
+        V2PolicyResponseEnvelope
             OK
 
         Examples
@@ -804,8 +806,8 @@ class AsyncPoliciesClient:
 
         async def main() -> None:
             await client.permissions.policies.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                name="Custom",
+                id="id",
+                name="name",
             )
 
 
@@ -818,7 +820,7 @@ class AsyncPoliciesClient:
                 "name": name,
                 "organization_id": organization_id,
                 "policy_actions": convert_and_respect_annotation_metadata(
-                    object_=policy_actions, annotation=typing.Sequence[PolicyAction], direction="write"
+                    object_=policy_actions, annotation=typing.Sequence[V2PolicyAction], direction="write"
                 ),
             },
             headers={
@@ -830,9 +832,9 @@ class AsyncPoliciesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    PolicyResponseEnvelope,
+                    V2PolicyResponseEnvelope,
                     parse_obj_as(
-                        type_=PolicyResponseEnvelope,  # type: ignore
+                        type_=V2PolicyResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -918,7 +920,7 @@ class AsyncPoliciesClient:
 
         async def main() -> None:
             await client.permissions.policies.remove(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
