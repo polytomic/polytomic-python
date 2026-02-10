@@ -15,6 +15,7 @@ from .bulk_execution_status import BulkExecutionStatus
 from .bulk_fetch_mode import BulkFetchMode
 from .bulk_field import BulkField
 from .bulk_filter import BulkFilter
+from .bulk_filter_2 import BulkFilter2
 from .bulk_itemized_schedule import BulkItemizedSchedule
 from .bulk_multi_schedule_configuration import BulkMultiScheduleConfiguration
 from .bulk_normalize_names import BulkNormalizeNames
@@ -50,6 +51,7 @@ from .cancel_model_sync_response import CancelModelSyncResponse
 from .cancel_model_sync_response_envelope import CancelModelSyncResponseEnvelope
 from .common_output_actor import CommonOutputActor
 from .configuration_value import ConfigurationValue
+from .configuration_value_2 import ConfigurationValue2
 from .connect_card_response import ConnectCardResponse
 from .connect_card_response_envelope import ConnectCardResponseEnvelope
 from .connection_list_response_envelope import ConnectionListResponseEnvelope
@@ -122,6 +124,7 @@ from .organizations_envelope import OrganizationsEnvelope
 from .override import Override
 from .pagination import Pagination
 from .pagination_details import PaginationDetails
+from .pagination_details_2 import PaginationDetails2
 from .pick_value import PickValue
 from .policy_action import PolicyAction
 from .policy_response import PolicyResponse
@@ -216,6 +219,7 @@ __all__ = [
     "BulkFetchMode",
     "BulkField",
     "BulkFilter",
+    "BulkFilter2",
     "BulkItemizedSchedule",
     "BulkMultiScheduleConfiguration",
     "BulkNormalizeNames",
@@ -251,6 +255,7 @@ __all__ = [
     "CancelModelSyncResponseEnvelope",
     "CommonOutputActor",
     "ConfigurationValue",
+    "ConfigurationValue2",
     "ConnectCardResponse",
     "ConnectCardResponseEnvelope",
     "ConnectionListResponseEnvelope",
@@ -323,6 +328,7 @@ __all__ = [
     "Override",
     "Pagination",
     "PaginationDetails",
+    "PaginationDetails2",
     "PickValue",
     "PolicyAction",
     "PolicyResponse",

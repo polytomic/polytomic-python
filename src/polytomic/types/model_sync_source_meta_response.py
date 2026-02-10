@@ -2,14 +2,14 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .configuration_value import ConfigurationValue
+from .configuration_value_2 import ConfigurationValue2
 from .source_meta import SourceMeta
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
 class ModelSyncSourceMetaResponse(UniversalBaseModel):
-    configuration: typing.Optional[typing.Dict[str, ConfigurationValue]] = None
+    configuration: typing.Optional[typing.Dict[str, ConfigurationValue2]] = None
     items: typing.Optional[typing.Dict[str, typing.Optional[SourceMeta]]] = None
     requires_one_of: typing.Optional[typing.List[str]] = None
 

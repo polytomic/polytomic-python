@@ -61,10 +61,7 @@ class ExecutionsClient:
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        client.bulk_sync.executions.list_status(
-            all_=True,
-            active=True,
-        )
+        client.bulk_sync.executions.list_status()
         """
         _response = self._client_wrapper.httpx_client.request(
             "api/bulk/syncs/status",
@@ -150,11 +147,7 @@ class ExecutionsClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.executions.list(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            page_token="AmkYh8v0jR5B3kls2Qcc9y8MjrPmvR4CvaK7H0F4rEwqvg76K==",
-            only_terminal=True,
-            ascending=True,
-            limit=100,
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -229,8 +222,8 @@ class ExecutionsClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.executions.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            exec_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
+            exec_id="exec_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -299,8 +292,8 @@ class ExecutionsClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.executions.get_logs(
-            sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            sync_id="sync_id",
+            execution_id="execution_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -377,8 +370,8 @@ class ExecutionsClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.executions.export_logs(
-            sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            sync_id="sync_id",
+            execution_id="execution_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -489,10 +482,7 @@ class AsyncExecutionsClient:
 
 
         async def main() -> None:
-            await client.bulk_sync.executions.list_status(
-                all_=True,
-                active=True,
-            )
+            await client.bulk_sync.executions.list_status()
 
 
         asyncio.run(main())
@@ -586,11 +576,7 @@ class AsyncExecutionsClient:
 
         async def main() -> None:
             await client.bulk_sync.executions.list(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                page_token="AmkYh8v0jR5B3kls2Qcc9y8MjrPmvR4CvaK7H0F4rEwqvg76K==",
-                only_terminal=True,
-                ascending=True,
-                limit=100,
+                id="id",
             )
 
 
@@ -673,8 +659,8 @@ class AsyncExecutionsClient:
 
         async def main() -> None:
             await client.bulk_sync.executions.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                exec_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
+                exec_id="exec_id",
             )
 
 
@@ -751,8 +737,8 @@ class AsyncExecutionsClient:
 
         async def main() -> None:
             await client.bulk_sync.executions.get_logs(
-                sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                sync_id="sync_id",
+                execution_id="execution_id",
             )
 
 
@@ -837,8 +823,8 @@ class AsyncExecutionsClient:
 
         async def main() -> None:
             await client.bulk_sync.executions.export_logs(
-                sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                sync_id="sync_id",
+                execution_id="execution_id",
             )
 
 

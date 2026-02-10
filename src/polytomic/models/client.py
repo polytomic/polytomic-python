@@ -38,7 +38,7 @@ class ModelsClient:
         self,
         id: str,
         *,
-        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        params: typing.Optional[typing.Dict[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetModelSyncSourceMetaEnvelope:
         """
@@ -46,7 +46,7 @@ class ModelsClient:
         ----------
         id : str
 
-        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+        params : typing.Optional[typing.Dict[str, typing.Sequence[str]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -65,7 +65,7 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.get_enrichment_source(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -173,7 +173,7 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.post(
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            connection_id="connection_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -306,9 +306,9 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.preview(
-            configuration={"table": "public.users"},
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="Users",
+            configuration={"configuration": {"key": "value"}},
+            connection_id="connection_id",
+            name="name",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -519,9 +519,9 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.create(
-            configuration={"table": "public.users"},
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="Users",
+            configuration={"configuration": {"key": "value"}},
+            connection_id="connection_id",
+            name="name",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -634,7 +634,7 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -759,11 +759,10 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            async_=False,
-            configuration={"table": "public.users"},
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="Users",
+            id="id",
+            configuration={"configuration": {"key": "value"}},
+            connection_id="connection_id",
+            name="name",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -879,7 +878,7 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.remove(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -967,7 +966,7 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.sample(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1041,7 +1040,7 @@ class AsyncModelsClient:
         self,
         id: str,
         *,
-        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        params: typing.Optional[typing.Dict[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetModelSyncSourceMetaEnvelope:
         """
@@ -1049,7 +1048,7 @@ class AsyncModelsClient:
         ----------
         id : str
 
-        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+        params : typing.Optional[typing.Dict[str, typing.Sequence[str]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1073,7 +1072,7 @@ class AsyncModelsClient:
 
         async def main() -> None:
             await client.models.get_enrichment_source(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -1189,7 +1188,7 @@ class AsyncModelsClient:
 
         async def main() -> None:
             await client.models.post(
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                connection_id="connection_id",
             )
 
 
@@ -1330,9 +1329,9 @@ class AsyncModelsClient:
 
         async def main() -> None:
             await client.models.preview(
-                configuration={"table": "public.users"},
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                name="Users",
+                configuration={"configuration": {"key": "value"}},
+                connection_id="connection_id",
+                name="name",
             )
 
 
@@ -1559,9 +1558,9 @@ class AsyncModelsClient:
 
         async def main() -> None:
             await client.models.create(
-                configuration={"table": "public.users"},
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                name="Users",
+                configuration={"configuration": {"key": "value"}},
+                connection_id="connection_id",
+                name="name",
             )
 
 
@@ -1682,7 +1681,7 @@ class AsyncModelsClient:
 
         async def main() -> None:
             await client.models.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -1815,11 +1814,10 @@ class AsyncModelsClient:
 
         async def main() -> None:
             await client.models.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                async_=False,
-                configuration={"table": "public.users"},
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                name="Users",
+                id="id",
+                configuration={"configuration": {"key": "value"}},
+                connection_id="connection_id",
+                name="name",
             )
 
 
@@ -1943,7 +1941,7 @@ class AsyncModelsClient:
 
         async def main() -> None:
             await client.models.remove(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2039,7 +2037,7 @@ class AsyncModelsClient:
 
         async def main() -> None:
             await client.models.sample(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
