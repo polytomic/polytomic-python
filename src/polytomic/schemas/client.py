@@ -2,7 +2,7 @@
 
 import typing
 from ..core.client_wrapper import SyncClientWrapper
-from ..types.v_4_user_field_request import V4UserFieldRequest
+from ..types.v4user_field_request import V4UserFieldRequest
 from ..core.request_options import RequestOptions
 from ..core.jsonable_encoder import jsonable_encoder
 from ..core.serialization import convert_and_respect_annotation_metadata
@@ -16,9 +16,9 @@ from ..errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError as core_api_error_ApiError
 from ..types.schema_primary_key_override_input import SchemaPrimaryKeyOverrideInput
-from ..types.bulk_sync_source_status_envelope import BulkSyncSourceStatusEnvelope
-from ..types.bulk_sync_source_schema_envelope import BulkSyncSourceSchemaEnvelope
-from ..types.schema_records_response_envelope import SchemaRecordsResponseEnvelope
+from ..types.v3bulk_sync_source_status_envelope import V3BulkSyncSourceStatusEnvelope
+from ..types.v3bulk_sync_source_schema_envelope import V3BulkSyncSourceSchemaEnvelope
+from ..types.v3schema_records_response_envelope import V3SchemaRecordsResponseEnvelope
 from ..errors.forbidden_error import ForbiddenError
 from ..core.client_wrapper import AsyncClientWrapper
 
@@ -63,8 +63,8 @@ class SchemasClient:
             token="YOUR_TOKEN",
         )
         client.schemas.upsert_field(
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schema_id="public.users",
+            connection_id="connection_id",
+            schema_id="schema_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -162,9 +162,9 @@ class SchemasClient:
             token="YOUR_TOKEN",
         )
         client.schemas.delete_field(
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schema_id="public.users",
-            field_id="first_name",
+            connection_id="connection_id",
+            schema_id="schema_id",
+            field_id="field_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -253,8 +253,8 @@ class SchemasClient:
             token="YOUR_TOKEN",
         )
         client.schemas.set_primary_keys(
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schema_id="public.users",
+            connection_id="connection_id",
+            schema_id="schema_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -347,8 +347,8 @@ class SchemasClient:
             token="YOUR_TOKEN",
         )
         client.schemas.reset_primary_keys(
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schema_id="public.users",
+            connection_id="connection_id",
+            schema_id="schema_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -426,7 +426,7 @@ class SchemasClient:
             token="YOUR_TOKEN",
         )
         client.schemas.refresh(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -484,7 +484,7 @@ class SchemasClient:
 
     def get_status(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> BulkSyncSourceStatusEnvelope:
+    ) -> V3BulkSyncSourceStatusEnvelope:
         """
         Polytomic periodically inspects the schemas for connections to discover new fields and update metadata. This endpoint returns the current inspection status.
 
@@ -497,7 +497,7 @@ class SchemasClient:
 
         Returns
         -------
-        BulkSyncSourceStatusEnvelope
+        V3BulkSyncSourceStatusEnvelope
             OK
 
         Examples
@@ -509,7 +509,7 @@ class SchemasClient:
             token="YOUR_TOKEN",
         )
         client.schemas.get_status(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -520,9 +520,9 @@ class SchemasClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncSourceStatusEnvelope,
+                    V3BulkSyncSourceStatusEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncSourceStatusEnvelope,  # type: ignore
+                        type_=V3BulkSyncSourceStatusEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -573,7 +573,7 @@ class SchemasClient:
 
     def get(
         self, id: str, schema_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> BulkSyncSourceSchemaEnvelope:
+    ) -> V3BulkSyncSourceSchemaEnvelope:
         """
         Parameters
         ----------
@@ -586,7 +586,7 @@ class SchemasClient:
 
         Returns
         -------
-        BulkSyncSourceSchemaEnvelope
+        V3BulkSyncSourceSchemaEnvelope
             OK
 
         Examples
@@ -598,8 +598,8 @@ class SchemasClient:
             token="YOUR_TOKEN",
         )
         client.schemas.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schema_id="public.users",
+            id="id",
+            schema_id="schema_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -610,9 +610,9 @@ class SchemasClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncSourceSchemaEnvelope,
+                    V3BulkSyncSourceSchemaEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncSourceSchemaEnvelope,  # type: ignore
+                        type_=V3BulkSyncSourceSchemaEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -663,7 +663,7 @@ class SchemasClient:
 
     def get_records(
         self, id: str, schema_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> SchemaRecordsResponseEnvelope:
+    ) -> V3SchemaRecordsResponseEnvelope:
         """
         Parameters
         ----------
@@ -676,7 +676,7 @@ class SchemasClient:
 
         Returns
         -------
-        SchemaRecordsResponseEnvelope
+        V3SchemaRecordsResponseEnvelope
             OK
 
         Examples
@@ -688,8 +688,8 @@ class SchemasClient:
             token="YOUR_TOKEN",
         )
         client.schemas.get_records(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schema_id="public.users",
+            id="id",
+            schema_id="schema_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -700,9 +700,9 @@ class SchemasClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    SchemaRecordsResponseEnvelope,
+                    V3SchemaRecordsResponseEnvelope,
                     parse_obj_as(
-                        type_=SchemaRecordsResponseEnvelope,  # type: ignore
+                        type_=V3SchemaRecordsResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -804,8 +804,8 @@ class AsyncSchemasClient:
 
         async def main() -> None:
             await client.schemas.upsert_field(
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                schema_id="public.users",
+                connection_id="connection_id",
+                schema_id="schema_id",
             )
 
 
@@ -911,9 +911,9 @@ class AsyncSchemasClient:
 
         async def main() -> None:
             await client.schemas.delete_field(
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                schema_id="public.users",
-                field_id="first_name",
+                connection_id="connection_id",
+                schema_id="schema_id",
+                field_id="field_id",
             )
 
 
@@ -1010,8 +1010,8 @@ class AsyncSchemasClient:
 
         async def main() -> None:
             await client.schemas.set_primary_keys(
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                schema_id="public.users",
+                connection_id="connection_id",
+                schema_id="schema_id",
             )
 
 
@@ -1112,8 +1112,8 @@ class AsyncSchemasClient:
 
         async def main() -> None:
             await client.schemas.reset_primary_keys(
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                schema_id="public.users",
+                connection_id="connection_id",
+                schema_id="schema_id",
             )
 
 
@@ -1199,7 +1199,7 @@ class AsyncSchemasClient:
 
         async def main() -> None:
             await client.schemas.refresh(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -1260,7 +1260,7 @@ class AsyncSchemasClient:
 
     async def get_status(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> BulkSyncSourceStatusEnvelope:
+    ) -> V3BulkSyncSourceStatusEnvelope:
         """
         Polytomic periodically inspects the schemas for connections to discover new fields and update metadata. This endpoint returns the current inspection status.
 
@@ -1273,7 +1273,7 @@ class AsyncSchemasClient:
 
         Returns
         -------
-        BulkSyncSourceStatusEnvelope
+        V3BulkSyncSourceStatusEnvelope
             OK
 
         Examples
@@ -1290,7 +1290,7 @@ class AsyncSchemasClient:
 
         async def main() -> None:
             await client.schemas.get_status(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -1304,9 +1304,9 @@ class AsyncSchemasClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncSourceStatusEnvelope,
+                    V3BulkSyncSourceStatusEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncSourceStatusEnvelope,  # type: ignore
+                        type_=V3BulkSyncSourceStatusEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1357,7 +1357,7 @@ class AsyncSchemasClient:
 
     async def get(
         self, id: str, schema_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> BulkSyncSourceSchemaEnvelope:
+    ) -> V3BulkSyncSourceSchemaEnvelope:
         """
         Parameters
         ----------
@@ -1370,7 +1370,7 @@ class AsyncSchemasClient:
 
         Returns
         -------
-        BulkSyncSourceSchemaEnvelope
+        V3BulkSyncSourceSchemaEnvelope
             OK
 
         Examples
@@ -1387,8 +1387,8 @@ class AsyncSchemasClient:
 
         async def main() -> None:
             await client.schemas.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                schema_id="public.users",
+                id="id",
+                schema_id="schema_id",
             )
 
 
@@ -1402,9 +1402,9 @@ class AsyncSchemasClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncSourceSchemaEnvelope,
+                    V3BulkSyncSourceSchemaEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncSourceSchemaEnvelope,  # type: ignore
+                        type_=V3BulkSyncSourceSchemaEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1455,7 +1455,7 @@ class AsyncSchemasClient:
 
     async def get_records(
         self, id: str, schema_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> SchemaRecordsResponseEnvelope:
+    ) -> V3SchemaRecordsResponseEnvelope:
         """
         Parameters
         ----------
@@ -1468,7 +1468,7 @@ class AsyncSchemasClient:
 
         Returns
         -------
-        SchemaRecordsResponseEnvelope
+        V3SchemaRecordsResponseEnvelope
             OK
 
         Examples
@@ -1485,8 +1485,8 @@ class AsyncSchemasClient:
 
         async def main() -> None:
             await client.schemas.get_records(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                schema_id="public.users",
+                id="id",
+                schema_id="schema_id",
             )
 
 
@@ -1500,9 +1500,9 @@ class AsyncSchemasClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    SchemaRecordsResponseEnvelope,
+                    V3SchemaRecordsResponseEnvelope,
                     parse_obj_as(
-                        type_=SchemaRecordsResponseEnvelope,  # type: ignore
+                        type_=V3SchemaRecordsResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

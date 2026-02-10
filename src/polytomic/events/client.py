@@ -4,7 +4,7 @@ from ..core.client_wrapper import SyncClientWrapper
 import typing
 import datetime as dt
 from ..core.request_options import RequestOptions
-from ..types.events_envelope import EventsEnvelope
+from ..types.v2events_envelope import V2EventsEnvelope
 from ..core.datetime_utils import serialize_datetime
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.unauthorized_error import UnauthorizedError
@@ -14,7 +14,7 @@ from ..types.api_error import ApiError as types_api_error_ApiError
 from ..errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError as core_api_error_ApiError
-from ..types.event_types_envelope import EventTypesEnvelope
+from ..types.v2event_types_envelope import V2EventTypesEnvelope
 from ..core.client_wrapper import AsyncClientWrapper
 
 
@@ -31,7 +31,7 @@ class EventsClient:
         ending_before: typing.Optional[dt.datetime] = None,
         limit: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> EventsEnvelope:
+    ) -> V2EventsEnvelope:
         """
         Parameters
         ----------
@@ -50,28 +50,18 @@ class EventsClient:
 
         Returns
         -------
-        EventsEnvelope
+        V2EventsEnvelope
             OK
 
         Examples
         --------
-        import datetime
-
         from polytomic import Polytomic
 
         client = Polytomic(
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        client.events.list(
-            organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            starting_after=datetime.datetime.fromisoformat(
-                "2020-01-01 00:00:00+00:00",
-            ),
-            ending_before=datetime.datetime.fromisoformat(
-                "2020-01-01 00:00:00+00:00",
-            ),
-        )
+        client.events.list()
         """
         _response = self._client_wrapper.httpx_client.request(
             "api/events",
@@ -88,9 +78,9 @@ class EventsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    EventsEnvelope,
+                    V2EventsEnvelope,
                     parse_obj_as(
-                        type_=EventsEnvelope,  # type: ignore
+                        type_=V2EventsEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -129,7 +119,7 @@ class EventsClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get_types(self, *, request_options: typing.Optional[RequestOptions] = None) -> EventTypesEnvelope:
+    def get_types(self, *, request_options: typing.Optional[RequestOptions] = None) -> V2EventTypesEnvelope:
         """
         Parameters
         ----------
@@ -138,7 +128,7 @@ class EventsClient:
 
         Returns
         -------
-        EventTypesEnvelope
+        V2EventTypesEnvelope
             OK
 
         Examples
@@ -159,9 +149,9 @@ class EventsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    EventTypesEnvelope,
+                    V2EventTypesEnvelope,
                     parse_obj_as(
-                        type_=EventTypesEnvelope,  # type: ignore
+                        type_=V2EventTypesEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -194,7 +184,7 @@ class AsyncEventsClient:
         ending_before: typing.Optional[dt.datetime] = None,
         limit: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> EventsEnvelope:
+    ) -> V2EventsEnvelope:
         """
         Parameters
         ----------
@@ -213,13 +203,12 @@ class AsyncEventsClient:
 
         Returns
         -------
-        EventsEnvelope
+        V2EventsEnvelope
             OK
 
         Examples
         --------
         import asyncio
-        import datetime
 
         from polytomic import AsyncPolytomic
 
@@ -230,15 +219,7 @@ class AsyncEventsClient:
 
 
         async def main() -> None:
-            await client.events.list(
-                organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                starting_after=datetime.datetime.fromisoformat(
-                    "2020-01-01 00:00:00+00:00",
-                ),
-                ending_before=datetime.datetime.fromisoformat(
-                    "2020-01-01 00:00:00+00:00",
-                ),
-            )
+            await client.events.list()
 
 
         asyncio.run(main())
@@ -258,9 +239,9 @@ class AsyncEventsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    EventsEnvelope,
+                    V2EventsEnvelope,
                     parse_obj_as(
-                        type_=EventsEnvelope,  # type: ignore
+                        type_=V2EventsEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -299,7 +280,7 @@ class AsyncEventsClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get_types(self, *, request_options: typing.Optional[RequestOptions] = None) -> EventTypesEnvelope:
+    async def get_types(self, *, request_options: typing.Optional[RequestOptions] = None) -> V2EventTypesEnvelope:
         """
         Parameters
         ----------
@@ -308,7 +289,7 @@ class AsyncEventsClient:
 
         Returns
         -------
-        EventTypesEnvelope
+        V2EventTypesEnvelope
             OK
 
         Examples
@@ -337,9 +318,9 @@ class AsyncEventsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    EventTypesEnvelope,
+                    V2EventTypesEnvelope,
                     parse_obj_as(
-                        type_=EventTypesEnvelope,  # type: ignore
+                        type_=V2EventTypesEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

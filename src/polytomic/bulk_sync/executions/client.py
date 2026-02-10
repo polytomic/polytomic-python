@@ -3,7 +3,7 @@
 from ...core.client_wrapper import SyncClientWrapper
 import typing
 from ...core.request_options import RequestOptions
-from ...types.list_bulk_sync_execution_status_envelope import ListBulkSyncExecutionStatusEnvelope
+from ...types.v4list_bulk_sync_executions_status_envelope import V4ListBulkSyncExecutionsStatusEnvelope
 from ...core.pydantic_utilities import parse_obj_as
 from ...errors.unauthorized_error import UnauthorizedError
 from ...types.rest_err_response import RestErrResponse
@@ -11,11 +11,11 @@ from ...errors.not_found_error import NotFoundError
 from ...types.api_error import ApiError as types_api_error_ApiError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError as core_api_error_ApiError
-from ...types.list_bulk_sync_executions_envelope import ListBulkSyncExecutionsEnvelope
+from ...types.v3list_bulk_sync_executions_envelope import V3ListBulkSyncExecutionsEnvelope
 from ...core.jsonable_encoder import jsonable_encoder
-from ...types.bulk_sync_execution_envelope import BulkSyncExecutionEnvelope
-from ...types.v_4_bulk_sync_execution_logs_envelope import V4BulkSyncExecutionLogsEnvelope
-from ...types.v_4_export_sync_logs_envelope import V4ExportSyncLogsEnvelope
+from ...types.v3bulk_sync_execution_envelope import V3BulkSyncExecutionEnvelope
+from ...types.v4bulk_sync_execution_logs_envelope import V4BulkSyncExecutionLogsEnvelope
+from ...types.v4export_sync_logs_envelope import V4ExportSyncLogsEnvelope
 from ...errors.bad_request_error import BadRequestError
 from ...errors.internal_server_error import InternalServerError
 from ...core.client_wrapper import AsyncClientWrapper
@@ -32,7 +32,7 @@ class ExecutionsClient:
         active: typing.Optional[bool] = None,
         sync_id: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ListBulkSyncExecutionStatusEnvelope:
+    ) -> V4ListBulkSyncExecutionsStatusEnvelope:
         """
         Parameters
         ----------
@@ -50,7 +50,7 @@ class ExecutionsClient:
 
         Returns
         -------
-        ListBulkSyncExecutionStatusEnvelope
+        V4ListBulkSyncExecutionsStatusEnvelope
             OK
 
         Examples
@@ -61,10 +61,7 @@ class ExecutionsClient:
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        client.bulk_sync.executions.list_status(
-            all_=True,
-            active=True,
-        )
+        client.bulk_sync.executions.list_status()
         """
         _response = self._client_wrapper.httpx_client.request(
             "api/bulk/syncs/status",
@@ -79,9 +76,9 @@ class ExecutionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ListBulkSyncExecutionStatusEnvelope,
+                    V4ListBulkSyncExecutionsStatusEnvelope,
                     parse_obj_as(
-                        type_=ListBulkSyncExecutionStatusEnvelope,  # type: ignore
+                        type_=V4ListBulkSyncExecutionsStatusEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -119,7 +116,7 @@ class ExecutionsClient:
         ascending: typing.Optional[bool] = None,
         limit: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ListBulkSyncExecutionsEnvelope:
+    ) -> V3ListBulkSyncExecutionsEnvelope:
         """
         Parameters
         ----------
@@ -138,7 +135,7 @@ class ExecutionsClient:
 
         Returns
         -------
-        ListBulkSyncExecutionsEnvelope
+        V3ListBulkSyncExecutionsEnvelope
             OK
 
         Examples
@@ -150,11 +147,7 @@ class ExecutionsClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.executions.list(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            page_token="AmkYh8v0jR5B3kls2Qcc9y8MjrPmvR4CvaK7H0F4rEwqvg76K==",
-            only_terminal=True,
-            ascending=True,
-            limit=100,
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -171,9 +164,9 @@ class ExecutionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ListBulkSyncExecutionsEnvelope,
+                    V3ListBulkSyncExecutionsEnvelope,
                     parse_obj_as(
-                        type_=ListBulkSyncExecutionsEnvelope,  # type: ignore
+                        type_=V3ListBulkSyncExecutionsEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -204,7 +197,7 @@ class ExecutionsClient:
 
     def get(
         self, id: str, exec_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> BulkSyncExecutionEnvelope:
+    ) -> V3BulkSyncExecutionEnvelope:
         """
         Parameters
         ----------
@@ -217,7 +210,7 @@ class ExecutionsClient:
 
         Returns
         -------
-        BulkSyncExecutionEnvelope
+        V3BulkSyncExecutionEnvelope
             OK
 
         Examples
@@ -229,8 +222,8 @@ class ExecutionsClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.executions.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            exec_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
+            exec_id="exec_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -241,9 +234,9 @@ class ExecutionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncExecutionEnvelope,
+                    V3BulkSyncExecutionEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncExecutionEnvelope,  # type: ignore
+                        type_=V3BulkSyncExecutionEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -299,8 +292,8 @@ class ExecutionsClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.executions.get_logs(
-            sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            sync_id="sync_id",
+            execution_id="execution_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -377,8 +370,8 @@ class ExecutionsClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.executions.export_logs(
-            sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            sync_id="sync_id",
+            execution_id="execution_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -455,7 +448,7 @@ class AsyncExecutionsClient:
         active: typing.Optional[bool] = None,
         sync_id: typing.Optional[typing.Union[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ListBulkSyncExecutionStatusEnvelope:
+    ) -> V4ListBulkSyncExecutionsStatusEnvelope:
         """
         Parameters
         ----------
@@ -473,7 +466,7 @@ class AsyncExecutionsClient:
 
         Returns
         -------
-        ListBulkSyncExecutionStatusEnvelope
+        V4ListBulkSyncExecutionsStatusEnvelope
             OK
 
         Examples
@@ -489,10 +482,7 @@ class AsyncExecutionsClient:
 
 
         async def main() -> None:
-            await client.bulk_sync.executions.list_status(
-                all_=True,
-                active=True,
-            )
+            await client.bulk_sync.executions.list_status()
 
 
         asyncio.run(main())
@@ -510,9 +500,9 @@ class AsyncExecutionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ListBulkSyncExecutionStatusEnvelope,
+                    V4ListBulkSyncExecutionsStatusEnvelope,
                     parse_obj_as(
-                        type_=ListBulkSyncExecutionStatusEnvelope,  # type: ignore
+                        type_=V4ListBulkSyncExecutionsStatusEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -550,7 +540,7 @@ class AsyncExecutionsClient:
         ascending: typing.Optional[bool] = None,
         limit: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ListBulkSyncExecutionsEnvelope:
+    ) -> V3ListBulkSyncExecutionsEnvelope:
         """
         Parameters
         ----------
@@ -569,7 +559,7 @@ class AsyncExecutionsClient:
 
         Returns
         -------
-        ListBulkSyncExecutionsEnvelope
+        V3ListBulkSyncExecutionsEnvelope
             OK
 
         Examples
@@ -586,11 +576,7 @@ class AsyncExecutionsClient:
 
         async def main() -> None:
             await client.bulk_sync.executions.list(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                page_token="AmkYh8v0jR5B3kls2Qcc9y8MjrPmvR4CvaK7H0F4rEwqvg76K==",
-                only_terminal=True,
-                ascending=True,
-                limit=100,
+                id="id",
             )
 
 
@@ -610,9 +596,9 @@ class AsyncExecutionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ListBulkSyncExecutionsEnvelope,
+                    V3ListBulkSyncExecutionsEnvelope,
                     parse_obj_as(
-                        type_=ListBulkSyncExecutionsEnvelope,  # type: ignore
+                        type_=V3ListBulkSyncExecutionsEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -643,7 +629,7 @@ class AsyncExecutionsClient:
 
     async def get(
         self, id: str, exec_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> BulkSyncExecutionEnvelope:
+    ) -> V3BulkSyncExecutionEnvelope:
         """
         Parameters
         ----------
@@ -656,7 +642,7 @@ class AsyncExecutionsClient:
 
         Returns
         -------
-        BulkSyncExecutionEnvelope
+        V3BulkSyncExecutionEnvelope
             OK
 
         Examples
@@ -673,8 +659,8 @@ class AsyncExecutionsClient:
 
         async def main() -> None:
             await client.bulk_sync.executions.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                exec_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
+                exec_id="exec_id",
             )
 
 
@@ -688,9 +674,9 @@ class AsyncExecutionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncExecutionEnvelope,
+                    V3BulkSyncExecutionEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncExecutionEnvelope,  # type: ignore
+                        type_=V3BulkSyncExecutionEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -751,8 +737,8 @@ class AsyncExecutionsClient:
 
         async def main() -> None:
             await client.bulk_sync.executions.get_logs(
-                sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                sync_id="sync_id",
+                execution_id="execution_id",
             )
 
 
@@ -837,8 +823,8 @@ class AsyncExecutionsClient:
 
         async def main() -> None:
             await client.bulk_sync.executions.export_logs(
-                sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                sync_id="sync_id",
+                execution_id="execution_id",
             )
 
 

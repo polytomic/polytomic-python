@@ -3,7 +3,7 @@
 import typing
 from ..core.client_wrapper import SyncClientWrapper
 from ..core.request_options import RequestOptions
-from ..types.list_users_envelope import ListUsersEnvelope
+from ..types.v2list_users_envelope import V2ListUsersEnvelope
 from ..core.jsonable_encoder import jsonable_encoder
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.unauthorized_error import UnauthorizedError
@@ -12,10 +12,10 @@ from ..errors.not_found_error import NotFoundError
 from ..types.api_error import ApiError as types_api_error_ApiError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError as core_api_error_ApiError
-from ..types.user_envelope import UserEnvelope
+from ..types.v2user_envelope import V2UserEnvelope
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..errors.internal_server_error import InternalServerError
-from ..types.api_key_response_envelope import ApiKeyResponseEnvelope
+from ..types.v2api_key_response_envelope import V2ApiKeyResponseEnvelope
 from ..core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -26,7 +26,7 @@ class UsersClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list(self, org_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> ListUsersEnvelope:
+    def list(self, org_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> V2ListUsersEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -41,7 +41,7 @@ class UsersClient:
 
         Returns
         -------
-        ListUsersEnvelope
+        V2ListUsersEnvelope
             OK
 
         Examples
@@ -53,7 +53,7 @@ class UsersClient:
             token="YOUR_TOKEN",
         )
         client.users.list(
-            org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            org_id="org_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -64,9 +64,9 @@ class UsersClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ListUsersEnvelope,
+                    V2ListUsersEnvelope,
                     parse_obj_as(
-                        type_=ListUsersEnvelope,  # type: ignore
+                        type_=V2ListUsersEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -102,7 +102,7 @@ class UsersClient:
         email: str,
         role: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> UserEnvelope:
+    ) -> V2UserEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -121,7 +121,7 @@ class UsersClient:
 
         Returns
         -------
-        UserEnvelope
+        V2UserEnvelope
             OK
 
         Examples
@@ -133,8 +133,8 @@ class UsersClient:
             token="YOUR_TOKEN",
         )
         client.users.create(
-            org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            email="mail@example.com",
+            org_id="org_id",
+            email="email",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -153,9 +153,9 @@ class UsersClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    UserEnvelope,
+                    V2UserEnvelope,
                     parse_obj_as(
-                        type_=UserEnvelope,  # type: ignore
+                        type_=V2UserEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -194,7 +194,7 @@ class UsersClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> UserEnvelope:
+    def get(self, org_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> V2UserEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -202,16 +202,16 @@ class UsersClient:
 
         Parameters
         ----------
-        id : str
-
         org_id : str
+
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        UserEnvelope
+        V2UserEnvelope
             OK
 
         Examples
@@ -223,8 +223,8 @@ class UsersClient:
             token="YOUR_TOKEN",
         )
         client.users.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            org_id="org_id",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -235,9 +235,9 @@ class UsersClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    UserEnvelope,
+                    V2UserEnvelope,
                     parse_obj_as(
-                        type_=UserEnvelope,  # type: ignore
+                        type_=V2UserEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -278,13 +278,13 @@ class UsersClient:
 
     def update(
         self,
-        id: str,
         org_id: str,
+        id: str,
         *,
         email: str,
         role: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> UserEnvelope:
+    ) -> V2UserEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -292,9 +292,9 @@ class UsersClient:
 
         Parameters
         ----------
-        id : str
-
         org_id : str
+
+        id : str
 
         email : str
 
@@ -305,7 +305,7 @@ class UsersClient:
 
         Returns
         -------
-        UserEnvelope
+        V2UserEnvelope
             OK
 
         Examples
@@ -317,9 +317,9 @@ class UsersClient:
             token="YOUR_TOKEN",
         )
         client.users.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            email="mail@example.com",
+            org_id="org_id",
+            id="id",
+            email="email",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -338,9 +338,9 @@ class UsersClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    UserEnvelope,
+                    V2UserEnvelope,
                     parse_obj_as(
-                        type_=UserEnvelope,  # type: ignore
+                        type_=V2UserEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -379,7 +379,9 @@ class UsersClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def remove(self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> UserEnvelope:
+    def remove(
+        self, org_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> V2UserEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -387,16 +389,16 @@ class UsersClient:
 
         Parameters
         ----------
-        id : str
-
         org_id : str
+
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        UserEnvelope
+        V2UserEnvelope
             OK
 
         Examples
@@ -408,8 +410,8 @@ class UsersClient:
             token="YOUR_TOKEN",
         )
         client.users.remove(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            org_id="org_id",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -420,9 +422,9 @@ class UsersClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    UserEnvelope,
+                    V2UserEnvelope,
                     parse_obj_as(
-                        type_=UserEnvelope,  # type: ignore
+                        type_=V2UserEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -468,7 +470,7 @@ class UsersClient:
         *,
         force: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ApiKeyResponseEnvelope:
+    ) -> V2ApiKeyResponseEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -487,7 +489,7 @@ class UsersClient:
 
         Returns
         -------
-        ApiKeyResponseEnvelope
+        V2ApiKeyResponseEnvelope
             OK
 
         Examples
@@ -499,9 +501,8 @@ class UsersClient:
             token="YOUR_TOKEN",
         )
         client.users.create_api_key(
-            org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            force=True,
+            org_id="org_id",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -515,9 +516,9 @@ class UsersClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ApiKeyResponseEnvelope,
+                    V2ApiKeyResponseEnvelope,
                     parse_obj_as(
-                        type_=ApiKeyResponseEnvelope,  # type: ignore
+                        type_=V2ApiKeyResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -561,7 +562,9 @@ class AsyncUsersClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list(self, org_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> ListUsersEnvelope:
+    async def list(
+        self, org_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> V2ListUsersEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -576,7 +579,7 @@ class AsyncUsersClient:
 
         Returns
         -------
-        ListUsersEnvelope
+        V2ListUsersEnvelope
             OK
 
         Examples
@@ -593,7 +596,7 @@ class AsyncUsersClient:
 
         async def main() -> None:
             await client.users.list(
-                org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                org_id="org_id",
             )
 
 
@@ -607,9 +610,9 @@ class AsyncUsersClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ListUsersEnvelope,
+                    V2ListUsersEnvelope,
                     parse_obj_as(
-                        type_=ListUsersEnvelope,  # type: ignore
+                        type_=V2ListUsersEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -645,7 +648,7 @@ class AsyncUsersClient:
         email: str,
         role: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> UserEnvelope:
+    ) -> V2UserEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -664,7 +667,7 @@ class AsyncUsersClient:
 
         Returns
         -------
-        UserEnvelope
+        V2UserEnvelope
             OK
 
         Examples
@@ -681,8 +684,8 @@ class AsyncUsersClient:
 
         async def main() -> None:
             await client.users.create(
-                org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                email="mail@example.com",
+                org_id="org_id",
+                email="email",
             )
 
 
@@ -704,9 +707,9 @@ class AsyncUsersClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    UserEnvelope,
+                    V2UserEnvelope,
                     parse_obj_as(
-                        type_=UserEnvelope,  # type: ignore
+                        type_=V2UserEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -746,8 +749,8 @@ class AsyncUsersClient:
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     async def get(
-        self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> UserEnvelope:
+        self, org_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> V2UserEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -755,16 +758,16 @@ class AsyncUsersClient:
 
         Parameters
         ----------
-        id : str
-
         org_id : str
+
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        UserEnvelope
+        V2UserEnvelope
             OK
 
         Examples
@@ -781,8 +784,8 @@ class AsyncUsersClient:
 
         async def main() -> None:
             await client.users.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                org_id="org_id",
+                id="id",
             )
 
 
@@ -796,9 +799,9 @@ class AsyncUsersClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    UserEnvelope,
+                    V2UserEnvelope,
                     parse_obj_as(
-                        type_=UserEnvelope,  # type: ignore
+                        type_=V2UserEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -839,13 +842,13 @@ class AsyncUsersClient:
 
     async def update(
         self,
-        id: str,
         org_id: str,
+        id: str,
         *,
         email: str,
         role: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> UserEnvelope:
+    ) -> V2UserEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -853,9 +856,9 @@ class AsyncUsersClient:
 
         Parameters
         ----------
-        id : str
-
         org_id : str
+
+        id : str
 
         email : str
 
@@ -866,7 +869,7 @@ class AsyncUsersClient:
 
         Returns
         -------
-        UserEnvelope
+        V2UserEnvelope
             OK
 
         Examples
@@ -883,9 +886,9 @@ class AsyncUsersClient:
 
         async def main() -> None:
             await client.users.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                email="mail@example.com",
+                org_id="org_id",
+                id="id",
+                email="email",
             )
 
 
@@ -907,9 +910,9 @@ class AsyncUsersClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    UserEnvelope,
+                    V2UserEnvelope,
                     parse_obj_as(
-                        type_=UserEnvelope,  # type: ignore
+                        type_=V2UserEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -949,8 +952,8 @@ class AsyncUsersClient:
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     async def remove(
-        self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> UserEnvelope:
+        self, org_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> V2UserEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -958,16 +961,16 @@ class AsyncUsersClient:
 
         Parameters
         ----------
-        id : str
-
         org_id : str
+
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        UserEnvelope
+        V2UserEnvelope
             OK
 
         Examples
@@ -984,8 +987,8 @@ class AsyncUsersClient:
 
         async def main() -> None:
             await client.users.remove(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                org_id="org_id",
+                id="id",
             )
 
 
@@ -999,9 +1002,9 @@ class AsyncUsersClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    UserEnvelope,
+                    V2UserEnvelope,
                     parse_obj_as(
-                        type_=UserEnvelope,  # type: ignore
+                        type_=V2UserEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1047,7 +1050,7 @@ class AsyncUsersClient:
         *,
         force: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ApiKeyResponseEnvelope:
+    ) -> V2ApiKeyResponseEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -1066,7 +1069,7 @@ class AsyncUsersClient:
 
         Returns
         -------
-        ApiKeyResponseEnvelope
+        V2ApiKeyResponseEnvelope
             OK
 
         Examples
@@ -1083,9 +1086,8 @@ class AsyncUsersClient:
 
         async def main() -> None:
             await client.users.create_api_key(
-                org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                force=True,
+                org_id="org_id",
+                id="id",
             )
 
 
@@ -1102,9 +1104,9 @@ class AsyncUsersClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ApiKeyResponseEnvelope,
+                    V2ApiKeyResponseEnvelope,
                     parse_obj_as(
-                        type_=ApiKeyResponseEnvelope,  # type: ignore
+                        type_=V2ApiKeyResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

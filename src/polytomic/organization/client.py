@@ -3,7 +3,7 @@
 import typing
 from ..core.client_wrapper import SyncClientWrapper
 from ..core.request_options import RequestOptions
-from ..types.organizations_envelope import OrganizationsEnvelope
+from ..types.v2organizations_envelope import V2OrganizationsEnvelope
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.unauthorized_error import UnauthorizedError
 from ..types.rest_err_response import RestErrResponse
@@ -11,7 +11,7 @@ from ..errors.internal_server_error import InternalServerError
 from ..types.api_error import ApiError as types_api_error_ApiError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError as core_api_error_ApiError
-from ..types.organization_envelope import OrganizationEnvelope
+from ..types.v2organization_envelope import V2OrganizationEnvelope
 from ..errors.conflict_error import ConflictError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..core.jsonable_encoder import jsonable_encoder
@@ -26,7 +26,7 @@ class OrganizationClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> OrganizationsEnvelope:
+    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> V2OrganizationsEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -39,7 +39,7 @@ class OrganizationClient:
 
         Returns
         -------
-        OrganizationsEnvelope
+        V2OrganizationsEnvelope
             OK
 
         Examples
@@ -60,9 +60,9 @@ class OrganizationClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    OrganizationsEnvelope,
+                    V2OrganizationsEnvelope,
                     parse_obj_as(
-                        type_=OrganizationsEnvelope,  # type: ignore
+                        type_=V2OrganizationsEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -101,7 +101,7 @@ class OrganizationClient:
         sso_domain: typing.Optional[str] = OMIT,
         sso_org_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> OrganizationEnvelope:
+    ) -> V2OrganizationEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -126,7 +126,7 @@ class OrganizationClient:
 
         Returns
         -------
-        OrganizationEnvelope
+        V2OrganizationEnvelope
             OK
 
         Examples
@@ -138,7 +138,7 @@ class OrganizationClient:
             token="YOUR_TOKEN",
         )
         client.organization.create(
-            name="My Organization",
+            name="name",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -161,9 +161,9 @@ class OrganizationClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    OrganizationEnvelope,
+                    V2OrganizationEnvelope,
                     parse_obj_as(
-                        type_=OrganizationEnvelope,  # type: ignore
+                        type_=V2OrganizationEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -212,7 +212,7 @@ class OrganizationClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> OrganizationEnvelope:
+    def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> V2OrganizationEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -227,7 +227,7 @@ class OrganizationClient:
 
         Returns
         -------
-        OrganizationEnvelope
+        V2OrganizationEnvelope
             OK
 
         Examples
@@ -239,7 +239,7 @@ class OrganizationClient:
             token="YOUR_TOKEN",
         )
         client.organization.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -250,9 +250,9 @@ class OrganizationClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    OrganizationEnvelope,
+                    V2OrganizationEnvelope,
                     parse_obj_as(
-                        type_=OrganizationEnvelope,  # type: ignore
+                        type_=V2OrganizationEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -292,7 +292,7 @@ class OrganizationClient:
         sso_domain: typing.Optional[str] = OMIT,
         sso_org_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> OrganizationEnvelope:
+    ) -> V2OrganizationEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -319,7 +319,7 @@ class OrganizationClient:
 
         Returns
         -------
-        OrganizationEnvelope
+        V2OrganizationEnvelope
             OK
 
         Examples
@@ -331,8 +331,8 @@ class OrganizationClient:
             token="YOUR_TOKEN",
         )
         client.organization.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="My Organization",
+            id="id",
+            name="name",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -355,9 +355,9 @@ class OrganizationClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    OrganizationEnvelope,
+                    V2OrganizationEnvelope,
                     parse_obj_as(
-                        type_=OrganizationEnvelope,  # type: ignore
+                        type_=V2OrganizationEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -432,7 +432,7 @@ class OrganizationClient:
             token="YOUR_TOKEN",
         )
         client.organization.remove(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -483,7 +483,7 @@ class AsyncOrganizationClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> OrganizationsEnvelope:
+    async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> V2OrganizationsEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -496,7 +496,7 @@ class AsyncOrganizationClient:
 
         Returns
         -------
-        OrganizationsEnvelope
+        V2OrganizationsEnvelope
             OK
 
         Examples
@@ -525,9 +525,9 @@ class AsyncOrganizationClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    OrganizationsEnvelope,
+                    V2OrganizationsEnvelope,
                     parse_obj_as(
-                        type_=OrganizationsEnvelope,  # type: ignore
+                        type_=V2OrganizationsEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -566,7 +566,7 @@ class AsyncOrganizationClient:
         sso_domain: typing.Optional[str] = OMIT,
         sso_org_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> OrganizationEnvelope:
+    ) -> V2OrganizationEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -591,7 +591,7 @@ class AsyncOrganizationClient:
 
         Returns
         -------
-        OrganizationEnvelope
+        V2OrganizationEnvelope
             OK
 
         Examples
@@ -608,7 +608,7 @@ class AsyncOrganizationClient:
 
         async def main() -> None:
             await client.organization.create(
-                name="My Organization",
+                name="name",
             )
 
 
@@ -634,9 +634,9 @@ class AsyncOrganizationClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    OrganizationEnvelope,
+                    V2OrganizationEnvelope,
                     parse_obj_as(
-                        type_=OrganizationEnvelope,  # type: ignore
+                        type_=V2OrganizationEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -685,7 +685,7 @@ class AsyncOrganizationClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> OrganizationEnvelope:
+    async def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> V2OrganizationEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -700,7 +700,7 @@ class AsyncOrganizationClient:
 
         Returns
         -------
-        OrganizationEnvelope
+        V2OrganizationEnvelope
             OK
 
         Examples
@@ -717,7 +717,7 @@ class AsyncOrganizationClient:
 
         async def main() -> None:
             await client.organization.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -731,9 +731,9 @@ class AsyncOrganizationClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    OrganizationEnvelope,
+                    V2OrganizationEnvelope,
                     parse_obj_as(
-                        type_=OrganizationEnvelope,  # type: ignore
+                        type_=V2OrganizationEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -773,7 +773,7 @@ class AsyncOrganizationClient:
         sso_domain: typing.Optional[str] = OMIT,
         sso_org_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> OrganizationEnvelope:
+    ) -> V2OrganizationEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -800,7 +800,7 @@ class AsyncOrganizationClient:
 
         Returns
         -------
-        OrganizationEnvelope
+        V2OrganizationEnvelope
             OK
 
         Examples
@@ -817,8 +817,8 @@ class AsyncOrganizationClient:
 
         async def main() -> None:
             await client.organization.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                name="My Organization",
+                id="id",
+                name="name",
             )
 
 
@@ -844,9 +844,9 @@ class AsyncOrganizationClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    OrganizationEnvelope,
+                    V2OrganizationEnvelope,
                     parse_obj_as(
-                        type_=OrganizationEnvelope,  # type: ignore
+                        type_=V2OrganizationEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -926,7 +926,7 @@ class AsyncOrganizationClient:
 
         async def main() -> None:
             await client.organization.remove(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
