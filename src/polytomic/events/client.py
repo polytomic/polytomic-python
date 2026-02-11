@@ -55,23 +55,13 @@ class EventsClient:
 
         Examples
         --------
-        import datetime
-
         from polytomic import Polytomic
 
         client = Polytomic(
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        client.events.list(
-            organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            starting_after=datetime.datetime.fromisoformat(
-                "2020-01-01 00:00:00+00:00",
-            ),
-            ending_before=datetime.datetime.fromisoformat(
-                "2020-01-01 00:00:00+00:00",
-            ),
-        )
+        client.events.list()
         """
         _response = self._client_wrapper.httpx_client.request(
             "api/events",
@@ -219,7 +209,6 @@ class AsyncEventsClient:
         Examples
         --------
         import asyncio
-        import datetime
 
         from polytomic import AsyncPolytomic
 
@@ -230,15 +219,7 @@ class AsyncEventsClient:
 
 
         async def main() -> None:
-            await client.events.list(
-                organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                starting_after=datetime.datetime.fromisoformat(
-                    "2020-01-01 00:00:00+00:00",
-                ),
-                ending_before=datetime.datetime.fromisoformat(
-                    "2020-01-01 00:00:00+00:00",
-                ),
-            )
+            await client.events.list()
 
 
         asyncio.run(main())

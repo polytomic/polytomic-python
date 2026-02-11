@@ -22,14 +22,14 @@ class JobsClient:
         self._client_wrapper = client_wrapper
 
     def get(
-        self, id: str, type: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, type: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> JobResponseEnvelope:
         """
         Parameters
         ----------
-        id : str
-
         type : str
+
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -48,8 +48,8 @@ class JobsClient:
             token="YOUR_TOKEN",
         )
         client.jobs.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            type="createmodel",
+            type="type",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -117,14 +117,14 @@ class AsyncJobsClient:
         self._client_wrapper = client_wrapper
 
     async def get(
-        self, id: str, type: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, type: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> JobResponseEnvelope:
         """
         Parameters
         ----------
-        id : str
-
         type : str
+
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -148,8 +148,8 @@ class AsyncJobsClient:
 
         async def main() -> None:
             await client.jobs.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                type="createmodel",
+                type="type",
+                id="id",
             )
 
 

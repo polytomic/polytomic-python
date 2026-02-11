@@ -2,13 +2,15 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .v_4_bulk_sync_execution_logs import V4BulkSyncExecutionLogs
+from .v4export_sync_logs_response import V4ExportSyncLogsResponse
+from .job_response import JobResponse
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class V4BulkSyncExecutionLogsEnvelope(UniversalBaseModel):
-    data: typing.Optional[V4BulkSyncExecutionLogs] = None
+class V4ExportSyncLogsEnvelope(UniversalBaseModel):
+    data: typing.Optional[V4ExportSyncLogsResponse] = None
+    job: typing.Optional[JobResponse] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

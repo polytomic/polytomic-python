@@ -53,7 +53,7 @@ class ModelSyncClient:
         self,
         id: str,
         *,
-        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        params: typing.Optional[typing.Dict[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetModelSyncSourceMetaEnvelope:
         """
@@ -61,7 +61,7 @@ class ModelSyncClient:
         ----------
         id : str
 
-        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+        params : typing.Optional[typing.Dict[str, typing.Sequence[str]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -80,7 +80,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.get_source(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -159,7 +159,7 @@ class ModelSyncClient:
         self,
         id: str,
         *,
-        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        params: typing.Optional[typing.Dict[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ModelFieldResponse:
         """
@@ -167,7 +167,7 @@ class ModelSyncClient:
         ----------
         id : str
 
-        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+        params : typing.Optional[typing.Dict[str, typing.Sequence[str]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -186,7 +186,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.get_source_fields(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -294,10 +294,7 @@ class ModelSyncClient:
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        client.model_sync.list(
-            active=True,
-            target_connection_id="0b155265-c537-44c9-9359-a3ceb468a4da",
-        )
+        client.model_sync.list()
         """
         _response = self._client_wrapper.httpx_client.request(
             "api/syncs",
@@ -509,14 +506,17 @@ class ModelSyncClient:
         client.model_sync.create(
             fields=[
                 ModelSyncField(
-                    target="name",
-                )
+                    target="target",
+                ),
+                ModelSyncField(
+                    target="target",
+                ),
             ],
             mode="create",
-            name="Users Sync",
+            name="name",
             schedule=Schedule(),
             target=Target(
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                connection_id="connection_id",
             ),
         )
         """
@@ -710,7 +710,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -852,17 +852,20 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
             fields=[
                 ModelSyncField(
-                    target="name",
-                )
+                    target="target",
+                ),
+                ModelSyncField(
+                    target="target",
+                ),
             ],
             mode="create",
-            name="Users Sync",
+            name="name",
             schedule=Schedule(),
             target=Target(
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                connection_id="connection_id",
             ),
         )
         """
@@ -1002,7 +1005,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.remove(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1095,7 +1098,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.activate(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
             active=True,
         )
         """
@@ -1188,7 +1191,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.cancel(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1291,7 +1294,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.start(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1405,7 +1408,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.get_status(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1468,7 +1471,7 @@ class AsyncModelSyncClient:
         self,
         id: str,
         *,
-        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        params: typing.Optional[typing.Dict[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetModelSyncSourceMetaEnvelope:
         """
@@ -1476,7 +1479,7 @@ class AsyncModelSyncClient:
         ----------
         id : str
 
-        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+        params : typing.Optional[typing.Dict[str, typing.Sequence[str]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1500,7 +1503,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.get_source(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -1582,7 +1585,7 @@ class AsyncModelSyncClient:
         self,
         id: str,
         *,
-        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        params: typing.Optional[typing.Dict[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ModelFieldResponse:
         """
@@ -1590,7 +1593,7 @@ class AsyncModelSyncClient:
         ----------
         id : str
 
-        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+        params : typing.Optional[typing.Dict[str, typing.Sequence[str]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1614,7 +1617,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.get_source_fields(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -1730,10 +1733,7 @@ class AsyncModelSyncClient:
 
 
         async def main() -> None:
-            await client.model_sync.list(
-                active=True,
-                target_connection_id="0b155265-c537-44c9-9359-a3ceb468a4da",
-            )
+            await client.model_sync.list()
 
 
         asyncio.run(main())
@@ -1953,14 +1953,17 @@ class AsyncModelSyncClient:
             await client.model_sync.create(
                 fields=[
                     ModelSyncField(
-                        target="name",
-                    )
+                        target="target",
+                    ),
+                    ModelSyncField(
+                        target="target",
+                    ),
                 ],
                 mode="create",
-                name="Users Sync",
+                name="name",
                 schedule=Schedule(),
                 target=Target(
-                    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                    connection_id="connection_id",
                 ),
             )
 
@@ -2172,7 +2175,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2322,17 +2325,20 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
                 fields=[
                     ModelSyncField(
-                        target="name",
-                    )
+                        target="target",
+                    ),
+                    ModelSyncField(
+                        target="target",
+                    ),
                 ],
                 mode="create",
-                name="Users Sync",
+                name="name",
                 schedule=Schedule(),
                 target=Target(
-                    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                    connection_id="connection_id",
                 ),
             )
 
@@ -2480,7 +2486,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.remove(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2581,7 +2587,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.activate(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
                 active=True,
             )
 
@@ -2682,7 +2688,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.cancel(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2793,7 +2799,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.start(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2917,7 +2923,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.get_status(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
