@@ -17,7 +17,7 @@ from ...errors.internal_server_error import InternalServerError
 from ...types.execution_status import ExecutionStatus
 from ...errors.bad_request_error import BadRequestError
 from ...errors.forbidden_error import ForbiddenError
-from ...types.v_2_execution_log_type import V2ExecutionLogType
+from ...types.v2execution_log_type import V2ExecutionLogType
 from ...types.execution_logs_response_envelope import ExecutionLogsResponseEnvelope
 from ...core.client_wrapper import AsyncClientWrapper
 

@@ -14,8 +14,8 @@ from ...core.api_error import ApiError as core_api_error_ApiError
 from ...types.list_bulk_sync_executions_envelope import ListBulkSyncExecutionsEnvelope
 from ...core.jsonable_encoder import jsonable_encoder
 from ...types.bulk_sync_execution_envelope import BulkSyncExecutionEnvelope
-from ...types.v_4_bulk_sync_execution_logs_envelope import V4BulkSyncExecutionLogsEnvelope
-from ...types.v_4_export_sync_logs_envelope import V4ExportSyncLogsEnvelope
+from ...types.v4bulk_sync_execution_logs_envelope import V4BulkSyncExecutionLogsEnvelope
+from ...types.v4export_sync_logs_envelope import V4ExportSyncLogsEnvelope
 from ...errors.bad_request_error import BadRequestError
 from ...errors.internal_server_error import InternalServerError
 from ...core.client_wrapper import AsyncClientWrapper

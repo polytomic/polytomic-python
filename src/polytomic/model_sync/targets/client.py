@@ -16,8 +16,8 @@ from ...errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError as core_api_error_ApiError
 from ...types.target_response_envelope import TargetResponseEnvelope
-from ...types.v_4_target_objects_response_envelope import V4TargetObjectsResponseEnvelope
-from ...types.v_4_target_property_values_envelope import V4TargetPropertyValuesEnvelope
+from ...types.v4target_objects_response_envelope import V4TargetObjectsResponseEnvelope
+from ...types.v4target_property_values_envelope import V4TargetPropertyValuesEnvelope
 from ...core.client_wrapper import AsyncClientWrapper
 
 

@@ -4,7 +4,7 @@ from ..core.pydantic_utilities import UniversalBaseModel
 from .backend_connection_capabilities import BackendConnectionCapabilities
 import typing_extensions
 import typing
-from .v_2_connection_form import V2ConnectionForm
+from .v2connection_form import V2ConnectionForm
 from ..core.serialization import FieldMetadata
 from .backend_o_auth_prompt import BackendOAuthPrompt
 from ..core.pydantic_utilities import IS_PYDANTIC_V2

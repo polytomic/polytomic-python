@@ -19,7 +19,7 @@ from ..types.bulk_discover import BulkDiscover
 import datetime as dt
 from ..types.bulk_sync_mode import BulkSyncMode
 from ..types.bulk_normalize_names import BulkNormalizeNames
-from .types.v_2_create_bulk_sync_request_schemas_item import V2CreateBulkSyncRequestSchemasItem
+from .types.v2create_bulk_sync_request_schemas_item import V2CreateBulkSyncRequestSchemasItem
 from ..types.bulk_sync_response_envelope import BulkSyncResponseEnvelope
 from ..core.serialization import convert_and_respect_annotation_metadata
 from ..errors.bad_request_error import BadRequestError
@@ -27,7 +27,7 @@ from ..errors.forbidden_error import ForbiddenError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..core.jsonable_encoder import jsonable_encoder
 from ..errors.not_found_error import NotFoundError
-from .types.v_2_update_bulk_sync_request_schemas_item import V2UpdateBulkSyncRequestSchemasItem
+from .types.v2update_bulk_sync_request_schemas_item import V2UpdateBulkSyncRequestSchemasItem
 from ..types.activate_sync_envelope import ActivateSyncEnvelope
 from ..types.bulk_fetch_mode import BulkFetchMode
 from ..types.bulk_sync_execution_envelope import BulkSyncExecutionEnvelope
@@ -75,9 +75,7 @@ class BulkSyncClient:
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        client.bulk_sync.list(
-            active=True,
-        )
+        client.bulk_sync.list()
         """
         _response = self._client_wrapper.httpx_client.request(
             "api/bulk/syncs",
@@ -1201,9 +1199,7 @@ class AsyncBulkSyncClient:
 
 
         async def main() -> None:
-            await client.bulk_sync.list(
-                active=True,
-            )
+            await client.bulk_sync.list()
 
 
         asyncio.run(main())

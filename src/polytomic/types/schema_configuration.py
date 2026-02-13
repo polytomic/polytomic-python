@@ -4,7 +4,7 @@ from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 import datetime as dt
 import pydantic
-from .v_2_schema_configuration_fields_item import V2SchemaConfigurationFieldsItem
+from .v2schema_configuration_fields_item import V2SchemaConfigurationFieldsItem
 from .bulk_filter import BulkFilter
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 

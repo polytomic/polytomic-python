@@ -2,15 +2,13 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .target_object import TargetObject
-from .v_4_target_creator import V4TargetCreator
+from .v4bulk_sync_execution_logs import V4BulkSyncExecutionLogs
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class V4TargetObjectsResponseEnvelope(UniversalBaseModel):
-    data: typing.Optional[typing.List[TargetObject]] = None
-    target_creation: typing.Optional[V4TargetCreator] = None
+class V4BulkSyncExecutionLogsEnvelope(UniversalBaseModel):
+    data: typing.Optional[V4BulkSyncExecutionLogs] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
