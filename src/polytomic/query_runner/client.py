@@ -57,8 +57,7 @@ class QueryRunnerClient:
             token="YOUR_TOKEN",
         )
         client.query_runner.run_query(
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            query="SELECT * FROM table",
+            connection_id="connection_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -155,7 +154,7 @@ class QueryRunnerClient:
             token="YOUR_TOKEN",
         )
         client.query_runner.get_query(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -262,8 +261,7 @@ class AsyncQueryRunnerClient:
 
         async def main() -> None:
             await client.query_runner.run_query(
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                query="SELECT * FROM table",
+                connection_id="connection_id",
             )
 
 
@@ -368,7 +366,7 @@ class AsyncQueryRunnerClient:
 
         async def main() -> None:
             await client.query_runner.get_query(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
