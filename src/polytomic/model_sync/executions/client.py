@@ -67,9 +67,6 @@ class ExecutionsClient:
         )
         client.model_sync.executions.list(
             sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            page_token="AmkYh8v0jR5B3kls2Qcc9y8MjrPmvR4CvaK7H0F4rEwqvg76K==",
-            only_completed=True,
-            ascending=True,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -226,8 +223,8 @@ class ExecutionsClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.executions.update(
-            sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            sync_id="sync_id",
+            id="id",
             status="created",
         )
         """
@@ -441,10 +438,10 @@ class ExecutionsClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.executions.get_logs(
-            sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            id="0ecd09c1-b901-4d27-9053-f0367c427254",
+            sync_id="sync_id",
+            id="id",
             type="records",
-            filename="path/to/file.json",
+            filename="filename",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -548,9 +545,6 @@ class AsyncExecutionsClient:
         async def main() -> None:
             await client.model_sync.executions.list(
                 sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                page_token="AmkYh8v0jR5B3kls2Qcc9y8MjrPmvR4CvaK7H0F4rEwqvg76K==",
-                only_completed=True,
-                ascending=True,
             )
 
 
@@ -723,8 +717,8 @@ class AsyncExecutionsClient:
 
         async def main() -> None:
             await client.model_sync.executions.update(
-                sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                sync_id="sync_id",
+                id="id",
                 status="created",
             )
 
@@ -954,10 +948,10 @@ class AsyncExecutionsClient:
 
         async def main() -> None:
             await client.model_sync.executions.get_logs(
-                sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                id="0ecd09c1-b901-4d27-9053-f0367c427254",
+                sync_id="sync_id",
+                id="id",
                 type="records",
-                filename="path/to/file.json",
+                filename="filename",
             )
 
 
