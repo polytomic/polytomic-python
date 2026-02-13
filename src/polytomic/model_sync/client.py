@@ -32,7 +32,6 @@ from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.schedule_option_response_envelope import ScheduleOptionResponseEnvelope
 from ..errors.conflict_error import ConflictError
 from ..types.activate_sync_envelope import ActivateSyncEnvelope
-from ..types.cancel_model_sync_response_envelope import CancelModelSyncResponseEnvelope
 from ..types.start_model_sync_response_envelope import StartModelSyncResponseEnvelope
 from ..types.sync_status_envelope import SyncStatusEnvelope
 from ..core.client_wrapper import AsyncClientWrapper
@@ -53,7 +52,7 @@ class ModelSyncClient:
         self,
         id: str,
         *,
-        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        params: typing.Optional[typing.Dict[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetModelSyncSourceMetaEnvelope:
         """
@@ -61,7 +60,7 @@ class ModelSyncClient:
         ----------
         id : str
 
-        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+        params : typing.Optional[typing.Dict[str, typing.Sequence[str]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -80,7 +79,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.get_source(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -159,7 +158,7 @@ class ModelSyncClient:
         self,
         id: str,
         *,
-        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        params: typing.Optional[typing.Dict[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ModelFieldResponse:
         """
@@ -167,7 +166,7 @@ class ModelSyncClient:
         ----------
         id : str
 
-        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+        params : typing.Optional[typing.Dict[str, typing.Sequence[str]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -186,7 +185,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.get_source_fields(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -267,6 +266,8 @@ class ModelSyncClient:
         active: typing.Optional[bool] = None,
         mode: typing.Optional[ModelSyncMode] = None,
         target_connection_id: typing.Optional[str] = None,
+        page_token: typing.Optional[str] = None,
+        limit: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListModelSyncResponseEnvelope:
         """
@@ -277,6 +278,11 @@ class ModelSyncClient:
         mode : typing.Optional[ModelSyncMode]
 
         target_connection_id : typing.Optional[str]
+
+        page_token : typing.Optional[str]
+
+        limit : typing.Optional[int]
+            Maximum number of syncs to return. Default and maximum is 50.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -294,10 +300,7 @@ class ModelSyncClient:
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        client.model_sync.list(
-            active=True,
-            target_connection_id="0b155265-c537-44c9-9359-a3ceb468a4da",
-        )
+        client.model_sync.list()
         """
         _response = self._client_wrapper.httpx_client.request(
             "api/syncs",
@@ -306,6 +309,8 @@ class ModelSyncClient:
                 "active": active,
                 "mode": mode,
                 "target_connection_id": target_connection_id,
+                "page_token": page_token,
+                "limit": limit,
             },
             request_options=request_options,
         )
@@ -509,14 +514,17 @@ class ModelSyncClient:
         client.model_sync.create(
             fields=[
                 ModelSyncField(
-                    target="name",
-                )
+                    target="target",
+                ),
+                ModelSyncField(
+                    target="target",
+                ),
             ],
             mode="create",
-            name="Users Sync",
+            name="name",
             schedule=Schedule(),
             target=Target(
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                connection_id="connection_id",
             ),
         )
         """
@@ -710,7 +718,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -852,17 +860,20 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
             fields=[
                 ModelSyncField(
-                    target="name",
-                )
+                    target="target",
+                ),
+                ModelSyncField(
+                    target="target",
+                ),
             ],
             mode="create",
-            name="Users Sync",
+            name="name",
             schedule=Schedule(),
             target=Target(
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                connection_id="connection_id",
             ),
         )
         """
@@ -1002,7 +1013,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.remove(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1095,7 +1106,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.activate(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
             active=True,
         )
         """
@@ -1114,94 +1125,6 @@ class ModelSyncClient:
                     ActivateSyncEnvelope,
                     parse_obj_as(
                         type_=ActivateSyncEnvelope,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    typing.cast(
-                        RestErrResponse,
-                        parse_obj_as(
-                            type_=RestErrResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
-        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
-
-    def cancel(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> CancelModelSyncResponseEnvelope:
-        """
-        Parameters
-        ----------
-        id : str
-            The active execution of this sync ID will be cancelled.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        CancelModelSyncResponseEnvelope
-            OK
-
-        Examples
-        --------
-        from polytomic import Polytomic
-
-        client = Polytomic(
-            version="YOUR_VERSION",
-            token="YOUR_TOKEN",
-        )
-        client.model_sync.cancel(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-        )
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"api/syncs/{jsonable_encoder(id)}/cancel",
-            method="POST",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return typing.cast(
-                    CancelModelSyncResponseEnvelope,
-                    parse_obj_as(
-                        type_=CancelModelSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1291,7 +1214,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.start(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1405,7 +1328,7 @@ class ModelSyncClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.get_status(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1468,7 +1391,7 @@ class AsyncModelSyncClient:
         self,
         id: str,
         *,
-        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        params: typing.Optional[typing.Dict[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetModelSyncSourceMetaEnvelope:
         """
@@ -1476,7 +1399,7 @@ class AsyncModelSyncClient:
         ----------
         id : str
 
-        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+        params : typing.Optional[typing.Dict[str, typing.Sequence[str]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1500,7 +1423,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.get_source(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -1582,7 +1505,7 @@ class AsyncModelSyncClient:
         self,
         id: str,
         *,
-        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        params: typing.Optional[typing.Dict[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ModelFieldResponse:
         """
@@ -1590,7 +1513,7 @@ class AsyncModelSyncClient:
         ----------
         id : str
 
-        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+        params : typing.Optional[typing.Dict[str, typing.Sequence[str]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1614,7 +1537,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.get_source_fields(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -1698,6 +1621,8 @@ class AsyncModelSyncClient:
         active: typing.Optional[bool] = None,
         mode: typing.Optional[ModelSyncMode] = None,
         target_connection_id: typing.Optional[str] = None,
+        page_token: typing.Optional[str] = None,
+        limit: typing.Optional[int] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListModelSyncResponseEnvelope:
         """
@@ -1708,6 +1633,11 @@ class AsyncModelSyncClient:
         mode : typing.Optional[ModelSyncMode]
 
         target_connection_id : typing.Optional[str]
+
+        page_token : typing.Optional[str]
+
+        limit : typing.Optional[int]
+            Maximum number of syncs to return. Default and maximum is 50.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1730,10 +1660,7 @@ class AsyncModelSyncClient:
 
 
         async def main() -> None:
-            await client.model_sync.list(
-                active=True,
-                target_connection_id="0b155265-c537-44c9-9359-a3ceb468a4da",
-            )
+            await client.model_sync.list()
 
 
         asyncio.run(main())
@@ -1745,6 +1672,8 @@ class AsyncModelSyncClient:
                 "active": active,
                 "mode": mode,
                 "target_connection_id": target_connection_id,
+                "page_token": page_token,
+                "limit": limit,
             },
             request_options=request_options,
         )
@@ -1953,14 +1882,17 @@ class AsyncModelSyncClient:
             await client.model_sync.create(
                 fields=[
                     ModelSyncField(
-                        target="name",
-                    )
+                        target="target",
+                    ),
+                    ModelSyncField(
+                        target="target",
+                    ),
                 ],
                 mode="create",
-                name="Users Sync",
+                name="name",
                 schedule=Schedule(),
                 target=Target(
-                    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                    connection_id="connection_id",
                 ),
             )
 
@@ -2172,7 +2104,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2322,17 +2254,20 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
                 fields=[
                     ModelSyncField(
-                        target="name",
-                    )
+                        target="target",
+                    ),
+                    ModelSyncField(
+                        target="target",
+                    ),
                 ],
                 mode="create",
-                name="Users Sync",
+                name="name",
                 schedule=Schedule(),
                 target=Target(
-                    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                    connection_id="connection_id",
                 ),
             )
 
@@ -2480,7 +2415,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.remove(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2581,7 +2516,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.activate(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
                 active=True,
             )
 
@@ -2603,102 +2538,6 @@ class AsyncModelSyncClient:
                     ActivateSyncEnvelope,
                     parse_obj_as(
                         type_=ActivateSyncEnvelope,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    typing.cast(
-                        RestErrResponse,
-                        parse_obj_as(
-                            type_=RestErrResponse,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    )
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
-        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
-
-    async def cancel(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> CancelModelSyncResponseEnvelope:
-        """
-        Parameters
-        ----------
-        id : str
-            The active execution of this sync ID will be cancelled.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        CancelModelSyncResponseEnvelope
-            OK
-
-        Examples
-        --------
-        import asyncio
-
-        from polytomic import AsyncPolytomic
-
-        client = AsyncPolytomic(
-            version="YOUR_VERSION",
-            token="YOUR_TOKEN",
-        )
-
-
-        async def main() -> None:
-            await client.model_sync.cancel(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"api/syncs/{jsonable_encoder(id)}/cancel",
-            method="POST",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return typing.cast(
-                    CancelModelSyncResponseEnvelope,
-                    parse_obj_as(
-                        type_=CancelModelSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -2793,7 +2632,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.start(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2917,7 +2756,7 @@ class AsyncModelSyncClient:
 
         async def main() -> None:
             await client.model_sync.get_status(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 

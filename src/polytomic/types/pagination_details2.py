@@ -2,16 +2,12 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .configuration_value2 import ConfigurationValue2
-from .source_meta import SourceMeta
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class ModelSyncSourceMetaResponse(UniversalBaseModel):
-    configuration: typing.Optional[typing.Dict[str, ConfigurationValue2]] = None
-    items: typing.Optional[typing.Dict[str, typing.Optional[SourceMeta]]] = None
-    requires_one_of: typing.Optional[typing.List[str]] = None
+class PaginationDetails2(UniversalBaseModel):
+    next_page_token: typing.Optional[str] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

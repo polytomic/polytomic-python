@@ -2,13 +2,13 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .cancel_model_sync_response import CancelModelSyncResponse
+from .v4bulk_sync_execution_logs import V4BulkSyncExecutionLogs
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class CancelModelSyncResponseEnvelope(UniversalBaseModel):
-    data: typing.Optional[CancelModelSyncResponse] = None
+class V4BulkSyncExecutionLogsEnvelope(UniversalBaseModel):
+    data: typing.Optional[V4BulkSyncExecutionLogs] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

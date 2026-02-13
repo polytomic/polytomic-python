@@ -15,6 +15,7 @@ from .bulk_execution_status import BulkExecutionStatus
 from .bulk_fetch_mode import BulkFetchMode
 from .bulk_field import BulkField
 from .bulk_filter import BulkFilter
+from .bulk_filter2 import BulkFilter2
 from .bulk_itemized_schedule import BulkItemizedSchedule
 from .bulk_multi_schedule_configuration import BulkMultiScheduleConfiguration
 from .bulk_normalize_names import BulkNormalizeNames
@@ -35,8 +36,9 @@ from .bulk_sync_failed_event import BulkSyncFailedEvent
 from .bulk_sync_list_envelope import BulkSyncListEnvelope
 from .bulk_sync_mode import BulkSyncMode
 from .bulk_sync_response import BulkSyncResponse
-from .bulk_sync_response_envelope import BulkSyncResponseEnvelope
 from .bulk_sync_running_event import BulkSyncRunningEvent
+from .bulk_sync_schedule import BulkSyncSchedule
+from .bulk_sync_schedule_request import BulkSyncScheduleRequest
 from .bulk_sync_schema_execution import BulkSyncSchemaExecution
 from .bulk_sync_schema_execution_status import BulkSyncSchemaExecutionStatus
 from .bulk_sync_source import BulkSyncSource
@@ -46,10 +48,9 @@ from .bulk_sync_source_status import BulkSyncSourceStatus
 from .bulk_sync_source_status_envelope import BulkSyncSourceStatusEnvelope
 from .bulk_sync_status_envelope import BulkSyncStatusEnvelope
 from .bulk_sync_status_response import BulkSyncStatusResponse
-from .cancel_model_sync_response import CancelModelSyncResponse
-from .cancel_model_sync_response_envelope import CancelModelSyncResponseEnvelope
 from .common_output_actor import CommonOutputActor
 from .configuration_value import ConfigurationValue
+from .configuration_value2 import ConfigurationValue2
 from .connect_card_response import ConnectCardResponse
 from .connect_card_response_envelope import ConnectCardResponseEnvelope
 from .connection_list_response_envelope import ConnectionListResponseEnvelope
@@ -112,6 +113,7 @@ from .model_response_envelope import ModelResponseEnvelope
 from .model_sample import ModelSample
 from .model_sample_response_envelope import ModelSampleResponseEnvelope
 from .model_sync_field import ModelSyncField
+from .model_sync_list_response import ModelSyncListResponse
 from .model_sync_mode import ModelSyncMode
 from .model_sync_response import ModelSyncResponse
 from .model_sync_response_envelope import ModelSyncResponseEnvelope
@@ -122,6 +124,8 @@ from .organizations_envelope import OrganizationsEnvelope
 from .override import Override
 from .pagination import Pagination
 from .pagination_details import PaginationDetails
+from .pagination_details2 import PaginationDetails2
+from .pagination_details3 import PaginationDetails3
 from .pick_value import PickValue
 from .policy_action import PolicyAction
 from .policy_response import PolicyResponse
@@ -133,7 +137,9 @@ from .role_list_response_envelope import RoleListResponseEnvelope
 from .role_response import RoleResponse
 from .role_response_envelope import RoleResponseEnvelope
 from .run_after import RunAfter
+from .run_after2 import RunAfter2
 from .schedule import Schedule
+from .schedule2 import Schedule2
 from .schedule_envelope import ScheduleEnvelope
 from .schedule_frequency import ScheduleFrequency
 from .schedule_option_response import ScheduleOptionResponse
@@ -172,30 +178,32 @@ from .user import User
 from .user_envelope import UserEnvelope
 from .util_enum_value import UtilEnumValue
 from .util_field_type import UtilFieldType
-from .v_2_connection_form import V2ConnectionForm
-from .v_2_enricher_configuration import V2EnricherConfiguration
-from .v_2_enricher_mapping import V2EnricherMapping
-from .v_2_execution_log_type import V2ExecutionLogType
-from .v_2_get_enrichment_input_fields_response_envelope import V2GetEnrichmentInputFieldsResponseEnvelope
-from .v_2_ordered_map_string_github_com_invopop_jsonschema_schema import (
+from .v2connection_form import V2ConnectionForm
+from .v2enricher_configuration import V2EnricherConfiguration
+from .v2enricher_mapping import V2EnricherMapping
+from .v2execution_log_type import V2ExecutionLogType
+from .v2get_enrichment_input_fields_response_envelope import V2GetEnrichmentInputFieldsResponseEnvelope
+from .v2ordered_map_string_github_com_invopop_jsonschema_schema import (
     V2OrderedMapStringGithubComInvopopJsonschemaSchema,
 )
-from .v_2_sample_record import V2SampleRecord
-from .v_2_schema_configuration_fields_item import V2SchemaConfigurationFieldsItem
-from .v_4_bulk_sync_execution_logs import V4BulkSyncExecutionLogs
-from .v_4_bulk_sync_execution_logs_envelope import V4BulkSyncExecutionLogsEnvelope
-from .v_4_bulk_sync_schedule_api import V4BulkSyncScheduleApi
-from .v_4_export_sync_logs_envelope import V4ExportSyncLogsEnvelope
-from .v_4_export_sync_logs_response import V4ExportSyncLogsResponse
-from .v_4_global_error_subscribers_response import V4GlobalErrorSubscribersResponse
-from .v_4_query_results_envelope import V4QueryResultsEnvelope
-from .v_4_run_query_envelope import V4RunQueryEnvelope
-from .v_4_run_query_result import V4RunQueryResult
-from .v_4_target_creator import V4TargetCreator
-from .v_4_target_objects_response_envelope import V4TargetObjectsResponseEnvelope
-from .v_4_target_property_values import V4TargetPropertyValues
-from .v_4_target_property_values_envelope import V4TargetPropertyValuesEnvelope
-from .v_4_user_field_request import V4UserFieldRequest
+from .v2sample_record import V2SampleRecord
+from .v2schema_configuration_fields_item import V2SchemaConfigurationFieldsItem
+from .v4bulk_sync_execution_logs import V4BulkSyncExecutionLogs
+from .v4bulk_sync_execution_logs_envelope import V4BulkSyncExecutionLogsEnvelope
+from .v4bulk_sync_schedule_api import V4BulkSyncScheduleApi
+from .v4export_sync_logs_envelope import V4ExportSyncLogsEnvelope
+from .v4export_sync_logs_response import V4ExportSyncLogsResponse
+from .v4global_error_subscribers_response import V4GlobalErrorSubscribersResponse
+from .v4query_results_envelope import V4QueryResultsEnvelope
+from .v4run_query_envelope import V4RunQueryEnvelope
+from .v4run_query_result import V4RunQueryResult
+from .v4target_creator import V4TargetCreator
+from .v4target_objects_response_envelope import V4TargetObjectsResponseEnvelope
+from .v4target_property_values import V4TargetPropertyValues
+from .v4target_property_values_envelope import V4TargetPropertyValuesEnvelope
+from .v4user_field_request import V4UserFieldRequest
+from .v5bulk_sync_response import V5BulkSyncResponse
+from .v5bulk_sync_response_envelope import V5BulkSyncResponseEnvelope
 from .webhook import Webhook
 from .webhook_envelope import WebhookEnvelope
 from .webhook_list_envelope import WebhookListEnvelope
@@ -216,6 +224,7 @@ __all__ = [
     "BulkFetchMode",
     "BulkField",
     "BulkFilter",
+    "BulkFilter2",
     "BulkItemizedSchedule",
     "BulkMultiScheduleConfiguration",
     "BulkNormalizeNames",
@@ -236,8 +245,9 @@ __all__ = [
     "BulkSyncListEnvelope",
     "BulkSyncMode",
     "BulkSyncResponse",
-    "BulkSyncResponseEnvelope",
     "BulkSyncRunningEvent",
+    "BulkSyncSchedule",
+    "BulkSyncScheduleRequest",
     "BulkSyncSchemaExecution",
     "BulkSyncSchemaExecutionStatus",
     "BulkSyncSource",
@@ -247,10 +257,9 @@ __all__ = [
     "BulkSyncSourceStatusEnvelope",
     "BulkSyncStatusEnvelope",
     "BulkSyncStatusResponse",
-    "CancelModelSyncResponse",
-    "CancelModelSyncResponseEnvelope",
     "CommonOutputActor",
     "ConfigurationValue",
+    "ConfigurationValue2",
     "ConnectCardResponse",
     "ConnectCardResponseEnvelope",
     "ConnectionListResponseEnvelope",
@@ -313,6 +322,7 @@ __all__ = [
     "ModelSample",
     "ModelSampleResponseEnvelope",
     "ModelSyncField",
+    "ModelSyncListResponse",
     "ModelSyncMode",
     "ModelSyncResponse",
     "ModelSyncResponseEnvelope",
@@ -323,6 +333,8 @@ __all__ = [
     "Override",
     "Pagination",
     "PaginationDetails",
+    "PaginationDetails2",
+    "PaginationDetails3",
     "PickValue",
     "PolicyAction",
     "PolicyResponse",
@@ -334,7 +346,9 @@ __all__ = [
     "RoleResponse",
     "RoleResponseEnvelope",
     "RunAfter",
+    "RunAfter2",
     "Schedule",
+    "Schedule2",
     "ScheduleEnvelope",
     "ScheduleFrequency",
     "ScheduleOptionResponse",
@@ -396,6 +410,8 @@ __all__ = [
     "V4TargetPropertyValues",
     "V4TargetPropertyValuesEnvelope",
     "V4UserFieldRequest",
+    "V5BulkSyncResponse",
+    "V5BulkSyncResponseEnvelope",
     "Webhook",
     "WebhookEnvelope",
     "WebhookListEnvelope",

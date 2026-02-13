@@ -14,20 +14,20 @@ from ..errors.internal_server_error import InternalServerError
 from ..types.api_error import ApiError as types_api_error_ApiError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError as core_api_error_ApiError
-from ..types.bulk_schedule import BulkSchedule
+from ..types.bulk_sync_schedule_request import BulkSyncScheduleRequest
 from ..types.bulk_discover import BulkDiscover
 import datetime as dt
 from ..types.bulk_sync_mode import BulkSyncMode
 from ..types.bulk_normalize_names import BulkNormalizeNames
-from .types.v_2_create_bulk_sync_request_schemas_item import V2CreateBulkSyncRequestSchemasItem
-from ..types.bulk_sync_response_envelope import BulkSyncResponseEnvelope
+from .types.v5create_bulk_sync_request_schemas_item import V5CreateBulkSyncRequestSchemasItem
+from ..types.v5bulk_sync_response_envelope import V5BulkSyncResponseEnvelope
 from ..core.serialization import convert_and_respect_annotation_metadata
 from ..errors.bad_request_error import BadRequestError
 from ..errors.forbidden_error import ForbiddenError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..core.jsonable_encoder import jsonable_encoder
 from ..errors.not_found_error import NotFoundError
-from .types.v_2_update_bulk_sync_request_schemas_item import V2UpdateBulkSyncRequestSchemasItem
+from .types.v5update_bulk_sync_request_schemas_item import V5UpdateBulkSyncRequestSchemasItem
 from ..types.activate_sync_envelope import ActivateSyncEnvelope
 from ..types.bulk_fetch_mode import BulkFetchMode
 from ..types.bulk_sync_execution_envelope import BulkSyncExecutionEnvelope
@@ -75,9 +75,7 @@ class BulkSyncClient:
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        client.bulk_sync.list(
-            active=True,
-        )
+        client.bulk_sync.list()
         """
         _response = self._client_wrapper.httpx_client.request(
             "api/bulk/syncs",
@@ -127,7 +125,7 @@ class BulkSyncClient:
         destination_configuration: typing.Dict[str, typing.Optional[typing.Any]],
         destination_connection_id: str,
         name: str,
-        schedule: BulkSchedule,
+        schedules: typing.Sequence[BulkSyncScheduleRequest],
         source_connection_id: str,
         active: typing.Optional[bool] = OMIT,
         automatically_add_new_fields: typing.Optional[BulkDiscover] = OMIT,
@@ -135,16 +133,15 @@ class BulkSyncClient:
         concurrency_limit: typing.Optional[int] = OMIT,
         data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
-        discover: typing.Optional[bool] = OMIT,
         mode: typing.Optional[BulkSyncMode] = OMIT,
         normalize_names: typing.Optional[BulkNormalizeNames] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         resync_concurrency_limit: typing.Optional[int] = OMIT,
-        schemas: typing.Optional[typing.Sequence[V2CreateBulkSyncRequestSchemasItem]] = OMIT,
+        schemas: typing.Optional[typing.Sequence[V5CreateBulkSyncRequestSchemasItem]] = OMIT,
         source_configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> BulkSyncResponseEnvelope:
+    ) -> V5BulkSyncResponseEnvelope:
         """
         Create a new Bulk Sync from a source to a destination (data warehouse, database, or cloud storage bucket like S3).
 
@@ -181,7 +178,7 @@ class BulkSyncClient:
 
         name : str
 
-        schedule : BulkSchedule
+        schedules : typing.Sequence[BulkSyncScheduleRequest]
 
         source_connection_id : str
 
@@ -198,9 +195,6 @@ class BulkSyncClient:
 
         disable_record_timestamps : typing.Optional[bool]
 
-        discover : typing.Optional[bool]
-            DEPRECATED: Use automatically_add_new_objects/automatically_add_new_fields instead
-
         mode : typing.Optional[BulkSyncMode]
 
         normalize_names : typing.Optional[BulkNormalizeNames]
@@ -212,7 +206,7 @@ class BulkSyncClient:
         resync_concurrency_limit : typing.Optional[int]
             Override the default resync concurrency limit for this sync.
 
-        schemas : typing.Optional[typing.Sequence[V2CreateBulkSyncRequestSchemasItem]]
+        schemas : typing.Optional[typing.Sequence[V5CreateBulkSyncRequestSchemasItem]]
             List of schemas to sync; if omitted, all schemas will be selected for syncing.
 
         source_configuration : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
@@ -222,25 +216,30 @@ class BulkSyncClient:
 
         Returns
         -------
-        BulkSyncResponseEnvelope
+        V5BulkSyncResponseEnvelope
             OK
 
         Examples
         --------
-        from polytomic import BulkSchedule, Polytomic
+        from polytomic import BulkSyncScheduleRequest, Polytomic
 
         client = Polytomic(
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
         client.bulk_sync.create(
-            destination_configuration={"schema": "my_schema"},
-            destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="My Bulk Sync",
-            schedule=BulkSchedule(
-                frequency="manual",
-            ),
-            source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            destination_configuration={"destination_configuration": {"key": "value"}},
+            destination_connection_id="destination_connection_id",
+            name="name",
+            schedules=[
+                BulkSyncScheduleRequest(
+                    frequency="manual",
+                ),
+                BulkSyncScheduleRequest(
+                    frequency="manual",
+                ),
+            ],
+            source_connection_id="source_connection_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -255,18 +254,17 @@ class BulkSyncClient:
                 "destination_configuration": destination_configuration,
                 "destination_connection_id": destination_connection_id,
                 "disable_record_timestamps": disable_record_timestamps,
-                "discover": discover,
                 "mode": mode,
                 "name": name,
                 "normalize_names": normalize_names,
                 "organization_id": organization_id,
                 "policies": policies,
                 "resync_concurrency_limit": resync_concurrency_limit,
-                "schedule": convert_and_respect_annotation_metadata(
-                    object_=schedule, annotation=BulkSchedule, direction="write"
+                "schedules": convert_and_respect_annotation_metadata(
+                    object_=schedules, annotation=typing.Sequence[BulkSyncScheduleRequest], direction="write"
                 ),
                 "schemas": convert_and_respect_annotation_metadata(
-                    object_=schemas, annotation=typing.Sequence[V2CreateBulkSyncRequestSchemasItem], direction="write"
+                    object_=schemas, annotation=typing.Sequence[V5CreateBulkSyncRequestSchemasItem], direction="write"
                 ),
                 "source_configuration": source_configuration,
                 "source_connection_id": source_connection_id,
@@ -280,9 +278,9 @@ class BulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncResponseEnvelope,
+                    V5BulkSyncResponseEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncResponseEnvelope,  # type: ignore
+                        type_=V5BulkSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -347,7 +345,7 @@ class BulkSyncClient:
         *,
         refresh_schemas: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> BulkSyncResponseEnvelope:
+    ) -> V5BulkSyncResponseEnvelope:
         """
         Parameters
         ----------
@@ -360,7 +358,7 @@ class BulkSyncClient:
 
         Returns
         -------
-        BulkSyncResponseEnvelope
+        V5BulkSyncResponseEnvelope
             OK
 
         Examples
@@ -372,8 +370,7 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            refresh_schemas=True,
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -387,9 +384,9 @@ class BulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncResponseEnvelope,
+                    V5BulkSyncResponseEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncResponseEnvelope,  # type: ignore
+                        type_=V5BulkSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -425,7 +422,7 @@ class BulkSyncClient:
         destination_configuration: typing.Dict[str, typing.Optional[typing.Any]],
         destination_connection_id: str,
         name: str,
-        schedule: BulkSchedule,
+        schedules: typing.Sequence[BulkSyncScheduleRequest],
         source_connection_id: str,
         active: typing.Optional[bool] = OMIT,
         automatically_add_new_fields: typing.Optional[BulkDiscover] = OMIT,
@@ -433,21 +430,16 @@ class BulkSyncClient:
         concurrency_limit: typing.Optional[int] = OMIT,
         data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
-        discover: typing.Optional[bool] = OMIT,
         mode: typing.Optional[BulkSyncMode] = OMIT,
         normalize_names: typing.Optional[BulkNormalizeNames] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         resync_concurrency_limit: typing.Optional[int] = OMIT,
-        schemas: typing.Optional[typing.Sequence[V2UpdateBulkSyncRequestSchemasItem]] = OMIT,
+        schemas: typing.Optional[typing.Sequence[V5UpdateBulkSyncRequestSchemasItem]] = OMIT,
         source_configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> BulkSyncResponseEnvelope:
+    ) -> V5BulkSyncResponseEnvelope:
         """
-        > 📘 Updating schemas
-        >
-        > Schema updates can be performed using the [Update Bulk Sync Schemas](https://apidocs.polytomic.com/api-reference/bulk-sync/schemas/patch) endpoint.
-
         Parameters
         ----------
         id : str
@@ -458,7 +450,7 @@ class BulkSyncClient:
 
         name : str
 
-        schedule : BulkSchedule
+        schedules : typing.Sequence[BulkSyncScheduleRequest]
 
         source_connection_id : str
 
@@ -475,9 +467,6 @@ class BulkSyncClient:
 
         disable_record_timestamps : typing.Optional[bool]
 
-        discover : typing.Optional[bool]
-            DEPRECATED: Use automatically_add_new_objects/automatically_add_new_fields instead
-
         mode : typing.Optional[BulkSyncMode]
 
         normalize_names : typing.Optional[BulkNormalizeNames]
@@ -489,7 +478,7 @@ class BulkSyncClient:
         resync_concurrency_limit : typing.Optional[int]
             Override the default resync concurrency limit for this sync.
 
-        schemas : typing.Optional[typing.Sequence[V2UpdateBulkSyncRequestSchemasItem]]
+        schemas : typing.Optional[typing.Sequence[V5UpdateBulkSyncRequestSchemasItem]]
             List of schemas to sync; if omitted, all schemas will be selected for syncing.
 
         source_configuration : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
@@ -499,26 +488,31 @@ class BulkSyncClient:
 
         Returns
         -------
-        BulkSyncResponseEnvelope
+        V5BulkSyncResponseEnvelope
             OK
 
         Examples
         --------
-        from polytomic import BulkSchedule, Polytomic
+        from polytomic import BulkSyncScheduleRequest, Polytomic
 
         client = Polytomic(
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
         client.bulk_sync.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            destination_configuration={"schema": "my_schema"},
-            destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="My Bulk Sync",
-            schedule=BulkSchedule(
-                frequency="manual",
-            ),
-            source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
+            destination_configuration={"destination_configuration": {"key": "value"}},
+            destination_connection_id="destination_connection_id",
+            name="name",
+            schedules=[
+                BulkSyncScheduleRequest(
+                    frequency="manual",
+                ),
+                BulkSyncScheduleRequest(
+                    frequency="manual",
+                ),
+            ],
+            source_connection_id="source_connection_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -533,18 +527,17 @@ class BulkSyncClient:
                 "destination_configuration": destination_configuration,
                 "destination_connection_id": destination_connection_id,
                 "disable_record_timestamps": disable_record_timestamps,
-                "discover": discover,
                 "mode": mode,
                 "name": name,
                 "normalize_names": normalize_names,
                 "organization_id": organization_id,
                 "policies": policies,
                 "resync_concurrency_limit": resync_concurrency_limit,
-                "schedule": convert_and_respect_annotation_metadata(
-                    object_=schedule, annotation=BulkSchedule, direction="write"
+                "schedules": convert_and_respect_annotation_metadata(
+                    object_=schedules, annotation=typing.Sequence[BulkSyncScheduleRequest], direction="write"
                 ),
                 "schemas": convert_and_respect_annotation_metadata(
-                    object_=schemas, annotation=typing.Sequence[V2UpdateBulkSyncRequestSchemasItem], direction="write"
+                    object_=schemas, annotation=typing.Sequence[V5UpdateBulkSyncRequestSchemasItem], direction="write"
                 ),
                 "source_configuration": source_configuration,
                 "source_connection_id": source_connection_id,
@@ -558,9 +551,9 @@ class BulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncResponseEnvelope,
+                    V5BulkSyncResponseEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncResponseEnvelope,  # type: ignore
+                        type_=V5BulkSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -649,8 +642,7 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.remove(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            refresh_schemas=True,
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -736,7 +728,7 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.activate(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
             active=True,
         )
         """
@@ -843,7 +835,7 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.start(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -928,7 +920,7 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.get_status(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1011,8 +1003,7 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.get_source(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            include_fields=True,
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1102,7 +1093,7 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.get_destination(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1201,9 +1192,7 @@ class AsyncBulkSyncClient:
 
 
         async def main() -> None:
-            await client.bulk_sync.list(
-                active=True,
-            )
+            await client.bulk_sync.list()
 
 
         asyncio.run(main())
@@ -1256,7 +1245,7 @@ class AsyncBulkSyncClient:
         destination_configuration: typing.Dict[str, typing.Optional[typing.Any]],
         destination_connection_id: str,
         name: str,
-        schedule: BulkSchedule,
+        schedules: typing.Sequence[BulkSyncScheduleRequest],
         source_connection_id: str,
         active: typing.Optional[bool] = OMIT,
         automatically_add_new_fields: typing.Optional[BulkDiscover] = OMIT,
@@ -1264,16 +1253,15 @@ class AsyncBulkSyncClient:
         concurrency_limit: typing.Optional[int] = OMIT,
         data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
-        discover: typing.Optional[bool] = OMIT,
         mode: typing.Optional[BulkSyncMode] = OMIT,
         normalize_names: typing.Optional[BulkNormalizeNames] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         resync_concurrency_limit: typing.Optional[int] = OMIT,
-        schemas: typing.Optional[typing.Sequence[V2CreateBulkSyncRequestSchemasItem]] = OMIT,
+        schemas: typing.Optional[typing.Sequence[V5CreateBulkSyncRequestSchemasItem]] = OMIT,
         source_configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> BulkSyncResponseEnvelope:
+    ) -> V5BulkSyncResponseEnvelope:
         """
         Create a new Bulk Sync from a source to a destination (data warehouse, database, or cloud storage bucket like S3).
 
@@ -1310,7 +1298,7 @@ class AsyncBulkSyncClient:
 
         name : str
 
-        schedule : BulkSchedule
+        schedules : typing.Sequence[BulkSyncScheduleRequest]
 
         source_connection_id : str
 
@@ -1327,9 +1315,6 @@ class AsyncBulkSyncClient:
 
         disable_record_timestamps : typing.Optional[bool]
 
-        discover : typing.Optional[bool]
-            DEPRECATED: Use automatically_add_new_objects/automatically_add_new_fields instead
-
         mode : typing.Optional[BulkSyncMode]
 
         normalize_names : typing.Optional[BulkNormalizeNames]
@@ -1341,7 +1326,7 @@ class AsyncBulkSyncClient:
         resync_concurrency_limit : typing.Optional[int]
             Override the default resync concurrency limit for this sync.
 
-        schemas : typing.Optional[typing.Sequence[V2CreateBulkSyncRequestSchemasItem]]
+        schemas : typing.Optional[typing.Sequence[V5CreateBulkSyncRequestSchemasItem]]
             List of schemas to sync; if omitted, all schemas will be selected for syncing.
 
         source_configuration : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
@@ -1351,14 +1336,14 @@ class AsyncBulkSyncClient:
 
         Returns
         -------
-        BulkSyncResponseEnvelope
+        V5BulkSyncResponseEnvelope
             OK
 
         Examples
         --------
         import asyncio
 
-        from polytomic import AsyncPolytomic, BulkSchedule
+        from polytomic import AsyncPolytomic, BulkSyncScheduleRequest
 
         client = AsyncPolytomic(
             version="YOUR_VERSION",
@@ -1368,13 +1353,20 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.create(
-                destination_configuration={"schema": "my_schema"},
-                destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                name="My Bulk Sync",
-                schedule=BulkSchedule(
-                    frequency="manual",
-                ),
-                source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                destination_configuration={
+                    "destination_configuration": {"key": "value"}
+                },
+                destination_connection_id="destination_connection_id",
+                name="name",
+                schedules=[
+                    BulkSyncScheduleRequest(
+                        frequency="manual",
+                    ),
+                    BulkSyncScheduleRequest(
+                        frequency="manual",
+                    ),
+                ],
+                source_connection_id="source_connection_id",
             )
 
 
@@ -1392,18 +1384,17 @@ class AsyncBulkSyncClient:
                 "destination_configuration": destination_configuration,
                 "destination_connection_id": destination_connection_id,
                 "disable_record_timestamps": disable_record_timestamps,
-                "discover": discover,
                 "mode": mode,
                 "name": name,
                 "normalize_names": normalize_names,
                 "organization_id": organization_id,
                 "policies": policies,
                 "resync_concurrency_limit": resync_concurrency_limit,
-                "schedule": convert_and_respect_annotation_metadata(
-                    object_=schedule, annotation=BulkSchedule, direction="write"
+                "schedules": convert_and_respect_annotation_metadata(
+                    object_=schedules, annotation=typing.Sequence[BulkSyncScheduleRequest], direction="write"
                 ),
                 "schemas": convert_and_respect_annotation_metadata(
-                    object_=schemas, annotation=typing.Sequence[V2CreateBulkSyncRequestSchemasItem], direction="write"
+                    object_=schemas, annotation=typing.Sequence[V5CreateBulkSyncRequestSchemasItem], direction="write"
                 ),
                 "source_configuration": source_configuration,
                 "source_connection_id": source_connection_id,
@@ -1417,9 +1408,9 @@ class AsyncBulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncResponseEnvelope,
+                    V5BulkSyncResponseEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncResponseEnvelope,  # type: ignore
+                        type_=V5BulkSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1484,7 +1475,7 @@ class AsyncBulkSyncClient:
         *,
         refresh_schemas: typing.Optional[bool] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> BulkSyncResponseEnvelope:
+    ) -> V5BulkSyncResponseEnvelope:
         """
         Parameters
         ----------
@@ -1497,7 +1488,7 @@ class AsyncBulkSyncClient:
 
         Returns
         -------
-        BulkSyncResponseEnvelope
+        V5BulkSyncResponseEnvelope
             OK
 
         Examples
@@ -1514,8 +1505,7 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                refresh_schemas=True,
+                id="id",
             )
 
 
@@ -1532,9 +1522,9 @@ class AsyncBulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncResponseEnvelope,
+                    V5BulkSyncResponseEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncResponseEnvelope,  # type: ignore
+                        type_=V5BulkSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1570,7 +1560,7 @@ class AsyncBulkSyncClient:
         destination_configuration: typing.Dict[str, typing.Optional[typing.Any]],
         destination_connection_id: str,
         name: str,
-        schedule: BulkSchedule,
+        schedules: typing.Sequence[BulkSyncScheduleRequest],
         source_connection_id: str,
         active: typing.Optional[bool] = OMIT,
         automatically_add_new_fields: typing.Optional[BulkDiscover] = OMIT,
@@ -1578,21 +1568,16 @@ class AsyncBulkSyncClient:
         concurrency_limit: typing.Optional[int] = OMIT,
         data_cutoff_timestamp: typing.Optional[dt.datetime] = OMIT,
         disable_record_timestamps: typing.Optional[bool] = OMIT,
-        discover: typing.Optional[bool] = OMIT,
         mode: typing.Optional[BulkSyncMode] = OMIT,
         normalize_names: typing.Optional[BulkNormalizeNames] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         resync_concurrency_limit: typing.Optional[int] = OMIT,
-        schemas: typing.Optional[typing.Sequence[V2UpdateBulkSyncRequestSchemasItem]] = OMIT,
+        schemas: typing.Optional[typing.Sequence[V5UpdateBulkSyncRequestSchemasItem]] = OMIT,
         source_configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> BulkSyncResponseEnvelope:
+    ) -> V5BulkSyncResponseEnvelope:
         """
-        > 📘 Updating schemas
-        >
-        > Schema updates can be performed using the [Update Bulk Sync Schemas](https://apidocs.polytomic.com/api-reference/bulk-sync/schemas/patch) endpoint.
-
         Parameters
         ----------
         id : str
@@ -1603,7 +1588,7 @@ class AsyncBulkSyncClient:
 
         name : str
 
-        schedule : BulkSchedule
+        schedules : typing.Sequence[BulkSyncScheduleRequest]
 
         source_connection_id : str
 
@@ -1620,9 +1605,6 @@ class AsyncBulkSyncClient:
 
         disable_record_timestamps : typing.Optional[bool]
 
-        discover : typing.Optional[bool]
-            DEPRECATED: Use automatically_add_new_objects/automatically_add_new_fields instead
-
         mode : typing.Optional[BulkSyncMode]
 
         normalize_names : typing.Optional[BulkNormalizeNames]
@@ -1634,7 +1616,7 @@ class AsyncBulkSyncClient:
         resync_concurrency_limit : typing.Optional[int]
             Override the default resync concurrency limit for this sync.
 
-        schemas : typing.Optional[typing.Sequence[V2UpdateBulkSyncRequestSchemasItem]]
+        schemas : typing.Optional[typing.Sequence[V5UpdateBulkSyncRequestSchemasItem]]
             List of schemas to sync; if omitted, all schemas will be selected for syncing.
 
         source_configuration : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
@@ -1644,14 +1626,14 @@ class AsyncBulkSyncClient:
 
         Returns
         -------
-        BulkSyncResponseEnvelope
+        V5BulkSyncResponseEnvelope
             OK
 
         Examples
         --------
         import asyncio
 
-        from polytomic import AsyncPolytomic, BulkSchedule
+        from polytomic import AsyncPolytomic, BulkSyncScheduleRequest
 
         client = AsyncPolytomic(
             version="YOUR_VERSION",
@@ -1661,14 +1643,21 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                destination_configuration={"schema": "my_schema"},
-                destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                name="My Bulk Sync",
-                schedule=BulkSchedule(
-                    frequency="manual",
-                ),
-                source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
+                destination_configuration={
+                    "destination_configuration": {"key": "value"}
+                },
+                destination_connection_id="destination_connection_id",
+                name="name",
+                schedules=[
+                    BulkSyncScheduleRequest(
+                        frequency="manual",
+                    ),
+                    BulkSyncScheduleRequest(
+                        frequency="manual",
+                    ),
+                ],
+                source_connection_id="source_connection_id",
             )
 
 
@@ -1686,18 +1675,17 @@ class AsyncBulkSyncClient:
                 "destination_configuration": destination_configuration,
                 "destination_connection_id": destination_connection_id,
                 "disable_record_timestamps": disable_record_timestamps,
-                "discover": discover,
                 "mode": mode,
                 "name": name,
                 "normalize_names": normalize_names,
                 "organization_id": organization_id,
                 "policies": policies,
                 "resync_concurrency_limit": resync_concurrency_limit,
-                "schedule": convert_and_respect_annotation_metadata(
-                    object_=schedule, annotation=BulkSchedule, direction="write"
+                "schedules": convert_and_respect_annotation_metadata(
+                    object_=schedules, annotation=typing.Sequence[BulkSyncScheduleRequest], direction="write"
                 ),
                 "schemas": convert_and_respect_annotation_metadata(
-                    object_=schemas, annotation=typing.Sequence[V2UpdateBulkSyncRequestSchemasItem], direction="write"
+                    object_=schemas, annotation=typing.Sequence[V5UpdateBulkSyncRequestSchemasItem], direction="write"
                 ),
                 "source_configuration": source_configuration,
                 "source_connection_id": source_connection_id,
@@ -1711,9 +1699,9 @@ class AsyncBulkSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    BulkSyncResponseEnvelope,
+                    V5BulkSyncResponseEnvelope,
                     parse_obj_as(
-                        type_=BulkSyncResponseEnvelope,  # type: ignore
+                        type_=V5BulkSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1807,8 +1795,7 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.remove(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                refresh_schemas=True,
+                id="id",
             )
 
 
@@ -1902,7 +1889,7 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.activate(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
                 active=True,
             )
 
@@ -2017,7 +2004,7 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.start(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2112,7 +2099,7 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.get_status(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2203,8 +2190,7 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.get_source(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                include_fields=True,
+                id="id",
             )
 
 
@@ -2302,7 +2288,7 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.get_destination(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 

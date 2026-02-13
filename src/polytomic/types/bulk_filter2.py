@@ -2,15 +2,19 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .target_object import TargetObject
-from .v_4_target_creator import V4TargetCreator
-from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
+from .filter_function import FilterFunction
+from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
-class V4TargetObjectsResponseEnvelope(UniversalBaseModel):
-    data: typing.Optional[typing.List[TargetObject]] = None
-    target_creation: typing.Optional[V4TargetCreator] = None
+class BulkFilter2(UniversalBaseModel):
+    field_id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Schema field ID to filter on.
+    """
+
+    function: FilterFunction
+    value: typing.Optional[typing.Optional[typing.Any]] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

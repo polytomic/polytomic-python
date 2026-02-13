@@ -3,4 +3,4 @@
 import typing
 from ...types.schema_configuration import SchemaConfiguration
 
-V2UpdateBulkSyncRequestSchemasItem = typing.Union[str, SchemaConfiguration]
+V5CreateBulkSyncRequestSchemasItem = typing.Union[str, SchemaConfiguration]

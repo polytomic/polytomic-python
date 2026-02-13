@@ -2,13 +2,15 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .model_sync_response import ModelSyncResponse
+from .model_sync_list_response import ModelSyncListResponse
+from .pagination_details3 import PaginationDetails3
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
 class ListModelSyncResponseEnvelope(UniversalBaseModel):
-    data: typing.Optional[typing.List[ModelSyncResponse]] = None
+    data: typing.Optional[typing.List[ModelSyncListResponse]] = None
+    pagination: typing.Optional[PaginationDetails3] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
