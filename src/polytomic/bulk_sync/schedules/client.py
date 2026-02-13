@@ -140,7 +140,7 @@ class SchedulesClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.schedules.create(
-            sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            sync_id="sync_id",
             schedule=V4BulkSyncScheduleApi(
                 frequency="manual",
             ),
@@ -348,8 +348,8 @@ class SchedulesClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.schedules.update(
-            sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schedule_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            sync_id="sync_id",
+            schedule_id="schedule_id",
             schedule=V4BulkSyncScheduleApi(
                 frequency="manual",
             ),
@@ -646,7 +646,7 @@ class AsyncSchedulesClient:
 
         async def main() -> None:
             await client.bulk_sync.schedules.create(
-                sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                sync_id="sync_id",
                 schedule=V4BulkSyncScheduleApi(
                     frequency="manual",
                 ),
@@ -870,8 +870,8 @@ class AsyncSchedulesClient:
 
         async def main() -> None:
             await client.bulk_sync.schedules.update(
-                sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                schedule_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                sync_id="sync_id",
+                schedule_id="schedule_id",
                 schedule=V4BulkSyncScheduleApi(
                     frequency="manual",
                 ),

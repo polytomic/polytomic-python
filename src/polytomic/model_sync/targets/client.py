@@ -171,7 +171,6 @@ class TargetsClient:
         client.model_sync.targets.get_target_fields(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             target="database.table",
-            refresh=False,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -410,7 +409,7 @@ class TargetsClient:
             token="YOUR_TOKEN",
         )
         client.model_sync.targets.get_create_property(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
             property="property",
         )
         """
@@ -647,7 +646,6 @@ class AsyncTargetsClient:
             await client.model_sync.targets.get_target_fields(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 target="database.table",
-                refresh=False,
             )
 
 
@@ -902,7 +900,7 @@ class AsyncTargetsClient:
 
         async def main() -> None:
             await client.model_sync.targets.get_create_property(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
                 property="property",
             )
 

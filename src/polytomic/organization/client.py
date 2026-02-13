@@ -138,7 +138,7 @@ class OrganizationClient:
             token="YOUR_TOKEN",
         )
         client.organization.create(
-            name="My Organization",
+            name="name",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -331,8 +331,8 @@ class OrganizationClient:
             token="YOUR_TOKEN",
         )
         client.organization.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="My Organization",
+            id="id",
+            name="name",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -608,7 +608,7 @@ class AsyncOrganizationClient:
 
         async def main() -> None:
             await client.organization.create(
-                name="My Organization",
+                name="name",
             )
 
 
@@ -817,8 +817,8 @@ class AsyncOrganizationClient:
 
         async def main() -> None:
             await client.organization.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                name="My Organization",
+                id="id",
+                name="name",
             )
 
 

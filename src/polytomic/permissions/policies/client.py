@@ -123,7 +123,7 @@ class PoliciesClient:
             token="YOUR_TOKEN",
         )
         client.permissions.policies.create(
-            name="Custom",
+            name="name",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -318,8 +318,8 @@ class PoliciesClient:
             token="YOUR_TOKEN",
         )
         client.permissions.policies.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="Custom",
+            id="id",
+            name="name",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -593,7 +593,7 @@ class AsyncPoliciesClient:
 
         async def main() -> None:
             await client.permissions.policies.create(
-                name="Custom",
+                name="name",
             )
 
 
@@ -804,8 +804,8 @@ class AsyncPoliciesClient:
 
         async def main() -> None:
             await client.permissions.policies.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                name="Custom",
+                id="id",
+                name="name",
             )
 
 
