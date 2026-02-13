@@ -3,7 +3,7 @@
 import typing
 from ..core.client_wrapper import SyncClientWrapper
 from ..core.request_options import RequestOptions
-from ..types.v_4_global_error_subscribers_response import V4GlobalErrorSubscribersResponse
+from ..types.v4global_error_subscribers_response import V4GlobalErrorSubscribersResponse
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.unauthorized_error import UnauthorizedError
 from ..types.rest_err_response import RestErrResponse

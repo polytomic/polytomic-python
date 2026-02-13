@@ -3,7 +3,7 @@
 import typing
 from ...core.client_wrapper import SyncClientWrapper
 from ...core.request_options import RequestOptions
-from ...types.role_list_response_envelope import RoleListResponseEnvelope
+from ...types.v2role_list_response_envelope import V2RoleListResponseEnvelope
 from ...core.pydantic_utilities import parse_obj_as
 from ...errors.unauthorized_error import UnauthorizedError
 from ...types.rest_err_response import RestErrResponse
@@ -11,7 +11,7 @@ from ...errors.internal_server_error import InternalServerError
 from ...types.api_error import ApiError as types_api_error_ApiError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError as core_api_error_ApiError
-from ...types.role_response_envelope import RoleResponseEnvelope
+from ...types.v2role_response_envelope import V2RoleResponseEnvelope
 from ...errors.bad_request_error import BadRequestError
 from ...errors.forbidden_error import ForbiddenError
 from ...errors.not_found_error import NotFoundError
@@ -26,7 +26,7 @@ class RolesClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> RoleListResponseEnvelope:
+    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> V2RoleListResponseEnvelope:
         """
         Parameters
         ----------
@@ -35,7 +35,7 @@ class RolesClient:
 
         Returns
         -------
-        RoleListResponseEnvelope
+        V2RoleListResponseEnvelope
             OK
 
         Examples
@@ -56,9 +56,9 @@ class RolesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    RoleListResponseEnvelope,
+                    V2RoleListResponseEnvelope,
                     parse_obj_as(
-                        type_=RoleListResponseEnvelope,  # type: ignore
+                        type_=V2RoleListResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -93,7 +93,7 @@ class RolesClient:
         name: str,
         organization_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> RoleResponseEnvelope:
+    ) -> V2RoleResponseEnvelope:
         """
         Parameters
         ----------
@@ -106,7 +106,7 @@ class RolesClient:
 
         Returns
         -------
-        RoleResponseEnvelope
+        V2RoleResponseEnvelope
             OK
 
         Examples
@@ -118,7 +118,7 @@ class RolesClient:
             token="YOUR_TOKEN",
         )
         client.permissions.roles.create(
-            name="Custom",
+            name="name",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -137,9 +137,9 @@ class RolesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    RoleResponseEnvelope,
+                    V2RoleResponseEnvelope,
                     parse_obj_as(
-                        type_=RoleResponseEnvelope,  # type: ignore
+                        type_=V2RoleResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -198,7 +198,7 @@ class RolesClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> RoleResponseEnvelope:
+    def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> V2RoleResponseEnvelope:
         """
         Parameters
         ----------
@@ -209,7 +209,7 @@ class RolesClient:
 
         Returns
         -------
-        RoleResponseEnvelope
+        V2RoleResponseEnvelope
             OK
 
         Examples
@@ -221,7 +221,7 @@ class RolesClient:
             token="YOUR_TOKEN",
         )
         client.permissions.roles.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -232,9 +232,9 @@ class RolesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    RoleResponseEnvelope,
+                    V2RoleResponseEnvelope,
                     parse_obj_as(
-                        type_=RoleResponseEnvelope,  # type: ignore
+                        type_=V2RoleResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -270,7 +270,7 @@ class RolesClient:
         name: str,
         organization_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> RoleResponseEnvelope:
+    ) -> V2RoleResponseEnvelope:
         """
         Parameters
         ----------
@@ -285,7 +285,7 @@ class RolesClient:
 
         Returns
         -------
-        RoleResponseEnvelope
+        V2RoleResponseEnvelope
             OK
 
         Examples
@@ -297,8 +297,8 @@ class RolesClient:
             token="YOUR_TOKEN",
         )
         client.permissions.roles.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="Custom",
+            id="id",
+            name="name",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -317,9 +317,9 @@ class RolesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    RoleResponseEnvelope,
+                    V2RoleResponseEnvelope,
                     parse_obj_as(
-                        type_=RoleResponseEnvelope,  # type: ignore
+                        type_=V2RoleResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -400,7 +400,7 @@ class RolesClient:
             token="YOUR_TOKEN",
         )
         client.permissions.roles.remove(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -461,7 +461,7 @@ class AsyncRolesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> RoleListResponseEnvelope:
+    async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> V2RoleListResponseEnvelope:
         """
         Parameters
         ----------
@@ -470,7 +470,7 @@ class AsyncRolesClient:
 
         Returns
         -------
-        RoleListResponseEnvelope
+        V2RoleListResponseEnvelope
             OK
 
         Examples
@@ -499,9 +499,9 @@ class AsyncRolesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    RoleListResponseEnvelope,
+                    V2RoleListResponseEnvelope,
                     parse_obj_as(
-                        type_=RoleListResponseEnvelope,  # type: ignore
+                        type_=V2RoleListResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -536,7 +536,7 @@ class AsyncRolesClient:
         name: str,
         organization_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> RoleResponseEnvelope:
+    ) -> V2RoleResponseEnvelope:
         """
         Parameters
         ----------
@@ -549,7 +549,7 @@ class AsyncRolesClient:
 
         Returns
         -------
-        RoleResponseEnvelope
+        V2RoleResponseEnvelope
             OK
 
         Examples
@@ -566,7 +566,7 @@ class AsyncRolesClient:
 
         async def main() -> None:
             await client.permissions.roles.create(
-                name="Custom",
+                name="name",
             )
 
 
@@ -588,9 +588,9 @@ class AsyncRolesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    RoleResponseEnvelope,
+                    V2RoleResponseEnvelope,
                     parse_obj_as(
-                        type_=RoleResponseEnvelope,  # type: ignore
+                        type_=V2RoleResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -649,7 +649,7 @@ class AsyncRolesClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> RoleResponseEnvelope:
+    async def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> V2RoleResponseEnvelope:
         """
         Parameters
         ----------
@@ -660,7 +660,7 @@ class AsyncRolesClient:
 
         Returns
         -------
-        RoleResponseEnvelope
+        V2RoleResponseEnvelope
             OK
 
         Examples
@@ -677,7 +677,7 @@ class AsyncRolesClient:
 
         async def main() -> None:
             await client.permissions.roles.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -691,9 +691,9 @@ class AsyncRolesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    RoleResponseEnvelope,
+                    V2RoleResponseEnvelope,
                     parse_obj_as(
-                        type_=RoleResponseEnvelope,  # type: ignore
+                        type_=V2RoleResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -729,7 +729,7 @@ class AsyncRolesClient:
         name: str,
         organization_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> RoleResponseEnvelope:
+    ) -> V2RoleResponseEnvelope:
         """
         Parameters
         ----------
@@ -744,7 +744,7 @@ class AsyncRolesClient:
 
         Returns
         -------
-        RoleResponseEnvelope
+        V2RoleResponseEnvelope
             OK
 
         Examples
@@ -761,8 +761,8 @@ class AsyncRolesClient:
 
         async def main() -> None:
             await client.permissions.roles.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                name="Custom",
+                id="id",
+                name="name",
             )
 
 
@@ -784,9 +784,9 @@ class AsyncRolesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    RoleResponseEnvelope,
+                    V2RoleResponseEnvelope,
                     parse_obj_as(
-                        type_=RoleResponseEnvelope,  # type: ignore
+                        type_=V2RoleResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -872,7 +872,7 @@ class AsyncRolesClient:
 
         async def main() -> None:
             await client.permissions.roles.remove(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 

@@ -3,7 +3,7 @@
 import typing
 from ..core.client_wrapper import SyncClientWrapper
 from ..core.request_options import RequestOptions
-from ..types.webhook_list_envelope import WebhookListEnvelope
+from ..types.v2webhook_list_envelope import V2WebhookListEnvelope
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.unauthorized_error import UnauthorizedError
 from ..types.rest_err_response import RestErrResponse
@@ -11,7 +11,7 @@ from ..errors.internal_server_error import InternalServerError
 from ..types.api_error import ApiError as types_api_error_ApiError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError as core_api_error_ApiError
-from ..types.webhook_envelope import WebhookEnvelope
+from ..types.v2webhook_envelope import V2WebhookEnvelope
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..core.jsonable_encoder import jsonable_encoder
 from ..errors.not_found_error import NotFoundError
@@ -25,7 +25,7 @@ class WebhooksClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookListEnvelope:
+    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> V2WebhookListEnvelope:
         """
         Webooks can be set up using the webhook API endpoints. Currently, only one
         webhook may be created per organization. The webhook will be called for events
@@ -40,7 +40,7 @@ class WebhooksClient:
 
         Returns
         -------
-        WebhookListEnvelope
+        V2WebhookListEnvelope
             OK
 
         Examples
@@ -61,9 +61,9 @@ class WebhooksClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    WebhookListEnvelope,
+                    V2WebhookListEnvelope,
                     parse_obj_as(
-                        type_=WebhookListEnvelope,  # type: ignore
+                        type_=V2WebhookListEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -99,7 +99,7 @@ class WebhooksClient:
         secret: str,
         organization_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> WebhookEnvelope:
+    ) -> V2WebhookEnvelope:
         """
         Webooks can be set up using the webhook API endpoints. Currently, only one
         webhook may be created per organization. The webhook will be called for events
@@ -120,7 +120,7 @@ class WebhooksClient:
 
         Returns
         -------
-        WebhookEnvelope
+        V2WebhookEnvelope
             OK
 
         Examples
@@ -132,8 +132,8 @@ class WebhooksClient:
             token="YOUR_TOKEN",
         )
         client.webhooks.create(
-            endpoint="https://example.com/webhook",
-            secret="secret",
+            endpoint="endpoint",
+            secret="banana",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -153,9 +153,9 @@ class WebhooksClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    WebhookEnvelope,
+                    V2WebhookEnvelope,
                     parse_obj_as(
-                        type_=WebhookEnvelope,  # type: ignore
+                        type_=V2WebhookEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -194,7 +194,7 @@ class WebhooksClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookEnvelope:
+    def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> V2WebhookEnvelope:
         """
         Webooks can be set up using the webhook API endpoints. Currently, only one
         webhook may be created per organization. The webhook will be called for events
@@ -211,7 +211,7 @@ class WebhooksClient:
 
         Returns
         -------
-        WebhookEnvelope
+        V2WebhookEnvelope
             OK
 
         Examples
@@ -223,7 +223,7 @@ class WebhooksClient:
             token="YOUR_TOKEN",
         )
         client.webhooks.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -234,9 +234,9 @@ class WebhooksClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    WebhookEnvelope,
+                    V2WebhookEnvelope,
                     parse_obj_as(
-                        type_=WebhookEnvelope,  # type: ignore
+                        type_=V2WebhookEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -273,7 +273,7 @@ class WebhooksClient:
         secret: str,
         organization_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> WebhookEnvelope:
+    ) -> V2WebhookEnvelope:
         """
         Webooks can be set up using the webhook API endpoints. Currently, only one
         webhook may be created per organization. The webhook will be called for events
@@ -296,7 +296,7 @@ class WebhooksClient:
 
         Returns
         -------
-        WebhookEnvelope
+        V2WebhookEnvelope
             OK
 
         Examples
@@ -308,9 +308,9 @@ class WebhooksClient:
             token="YOUR_TOKEN",
         )
         client.webhooks.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            endpoint="https://example.com/webhook",
-            secret="secret",
+            id="id",
+            endpoint="endpoint",
+            secret="banana",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -330,9 +330,9 @@ class WebhooksClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    WebhookEnvelope,
+                    V2WebhookEnvelope,
                     parse_obj_as(
-                        type_=WebhookEnvelope,  # type: ignore
+                        type_=V2WebhookEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -393,7 +393,7 @@ class WebhooksClient:
             token="YOUR_TOKEN",
         )
         client.webhooks.remove(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -439,7 +439,7 @@ class WebhooksClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def disable(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookEnvelope:
+    def disable(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> V2WebhookEnvelope:
         """
         Parameters
         ----------
@@ -450,7 +450,7 @@ class WebhooksClient:
 
         Returns
         -------
-        WebhookEnvelope
+        V2WebhookEnvelope
             OK
 
         Examples
@@ -462,7 +462,7 @@ class WebhooksClient:
             token="YOUR_TOKEN",
         )
         client.webhooks.disable(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -473,9 +473,9 @@ class WebhooksClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    WebhookEnvelope,
+                    V2WebhookEnvelope,
                     parse_obj_as(
-                        type_=WebhookEnvelope,  # type: ignore
+                        type_=V2WebhookEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -514,7 +514,7 @@ class WebhooksClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def enable(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookEnvelope:
+    def enable(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> V2WebhookEnvelope:
         """
         Parameters
         ----------
@@ -525,7 +525,7 @@ class WebhooksClient:
 
         Returns
         -------
-        WebhookEnvelope
+        V2WebhookEnvelope
             OK
 
         Examples
@@ -537,7 +537,7 @@ class WebhooksClient:
             token="YOUR_TOKEN",
         )
         client.webhooks.enable(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -548,9 +548,9 @@ class WebhooksClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    WebhookEnvelope,
+                    V2WebhookEnvelope,
                     parse_obj_as(
-                        type_=WebhookEnvelope,  # type: ignore
+                        type_=V2WebhookEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -594,7 +594,7 @@ class AsyncWebhooksClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookListEnvelope:
+    async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> V2WebhookListEnvelope:
         """
         Webooks can be set up using the webhook API endpoints. Currently, only one
         webhook may be created per organization. The webhook will be called for events
@@ -609,7 +609,7 @@ class AsyncWebhooksClient:
 
         Returns
         -------
-        WebhookListEnvelope
+        V2WebhookListEnvelope
             OK
 
         Examples
@@ -638,9 +638,9 @@ class AsyncWebhooksClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    WebhookListEnvelope,
+                    V2WebhookListEnvelope,
                     parse_obj_as(
-                        type_=WebhookListEnvelope,  # type: ignore
+                        type_=V2WebhookListEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -676,7 +676,7 @@ class AsyncWebhooksClient:
         secret: str,
         organization_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> WebhookEnvelope:
+    ) -> V2WebhookEnvelope:
         """
         Webooks can be set up using the webhook API endpoints. Currently, only one
         webhook may be created per organization. The webhook will be called for events
@@ -697,7 +697,7 @@ class AsyncWebhooksClient:
 
         Returns
         -------
-        WebhookEnvelope
+        V2WebhookEnvelope
             OK
 
         Examples
@@ -714,8 +714,8 @@ class AsyncWebhooksClient:
 
         async def main() -> None:
             await client.webhooks.create(
-                endpoint="https://example.com/webhook",
-                secret="secret",
+                endpoint="endpoint",
+                secret="banana",
             )
 
 
@@ -738,9 +738,9 @@ class AsyncWebhooksClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    WebhookEnvelope,
+                    V2WebhookEnvelope,
                     parse_obj_as(
-                        type_=WebhookEnvelope,  # type: ignore
+                        type_=V2WebhookEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -779,7 +779,7 @@ class AsyncWebhooksClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookEnvelope:
+    async def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> V2WebhookEnvelope:
         """
         Webooks can be set up using the webhook API endpoints. Currently, only one
         webhook may be created per organization. The webhook will be called for events
@@ -796,7 +796,7 @@ class AsyncWebhooksClient:
 
         Returns
         -------
-        WebhookEnvelope
+        V2WebhookEnvelope
             OK
 
         Examples
@@ -813,7 +813,7 @@ class AsyncWebhooksClient:
 
         async def main() -> None:
             await client.webhooks.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -827,9 +827,9 @@ class AsyncWebhooksClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    WebhookEnvelope,
+                    V2WebhookEnvelope,
                     parse_obj_as(
-                        type_=WebhookEnvelope,  # type: ignore
+                        type_=V2WebhookEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -866,7 +866,7 @@ class AsyncWebhooksClient:
         secret: str,
         organization_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> WebhookEnvelope:
+    ) -> V2WebhookEnvelope:
         """
         Webooks can be set up using the webhook API endpoints. Currently, only one
         webhook may be created per organization. The webhook will be called for events
@@ -889,7 +889,7 @@ class AsyncWebhooksClient:
 
         Returns
         -------
-        WebhookEnvelope
+        V2WebhookEnvelope
             OK
 
         Examples
@@ -906,9 +906,9 @@ class AsyncWebhooksClient:
 
         async def main() -> None:
             await client.webhooks.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                endpoint="https://example.com/webhook",
-                secret="secret",
+                id="id",
+                endpoint="endpoint",
+                secret="banana",
             )
 
 
@@ -931,9 +931,9 @@ class AsyncWebhooksClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    WebhookEnvelope,
+                    V2WebhookEnvelope,
                     parse_obj_as(
-                        type_=WebhookEnvelope,  # type: ignore
+                        type_=V2WebhookEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -999,7 +999,7 @@ class AsyncWebhooksClient:
 
         async def main() -> None:
             await client.webhooks.remove(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -1048,7 +1048,7 @@ class AsyncWebhooksClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def disable(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookEnvelope:
+    async def disable(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> V2WebhookEnvelope:
         """
         Parameters
         ----------
@@ -1059,7 +1059,7 @@ class AsyncWebhooksClient:
 
         Returns
         -------
-        WebhookEnvelope
+        V2WebhookEnvelope
             OK
 
         Examples
@@ -1076,7 +1076,7 @@ class AsyncWebhooksClient:
 
         async def main() -> None:
             await client.webhooks.disable(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -1090,9 +1090,9 @@ class AsyncWebhooksClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    WebhookEnvelope,
+                    V2WebhookEnvelope,
                     parse_obj_as(
-                        type_=WebhookEnvelope,  # type: ignore
+                        type_=V2WebhookEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1131,7 +1131,7 @@ class AsyncWebhooksClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def enable(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookEnvelope:
+    async def enable(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> V2WebhookEnvelope:
         """
         Parameters
         ----------
@@ -1142,7 +1142,7 @@ class AsyncWebhooksClient:
 
         Returns
         -------
-        WebhookEnvelope
+        V2WebhookEnvelope
             OK
 
         Examples
@@ -1159,7 +1159,7 @@ class AsyncWebhooksClient:
 
         async def main() -> None:
             await client.webhooks.enable(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -1173,9 +1173,9 @@ class AsyncWebhooksClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    WebhookEnvelope,
+                    V2WebhookEnvelope,
                     parse_obj_as(
-                        type_=WebhookEnvelope,  # type: ignore
+                        type_=V2WebhookEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

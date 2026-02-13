@@ -3,7 +3,7 @@
 import typing
 from ..core.client_wrapper import SyncClientWrapper
 from ..core.request_options import RequestOptions
-from ..types.connection_type_response_envelope import ConnectionTypeResponseEnvelope
+from ..types.v2connection_type_response_envelope import V2ConnectionTypeResponseEnvelope
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.unauthorized_error import UnauthorizedError
 from ..types.rest_err_response import RestErrResponse
@@ -14,14 +14,14 @@ from ..core.api_error import ApiError as core_api_error_ApiError
 from ..types.jsonschema_schema import JsonschemaSchema
 from ..core.jsonable_encoder import jsonable_encoder
 from ..errors.not_found_error import NotFoundError
-from ..types.connection_list_response_envelope import ConnectionListResponseEnvelope
-from ..types.create_connection_response_envelope import CreateConnectionResponseEnvelope
+from ..types.v2connection_list_response_envelope import V2ConnectionListResponseEnvelope
+from ..types.v2create_connection_response_envelope import V2CreateConnectionResponseEnvelope
 from ..errors.bad_request_error import BadRequestError
 from ..errors.forbidden_error import ForbiddenError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
-from ..types.connect_card_response_envelope import ConnectCardResponseEnvelope
-from ..types.connection_response_envelope import ConnectionResponseEnvelope
-from ..types.connection_parameter_values_response_envelope import ConnectionParameterValuesResponseEnvelope
+from ..types.v3connect_card_response_envelope import V3ConnectCardResponseEnvelope
+from ..types.v2connection_response_envelope import V2ConnectionResponseEnvelope
+from ..types.v2connection_parameter_values_response_envelope import V2ConnectionParameterValuesResponseEnvelope
 from ..core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -32,7 +32,7 @@ class ConnectionsClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def get_types(self, *, request_options: typing.Optional[RequestOptions] = None) -> ConnectionTypeResponseEnvelope:
+    def get_types(self, *, request_options: typing.Optional[RequestOptions] = None) -> V2ConnectionTypeResponseEnvelope:
         """
         Parameters
         ----------
@@ -41,7 +41,7 @@ class ConnectionsClient:
 
         Returns
         -------
-        ConnectionTypeResponseEnvelope
+        V2ConnectionTypeResponseEnvelope
             OK
 
         Examples
@@ -62,9 +62,9 @@ class ConnectionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ConnectionTypeResponseEnvelope,
+                    V2ConnectionTypeResponseEnvelope,
                     parse_obj_as(
-                        type_=ConnectionTypeResponseEnvelope,  # type: ignore
+                        type_=V2ConnectionTypeResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -118,7 +118,7 @@ class ConnectionsClient:
             token="YOUR_TOKEN",
         )
         client.connections.get_connection_type_schema(
-            id="postgresql",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -170,7 +170,7 @@ class ConnectionsClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ConnectionListResponseEnvelope:
+    def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> V2ConnectionListResponseEnvelope:
         """
         Parameters
         ----------
@@ -179,7 +179,7 @@ class ConnectionsClient:
 
         Returns
         -------
-        ConnectionListResponseEnvelope
+        V2ConnectionListResponseEnvelope
             OK
 
         Examples
@@ -200,9 +200,9 @@ class ConnectionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ConnectionListResponseEnvelope,
+                    V2ConnectionListResponseEnvelope,
                     parse_obj_as(
-                        type_=ConnectionListResponseEnvelope,  # type: ignore
+                        type_=V2ConnectionListResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -243,7 +243,7 @@ class ConnectionsClient:
         redirect_url: typing.Optional[str] = OMIT,
         validate: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> CreateConnectionResponseEnvelope:
+    ) -> V2CreateConnectionResponseEnvelope:
         """
         Parameters
         ----------
@@ -271,7 +271,7 @@ class ConnectionsClient:
 
         Returns
         -------
-        CreateConnectionResponseEnvelope
+        V2CreateConnectionResponseEnvelope
             OK
 
         Examples
@@ -283,15 +283,9 @@ class ConnectionsClient:
             token="YOUR_TOKEN",
         )
         client.connections.create(
-            configuration={
-                "database": "example",
-                "hostname": "postgres.example.com",
-                "password": "********",
-                "port": 5432,
-                "username": "user",
-            },
-            name="My Postgres Connection",
-            type="postgresql",
+            configuration={"configuration": {"key": "value"}},
+            name="name",
+            type="type",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -316,9 +310,9 @@ class ConnectionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    CreateConnectionResponseEnvelope,
+                    V2CreateConnectionResponseEnvelope,
                     parse_obj_as(
-                        type_=CreateConnectionResponseEnvelope,  # type: ignore
+                        type_=V2CreateConnectionResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -388,7 +382,7 @@ class ConnectionsClient:
         type: typing.Optional[str] = OMIT,
         whitelist: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ConnectCardResponseEnvelope:
+    ) -> V3ConnectCardResponseEnvelope:
         """
         Creates a new request for [Polytomic Connect](https://www.polytomic.com/connect).
 
@@ -427,7 +421,7 @@ class ConnectionsClient:
 
         Returns
         -------
-        ConnectCardResponseEnvelope
+        V3ConnectCardResponseEnvelope
             OK
 
         Examples
@@ -439,7 +433,7 @@ class ConnectionsClient:
             token="YOUR_TOKEN",
         )
         client.connections.connect(
-            name="Salesforce Connection",
+            name="name",
             redirect_url="redirect_url",
         )
         """
@@ -464,9 +458,9 @@ class ConnectionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ConnectCardResponseEnvelope,
+                    V3ConnectCardResponseEnvelope,
                     parse_obj_as(
-                        type_=ConnectCardResponseEnvelope,  # type: ignore
+                        type_=V3ConnectCardResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -553,14 +547,8 @@ class ConnectionsClient:
             token="YOUR_TOKEN",
         )
         client.connections.test_connection(
-            configuration={
-                "database": "example",
-                "hostname": "postgres.example.com",
-                "password": "password",
-                "port": 5432,
-                "username": "user",
-            },
-            type="postgresql",
+            configuration={"configuration": {"key": "value"}},
+            type="type",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -625,7 +613,7 @@ class ConnectionsClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> ConnectionResponseEnvelope:
+    def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> V2ConnectionResponseEnvelope:
         """
         Parameters
         ----------
@@ -636,7 +624,7 @@ class ConnectionsClient:
 
         Returns
         -------
-        ConnectionResponseEnvelope
+        V2ConnectionResponseEnvelope
             OK
 
         Examples
@@ -648,7 +636,7 @@ class ConnectionsClient:
             token="YOUR_TOKEN",
         )
         client.connections.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -659,9 +647,9 @@ class ConnectionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ConnectionResponseEnvelope,
+                    V2ConnectionResponseEnvelope,
                     parse_obj_as(
-                        type_=ConnectionResponseEnvelope,  # type: ignore
+                        type_=V2ConnectionResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -713,7 +701,7 @@ class ConnectionsClient:
         type: typing.Optional[str] = OMIT,
         validate: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> CreateConnectionResponseEnvelope:
+    ) -> V2CreateConnectionResponseEnvelope:
         """
         Parameters
         ----------
@@ -742,7 +730,7 @@ class ConnectionsClient:
 
         Returns
         -------
-        CreateConnectionResponseEnvelope
+        V2CreateConnectionResponseEnvelope
             OK
 
         Examples
@@ -754,15 +742,9 @@ class ConnectionsClient:
             token="YOUR_TOKEN",
         )
         client.connections.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            configuration={
-                "database": "example",
-                "hostname": "postgres.example.com",
-                "password": "********",
-                "port": 5432,
-                "username": "user",
-            },
-            name="My Postgres Connection",
+            id="id",
+            configuration={"configuration": {"key": "value"}},
+            name="name",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -787,9 +769,9 @@ class ConnectionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    CreateConnectionResponseEnvelope,
+                    V2CreateConnectionResponseEnvelope,
                     parse_obj_as(
-                        type_=CreateConnectionResponseEnvelope,  # type: ignore
+                        type_=V2CreateConnectionResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -884,8 +866,7 @@ class ConnectionsClient:
             token="YOUR_TOKEN",
         )
         client.connections.remove(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            force=True,
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -956,7 +937,7 @@ class ConnectionsClient:
 
     def get_parameter_values(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> ConnectionParameterValuesResponseEnvelope:
+    ) -> V2ConnectionParameterValuesResponseEnvelope:
         """
         Parameters
         ----------
@@ -967,7 +948,7 @@ class ConnectionsClient:
 
         Returns
         -------
-        ConnectionParameterValuesResponseEnvelope
+        V2ConnectionParameterValuesResponseEnvelope
             OK
 
         Examples
@@ -979,7 +960,7 @@ class ConnectionsClient:
             token="YOUR_TOKEN",
         )
         client.connections.get_parameter_values(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -990,9 +971,9 @@ class ConnectionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ConnectionParameterValuesResponseEnvelope,
+                    V2ConnectionParameterValuesResponseEnvelope,
                     parse_obj_as(
-                        type_=ConnectionParameterValuesResponseEnvelope,  # type: ignore
+                        type_=V2ConnectionParameterValuesResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1038,7 +1019,7 @@ class AsyncConnectionsClient:
 
     async def get_types(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> ConnectionTypeResponseEnvelope:
+    ) -> V2ConnectionTypeResponseEnvelope:
         """
         Parameters
         ----------
@@ -1047,7 +1028,7 @@ class AsyncConnectionsClient:
 
         Returns
         -------
-        ConnectionTypeResponseEnvelope
+        V2ConnectionTypeResponseEnvelope
             OK
 
         Examples
@@ -1076,9 +1057,9 @@ class AsyncConnectionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ConnectionTypeResponseEnvelope,
+                    V2ConnectionTypeResponseEnvelope,
                     parse_obj_as(
-                        type_=ConnectionTypeResponseEnvelope,  # type: ignore
+                        type_=V2ConnectionTypeResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1137,7 +1118,7 @@ class AsyncConnectionsClient:
 
         async def main() -> None:
             await client.connections.get_connection_type_schema(
-                id="postgresql",
+                id="id",
             )
 
 
@@ -1192,7 +1173,9 @@ class AsyncConnectionsClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ConnectionListResponseEnvelope:
+    async def list(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> V2ConnectionListResponseEnvelope:
         """
         Parameters
         ----------
@@ -1201,7 +1184,7 @@ class AsyncConnectionsClient:
 
         Returns
         -------
-        ConnectionListResponseEnvelope
+        V2ConnectionListResponseEnvelope
             OK
 
         Examples
@@ -1230,9 +1213,9 @@ class AsyncConnectionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ConnectionListResponseEnvelope,
+                    V2ConnectionListResponseEnvelope,
                     parse_obj_as(
-                        type_=ConnectionListResponseEnvelope,  # type: ignore
+                        type_=V2ConnectionListResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1273,7 +1256,7 @@ class AsyncConnectionsClient:
         redirect_url: typing.Optional[str] = OMIT,
         validate: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> CreateConnectionResponseEnvelope:
+    ) -> V2CreateConnectionResponseEnvelope:
         """
         Parameters
         ----------
@@ -1301,7 +1284,7 @@ class AsyncConnectionsClient:
 
         Returns
         -------
-        CreateConnectionResponseEnvelope
+        V2CreateConnectionResponseEnvelope
             OK
 
         Examples
@@ -1318,15 +1301,9 @@ class AsyncConnectionsClient:
 
         async def main() -> None:
             await client.connections.create(
-                configuration={
-                    "database": "example",
-                    "hostname": "postgres.example.com",
-                    "password": "********",
-                    "port": 5432,
-                    "username": "user",
-                },
-                name="My Postgres Connection",
-                type="postgresql",
+                configuration={"configuration": {"key": "value"}},
+                name="name",
+                type="type",
             )
 
 
@@ -1354,9 +1331,9 @@ class AsyncConnectionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    CreateConnectionResponseEnvelope,
+                    V2CreateConnectionResponseEnvelope,
                     parse_obj_as(
-                        type_=CreateConnectionResponseEnvelope,  # type: ignore
+                        type_=V2CreateConnectionResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1426,7 +1403,7 @@ class AsyncConnectionsClient:
         type: typing.Optional[str] = OMIT,
         whitelist: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ConnectCardResponseEnvelope:
+    ) -> V3ConnectCardResponseEnvelope:
         """
         Creates a new request for [Polytomic Connect](https://www.polytomic.com/connect).
 
@@ -1465,7 +1442,7 @@ class AsyncConnectionsClient:
 
         Returns
         -------
-        ConnectCardResponseEnvelope
+        V3ConnectCardResponseEnvelope
             OK
 
         Examples
@@ -1482,7 +1459,7 @@ class AsyncConnectionsClient:
 
         async def main() -> None:
             await client.connections.connect(
-                name="Salesforce Connection",
+                name="name",
                 redirect_url="redirect_url",
             )
 
@@ -1510,9 +1487,9 @@ class AsyncConnectionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ConnectCardResponseEnvelope,
+                    V3ConnectCardResponseEnvelope,
                     parse_obj_as(
-                        type_=ConnectCardResponseEnvelope,  # type: ignore
+                        type_=V3ConnectCardResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1604,14 +1581,8 @@ class AsyncConnectionsClient:
 
         async def main() -> None:
             await client.connections.test_connection(
-                configuration={
-                    "database": "example",
-                    "hostname": "postgres.example.com",
-                    "password": "password",
-                    "port": 5432,
-                    "username": "user",
-                },
-                type="postgresql",
+                configuration={"configuration": {"key": "value"}},
+                type="type",
             )
 
 
@@ -1681,7 +1652,7 @@ class AsyncConnectionsClient:
 
     async def get(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> ConnectionResponseEnvelope:
+    ) -> V2ConnectionResponseEnvelope:
         """
         Parameters
         ----------
@@ -1692,7 +1663,7 @@ class AsyncConnectionsClient:
 
         Returns
         -------
-        ConnectionResponseEnvelope
+        V2ConnectionResponseEnvelope
             OK
 
         Examples
@@ -1709,7 +1680,7 @@ class AsyncConnectionsClient:
 
         async def main() -> None:
             await client.connections.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -1723,9 +1694,9 @@ class AsyncConnectionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ConnectionResponseEnvelope,
+                    V2ConnectionResponseEnvelope,
                     parse_obj_as(
-                        type_=ConnectionResponseEnvelope,  # type: ignore
+                        type_=V2ConnectionResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1777,7 +1748,7 @@ class AsyncConnectionsClient:
         type: typing.Optional[str] = OMIT,
         validate: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> CreateConnectionResponseEnvelope:
+    ) -> V2CreateConnectionResponseEnvelope:
         """
         Parameters
         ----------
@@ -1806,7 +1777,7 @@ class AsyncConnectionsClient:
 
         Returns
         -------
-        CreateConnectionResponseEnvelope
+        V2CreateConnectionResponseEnvelope
             OK
 
         Examples
@@ -1823,15 +1794,9 @@ class AsyncConnectionsClient:
 
         async def main() -> None:
             await client.connections.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                configuration={
-                    "database": "example",
-                    "hostname": "postgres.example.com",
-                    "password": "********",
-                    "port": 5432,
-                    "username": "user",
-                },
-                name="My Postgres Connection",
+                id="id",
+                configuration={"configuration": {"key": "value"}},
+                name="name",
             )
 
 
@@ -1859,9 +1824,9 @@ class AsyncConnectionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    CreateConnectionResponseEnvelope,
+                    V2CreateConnectionResponseEnvelope,
                     parse_obj_as(
-                        type_=CreateConnectionResponseEnvelope,  # type: ignore
+                        type_=V2CreateConnectionResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1961,8 +1926,7 @@ class AsyncConnectionsClient:
 
         async def main() -> None:
             await client.connections.remove(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                force=True,
+                id="id",
             )
 
 
@@ -2036,7 +2000,7 @@ class AsyncConnectionsClient:
 
     async def get_parameter_values(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> ConnectionParameterValuesResponseEnvelope:
+    ) -> V2ConnectionParameterValuesResponseEnvelope:
         """
         Parameters
         ----------
@@ -2047,7 +2011,7 @@ class AsyncConnectionsClient:
 
         Returns
         -------
-        ConnectionParameterValuesResponseEnvelope
+        V2ConnectionParameterValuesResponseEnvelope
             OK
 
         Examples
@@ -2064,7 +2028,7 @@ class AsyncConnectionsClient:
 
         async def main() -> None:
             await client.connections.get_parameter_values(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2078,9 +2042,9 @@ class AsyncConnectionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    ConnectionParameterValuesResponseEnvelope,
+                    V2ConnectionParameterValuesResponseEnvelope,
                     parse_obj_as(
-                        type_=ConnectionParameterValuesResponseEnvelope,  # type: ignore
+                        type_=V2ConnectionParameterValuesResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

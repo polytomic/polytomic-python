@@ -3,7 +3,7 @@
 from ..core.client_wrapper import SyncClientWrapper
 import typing
 from ..core.request_options import RequestOptions
-from ..types.job_response_envelope import JobResponseEnvelope
+from ..types.v2job_response_envelope import V2JobResponseEnvelope
 from ..core.jsonable_encoder import jsonable_encoder
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.bad_request_error import BadRequestError
@@ -22,21 +22,21 @@ class JobsClient:
         self._client_wrapper = client_wrapper
 
     def get(
-        self, id: str, type: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> JobResponseEnvelope:
+        self, type: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> V2JobResponseEnvelope:
         """
         Parameters
         ----------
-        id : str
-
         type : str
+
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        JobResponseEnvelope
+        V2JobResponseEnvelope
             OK
 
         Examples
@@ -48,8 +48,8 @@ class JobsClient:
             token="YOUR_TOKEN",
         )
         client.jobs.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            type="createmodel",
+            type="type",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -60,9 +60,9 @@ class JobsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    JobResponseEnvelope,
+                    V2JobResponseEnvelope,
                     parse_obj_as(
-                        type_=JobResponseEnvelope,  # type: ignore
+                        type_=V2JobResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -117,21 +117,21 @@ class AsyncJobsClient:
         self._client_wrapper = client_wrapper
 
     async def get(
-        self, id: str, type: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> JobResponseEnvelope:
+        self, type: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> V2JobResponseEnvelope:
         """
         Parameters
         ----------
-        id : str
-
         type : str
+
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        JobResponseEnvelope
+        V2JobResponseEnvelope
             OK
 
         Examples
@@ -148,8 +148,8 @@ class AsyncJobsClient:
 
         async def main() -> None:
             await client.jobs.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                type="createmodel",
+                type="type",
+                id="id",
             )
 
 
@@ -163,9 +163,9 @@ class AsyncJobsClient:
         try:
             if 200 <= _response.status_code < 300:
                 return typing.cast(
-                    JobResponseEnvelope,
+                    V2JobResponseEnvelope,
                     parse_obj_as(
-                        type_=JobResponseEnvelope,  # type: ignore
+                        type_=V2JobResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
