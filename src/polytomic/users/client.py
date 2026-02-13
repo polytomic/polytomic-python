@@ -133,8 +133,8 @@ class UsersClient:
             token="YOUR_TOKEN",
         )
         client.users.create(
-            org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            email="mail@example.com",
+            org_id="org_id",
+            email="email",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -194,7 +194,7 @@ class UsersClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> UserEnvelope:
+    def get(self, org_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> UserEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -202,9 +202,9 @@ class UsersClient:
 
         Parameters
         ----------
-        id : str
-
         org_id : str
+
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -223,8 +223,8 @@ class UsersClient:
             token="YOUR_TOKEN",
         )
         client.users.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
             org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="18a0e5f1-3a72-4dc6-9226-12cc60ff8d8e",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -278,8 +278,8 @@ class UsersClient:
 
     def update(
         self,
-        id: str,
         org_id: str,
+        id: str,
         *,
         email: str,
         role: typing.Optional[str] = OMIT,
@@ -292,9 +292,9 @@ class UsersClient:
 
         Parameters
         ----------
-        id : str
-
         org_id : str
+
+        id : str
 
         email : str
 
@@ -317,9 +317,9 @@ class UsersClient:
             token="YOUR_TOKEN",
         )
         client.users.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            email="mail@example.com",
+            org_id="org_id",
+            id="id",
+            email="email",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -379,7 +379,7 @@ class UsersClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def remove(self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> UserEnvelope:
+    def remove(self, org_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> UserEnvelope:
         """
         > 🚧 Requires partner key
         >
@@ -387,9 +387,9 @@ class UsersClient:
 
         Parameters
         ----------
-        id : str
-
         org_id : str
+
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -408,8 +408,8 @@ class UsersClient:
             token="YOUR_TOKEN",
         )
         client.users.remove(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
             org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="18a0e5f1-3a72-4dc6-9226-12cc60ff8d8e",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -499,9 +499,8 @@ class UsersClient:
             token="YOUR_TOKEN",
         )
         client.users.create_api_key(
-            org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            force=True,
+            org_id="org_id",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -681,8 +680,8 @@ class AsyncUsersClient:
 
         async def main() -> None:
             await client.users.create(
-                org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                email="mail@example.com",
+                org_id="org_id",
+                email="email",
             )
 
 
@@ -746,7 +745,7 @@ class AsyncUsersClient:
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     async def get(
-        self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, org_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> UserEnvelope:
         """
         > 🚧 Requires partner key
@@ -755,9 +754,9 @@ class AsyncUsersClient:
 
         Parameters
         ----------
-        id : str
-
         org_id : str
+
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -781,8 +780,8 @@ class AsyncUsersClient:
 
         async def main() -> None:
             await client.users.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="18a0e5f1-3a72-4dc6-9226-12cc60ff8d8e",
             )
 
 
@@ -839,8 +838,8 @@ class AsyncUsersClient:
 
     async def update(
         self,
-        id: str,
         org_id: str,
+        id: str,
         *,
         email: str,
         role: typing.Optional[str] = OMIT,
@@ -853,9 +852,9 @@ class AsyncUsersClient:
 
         Parameters
         ----------
-        id : str
-
         org_id : str
+
+        id : str
 
         email : str
 
@@ -883,9 +882,9 @@ class AsyncUsersClient:
 
         async def main() -> None:
             await client.users.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                email="mail@example.com",
+                org_id="org_id",
+                id="id",
+                email="email",
             )
 
 
@@ -949,7 +948,7 @@ class AsyncUsersClient:
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     async def remove(
-        self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, org_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> UserEnvelope:
         """
         > 🚧 Requires partner key
@@ -958,9 +957,9 @@ class AsyncUsersClient:
 
         Parameters
         ----------
-        id : str
-
         org_id : str
+
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -984,8 +983,8 @@ class AsyncUsersClient:
 
         async def main() -> None:
             await client.users.remove(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="18a0e5f1-3a72-4dc6-9226-12cc60ff8d8e",
             )
 
 
@@ -1083,9 +1082,8 @@ class AsyncUsersClient:
 
         async def main() -> None:
             await client.users.create_api_key(
-                org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                force=True,
+                org_id="org_id",
+                id="id",
             )
 
 

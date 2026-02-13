@@ -116,13 +116,13 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.bulk_sync.create(
-    destination_configuration={"schema": "my_schema"},
-    destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    name="My Bulk Sync",
+    destination_configuration={"destination_configuration": {"key": "value"}},
+    destination_connection_id="destination_connection_id",
+    name="name",
     schedule=BulkSchedule(
         frequency="manual",
     ),
-    source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    source_connection_id="source_connection_id",
 )
 
 ```
@@ -324,7 +324,6 @@ client = Polytomic(
 )
 client.bulk_sync.get(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    refresh_schemas=True,
 )
 
 ```
@@ -405,14 +404,14 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.bulk_sync.update(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    destination_configuration={"schema": "my_schema"},
-    destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    name="My Bulk Sync",
+    id="id",
+    destination_configuration={"destination_configuration": {"key": "value"}},
+    destination_connection_id="destination_connection_id",
+    name="name",
     schedule=BulkSchedule(
         frequency="manual",
     ),
-    source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    source_connection_id="source_connection_id",
 )
 
 ```
@@ -622,7 +621,6 @@ client = Polytomic(
 )
 client.bulk_sync.remove(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    refresh_schemas=True,
 )
 
 ```
@@ -753,7 +751,7 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.bulk_sync.start(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    id="id",
 )
 
 ```
@@ -900,7 +898,6 @@ client = Polytomic(
 )
 client.bulk_sync.get_source(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    include_fields=True,
 )
 
 ```
@@ -1174,15 +1171,9 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.connections.create(
-    configuration={
-        "database": "example",
-        "hostname": "postgres.example.com",
-        "password": "********",
-        "port": 5432,
-        "username": "user",
-    },
-    name="My Postgres Connection",
-    type="postgresql",
+    configuration={"configuration": {"key": "value"}},
+    name="name",
+    type="type",
 )
 
 ```
@@ -1317,7 +1308,7 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.connections.connect(
-    name="Salesforce Connection",
+    name="name",
     redirect_url="redirect_url",
 )
 
@@ -1437,14 +1428,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.connections.test_connection(
-    configuration={
-        "database": "example",
-        "hostname": "postgres.example.com",
-        "password": "password",
-        "port": 5432,
-        "username": "user",
-    },
-    type="postgresql",
+    configuration={"configuration": {"key": "value"}},
+    type="type",
 )
 
 ```
@@ -1574,15 +1559,9 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.connections.update(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    configuration={
-        "database": "example",
-        "hostname": "postgres.example.com",
-        "password": "********",
-        "port": 5432,
-        "username": "user",
-    },
-    name="My Postgres Connection",
+    id="id",
+    configuration={"configuration": {"key": "value"}},
+    name="name",
 )
 
 ```
@@ -1704,7 +1683,6 @@ client = Polytomic(
 )
 client.connections.remove(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    force=True,
 )
 
 ```
@@ -1959,8 +1937,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.schemas.upsert_field(
-    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    schema_id="public.users",
+    connection_id="connection_id",
+    schema_id="schema_id",
 )
 
 ```
@@ -2035,7 +2013,7 @@ client = Polytomic(
 client.schemas.delete_field(
     connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     schema_id="public.users",
-    field_id="first_name",
+    field_id="email",
 )
 
 ```
@@ -2108,8 +2086,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.schemas.set_primary_keys(
-    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    schema_id="public.users",
+    connection_id="connection_id",
+    schema_id="schema_id",
 )
 
 ```
@@ -2196,8 +2174,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.schemas.reset_primary_keys(
-    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    schema_id="public.users",
+    connection_id="connection_id",
+    schema_id="schema_id",
 )
 
 ```
@@ -2262,7 +2240,7 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.schemas.refresh(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    id="id",
 )
 
 ```
@@ -2548,7 +2526,7 @@ client.models.get_enrichment_source(
 <dl>
 <dd>
 
-**params:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]` 
+**params:** `typing.Optional[typing.Dict[str, typing.Sequence[str]]]` 
     
 </dd>
 </dl>
@@ -2602,7 +2580,7 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.models.post(
-    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    connection_id="connection_id",
 )
 
 ```
@@ -2667,9 +2645,9 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.models.preview(
-    configuration={"table": "public.users"},
-    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    name="Users",
+    configuration={"configuration": {"key": "value"}},
+    connection_id="connection_id",
+    name="name",
 )
 
 ```
@@ -2869,9 +2847,9 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.models.create(
-    configuration={"table": "public.users"},
-    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    name="Users",
+    configuration={"configuration": {"key": "value"}},
+    connection_id="connection_id",
+    name="name",
 )
 
 ```
@@ -3089,11 +3067,10 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.models.update(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    async_=False,
-    configuration={"table": "public.users"},
-    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    name="Users",
+    id="id",
+    configuration={"configuration": {"key": "value"}},
+    connection_id="connection_id",
+    name="name",
 )
 
 ```
@@ -3432,7 +3409,7 @@ client.model_sync.get_source(
 <dl>
 <dd>
 
-**params:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]` 
+**params:** `typing.Optional[typing.Dict[str, typing.Sequence[str]]]` 
     
 </dd>
 </dl>
@@ -3497,7 +3474,7 @@ client.model_sync.get_source_fields(
 <dl>
 <dd>
 
-**params:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]` 
+**params:** `typing.Optional[typing.Dict[str, typing.Sequence[str]]]` 
     
 </dd>
 </dl>
@@ -3538,7 +3515,6 @@ client = Polytomic(
 )
 client.model_sync.list(
     active=True,
-    target_connection_id="0b155265-c537-44c9-9359-a3ceb468a4da",
 )
 
 ```
@@ -3682,14 +3658,17 @@ client = Polytomic(
 client.model_sync.create(
     fields=[
         ModelSyncField(
-            target="name",
-        )
+            target="target",
+        ),
+        ModelSyncField(
+            target="target",
+        ),
     ],
     mode="create",
-    name="Users Sync",
+    name="name",
     schedule=Schedule(),
     target=Target(
-        connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        connection_id="connection_id",
     ),
 )
 
@@ -3979,17 +3958,20 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.model_sync.update(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    id="id",
     fields=[
         ModelSyncField(
-            target="name",
-        )
+            target="target",
+        ),
+        ModelSyncField(
+            target="target",
+        ),
     ],
     mode="create",
-    name="Users Sync",
+    name="name",
     schedule=Schedule(),
     target=Target(
-        connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        connection_id="connection_id",
     ),
 )
 
@@ -4520,12 +4502,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.events.list(
-    organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     starting_after=datetime.datetime.fromisoformat(
-        "2020-01-01 00:00:00+00:00",
-    ),
-    ending_before=datetime.datetime.fromisoformat(
-        "2020-01-01 00:00:00+00:00",
+        "2023-01-01 00:00:00+00:00",
     ),
 )
 
@@ -4663,8 +4641,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.jobs.get(
+    type="sync",
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    type="createmodel",
 )
 
 ```
@@ -4681,7 +4659,7 @@ client.jobs.get(
 <dl>
 <dd>
 
-**id:** `str` 
+**type:** `str` 
     
 </dd>
 </dl>
@@ -4689,7 +4667,7 @@ client.jobs.get(
 <dl>
 <dd>
 
-**type:** `str` 
+**id:** `str` 
     
 </dd>
 </dl>
@@ -4974,7 +4952,7 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.organization.create(
-    name="My Organization",
+    name="name",
 )
 
 ```
@@ -5160,8 +5138,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.organization.update(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    name="My Organization",
+    id="id",
+    name="name",
 )
 
 ```
@@ -5429,8 +5407,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.users.create(
-    org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    email="mail@example.com",
+    org_id="org_id",
+    email="email",
 )
 
 ```
@@ -5519,8 +5497,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.users.get(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
     org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    id="18a0e5f1-3a72-4dc6-9226-12cc60ff8d8e",
 )
 
 ```
@@ -5537,7 +5515,7 @@ client.users.get(
 <dl>
 <dd>
 
-**id:** `str` 
+**org_id:** `str` 
     
 </dd>
 </dl>
@@ -5545,7 +5523,7 @@ client.users.get(
 <dl>
 <dd>
 
-**org_id:** `str` 
+**id:** `str` 
     
 </dd>
 </dl>
@@ -5601,9 +5579,9 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.users.update(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    email="mail@example.com",
+    org_id="org_id",
+    id="id",
+    email="email",
 )
 
 ```
@@ -5620,7 +5598,7 @@ client.users.update(
 <dl>
 <dd>
 
-**id:** `str` 
+**org_id:** `str` 
     
 </dd>
 </dl>
@@ -5628,7 +5606,7 @@ client.users.update(
 <dl>
 <dd>
 
-**org_id:** `str` 
+**id:** `str` 
     
 </dd>
 </dl>
@@ -5700,8 +5678,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.users.remove(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
     org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    id="18a0e5f1-3a72-4dc6-9226-12cc60ff8d8e",
 )
 
 ```
@@ -5718,7 +5696,7 @@ client.users.remove(
 <dl>
 <dd>
 
-**id:** `str` 
+**org_id:** `str` 
     
 </dd>
 </dl>
@@ -5726,7 +5704,7 @@ client.users.remove(
 <dl>
 <dd>
 
-**org_id:** `str` 
+**id:** `str` 
     
 </dd>
 </dl>
@@ -5782,9 +5760,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.users.create_api_key(
-    org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    force=True,
+    org_id="org_id",
+    id="id",
 )
 
 ```
@@ -5941,8 +5918,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.webhooks.create(
-    endpoint="https://example.com/webhook",
-    secret="secret",
+    endpoint="endpoint",
+    secret="banana",
 )
 
 ```
@@ -6108,9 +6085,9 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.webhooks.update(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    endpoint="https://example.com/webhook",
-    secret="secret",
+    id="id",
+    endpoint="endpoint",
+    secret="banana",
 )
 
 ```
@@ -6364,7 +6341,6 @@ client = Polytomic(
 )
 client.bulk_sync.executions.list_status(
     all_=True,
-    active=True,
 )
 
 ```
@@ -6438,10 +6414,6 @@ client = Polytomic(
 )
 client.bulk_sync.executions.list(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    page_token="AmkYh8v0jR5B3kls2Qcc9y8MjrPmvR4CvaK7H0F4rEwqvg76K==",
-    only_terminal=True,
-    ascending=True,
-    limit=100,
 )
 
 ```
@@ -6531,7 +6503,7 @@ client = Polytomic(
 )
 client.bulk_sync.executions.get(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    exec_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    exec_id="18a0e5f1-3a72-4dc6-9226-12cc60ff8d8e",
 )
 
 ```
@@ -6597,7 +6569,7 @@ client = Polytomic(
 )
 client.bulk_sync.executions.get_logs(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    execution_id="18a0e5f1-3a72-4dc6-9226-12cc60ff8d8e",
 )
 
 ```
@@ -6662,8 +6634,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.bulk_sync.executions.export_logs(
-    sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    sync_id="sync_id",
+    execution_id="execution_id",
 )
 
 ```
@@ -6762,7 +6734,7 @@ client.bulk_sync.schemas.list(
 <dl>
 <dd>
 
-**filters:** `typing.Optional[typing.Dict[str, typing.Optional[str]]]` 
+**filters:** `typing.Optional[typing.Dict[str, str]]` 
     
 </dd>
 </dl>
@@ -6802,7 +6774,7 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.bulk_sync.schemas.patch(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    id="id",
 )
 
 ```
@@ -6868,7 +6840,7 @@ client = Polytomic(
 )
 client.bulk_sync.schemas.get(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    schema_id="Contact",
+    schema_id="public.users",
 )
 
 ```
@@ -6933,8 +6905,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.bulk_sync.schemas.update(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    schema_id="contact",
+    id="id",
+    schema_id="schema_id",
 )
 
 ```
@@ -6999,7 +6971,7 @@ client.bulk_sync.schemas.update(
 <dl>
 <dd>
 
-**filters:** `typing.Optional[typing.Sequence[BulkFilter]]` 
+**filters:** `typing.Optional[typing.Sequence[BulkFilter2]]` 
     
 </dd>
 </dl>
@@ -7121,7 +7093,7 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.bulk_sync.schedules.create(
-    sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    sync_id="sync_id",
     schedule=V4BulkSyncScheduleApi(
         frequency="manual",
     ),
@@ -7190,7 +7162,7 @@ client = Polytomic(
 )
 client.bulk_sync.schedules.get(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    schedule_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    schedule_id="18a0e5f1-3a72-4dc6-9226-12cc60ff8d8e",
 )
 
 ```
@@ -7255,8 +7227,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.bulk_sync.schedules.update(
-    sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    schedule_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    sync_id="sync_id",
+    schedule_id="schedule_id",
     schedule=V4BulkSyncScheduleApi(
         frequency="manual",
     ),
@@ -7333,7 +7305,7 @@ client = Polytomic(
 )
 client.bulk_sync.schedules.delete(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    schedule_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    schedule_id="18a0e5f1-3a72-4dc6-9226-12cc60ff8d8e",
 )
 
 ```
@@ -7473,8 +7445,7 @@ client = Polytomic(
 )
 client.model_sync.targets.get_target_fields(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    target="database.table",
-    refresh=False,
+    target="Contact",
 )
 
 ```
@@ -7678,7 +7649,7 @@ client = Polytomic(
 )
 client.model_sync.targets.get_create_property(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    property="property",
+    property="email",
 )
 
 ```
@@ -7745,9 +7716,6 @@ client = Polytomic(
 )
 client.model_sync.executions.list(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    page_token="AmkYh8v0jR5B3kls2Qcc9y8MjrPmvR4CvaK7H0F4rEwqvg76K==",
-    only_completed=True,
-    ascending=True,
 )
 
 ```
@@ -7829,7 +7797,7 @@ client = Polytomic(
 )
 client.model_sync.executions.get(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    id="18a0e5f1-3a72-4dc6-9226-12cc60ff8d8e",
 )
 
 ```
@@ -7894,8 +7862,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.model_sync.executions.update(
-    sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    sync_id="sync_id",
+    id="id",
     status="created",
 )
 
@@ -7970,7 +7938,7 @@ client = Polytomic(
 )
 client.model_sync.executions.get_log_urls(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    id="18a0e5f1-3a72-4dc6-9226-12cc60ff8d8e",
     type="records",
 )
 
@@ -8044,10 +8012,10 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.model_sync.executions.get_logs(
-    sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    id="0ecd09c1-b901-4d27-9053-f0367c427254",
+    sync_id="sync_id",
+    id="id",
     type="records",
-    filename="path/to/file.json",
+    filename="filename",
 )
 
 ```
@@ -8176,7 +8144,7 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.permissions.policies.create(
-    name="Custom",
+    name="name",
 )
 
 ```
@@ -8306,8 +8274,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.permissions.policies.update(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    name="Custom",
+    id="id",
+    name="name",
 )
 
 ```
@@ -8493,7 +8461,7 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.permissions.roles.create(
-    name="Custom",
+    name="name",
 )
 
 ```
@@ -8615,8 +8583,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.permissions.roles.update(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    name="Custom",
+    id="id",
+    name="name",
 )
 
 ```

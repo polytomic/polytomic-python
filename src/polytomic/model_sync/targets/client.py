@@ -170,8 +170,7 @@ class TargetsClient:
         )
         client.model_sync.targets.get_target_fields(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            target="database.table",
-            refresh=False,
+            target="Contact",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -411,7 +410,7 @@ class TargetsClient:
         )
         client.model_sync.targets.get_create_property(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            property="property",
+            property="email",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -646,8 +645,7 @@ class AsyncTargetsClient:
         async def main() -> None:
             await client.model_sync.targets.get_target_fields(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                target="database.table",
-                refresh=False,
+                target="Contact",
             )
 
 
@@ -903,7 +901,7 @@ class AsyncTargetsClient:
         async def main() -> None:
             await client.model_sync.targets.get_create_property(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                property="property",
+                property="email",
             )
 
 

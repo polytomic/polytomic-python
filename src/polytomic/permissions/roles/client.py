@@ -118,7 +118,7 @@ class RolesClient:
             token="YOUR_TOKEN",
         )
         client.permissions.roles.create(
-            name="Custom",
+            name="name",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -297,8 +297,8 @@ class RolesClient:
             token="YOUR_TOKEN",
         )
         client.permissions.roles.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            name="Custom",
+            id="id",
+            name="name",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -566,7 +566,7 @@ class AsyncRolesClient:
 
         async def main() -> None:
             await client.permissions.roles.create(
-                name="Custom",
+                name="name",
             )
 
 
@@ -761,8 +761,8 @@ class AsyncRolesClient:
 
         async def main() -> None:
             await client.permissions.roles.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                name="Custom",
+                id="id",
+                name="name",
             )
 
 

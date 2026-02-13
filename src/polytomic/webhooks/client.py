@@ -132,8 +132,8 @@ class WebhooksClient:
             token="YOUR_TOKEN",
         )
         client.webhooks.create(
-            endpoint="https://example.com/webhook",
-            secret="secret",
+            endpoint="endpoint",
+            secret="banana",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -308,9 +308,9 @@ class WebhooksClient:
             token="YOUR_TOKEN",
         )
         client.webhooks.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            endpoint="https://example.com/webhook",
-            secret="secret",
+            id="id",
+            endpoint="endpoint",
+            secret="banana",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -714,8 +714,8 @@ class AsyncWebhooksClient:
 
         async def main() -> None:
             await client.webhooks.create(
-                endpoint="https://example.com/webhook",
-                secret="secret",
+                endpoint="endpoint",
+                secret="banana",
             )
 
 
@@ -906,9 +906,9 @@ class AsyncWebhooksClient:
 
         async def main() -> None:
             await client.webhooks.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                endpoint="https://example.com/webhook",
-                secret="secret",
+                id="id",
+                endpoint="endpoint",
+                secret="banana",
             )
 
 

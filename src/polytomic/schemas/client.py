@@ -63,8 +63,8 @@ class SchemasClient:
             token="YOUR_TOKEN",
         )
         client.schemas.upsert_field(
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schema_id="public.users",
+            connection_id="connection_id",
+            schema_id="schema_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -164,7 +164,7 @@ class SchemasClient:
         client.schemas.delete_field(
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             schema_id="public.users",
-            field_id="first_name",
+            field_id="email",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -253,8 +253,8 @@ class SchemasClient:
             token="YOUR_TOKEN",
         )
         client.schemas.set_primary_keys(
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schema_id="public.users",
+            connection_id="connection_id",
+            schema_id="schema_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -347,8 +347,8 @@ class SchemasClient:
             token="YOUR_TOKEN",
         )
         client.schemas.reset_primary_keys(
-            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            schema_id="public.users",
+            connection_id="connection_id",
+            schema_id="schema_id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -426,7 +426,7 @@ class SchemasClient:
             token="YOUR_TOKEN",
         )
         client.schemas.refresh(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -804,8 +804,8 @@ class AsyncSchemasClient:
 
         async def main() -> None:
             await client.schemas.upsert_field(
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                schema_id="public.users",
+                connection_id="connection_id",
+                schema_id="schema_id",
             )
 
 
@@ -913,7 +913,7 @@ class AsyncSchemasClient:
             await client.schemas.delete_field(
                 connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 schema_id="public.users",
-                field_id="first_name",
+                field_id="email",
             )
 
 
@@ -1010,8 +1010,8 @@ class AsyncSchemasClient:
 
         async def main() -> None:
             await client.schemas.set_primary_keys(
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                schema_id="public.users",
+                connection_id="connection_id",
+                schema_id="schema_id",
             )
 
 
@@ -1112,8 +1112,8 @@ class AsyncSchemasClient:
 
         async def main() -> None:
             await client.schemas.reset_primary_keys(
-                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                schema_id="public.users",
+                connection_id="connection_id",
+                schema_id="schema_id",
             )
 
 
@@ -1199,7 +1199,7 @@ class AsyncSchemasClient:
 
         async def main() -> None:
             await client.schemas.refresh(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
