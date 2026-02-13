@@ -3,14 +3,14 @@
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 from .bulk_sync_execution import BulkSyncExecution
-from .pagination_details import PaginationDetails
+from .pagination_details2 import PaginationDetails2
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
 class ListBulkSyncExecutionsEnvelope(UniversalBaseModel):
     data: typing.Optional[typing.List[BulkSyncExecution]] = None
-    pagination: typing.Optional[PaginationDetails] = None
+    pagination: typing.Optional[PaginationDetails2] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

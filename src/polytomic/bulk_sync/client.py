@@ -19,7 +19,7 @@ from ..types.bulk_discover import BulkDiscover
 import datetime as dt
 from ..types.bulk_sync_mode import BulkSyncMode
 from ..types.bulk_normalize_names import BulkNormalizeNames
-from .types.v_2_create_bulk_sync_request_schemas_item import V2CreateBulkSyncRequestSchemasItem
+from .types.v2create_bulk_sync_request_schemas_item import V2CreateBulkSyncRequestSchemasItem
 from ..types.bulk_sync_response_envelope import BulkSyncResponseEnvelope
 from ..core.serialization import convert_and_respect_annotation_metadata
 from ..errors.bad_request_error import BadRequestError
@@ -27,7 +27,7 @@ from ..errors.forbidden_error import ForbiddenError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..core.jsonable_encoder import jsonable_encoder
 from ..errors.not_found_error import NotFoundError
-from .types.v_2_update_bulk_sync_request_schemas_item import V2UpdateBulkSyncRequestSchemasItem
+from .types.v2update_bulk_sync_request_schemas_item import V2UpdateBulkSyncRequestSchemasItem
 from ..types.activate_sync_envelope import ActivateSyncEnvelope
 from ..types.bulk_fetch_mode import BulkFetchMode
 from ..types.bulk_sync_execution_envelope import BulkSyncExecutionEnvelope
@@ -75,9 +75,7 @@ class BulkSyncClient:
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        client.bulk_sync.list(
-            active=True,
-        )
+        client.bulk_sync.list()
         """
         _response = self._client_wrapper.httpx_client.request(
             "api/bulk/syncs",
@@ -234,13 +232,16 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.create(
-            destination_configuration={"schema": "my_schema"},
-            destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="My Bulk Sync",
-            schedule=BulkSchedule(
-                frequency="manual",
-            ),
             source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            destination_configuration={"schema": "my_schema"},
+            mode="replicate",
+            schedule=BulkSchedule(
+                frequency="daily",
+                hour="0",
+                minute="0",
+            ),
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -373,7 +374,6 @@ class BulkSyncClient:
         )
         client.bulk_sync.get(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            refresh_schemas=True,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -512,13 +512,16 @@ class BulkSyncClient:
         )
         client.bulk_sync.update(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            destination_configuration={"schema": "my_schema"},
-            destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="My Bulk Sync",
-            schedule=BulkSchedule(
-                frequency="manual",
-            ),
             source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            destination_configuration={"schema": "my_schema"},
+            mode="replicate",
+            schedule=BulkSchedule(
+                frequency="daily",
+                hour="0",
+                minute="0",
+            ),
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -649,8 +652,7 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.remove(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            refresh_schemas=True,
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -736,7 +738,7 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.activate(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
             active=True,
         )
         """
@@ -843,7 +845,7 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.start(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -928,7 +930,7 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.get_status(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1011,8 +1013,7 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.get_source(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            include_fields=True,
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1102,7 +1103,7 @@ class BulkSyncClient:
             token="YOUR_TOKEN",
         )
         client.bulk_sync.get_destination(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1201,9 +1202,7 @@ class AsyncBulkSyncClient:
 
 
         async def main() -> None:
-            await client.bulk_sync.list(
-                active=True,
-            )
+            await client.bulk_sync.list()
 
 
         asyncio.run(main())
@@ -1368,13 +1367,16 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.create(
-                destination_configuration={"schema": "my_schema"},
-                destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 name="My Bulk Sync",
-                schedule=BulkSchedule(
-                    frequency="manual",
-                ),
                 source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                destination_configuration={"schema": "my_schema"},
+                mode="replicate",
+                schedule=BulkSchedule(
+                    frequency="daily",
+                    hour="0",
+                    minute="0",
+                ),
             )
 
 
@@ -1515,7 +1517,6 @@ class AsyncBulkSyncClient:
         async def main() -> None:
             await client.bulk_sync.get(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                refresh_schemas=True,
             )
 
 
@@ -1662,13 +1663,16 @@ class AsyncBulkSyncClient:
         async def main() -> None:
             await client.bulk_sync.update(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                destination_configuration={"schema": "my_schema"},
-                destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 name="My Bulk Sync",
-                schedule=BulkSchedule(
-                    frequency="manual",
-                ),
                 source_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                destination_configuration={"schema": "my_schema"},
+                mode="replicate",
+                schedule=BulkSchedule(
+                    frequency="daily",
+                    hour="0",
+                    minute="0",
+                ),
             )
 
 
@@ -1807,8 +1811,7 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.remove(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                refresh_schemas=True,
+                id="id",
             )
 
 
@@ -1902,7 +1905,7 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.activate(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
                 active=True,
             )
 
@@ -2017,7 +2020,7 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.start(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2112,7 +2115,7 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.get_status(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -2203,8 +2206,7 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.get_source(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                include_fields=True,
+                id="id",
             )
 
 
@@ -2302,7 +2304,7 @@ class AsyncBulkSyncClient:
 
         async def main() -> None:
             await client.bulk_sync.get_destination(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 

@@ -283,15 +283,9 @@ class ConnectionsClient:
             token="YOUR_TOKEN",
         )
         client.connections.create(
-            configuration={
-                "database": "example",
-                "hostname": "postgres.example.com",
-                "password": "********",
-                "port": 5432,
-                "username": "user",
-            },
-            name="My Postgres Connection",
-            type="postgresql",
+            configuration={"configuration": {"key": "value"}},
+            name="name",
+            type="type",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -439,7 +433,7 @@ class ConnectionsClient:
             token="YOUR_TOKEN",
         )
         client.connections.connect(
-            name="Salesforce Connection",
+            name="name",
             redirect_url="redirect_url",
         )
         """
@@ -553,14 +547,8 @@ class ConnectionsClient:
             token="YOUR_TOKEN",
         )
         client.connections.test_connection(
-            configuration={
-                "database": "example",
-                "hostname": "postgres.example.com",
-                "password": "password",
-                "port": 5432,
-                "username": "user",
-            },
-            type="postgresql",
+            configuration={"configuration": {"key": "value"}},
+            type="type",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -648,7 +636,7 @@ class ConnectionsClient:
             token="YOUR_TOKEN",
         )
         client.connections.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -754,15 +742,9 @@ class ConnectionsClient:
             token="YOUR_TOKEN",
         )
         client.connections.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            configuration={
-                "database": "example",
-                "hostname": "postgres.example.com",
-                "password": "********",
-                "port": 5432,
-                "username": "user",
-            },
-            name="My Postgres Connection",
+            id="id",
+            configuration={"configuration": {"key": "value"}},
+            name="name",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -884,8 +866,7 @@ class ConnectionsClient:
             token="YOUR_TOKEN",
         )
         client.connections.remove(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            force=True,
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -979,7 +960,7 @@ class ConnectionsClient:
             token="YOUR_TOKEN",
         )
         client.connections.get_parameter_values(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="id",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1318,15 +1299,9 @@ class AsyncConnectionsClient:
 
         async def main() -> None:
             await client.connections.create(
-                configuration={
-                    "database": "example",
-                    "hostname": "postgres.example.com",
-                    "password": "********",
-                    "port": 5432,
-                    "username": "user",
-                },
-                name="My Postgres Connection",
-                type="postgresql",
+                configuration={"configuration": {"key": "value"}},
+                name="name",
+                type="type",
             )
 
 
@@ -1482,7 +1457,7 @@ class AsyncConnectionsClient:
 
         async def main() -> None:
             await client.connections.connect(
-                name="Salesforce Connection",
+                name="name",
                 redirect_url="redirect_url",
             )
 
@@ -1604,14 +1579,8 @@ class AsyncConnectionsClient:
 
         async def main() -> None:
             await client.connections.test_connection(
-                configuration={
-                    "database": "example",
-                    "hostname": "postgres.example.com",
-                    "password": "password",
-                    "port": 5432,
-                    "username": "user",
-                },
-                type="postgresql",
+                configuration={"configuration": {"key": "value"}},
+                type="type",
             )
 
 
@@ -1709,7 +1678,7 @@ class AsyncConnectionsClient:
 
         async def main() -> None:
             await client.connections.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 
@@ -1823,15 +1792,9 @@ class AsyncConnectionsClient:
 
         async def main() -> None:
             await client.connections.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                configuration={
-                    "database": "example",
-                    "hostname": "postgres.example.com",
-                    "password": "********",
-                    "port": 5432,
-                    "username": "user",
-                },
-                name="My Postgres Connection",
+                id="id",
+                configuration={"configuration": {"key": "value"}},
+                name="name",
             )
 
 
@@ -1961,8 +1924,7 @@ class AsyncConnectionsClient:
 
         async def main() -> None:
             await client.connections.remove(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                force=True,
+                id="id",
             )
 
 
@@ -2064,7 +2026,7 @@ class AsyncConnectionsClient:
 
         async def main() -> None:
             await client.connections.get_parameter_values(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="id",
             )
 
 

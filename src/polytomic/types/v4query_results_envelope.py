@@ -2,15 +2,15 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .v_4_export_sync_logs_response import V4ExportSyncLogsResponse
-from .job_response import JobResponse
+from .v4run_query_result import V4RunQueryResult
+from .pagination import Pagination
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class V4ExportSyncLogsEnvelope(UniversalBaseModel):
-    data: typing.Optional[V4ExportSyncLogsResponse] = None
-    job: typing.Optional[JobResponse] = None
+class V4QueryResultsEnvelope(UniversalBaseModel):
+    data: typing.Optional[V4RunQueryResult] = None
+    links: typing.Optional[Pagination] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

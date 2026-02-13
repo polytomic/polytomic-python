@@ -4,7 +4,7 @@ from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 import datetime as dt
 from .bulk_field import BulkField
-from .bulk_filter import BulkFilter
+from .bulk_filter2 import BulkFilter2
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
@@ -14,7 +14,7 @@ class BulkSchema(UniversalBaseModel):
     disable_data_cutoff: typing.Optional[bool] = None
     enabled: typing.Optional[bool] = None
     fields: typing.Optional[typing.List[BulkField]] = None
-    filters: typing.Optional[typing.List[BulkFilter]] = None
+    filters: typing.Optional[typing.List[BulkFilter2]] = None
     id: typing.Optional[str] = None
     output_name: typing.Optional[str] = None
     partition_key: typing.Optional[str] = None
