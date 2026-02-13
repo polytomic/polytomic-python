@@ -2548,7 +2548,7 @@ client.models.get_enrichment_source(
 <dl>
 <dd>
 
-**params:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]` 
+**params:** `typing.Optional[typing.Dict[str, typing.Sequence[str]]]` 
     
 </dd>
 </dl>
@@ -3432,7 +3432,7 @@ client.model_sync.get_source(
 <dl>
 <dd>
 
-**params:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]` 
+**params:** `typing.Optional[typing.Dict[str, typing.Sequence[str]]]` 
     
 </dd>
 </dl>
@@ -3497,7 +3497,7 @@ client.model_sync.get_source_fields(
 <dl>
 <dd>
 
-**params:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]` 
+**params:** `typing.Optional[typing.Dict[str, typing.Sequence[str]]]` 
     
 </dd>
 </dl>
@@ -4663,8 +4663,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.jobs.get(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
     type="createmodel",
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
 
 ```
@@ -4681,7 +4681,7 @@ client.jobs.get(
 <dl>
 <dd>
 
-**id:** `str` 
+**type:** `str` 
     
 </dd>
 </dl>
@@ -4689,7 +4689,7 @@ client.jobs.get(
 <dl>
 <dd>
 
-**type:** `str` 
+**id:** `str` 
     
 </dd>
 </dl>
@@ -5519,8 +5519,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.users.get(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
     org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
 
 ```
@@ -5537,7 +5537,7 @@ client.users.get(
 <dl>
 <dd>
 
-**id:** `str` 
+**org_id:** `str` 
     
 </dd>
 </dl>
@@ -5545,7 +5545,7 @@ client.users.get(
 <dl>
 <dd>
 
-**org_id:** `str` 
+**id:** `str` 
     
 </dd>
 </dl>
@@ -5601,8 +5601,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.users.update(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
     org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
     email="mail@example.com",
 )
 
@@ -5620,7 +5620,7 @@ client.users.update(
 <dl>
 <dd>
 
-**id:** `str` 
+**org_id:** `str` 
     
 </dd>
 </dl>
@@ -5628,7 +5628,7 @@ client.users.update(
 <dl>
 <dd>
 
-**org_id:** `str` 
+**id:** `str` 
     
 </dd>
 </dl>
@@ -5700,8 +5700,8 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.users.remove(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
     org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
 
 ```
@@ -5718,7 +5718,7 @@ client.users.remove(
 <dl>
 <dd>
 
-**id:** `str` 
+**org_id:** `str` 
     
 </dd>
 </dl>
@@ -5726,7 +5726,7 @@ client.users.remove(
 <dl>
 <dd>
 
-**org_id:** `str` 
+**id:** `str` 
     
 </dd>
 </dl>
@@ -6762,7 +6762,7 @@ client.bulk_sync.schemas.list(
 <dl>
 <dd>
 
-**filters:** `typing.Optional[typing.Dict[str, typing.Optional[str]]]` 
+**filters:** `typing.Optional[typing.Dict[str, str]]` 
     
 </dd>
 </dl>
@@ -6999,7 +6999,7 @@ client.bulk_sync.schemas.update(
 <dl>
 <dd>
 
-**filters:** `typing.Optional[typing.Sequence[BulkFilter]]` 
+**filters:** `typing.Optional[typing.Sequence[BulkFilter2]]` 
     
 </dd>
 </dl>
