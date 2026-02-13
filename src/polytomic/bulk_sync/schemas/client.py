@@ -20,7 +20,7 @@ from ...errors.internal_server_error import InternalServerError
 from ...types.bulk_schema_envelope import BulkSchemaEnvelope
 import datetime as dt
 from ...types.update_bulk_field import UpdateBulkField
-from ...types.bulk_filter import BulkFilter
+from ...types.bulk_filter_2 import BulkFilter2
 from ...core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -35,7 +35,7 @@ class SchemasClient:
         self,
         id: str,
         *,
-        filters: typing.Optional[typing.Dict[str, typing.Optional[str]]] = None,
+        filters: typing.Optional[typing.Dict[str, str]] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListBulkSchema:
         """
@@ -43,7 +43,7 @@ class SchemasClient:
         ----------
         id : str
 
-        filters : typing.Optional[typing.Dict[str, typing.Optional[str]]]
+        filters : typing.Optional[typing.Dict[str, str]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -298,7 +298,7 @@ class SchemasClient:
         disable_data_cutoff: typing.Optional[bool] = OMIT,
         enabled: typing.Optional[bool] = OMIT,
         fields: typing.Optional[typing.Sequence[UpdateBulkField]] = OMIT,
-        filters: typing.Optional[typing.Sequence[BulkFilter]] = OMIT,
+        filters: typing.Optional[typing.Sequence[BulkFilter2]] = OMIT,
         partition_key: typing.Optional[str] = OMIT,
         tracking_field: typing.Optional[str] = OMIT,
         user_output_name: typing.Optional[str] = OMIT,
@@ -319,7 +319,7 @@ class SchemasClient:
 
         fields : typing.Optional[typing.Sequence[UpdateBulkField]]
 
-        filters : typing.Optional[typing.Sequence[BulkFilter]]
+        filters : typing.Optional[typing.Sequence[BulkFilter2]]
 
         partition_key : typing.Optional[str]
 
@@ -359,7 +359,7 @@ class SchemasClient:
                     object_=fields, annotation=typing.Sequence[UpdateBulkField], direction="write"
                 ),
                 "filters": convert_and_respect_annotation_metadata(
-                    object_=filters, annotation=typing.Sequence[BulkFilter], direction="write"
+                    object_=filters, annotation=typing.Sequence[BulkFilter2], direction="write"
                 ),
                 "partition_key": partition_key,
                 "tracking_field": tracking_field,
@@ -434,7 +434,7 @@ class AsyncSchemasClient:
         self,
         id: str,
         *,
-        filters: typing.Optional[typing.Dict[str, typing.Optional[str]]] = None,
+        filters: typing.Optional[typing.Dict[str, str]] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListBulkSchema:
         """
@@ -442,7 +442,7 @@ class AsyncSchemasClient:
         ----------
         id : str
 
-        filters : typing.Optional[typing.Dict[str, typing.Optional[str]]]
+        filters : typing.Optional[typing.Dict[str, str]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -721,7 +721,7 @@ class AsyncSchemasClient:
         disable_data_cutoff: typing.Optional[bool] = OMIT,
         enabled: typing.Optional[bool] = OMIT,
         fields: typing.Optional[typing.Sequence[UpdateBulkField]] = OMIT,
-        filters: typing.Optional[typing.Sequence[BulkFilter]] = OMIT,
+        filters: typing.Optional[typing.Sequence[BulkFilter2]] = OMIT,
         partition_key: typing.Optional[str] = OMIT,
         tracking_field: typing.Optional[str] = OMIT,
         user_output_name: typing.Optional[str] = OMIT,
@@ -742,7 +742,7 @@ class AsyncSchemasClient:
 
         fields : typing.Optional[typing.Sequence[UpdateBulkField]]
 
-        filters : typing.Optional[typing.Sequence[BulkFilter]]
+        filters : typing.Optional[typing.Sequence[BulkFilter2]]
 
         partition_key : typing.Optional[str]
 
@@ -790,7 +790,7 @@ class AsyncSchemasClient:
                     object_=fields, annotation=typing.Sequence[UpdateBulkField], direction="write"
                 ),
                 "filters": convert_and_respect_annotation_metadata(
-                    object_=filters, annotation=typing.Sequence[BulkFilter], direction="write"
+                    object_=filters, annotation=typing.Sequence[BulkFilter2], direction="write"
                 ),
                 "partition_key": partition_key,
                 "tracking_field": tracking_field,

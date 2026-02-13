@@ -64,7 +64,6 @@ class EventsClient:
             token="YOUR_TOKEN",
         )
         client.events.list(
-            organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             starting_after=datetime.datetime.fromisoformat(
                 "2020-01-01 00:00:00+00:00",
             ),
@@ -231,7 +230,6 @@ class AsyncEventsClient:
 
         async def main() -> None:
             await client.events.list(
-                organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 starting_after=datetime.datetime.fromisoformat(
                     "2020-01-01 00:00:00+00:00",
                 ),

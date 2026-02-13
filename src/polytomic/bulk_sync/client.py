@@ -75,9 +75,7 @@ class BulkSyncClient:
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        client.bulk_sync.list(
-            active=True,
-        )
+        client.bulk_sync.list()
         """
         _response = self._client_wrapper.httpx_client.request(
             "api/bulk/syncs",
@@ -1201,9 +1199,7 @@ class AsyncBulkSyncClient:
 
 
         async def main() -> None:
-            await client.bulk_sync.list(
-                active=True,
-            )
+            await client.bulk_sync.list()
 
 
         asyncio.run(main())
