@@ -38,7 +38,7 @@ class ModelsClient:
         self,
         id: str,
         *,
-        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        params: typing.Optional[typing.Dict[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetModelSyncSourceMetaEnvelope:
         """
@@ -46,7 +46,7 @@ class ModelsClient:
         ----------
         id : str
 
-        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+        params : typing.Optional[typing.Dict[str, typing.Sequence[str]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1041,7 +1041,7 @@ class AsyncModelsClient:
         self,
         id: str,
         *,
-        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        params: typing.Optional[typing.Dict[str, typing.Sequence[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetModelSyncSourceMetaEnvelope:
         """
@@ -1049,7 +1049,7 @@ class AsyncModelsClient:
         ----------
         id : str
 
-        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+        params : typing.Optional[typing.Dict[str, typing.Sequence[str]]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
