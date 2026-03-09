@@ -8,8 +8,9 @@ from ..core.jsonable_encoder import jsonable_encoder
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.unauthorized_error import UnauthorizedError
 from ..types.rest_err_response import RestErrResponse
-from ..errors.not_found_error import NotFoundError
+from ..errors.forbidden_error import ForbiddenError
 from ..types.api_error import ApiError as types_api_error_ApiError
+from ..errors.not_found_error import NotFoundError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError as core_api_error_ApiError
 from ..types.user_envelope import UserEnvelope
@@ -28,10 +29,6 @@ class UsersClient:
 
     def list(self, org_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> ListUsersEnvelope:
         """
-        > 🚧 Requires partner key
-        >
-        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
-
         Parameters
         ----------
         org_id : str
@@ -80,6 +77,16 @@ class UsersClient:
                         ),
                     )
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     typing.cast(
@@ -104,10 +111,6 @@ class UsersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UserEnvelope:
         """
-        > 🚧 Requires partner key
-        >
-        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
-
         Parameters
         ----------
         org_id : str
@@ -169,6 +172,16 @@ class UsersClient:
                         ),
                     )
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     typing.cast(
@@ -196,10 +209,6 @@ class UsersClient:
 
     def get(self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> UserEnvelope:
         """
-        > 🚧 Requires partner key
-        >
-        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
-
         Parameters
         ----------
         id : str
@@ -251,6 +260,16 @@ class UsersClient:
                         ),
                     )
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     typing.cast(
@@ -286,10 +305,6 @@ class UsersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UserEnvelope:
         """
-        > 🚧 Requires partner key
-        >
-        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
-
         Parameters
         ----------
         id : str
@@ -354,6 +369,16 @@ class UsersClient:
                         ),
                     )
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     typing.cast(
@@ -381,10 +406,6 @@ class UsersClient:
 
     def remove(self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> UserEnvelope:
         """
-        > 🚧 Requires partner key
-        >
-        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
-
         Parameters
         ----------
         id : str
@@ -432,6 +453,16 @@ class UsersClient:
                         RestErrResponse,
                         parse_obj_as(
                             type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
                             object_=_response.json(),
                         ),
                     )
@@ -563,10 +594,6 @@ class AsyncUsersClient:
 
     async def list(self, org_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> ListUsersEnvelope:
         """
-        > 🚧 Requires partner key
-        >
-        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
-
         Parameters
         ----------
         org_id : str
@@ -623,6 +650,16 @@ class AsyncUsersClient:
                         ),
                     )
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     typing.cast(
@@ -647,10 +684,6 @@ class AsyncUsersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UserEnvelope:
         """
-        > 🚧 Requires partner key
-        >
-        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
-
         Parameters
         ----------
         org_id : str
@@ -720,6 +753,16 @@ class AsyncUsersClient:
                         ),
                     )
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     typing.cast(
@@ -749,10 +792,6 @@ class AsyncUsersClient:
         self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> UserEnvelope:
         """
-        > 🚧 Requires partner key
-        >
-        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
-
         Parameters
         ----------
         id : str
@@ -812,6 +851,16 @@ class AsyncUsersClient:
                         ),
                     )
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     typing.cast(
@@ -847,10 +896,6 @@ class AsyncUsersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UserEnvelope:
         """
-        > 🚧 Requires partner key
-        >
-        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
-
         Parameters
         ----------
         id : str
@@ -923,6 +968,16 @@ class AsyncUsersClient:
                         ),
                     )
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     typing.cast(
@@ -952,10 +1007,6 @@ class AsyncUsersClient:
         self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> UserEnvelope:
         """
-        > 🚧 Requires partner key
-        >
-        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
-
         Parameters
         ----------
         id : str
@@ -1011,6 +1062,16 @@ class AsyncUsersClient:
                         RestErrResponse,
                         parse_obj_as(
                             type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
                             object_=_response.json(),
                         ),
                     )

@@ -29,6 +29,7 @@ from ..core.jsonable_encoder import jsonable_encoder
 from ..errors.not_found_error import NotFoundError
 from .types.v_2_update_bulk_sync_request_schemas_item import V2UpdateBulkSyncRequestSchemasItem
 from ..types.activate_sync_envelope import ActivateSyncEnvelope
+from ..types.cancel_bulk_sync_response_envelope import CancelBulkSyncResponseEnvelope
 from ..types.bulk_fetch_mode import BulkFetchMode
 from ..types.bulk_sync_execution_envelope import BulkSyncExecutionEnvelope
 from ..errors.conflict_error import ConflictError
@@ -755,6 +756,94 @@ class BulkSyncClient:
                     ActivateSyncEnvelope,
                     parse_obj_as(
                         type_=ActivateSyncEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        RestErrResponse,
+                        parse_obj_as(
+                            type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
+    def cancel(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> CancelBulkSyncResponseEnvelope:
+        """
+        Parameters
+        ----------
+        id : str
+            The active execution of this bulk sync ID will be cancelled.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CancelBulkSyncResponseEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            version="YOUR_VERSION",
+            token="YOUR_TOKEN",
+        )
+        client.bulk_sync.cancel(
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"api/bulk/syncs/{jsonable_encoder(id)}/cancel",
+            method="POST",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    CancelBulkSyncResponseEnvelope,
+                    parse_obj_as(
+                        type_=CancelBulkSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1924,6 +2013,102 @@ class AsyncBulkSyncClient:
                     ActivateSyncEnvelope,
                     parse_obj_as(
                         type_=ActivateSyncEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        RestErrResponse,
+                        parse_obj_as(
+                            type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def cancel(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> CancelBulkSyncResponseEnvelope:
+        """
+        Parameters
+        ----------
+        id : str
+            The active execution of this bulk sync ID will be cancelled.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CancelBulkSyncResponseEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            version="YOUR_VERSION",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.bulk_sync.cancel(
+                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"api/bulk/syncs/{jsonable_encoder(id)}/cancel",
+            method="POST",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    CancelBulkSyncResponseEnvelope,
+                    parse_obj_as(
+                        type_=CancelBulkSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

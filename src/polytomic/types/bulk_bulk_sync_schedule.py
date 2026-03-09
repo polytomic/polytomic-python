@@ -7,6 +7,7 @@ import datetime as dt
 from ..core.serialization import FieldMetadata
 from .schedule_frequency import ScheduleFrequency
 from .bulk_selective_mode import BulkSelectiveMode
+from .bulk_schedule_sync_mode import BulkScheduleSyncMode
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
@@ -22,10 +23,14 @@ class BulkBulkSyncSchedule(UniversalBaseModel):
     hour: typing.Optional[str] = None
     minute: typing.Optional[str] = None
     month: typing.Optional[str] = None
+    schemas: typing.Optional[typing.List[str]] = None
     selective_mode: typing_extensions.Annotated[
         typing.Optional[BulkSelectiveMode], FieldMetadata(alias="selectiveMode")
     ] = None
     sync_id: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="syncId")] = None
+    sync_mode: typing_extensions.Annotated[typing.Optional[BulkScheduleSyncMode], FieldMetadata(alias="syncMode")] = (
+        None
+    )
     updated_at: typing_extensions.Annotated[typing.Optional[dt.datetime], FieldMetadata(alias="updatedAt")] = None
     updated_by: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="updatedBy")] = None
 

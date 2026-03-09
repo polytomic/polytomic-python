@@ -21,6 +21,7 @@ from ...types.bulk_schema_envelope import BulkSchemaEnvelope
 import datetime as dt
 from ...types.update_bulk_field import UpdateBulkField
 from ...types.bulk_filter import BulkFilter
+from ...types.cancel_bulk_sync_response_envelope import CancelBulkSyncResponseEnvelope
 from ...core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -377,6 +378,98 @@ class SchemasClient:
                     BulkSchemaEnvelope,
                     parse_obj_as(
                         type_=BulkSchemaEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        RestErrResponse,
+                        parse_obj_as(
+                            type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
+    def cancel(
+        self, id: str, schema_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> CancelBulkSyncResponseEnvelope:
+        """
+        Parameters
+        ----------
+        id : str
+            The bulk sync ID.
+
+        schema_id : str
+            The schema ID to cancel for the bulk sync.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CancelBulkSyncResponseEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            version="YOUR_VERSION",
+            token="YOUR_TOKEN",
+        )
+        client.bulk_sync.schemas.cancel(
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            schema_id="schema_id",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"api/bulk/syncs/{jsonable_encoder(id)}/schemas/{jsonable_encoder(schema_id)}/cancel",
+            method="POST",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    CancelBulkSyncResponseEnvelope,
+                    parse_obj_as(
+                        type_=CancelBulkSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -808,6 +901,106 @@ class AsyncSchemasClient:
                     BulkSchemaEnvelope,
                     parse_obj_as(
                         type_=BulkSchemaEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        RestErrResponse,
+                        parse_obj_as(
+                            type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def cancel(
+        self, id: str, schema_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> CancelBulkSyncResponseEnvelope:
+        """
+        Parameters
+        ----------
+        id : str
+            The bulk sync ID.
+
+        schema_id : str
+            The schema ID to cancel for the bulk sync.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        CancelBulkSyncResponseEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            version="YOUR_VERSION",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.bulk_sync.schemas.cancel(
+                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                schema_id="schema_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"api/bulk/syncs/{jsonable_encoder(id)}/schemas/{jsonable_encoder(schema_id)}/cancel",
+            method="POST",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    CancelBulkSyncResponseEnvelope,
+                    parse_obj_as(
+                        type_=CancelBulkSyncResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

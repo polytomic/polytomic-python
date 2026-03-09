@@ -19,6 +19,7 @@ from .bulk_itemized_schedule import BulkItemizedSchedule
 from .bulk_multi_schedule_configuration import BulkMultiScheduleConfiguration
 from .bulk_normalize_names import BulkNormalizeNames
 from .bulk_schedule import BulkSchedule
+from .bulk_schedule_sync_mode import BulkScheduleSyncMode
 from .bulk_schema import BulkSchema
 from .bulk_schema_envelope import BulkSchemaEnvelope
 from .bulk_schema_execution_status import BulkSchemaExecutionStatus
@@ -46,6 +47,8 @@ from .bulk_sync_source_status import BulkSyncSourceStatus
 from .bulk_sync_source_status_envelope import BulkSyncSourceStatusEnvelope
 from .bulk_sync_status_envelope import BulkSyncStatusEnvelope
 from .bulk_sync_status_response import BulkSyncStatusResponse
+from .cancel_bulk_sync_response import CancelBulkSyncResponse
+from .cancel_bulk_sync_response_envelope import CancelBulkSyncResponseEnvelope
 from .cancel_model_sync_response import CancelModelSyncResponse
 from .cancel_model_sync_response_envelope import CancelModelSyncResponseEnvelope
 from .common_output_actor import CommonOutputActor
@@ -220,6 +223,7 @@ __all__ = [
     "BulkMultiScheduleConfiguration",
     "BulkNormalizeNames",
     "BulkSchedule",
+    "BulkScheduleSyncMode",
     "BulkSchema",
     "BulkSchemaEnvelope",
     "BulkSchemaExecutionStatus",
@@ -247,6 +251,8 @@ __all__ = [
     "BulkSyncSourceStatusEnvelope",
     "BulkSyncStatusEnvelope",
     "BulkSyncStatusResponse",
+    "CancelBulkSyncResponse",
+    "CancelBulkSyncResponseEnvelope",
     "CancelModelSyncResponse",
     "CancelModelSyncResponseEnvelope",
     "CommonOutputActor",
