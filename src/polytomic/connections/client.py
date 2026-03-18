@@ -14,14 +14,15 @@ from ..core.api_error import ApiError as core_api_error_ApiError
 from ..types.jsonschema_schema import JsonschemaSchema
 from ..core.jsonable_encoder import jsonable_encoder
 from ..errors.not_found_error import NotFoundError
+from ..types.connection_parameter_values_response_envelope import ConnectionParameterValuesResponseEnvelope
+from ..errors.bad_request_error import BadRequestError
 from ..types.connection_list_response_envelope import ConnectionListResponseEnvelope
 from ..types.create_connection_response_envelope import CreateConnectionResponseEnvelope
-from ..errors.bad_request_error import BadRequestError
 from ..errors.forbidden_error import ForbiddenError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.connect_card_response_envelope import ConnectCardResponseEnvelope
 from ..types.connection_response_envelope import ConnectionResponseEnvelope
-from ..types.connection_parameter_values_response_envelope import ConnectionParameterValuesResponseEnvelope
+from ..types.v_2_create_shared_connection_response_envelope import V2CreateSharedConnectionResponseEnvelope
 from ..core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -134,6 +135,119 @@ class ConnectionsClient:
                         type_=JsonschemaSchema,  # type: ignore
                         object_=_response.json(),
                     ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        RestErrResponse,
+                        parse_obj_as(
+                            type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
+    def get_type_parameter_values(
+        self,
+        type: str,
+        *,
+        field: str,
+        connection_id: typing.Optional[str] = OMIT,
+        parameters: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
+        query: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ConnectionParameterValuesResponseEnvelope:
+        """
+        Parameters
+        ----------
+        type : str
+
+        field : str
+
+        connection_id : typing.Optional[str]
+
+        parameters : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
+
+        query : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ConnectionParameterValuesResponseEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            version="YOUR_VERSION",
+            token="YOUR_TOKEN",
+        )
+        client.connections.get_type_parameter_values(
+            type="type",
+            field="field",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"api/connection_types/{jsonable_encoder(type)}/parameter_values",
+            method="POST",
+            json={
+                "connection_id": connection_id,
+                "field": field,
+                "parameters": parameters,
+                "query": query,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    ConnectionParameterValuesResponseEnvelope,
+                    parse_obj_as(
+                        type_=ConnectionParameterValuesResponseEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
                 )
             if _response.status_code == 401:
                 raise UnauthorizedError(
@@ -1031,6 +1145,111 @@ class ConnectionsClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
+    def api_v_2_create_shared_connection(
+        self,
+        id: str,
+        *,
+        organization_id: str,
+        name: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> V2CreateSharedConnectionResponseEnvelope:
+        """
+        Parameters
+        ----------
+        id : str
+
+        organization_id : str
+
+        name : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        V2CreateSharedConnectionResponseEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            version="YOUR_VERSION",
+            token="YOUR_TOKEN",
+        )
+        client.connections.api_v_2_create_shared_connection(
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"api/connections/{jsonable_encoder(id)}/share",
+            method="POST",
+            json={
+                "name": name,
+                "organization_id": organization_id,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    V2CreateSharedConnectionResponseEnvelope,
+                    parse_obj_as(
+                        type_=V2CreateSharedConnectionResponseEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        RestErrResponse,
+                        parse_obj_as(
+                            type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
 
 class AsyncConnectionsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -1156,6 +1375,127 @@ class AsyncConnectionsClient:
                         type_=JsonschemaSchema,  # type: ignore
                         object_=_response.json(),
                     ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        RestErrResponse,
+                        parse_obj_as(
+                            type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def get_type_parameter_values(
+        self,
+        type: str,
+        *,
+        field: str,
+        connection_id: typing.Optional[str] = OMIT,
+        parameters: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
+        query: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ConnectionParameterValuesResponseEnvelope:
+        """
+        Parameters
+        ----------
+        type : str
+
+        field : str
+
+        connection_id : typing.Optional[str]
+
+        parameters : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
+
+        query : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ConnectionParameterValuesResponseEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            version="YOUR_VERSION",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.connections.get_type_parameter_values(
+                type="type",
+                field="field",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"api/connection_types/{jsonable_encoder(type)}/parameter_values",
+            method="POST",
+            json={
+                "connection_id": connection_id,
+                "field": field,
+                "parameters": parameters,
+                "query": query,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    ConnectionParameterValuesResponseEnvelope,
+                    parse_obj_as(
+                        type_=ConnectionParameterValuesResponseEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
                 )
             if _response.status_code == 401:
                 raise UnauthorizedError(
@@ -2090,6 +2430,119 @@ class AsyncConnectionsClient:
                         RestErrResponse,
                         parse_obj_as(
                             type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def api_v_2_create_shared_connection(
+        self,
+        id: str,
+        *,
+        organization_id: str,
+        name: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> V2CreateSharedConnectionResponseEnvelope:
+        """
+        Parameters
+        ----------
+        id : str
+
+        organization_id : str
+
+        name : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        V2CreateSharedConnectionResponseEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            version="YOUR_VERSION",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.connections.api_v_2_create_shared_connection(
+                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"api/connections/{jsonable_encoder(id)}/share",
+            method="POST",
+            json={
+                "name": name,
+                "organization_id": organization_id,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    V2CreateSharedConnectionResponseEnvelope,
+                    parse_obj_as(
+                        type_=V2CreateSharedConnectionResponseEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        RestErrResponse,
+                        parse_obj_as(
+                            type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
                             object_=_response.json(),
                         ),
                     )

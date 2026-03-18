@@ -1164,6 +1164,96 @@ client.connections.get_connection_type_schema(
 </dl>
 </details>
 
+<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">get_type_parameter_values</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.connections.get_type_parameter_values(
+    type="type",
+    field="field",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**type:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**field:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**connection_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**parameters:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**query:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">list</a>()</code></summary>
 <dl>
 <dd>
@@ -1844,6 +1934,80 @@ client.connections.get_parameter_values(
 <dd>
 
 **id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">api_v_2_create_shared_connection</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.connections.api_v_2_create_shared_connection(
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**organization_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `typing.Optional[str]` 
     
 </dd>
 </dl>
@@ -5496,6 +5660,14 @@ client.users.create(
 <dl>
 <dd>
 
+**role_ids:** `typing.Optional[typing.Sequence[str]]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -5638,6 +5810,14 @@ client.users.update(
 <dd>
 
 **role:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**role_ids:** `typing.Optional[typing.Sequence[str]]` 
     
 </dd>
 </dl>

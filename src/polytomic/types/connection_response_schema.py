@@ -21,6 +21,11 @@ class ConnectionResponseSchema(UniversalBaseModel):
     id: typing.Optional[str] = None
     name: typing.Optional[str] = None
     organization_id: typing.Optional[str] = None
+    parent_connection_id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    For shared connections, the ID of the parent connection.
+    """
+
     policies: typing.Optional[typing.List[str]] = None
     saved: typing.Optional[bool] = None
     status: typing.Optional[str] = None

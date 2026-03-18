@@ -69,6 +69,7 @@ from .connection_type_schema import ConnectionTypeSchema
 from .create_connection_response_envelope import CreateConnectionResponseEnvelope
 from .create_connection_response_schema import CreateConnectionResponseSchema
 from .create_model_request import CreateModelRequest
+from .create_shared_connection_response_schema import CreateSharedConnectionResponseSchema
 from .enrichment import Enrichment
 from .event import Event
 from .event_body import EventBody
@@ -176,6 +177,7 @@ from .user_envelope import UserEnvelope
 from .util_enum_value import UtilEnumValue
 from .util_field_type import UtilFieldType
 from .v_2_connection_form import V2ConnectionForm
+from .v_2_create_shared_connection_response_envelope import V2CreateSharedConnectionResponseEnvelope
 from .v_2_enricher_configuration import V2EnricherConfiguration
 from .v_2_enricher_mapping import V2EnricherMapping
 from .v_2_execution_log_type import V2ExecutionLogType
@@ -273,6 +275,7 @@ __all__ = [
     "CreateConnectionResponseEnvelope",
     "CreateConnectionResponseSchema",
     "CreateModelRequest",
+    "CreateSharedConnectionResponseSchema",
     "Enrichment",
     "Event",
     "EventBody",
@@ -381,6 +384,7 @@ __all__ = [
     "UtilEnumValue",
     "UtilFieldType",
     "V2ConnectionForm",
+    "V2CreateSharedConnectionResponseEnvelope",
     "V2EnricherConfiguration",
     "V2EnricherMapping",
     "V2ExecutionLogType",

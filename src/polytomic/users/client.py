@@ -108,6 +108,7 @@ class UsersClient:
         *,
         email: str,
         role: typing.Optional[str] = OMIT,
+        role_ids: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UserEnvelope:
         """
@@ -118,6 +119,8 @@ class UsersClient:
         email : str
 
         role : typing.Optional[str]
+
+        role_ids : typing.Optional[typing.Sequence[str]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -146,6 +149,7 @@ class UsersClient:
             json={
                 "email": email,
                 "role": role,
+                "role_ids": role_ids,
             },
             headers={
                 "content-type": "application/json",
@@ -302,6 +306,7 @@ class UsersClient:
         *,
         email: str,
         role: typing.Optional[str] = OMIT,
+        role_ids: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UserEnvelope:
         """
@@ -314,6 +319,8 @@ class UsersClient:
         email : str
 
         role : typing.Optional[str]
+
+        role_ids : typing.Optional[typing.Sequence[str]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -343,6 +350,7 @@ class UsersClient:
             json={
                 "email": email,
                 "role": role,
+                "role_ids": role_ids,
             },
             headers={
                 "content-type": "application/json",
@@ -681,6 +689,7 @@ class AsyncUsersClient:
         *,
         email: str,
         role: typing.Optional[str] = OMIT,
+        role_ids: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UserEnvelope:
         """
@@ -691,6 +700,8 @@ class AsyncUsersClient:
         email : str
 
         role : typing.Optional[str]
+
+        role_ids : typing.Optional[typing.Sequence[str]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -727,6 +738,7 @@ class AsyncUsersClient:
             json={
                 "email": email,
                 "role": role,
+                "role_ids": role_ids,
             },
             headers={
                 "content-type": "application/json",
@@ -893,6 +905,7 @@ class AsyncUsersClient:
         *,
         email: str,
         role: typing.Optional[str] = OMIT,
+        role_ids: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UserEnvelope:
         """
@@ -905,6 +918,8 @@ class AsyncUsersClient:
         email : str
 
         role : typing.Optional[str]
+
+        role_ids : typing.Optional[typing.Sequence[str]]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -942,6 +957,7 @@ class AsyncUsersClient:
             json={
                 "email": email,
                 "role": role,
+                "role_ids": role_ids,
             },
             headers={
                 "content-type": "application/json",
