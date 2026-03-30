@@ -1,6 +1,6 @@
 # Reference
 ## BulkSync
-<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">list</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">list</a>(...) -> BulkSyncListEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -14,11 +14,14 @@
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.list(
     active=True,
 )
@@ -57,7 +60,7 @@ client.bulk_sync.list(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">create</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">create</a>(...) -> BulkSyncResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -109,14 +112,19 @@ to see configurations for particular integrations (for example, [here](https://a
 <dd>
 
 ```python
-from polytomic import BulkSchedule, Polytomic
+from polytomic import Polytomic, BulkSchedule
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.create(
-    destination_configuration={"schema": "my_schema"},
+    destination_configuration={
+        "schema": "my_schema"
+    },
     destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     name="My Bulk Sync",
     schedule=BulkSchedule(
@@ -139,7 +147,7 @@ client.bulk_sync.create(
 <dl>
 <dd>
 
-**destination_configuration:** `typing.Dict[str, typing.Optional[typing.Any]]` 
+**destination_configuration:** `typing.Dict[str, typing.Any]` 
     
 </dd>
 </dl>
@@ -211,7 +219,7 @@ client.bulk_sync.create(
 <dl>
 <dd>
 
-**data_cutoff_timestamp:** `typing.Optional[dt.datetime]` 
+**data_cutoff_timestamp:** `typing.Optional[datetime.datetime]` 
     
 </dd>
 </dl>
@@ -259,7 +267,7 @@ client.bulk_sync.create(
 <dl>
 <dd>
 
-**policies:** `typing.Optional[typing.Sequence[str]]` 
+**policies:** `typing.Optional[typing.List[str]]` 
     
 </dd>
 </dl>
@@ -275,7 +283,7 @@ client.bulk_sync.create(
 <dl>
 <dd>
 
-**schemas:** `typing.Optional[typing.Sequence[V2CreateBulkSyncRequestSchemasItem]]` — List of schemas to sync; if omitted, all schemas will be selected for syncing.
+**schemas:** `typing.Optional[typing.List[V2CreateBulkSyncRequestSchemasItem]]` — List of schemas to sync; if omitted, all schemas will be selected for syncing.
     
 </dd>
 </dl>
@@ -283,7 +291,7 @@ client.bulk_sync.create(
 <dl>
 <dd>
 
-**source_configuration:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` 
+**source_configuration:** `typing.Optional[typing.Dict[str, typing.Any]]` 
     
 </dd>
 </dl>
@@ -303,7 +311,7 @@ client.bulk_sync.create(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">get</a>(...) -> BulkSyncResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -317,11 +325,14 @@ client.bulk_sync.create(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.get(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     refresh_schemas=True,
@@ -369,7 +380,7 @@ client.bulk_sync.get(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">update</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">update</a>(...) -> BulkSyncResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -398,15 +409,20 @@ client.bulk_sync.get(
 <dd>
 
 ```python
-from polytomic import BulkSchedule, Polytomic
+from polytomic import Polytomic, BulkSchedule
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.update(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    destination_configuration={"schema": "my_schema"},
+    destination_configuration={
+        "schema": "my_schema"
+    },
     destination_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     name="My Bulk Sync",
     schedule=BulkSchedule(
@@ -437,7 +453,7 @@ client.bulk_sync.update(
 <dl>
 <dd>
 
-**destination_configuration:** `typing.Dict[str, typing.Optional[typing.Any]]` 
+**destination_configuration:** `typing.Dict[str, typing.Any]` 
     
 </dd>
 </dl>
@@ -509,7 +525,7 @@ client.bulk_sync.update(
 <dl>
 <dd>
 
-**data_cutoff_timestamp:** `typing.Optional[dt.datetime]` 
+**data_cutoff_timestamp:** `typing.Optional[datetime.datetime]` 
     
 </dd>
 </dl>
@@ -557,7 +573,7 @@ client.bulk_sync.update(
 <dl>
 <dd>
 
-**policies:** `typing.Optional[typing.Sequence[str]]` 
+**policies:** `typing.Optional[typing.List[str]]` 
     
 </dd>
 </dl>
@@ -573,7 +589,7 @@ client.bulk_sync.update(
 <dl>
 <dd>
 
-**schemas:** `typing.Optional[typing.Sequence[V2UpdateBulkSyncRequestSchemasItem]]` — List of schemas to sync; if omitted, all schemas will be selected for syncing.
+**schemas:** `typing.Optional[typing.List[V2UpdateBulkSyncRequestSchemasItem]]` — List of schemas to sync; if omitted, all schemas will be selected for syncing.
     
 </dd>
 </dl>
@@ -581,7 +597,7 @@ client.bulk_sync.update(
 <dl>
 <dd>
 
-**source_configuration:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` 
+**source_configuration:** `typing.Optional[typing.Dict[str, typing.Any]]` 
     
 </dd>
 </dl>
@@ -615,11 +631,14 @@ client.bulk_sync.update(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.remove(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     refresh_schemas=True,
@@ -667,7 +686,7 @@ client.bulk_sync.remove(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">activate</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">activate</a>(...) -> ActivateSyncEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -681,11 +700,14 @@ client.bulk_sync.remove(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.activate(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     active=True,
@@ -713,7 +735,7 @@ client.bulk_sync.activate(
 <dl>
 <dd>
 
-**active:** `bool` 
+**request:** `ActivateSyncInput` 
     
 </dd>
 </dl>
@@ -733,7 +755,7 @@ client.bulk_sync.activate(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">cancel</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">cancel</a>(...) -> CancelBulkSyncResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -747,11 +769,14 @@ client.bulk_sync.activate(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.cancel(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -790,7 +815,7 @@ client.bulk_sync.cancel(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">start</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">start</a>(...) -> BulkSyncExecutionEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -804,11 +829,14 @@ client.bulk_sync.cancel(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.start(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -851,7 +879,7 @@ client.bulk_sync.start(
 <dl>
 <dd>
 
-**schemas:** `typing.Optional[typing.Sequence[str]]` 
+**schemas:** `typing.Optional[typing.List[str]]` 
     
 </dd>
 </dl>
@@ -879,7 +907,7 @@ client.bulk_sync.start(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">get_status</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">get_status</a>(...) -> BulkSyncStatusEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -893,11 +921,14 @@ client.bulk_sync.start(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.get_status(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -936,7 +967,7 @@ client.bulk_sync.get_status(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">get_source</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">get_source</a>(...) -> BulkSyncSourceEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -950,11 +981,14 @@ client.bulk_sync.get_status(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.get_source(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     include_fields=True,
@@ -1002,7 +1036,7 @@ client.bulk_sync.get_source(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">get_destination</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">get_destination</a>(...) -> BulkSyncDestEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -1016,11 +1050,14 @@ client.bulk_sync.get_source(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.get_destination(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -1060,7 +1097,7 @@ client.bulk_sync.get_destination(
 </details>
 
 ## Connections
-<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">get_types</a>()</code></summary>
+<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">get_types</a>() -> ConnectionTypeResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -1074,11 +1111,14 @@ client.bulk_sync.get_destination(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.connections.get_types()
 
 ```
@@ -1107,7 +1147,7 @@ client.connections.get_types()
 </dl>
 </details>
 
-<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">get_connection_type_schema</a>(...)</code></summary>
+<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">get_connection_type_schema</a>(...) -> JsonschemaSchema</code></summary>
 <dl>
 <dd>
 
@@ -1121,11 +1161,14 @@ client.connections.get_types()
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.connections.get_connection_type_schema(
     id="postgresql",
 )
@@ -1164,7 +1207,7 @@ client.connections.get_connection_type_schema(
 </dl>
 </details>
 
-<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">get_type_parameter_values</a>(...)</code></summary>
+<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">get_type_parameter_values</a>(...) -> ConnectionParameterValuesResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -1178,11 +1221,14 @@ client.connections.get_connection_type_schema(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.connections.get_type_parameter_values(
     type="type",
     field="field",
@@ -1226,7 +1272,7 @@ client.connections.get_type_parameter_values(
 <dl>
 <dd>
 
-**parameters:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` 
+**parameters:** `typing.Optional[typing.Dict[str, typing.Any]]` 
     
 </dd>
 </dl>
@@ -1254,7 +1300,7 @@ client.connections.get_type_parameter_values(
 </dl>
 </details>
 
-<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">list</a>()</code></summary>
+<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">list</a>() -> ConnectionListResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -1268,11 +1314,14 @@ client.connections.get_type_parameter_values(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.connections.list()
 
 ```
@@ -1301,7 +1350,7 @@ client.connections.list()
 </dl>
 </details>
 
-<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">create</a>(...)</code></summary>
+<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">create</a>(...) -> CreateConnectionResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -1315,18 +1364,21 @@ client.connections.list()
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.connections.create(
     configuration={
         "database": "example",
         "hostname": "postgres.example.com",
         "password": "********",
         "port": 5432,
-        "username": "user",
+        "username": "user"
     },
     name="My Postgres Connection",
     type="postgresql",
@@ -1346,7 +1398,7 @@ client.connections.create(
 <dl>
 <dd>
 
-**configuration:** `typing.Dict[str, typing.Optional[typing.Any]]` 
+**configuration:** `typing.Dict[str, typing.Any]` 
     
 </dd>
 </dl>
@@ -1386,7 +1438,7 @@ client.connections.create(
 <dl>
 <dd>
 
-**policies:** `typing.Optional[typing.Sequence[str]]` 
+**policies:** `typing.Optional[typing.List[str]]` 
     
 </dd>
 </dl>
@@ -1422,7 +1474,7 @@ client.connections.create(
 </dl>
 </details>
 
-<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">connect</a>(...)</code></summary>
+<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">connect</a>(...) -> ConnectCardResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -1458,11 +1510,14 @@ See also:
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.connections.connect(
     name="Salesforce Connection",
     redirect_url="redirect_url",
@@ -1530,7 +1585,7 @@ client.connections.connect(
 <dl>
 <dd>
 
-**whitelist:** `typing.Optional[typing.Sequence[str]]` — List of connection types which are allowed to be created. Ignored if type is set.
+**whitelist:** `typing.Optional[typing.List[str]]` — List of connection types which are allowed to be created. Ignored if type is set.
     
 </dd>
 </dl>
@@ -1578,18 +1633,21 @@ Tests a connection configuration.
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.connections.test_connection(
     configuration={
         "database": "example",
         "hostname": "postgres.example.com",
         "password": "password",
         "port": 5432,
-        "username": "user",
+        "username": "user"
     },
     type="postgresql",
 )
@@ -1608,7 +1666,7 @@ client.connections.test_connection(
 <dl>
 <dd>
 
-**configuration:** `typing.Dict[str, typing.Optional[typing.Any]]` — Connection configuration to test.
+**configuration:** `typing.Dict[str, typing.Any]` — Connection configuration to test.
     
 </dd>
 </dl>
@@ -1644,7 +1702,7 @@ client.connections.test_connection(
 </dl>
 </details>
 
-<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">get</a>(...) -> ConnectionResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -1658,11 +1716,14 @@ client.connections.test_connection(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.connections.get(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -1701,7 +1762,7 @@ client.connections.get(
 </dl>
 </details>
 
-<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">update</a>(...)</code></summary>
+<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">update</a>(...) -> CreateConnectionResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -1715,11 +1776,14 @@ client.connections.get(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.connections.update(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     configuration={
@@ -1727,7 +1791,7 @@ client.connections.update(
         "hostname": "postgres.example.com",
         "password": "********",
         "port": 5432,
-        "username": "user",
+        "username": "user"
     },
     name="My Postgres Connection",
 )
@@ -1754,7 +1818,7 @@ client.connections.update(
 <dl>
 <dd>
 
-**configuration:** `typing.Dict[str, typing.Optional[typing.Any]]` 
+**configuration:** `typing.Dict[str, typing.Any]` 
     
 </dd>
 </dl>
@@ -1786,7 +1850,7 @@ client.connections.update(
 <dl>
 <dd>
 
-**policies:** `typing.Optional[typing.Sequence[str]]` 
+**policies:** `typing.Optional[typing.List[str]]` 
     
 </dd>
 </dl>
@@ -1844,11 +1908,14 @@ client.connections.update(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.connections.remove(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     force=True,
@@ -1896,7 +1963,7 @@ client.connections.remove(
 </dl>
 </details>
 
-<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">get_parameter_values</a>(...)</code></summary>
+<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">get_parameter_values</a>(...) -> ConnectionParameterValuesResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -1910,11 +1977,14 @@ client.connections.remove(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.connections.get_parameter_values(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -1953,9 +2023,25 @@ client.connections.get_parameter_values(
 </dl>
 </details>
 
-<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">api_v_2_create_shared_connection</a>(...)</code></summary>
+<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">create_shared_connection</a>(...) -> V2CreateSharedConnectionResponseEnvelope</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+> 🚧 Requires partner key
+>
+> Shared connections can only be created by using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -1967,14 +2053,17 @@ client.connections.get_parameter_values(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
-client.connections.api_v_2_create_shared_connection(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+
+client.connections.create_shared_connection(
+    parent_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    child_organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
 
 ```
@@ -1991,7 +2080,7 @@ client.connections.api_v_2_create_shared_connection(
 <dl>
 <dd>
 
-**id:** `str` 
+**parent_connection_id:** `str` 
     
 </dd>
 </dl>
@@ -1999,7 +2088,7 @@ client.connections.api_v_2_create_shared_connection(
 <dl>
 <dd>
 
-**organization_id:** `str` 
+**child_organization_id:** `str` 
     
 </dd>
 </dl>
@@ -2027,8 +2116,7 @@ client.connections.api_v_2_create_shared_connection(
 </dl>
 </details>
 
-## QueryRunner
-<details><summary><code>client.query_runner.<a href="src/polytomic/query_runner/client.py">run_query</a>(...)</code></summary>
+<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">list_shared_connections</a>(...) -> ConnectionListResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -2042,11 +2130,89 @@ client.connections.api_v_2_create_shared_connection(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
+client.connections.list_shared_connections(
+    parent_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**parent_connection_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## QueryRunner
+<details><summary><code>client.query_runner.<a href="src/polytomic/query_runner/client.py">run_query</a>(...) -> V4RunQueryEnvelope</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Submit a query for asynchronous execution against the connection. The initial response may only contain the query task id and status. Poll GET /api/queries/{id} with the returned id to retrieve completion status, fields, and results.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
+
+client = Polytomic(
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
+)
+
 client.query_runner.run_query(
     connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     query="SELECT * FROM table",
@@ -2094,9 +2260,23 @@ client.query_runner.run_query(
 </dl>
 </details>
 
-<details><summary><code>client.query_runner.<a href="src/polytomic/query_runner/client.py">get_query</a>(...)</code></summary>
+<details><summary><code>client.query_runner.<a href="src/polytomic/query_runner/client.py">get_query</a>(...) -> V4QueryResultsEnvelope</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Fetch the latest status for a submitted query and, once complete, return fields and paginated results. Use the query id returned by POST /api/connections/{connection_id}/query.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -2108,11 +2288,14 @@ client.query_runner.run_query(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.query_runner.get_query(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -2174,11 +2357,14 @@ client.query_runner.get_query(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.schemas.upsert_field(
     connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     schema_id="public.users",
@@ -2214,7 +2400,7 @@ client.schemas.upsert_field(
 <dl>
 <dd>
 
-**fields:** `typing.Optional[typing.Sequence[V4UserFieldRequest]]` 
+**fields:** `typing.Optional[typing.List[V4UserFieldRequest]]` 
     
 </dd>
 </dl>
@@ -2248,11 +2434,14 @@ client.schemas.upsert_field(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.schemas.delete_field(
     connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     schema_id="public.users",
@@ -2323,11 +2512,14 @@ client.schemas.delete_field(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.schemas.set_primary_keys(
     connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     schema_id="public.users",
@@ -2363,7 +2555,7 @@ client.schemas.set_primary_keys(
 <dl>
 <dd>
 
-**fields:** `typing.Optional[typing.Sequence[SchemaPrimaryKeyOverrideInput]]` 
+**fields:** `typing.Optional[typing.List[SchemaPrimaryKeyOverrideInput]]` 
     
 </dd>
 </dl>
@@ -2411,11 +2603,14 @@ Delete all primary key overrides for a schema. After this call the schema will u
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.schemas.reset_primary_keys(
     connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     schema_id="public.users",
@@ -2477,11 +2672,14 @@ client.schemas.reset_primary_keys(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.schemas.refresh(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -2520,7 +2718,7 @@ client.schemas.refresh(
 </dl>
 </details>
 
-<details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">get_status</a>(...)</code></summary>
+<details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">get_status</a>(...) -> BulkSyncSourceStatusEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -2548,11 +2746,14 @@ Polytomic periodically inspects the schemas for connections to discover new fiel
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.schemas.get_status(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -2591,7 +2792,7 @@ client.schemas.get_status(
 </dl>
 </details>
 
-<details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">get</a>(...) -> BulkSyncSourceSchemaEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -2605,11 +2806,14 @@ client.schemas.get_status(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.schemas.get(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     schema_id="public.users",
@@ -2657,7 +2861,7 @@ client.schemas.get(
 </dl>
 </details>
 
-<details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">get_records</a>(...)</code></summary>
+<details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">get_records</a>(...) -> SchemaRecordsResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -2671,11 +2875,14 @@ client.schemas.get(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.schemas.get_records(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     schema_id="public.users",
@@ -2724,7 +2931,7 @@ client.schemas.get_records(
 </details>
 
 ## Models
-<details><summary><code>client.models.<a href="src/polytomic/models/client.py">get_enrichment_source</a>(...)</code></summary>
+<details><summary><code>client.models.<a href="src/polytomic/models/client.py">get_enrichment_source</a>(...) -> GetModelSyncSourceMetaEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -2738,11 +2945,14 @@ client.schemas.get_records(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.models.get_enrichment_source(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -2769,7 +2979,7 @@ client.models.get_enrichment_source(
 <dl>
 <dd>
 
-**params:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]` 
+**params:** `typing.Optional[typing.Dict[str, typing.List[str]]]` 
     
 </dd>
 </dl>
@@ -2789,7 +2999,7 @@ client.models.get_enrichment_source(
 </dl>
 </details>
 
-<details><summary><code>client.models.<a href="src/polytomic/models/client.py">post</a>(...)</code></summary>
+<details><summary><code>client.models.<a href="src/polytomic/models/client.py">post</a>(...) -> V2GetEnrichmentInputFieldsResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -2817,11 +3027,14 @@ For a given connection and enrichment configuration, provides the valid sets of 
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.models.post(
     connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -2868,7 +3081,7 @@ client.models.post(
 </dl>
 </details>
 
-<details><summary><code>client.models.<a href="src/polytomic/models/client.py">preview</a>(...)</code></summary>
+<details><summary><code>client.models.<a href="src/polytomic/models/client.py">preview</a>(...) -> ModelResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -2882,13 +3095,18 @@ client.models.post(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.models.preview(
-    configuration={"table": "public.users"},
+    configuration={
+        "table": "public.users"
+    },
     connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     name="Users",
 )
@@ -2907,7 +3125,7 @@ client.models.preview(
 <dl>
 <dd>
 
-**configuration:** `typing.Dict[str, typing.Optional[typing.Any]]` 
+**request:** `CreateModelRequest` 
     
 </dd>
 </dl>
@@ -2915,95 +3133,7 @@ client.models.preview(
 <dl>
 <dd>
 
-**connection_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**async_:** `typing.Optional[bool]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**additional_fields:** `typing.Optional[typing.Sequence[ModelModelFieldRequest]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**enricher:** `typing.Optional[Enrichment]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**fields:** `typing.Optional[typing.Sequence[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**identifier:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**labels:** `typing.Optional[typing.Sequence[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**organization_id:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**policies:** `typing.Optional[typing.Sequence[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**relations:** `typing.Optional[typing.Sequence[ModelRelation]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**tracking_columns:** `typing.Optional[typing.Sequence[str]]` 
+**async:** `typing.Optional[bool]` 
     
 </dd>
 </dl>
@@ -3023,7 +3153,7 @@ client.models.preview(
 </dl>
 </details>
 
-<details><summary><code>client.models.<a href="src/polytomic/models/client.py">list</a>()</code></summary>
+<details><summary><code>client.models.<a href="src/polytomic/models/client.py">list</a>() -> ModelListResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -3037,11 +3167,14 @@ client.models.preview(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.models.list()
 
 ```
@@ -3070,7 +3203,7 @@ client.models.list()
 </dl>
 </details>
 
-<details><summary><code>client.models.<a href="src/polytomic/models/client.py">create</a>(...)</code></summary>
+<details><summary><code>client.models.<a href="src/polytomic/models/client.py">create</a>(...) -> ModelResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -3084,13 +3217,18 @@ client.models.list()
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.models.create(
-    configuration={"table": "public.users"},
+    configuration={
+        "table": "public.users"
+    },
     connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     name="Users",
 )
@@ -3109,7 +3247,7 @@ client.models.create(
 <dl>
 <dd>
 
-**configuration:** `typing.Dict[str, typing.Optional[typing.Any]]` 
+**request:** `CreateModelRequest` 
     
 </dd>
 </dl>
@@ -3117,95 +3255,7 @@ client.models.create(
 <dl>
 <dd>
 
-**connection_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**name:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**async_:** `typing.Optional[bool]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**additional_fields:** `typing.Optional[typing.Sequence[ModelModelFieldRequest]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**enricher:** `typing.Optional[Enrichment]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**fields:** `typing.Optional[typing.Sequence[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**identifier:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**labels:** `typing.Optional[typing.Sequence[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**organization_id:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**policies:** `typing.Optional[typing.Sequence[str]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**relations:** `typing.Optional[typing.Sequence[ModelRelation]]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**tracking_columns:** `typing.Optional[typing.Sequence[str]]` 
+**async:** `typing.Optional[bool]` 
     
 </dd>
 </dl>
@@ -3225,7 +3275,7 @@ client.models.create(
 </dl>
 </details>
 
-<details><summary><code>client.models.<a href="src/polytomic/models/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.models.<a href="src/polytomic/models/client.py">get</a>(...) -> ModelResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -3239,11 +3289,14 @@ client.models.create(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.models.get(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -3270,7 +3323,7 @@ client.models.get(
 <dl>
 <dd>
 
-**async_:** `typing.Optional[bool]` 
+**async:** `typing.Optional[bool]` 
     
 </dd>
 </dl>
@@ -3290,7 +3343,7 @@ client.models.get(
 </dl>
 </details>
 
-<details><summary><code>client.models.<a href="src/polytomic/models/client.py">update</a>(...)</code></summary>
+<details><summary><code>client.models.<a href="src/polytomic/models/client.py">update</a>(...) -> ModelResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -3304,15 +3357,20 @@ client.models.get(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.models.update(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     async_=False,
-    configuration={"table": "public.users"},
+    configuration={
+        "table": "public.users"
+    },
     connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     name="Users",
 )
@@ -3339,7 +3397,7 @@ client.models.update(
 <dl>
 <dd>
 
-**configuration:** `typing.Dict[str, typing.Optional[typing.Any]]` 
+**configuration:** `typing.Dict[str, typing.Any]` 
     
 </dd>
 </dl>
@@ -3363,7 +3421,7 @@ client.models.update(
 <dl>
 <dd>
 
-**async_:** `typing.Optional[bool]` 
+**async:** `typing.Optional[bool]` 
     
 </dd>
 </dl>
@@ -3371,7 +3429,7 @@ client.models.update(
 <dl>
 <dd>
 
-**additional_fields:** `typing.Optional[typing.Sequence[ModelModelFieldRequest]]` 
+**additional_fields:** `typing.Optional[typing.List[ModelModelFieldRequest]]` 
     
 </dd>
 </dl>
@@ -3387,7 +3445,7 @@ client.models.update(
 <dl>
 <dd>
 
-**fields:** `typing.Optional[typing.Sequence[str]]` 
+**fields:** `typing.Optional[typing.List[str]]` 
     
 </dd>
 </dl>
@@ -3403,7 +3461,7 @@ client.models.update(
 <dl>
 <dd>
 
-**labels:** `typing.Optional[typing.Sequence[str]]` 
+**labels:** `typing.Optional[typing.List[str]]` 
     
 </dd>
 </dl>
@@ -3419,7 +3477,7 @@ client.models.update(
 <dl>
 <dd>
 
-**policies:** `typing.Optional[typing.Sequence[str]]` 
+**policies:** `typing.Optional[typing.List[str]]` 
     
 </dd>
 </dl>
@@ -3435,7 +3493,7 @@ client.models.update(
 <dl>
 <dd>
 
-**relations:** `typing.Optional[typing.Sequence[ModelRelation]]` 
+**relations:** `typing.Optional[typing.List[ModelRelation]]` 
     
 </dd>
 </dl>
@@ -3443,7 +3501,7 @@ client.models.update(
 <dl>
 <dd>
 
-**tracking_columns:** `typing.Optional[typing.Sequence[str]]` 
+**tracking_columns:** `typing.Optional[typing.List[str]]` 
     
 </dd>
 </dl>
@@ -3477,11 +3535,14 @@ client.models.update(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.models.remove(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -3508,7 +3569,7 @@ client.models.remove(
 <dl>
 <dd>
 
-**async_:** `typing.Optional[bool]` 
+**async:** `typing.Optional[bool]` 
     
 </dd>
 </dl>
@@ -3528,7 +3589,7 @@ client.models.remove(
 </dl>
 </details>
 
-<details><summary><code>client.models.<a href="src/polytomic/models/client.py">sample</a>(...)</code></summary>
+<details><summary><code>client.models.<a href="src/polytomic/models/client.py">sample</a>(...) -> ModelSampleResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -3556,11 +3617,14 @@ Returns sample records from the model. The first ten records that the source pro
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.models.sample(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -3587,7 +3651,7 @@ client.models.sample(
 <dl>
 <dd>
 
-**async_:** `typing.Optional[bool]` 
+**async:** `typing.Optional[bool]` 
     
 </dd>
 </dl>
@@ -3608,7 +3672,7 @@ client.models.sample(
 </details>
 
 ## ModelSync
-<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">get_source</a>(...)</code></summary>
+<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">get_source</a>(...) -> GetModelSyncSourceMetaEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -3622,11 +3686,14 @@ client.models.sample(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.model_sync.get_source(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -3653,7 +3720,7 @@ client.model_sync.get_source(
 <dl>
 <dd>
 
-**params:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]` 
+**params:** `typing.Optional[typing.Dict[str, typing.List[str]]]` 
     
 </dd>
 </dl>
@@ -3673,7 +3740,7 @@ client.model_sync.get_source(
 </dl>
 </details>
 
-<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">get_source_fields</a>(...)</code></summary>
+<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">get_source_fields</a>(...) -> ModelFieldResponse</code></summary>
 <dl>
 <dd>
 
@@ -3687,11 +3754,14 @@ client.model_sync.get_source(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.model_sync.get_source_fields(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -3718,7 +3788,7 @@ client.model_sync.get_source_fields(
 <dl>
 <dd>
 
-**params:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]` 
+**params:** `typing.Optional[typing.Dict[str, typing.List[str]]]` 
     
 </dd>
 </dl>
@@ -3738,7 +3808,7 @@ client.model_sync.get_source_fields(
 </dl>
 </details>
 
-<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">list</a>(...)</code></summary>
+<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">list</a>(...) -> ListModelSyncResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -3752,11 +3822,14 @@ client.model_sync.get_source_fields(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.model_sync.list(
     active=True,
     target_connection_id="0b155265-c537-44c9-9359-a3ceb468a4da",
@@ -3812,7 +3885,7 @@ client.model_sync.list(
 </dl>
 </details>
 
-<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">create</a>(...)</code></summary>
+<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">create</a>(...) -> ModelSyncResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -3894,12 +3967,15 @@ a connection supports target creation.
 <dd>
 
 ```python
-from polytomic import ModelSyncField, Polytomic, Schedule, Target
+from polytomic import Polytomic, ModelSyncField, Schedule, Target
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.model_sync.create(
     fields=[
         ModelSyncField(
@@ -3928,7 +4004,7 @@ client.model_sync.create(
 <dl>
 <dd>
 
-**fields:** `typing.Sequence[ModelSyncField]` — Fields to sync from source to destination.
+**fields:** `typing.List[ModelSyncField]` — Fields to sync from source to destination.
     
 </dd>
 </dl>
@@ -3992,7 +4068,7 @@ client.model_sync.create(
 <dl>
 <dd>
 
-**filters:** `typing.Optional[typing.Sequence[Filter]]` — Filters to apply to the source data.
+**filters:** `typing.Optional[typing.List[Filter]]` — Filters to apply to the source data.
     
 </dd>
 </dl>
@@ -4024,7 +4100,7 @@ client.model_sync.create(
 <dl>
 <dd>
 
-**override_fields:** `typing.Optional[typing.Sequence[ModelSyncField]]` — Values to set in the target unconditionally.
+**override_fields:** `typing.Optional[typing.List[ModelSyncField]]` — Values to set in the target unconditionally.
     
 </dd>
 </dl>
@@ -4032,7 +4108,7 @@ client.model_sync.create(
 <dl>
 <dd>
 
-**overrides:** `typing.Optional[typing.Sequence[Override]]` — Conditional value replacement for fields.
+**overrides:** `typing.Optional[typing.List[Override]]` — Conditional value replacement for fields.
     
 </dd>
 </dl>
@@ -4040,7 +4116,7 @@ client.model_sync.create(
 <dl>
 <dd>
 
-**policies:** `typing.Optional[typing.Sequence[str]]` 
+**policies:** `typing.Optional[typing.List[str]]` 
     
 </dd>
 </dl>
@@ -4076,7 +4152,7 @@ client.model_sync.create(
 </dl>
 </details>
 
-<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">get_schedule_options</a>()</code></summary>
+<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">get_schedule_options</a>() -> ScheduleOptionResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -4090,11 +4166,14 @@ client.model_sync.create(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.model_sync.get_schedule_options()
 
 ```
@@ -4123,7 +4202,7 @@ client.model_sync.get_schedule_options()
 </dl>
 </details>
 
-<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">get</a>(...) -> ModelSyncResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -4137,11 +4216,14 @@ client.model_sync.get_schedule_options()
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.model_sync.get(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -4180,7 +4262,7 @@ client.model_sync.get(
 </dl>
 </details>
 
-<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">update</a>(...)</code></summary>
+<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">update</a>(...) -> ModelSyncResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -4193,12 +4275,15 @@ client.model_sync.get(
 <dd>
 
 ```python
-from polytomic import ModelSyncField, Polytomic, Schedule, Target
+from polytomic import Polytomic, ModelSyncField, Schedule, Target
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.model_sync.update(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     fields=[
@@ -4236,7 +4321,7 @@ client.model_sync.update(
 <dl>
 <dd>
 
-**fields:** `typing.Sequence[ModelSyncField]` — Fields to sync from source to destination.
+**fields:** `typing.List[ModelSyncField]` — Fields to sync from source to destination.
     
 </dd>
 </dl>
@@ -4300,7 +4385,7 @@ client.model_sync.update(
 <dl>
 <dd>
 
-**filters:** `typing.Optional[typing.Sequence[Filter]]` — Filters to apply to the source data.
+**filters:** `typing.Optional[typing.List[Filter]]` — Filters to apply to the source data.
     
 </dd>
 </dl>
@@ -4332,7 +4417,7 @@ client.model_sync.update(
 <dl>
 <dd>
 
-**override_fields:** `typing.Optional[typing.Sequence[ModelSyncField]]` — Values to set in the target unconditionally.
+**override_fields:** `typing.Optional[typing.List[ModelSyncField]]` — Values to set in the target unconditionally.
     
 </dd>
 </dl>
@@ -4340,7 +4425,7 @@ client.model_sync.update(
 <dl>
 <dd>
 
-**overrides:** `typing.Optional[typing.Sequence[Override]]` — Conditional value replacement for fields.
+**overrides:** `typing.Optional[typing.List[Override]]` — Conditional value replacement for fields.
     
 </dd>
 </dl>
@@ -4348,7 +4433,7 @@ client.model_sync.update(
 <dl>
 <dd>
 
-**policies:** `typing.Optional[typing.Sequence[str]]` 
+**policies:** `typing.Optional[typing.List[str]]` 
     
 </dd>
 </dl>
@@ -4398,11 +4483,14 @@ client.model_sync.update(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.model_sync.remove(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -4441,7 +4529,7 @@ client.model_sync.remove(
 </dl>
 </details>
 
-<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">activate</a>(...)</code></summary>
+<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">activate</a>(...) -> ActivateSyncEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -4455,11 +4543,14 @@ client.model_sync.remove(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.model_sync.activate(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     active=True,
@@ -4487,7 +4578,7 @@ client.model_sync.activate(
 <dl>
 <dd>
 
-**active:** `bool` 
+**request:** `ActivateSyncInput` 
     
 </dd>
 </dl>
@@ -4507,7 +4598,7 @@ client.model_sync.activate(
 </dl>
 </details>
 
-<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">cancel</a>(...)</code></summary>
+<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">cancel</a>(...) -> CancelModelSyncResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -4521,11 +4612,14 @@ client.model_sync.activate(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.model_sync.cancel(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -4564,7 +4658,7 @@ client.model_sync.cancel(
 </dl>
 </details>
 
-<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">start</a>(...)</code></summary>
+<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">start</a>(...) -> StartModelSyncResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -4594,11 +4688,14 @@ client.model_sync.cancel(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.model_sync.start(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -4625,7 +4722,7 @@ client.model_sync.start(
 <dl>
 <dd>
 
-**identities:** `typing.Optional[typing.Sequence[str]]` 
+**identities:** `typing.Optional[typing.List[str]]` 
     
 </dd>
 </dl>
@@ -4661,7 +4758,7 @@ client.model_sync.start(
 </dl>
 </details>
 
-<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">get_status</a>(...)</code></summary>
+<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">get_status</a>(...) -> SyncStatusEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -4675,11 +4772,14 @@ client.model_sync.start(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.model_sync.get_status(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -4719,7 +4819,7 @@ client.model_sync.get_status(
 </details>
 
 ## Events
-<details><summary><code>client.events.<a href="src/polytomic/events/client.py">list</a>(...)</code></summary>
+<details><summary><code>client.events.<a href="src/polytomic/events/client.py">list</a>(...) -> EventsEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -4732,22 +4832,20 @@ client.model_sync.get_status(
 <dd>
 
 ```python
+from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 import datetime
 
-from polytomic import Polytomic
-
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.events.list(
     organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    starting_after=datetime.datetime.fromisoformat(
-        "2020-01-01 00:00:00+00:00",
-    ),
-    ending_before=datetime.datetime.fromisoformat(
-        "2020-01-01 00:00:00+00:00",
-    ),
+    starting_after=datetime.datetime.fromisoformat("2020-01-01T00:00:00+00:00"),
+    ending_before=datetime.datetime.fromisoformat("2020-01-01T00:00:00+00:00"),
 )
 
 ```
@@ -4780,7 +4878,7 @@ client.events.list(
 <dl>
 <dd>
 
-**starting_after:** `typing.Optional[dt.datetime]` 
+**starting_after:** `typing.Optional[datetime.datetime]` 
     
 </dd>
 </dl>
@@ -4788,7 +4886,7 @@ client.events.list(
 <dl>
 <dd>
 
-**ending_before:** `typing.Optional[dt.datetime]` 
+**ending_before:** `typing.Optional[datetime.datetime]` 
     
 </dd>
 </dl>
@@ -4816,7 +4914,7 @@ client.events.list(
 </dl>
 </details>
 
-<details><summary><code>client.events.<a href="src/polytomic/events/client.py">get_types</a>()</code></summary>
+<details><summary><code>client.events.<a href="src/polytomic/events/client.py">get_types</a>() -> EventTypesEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -4830,11 +4928,14 @@ client.events.list(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.events.get_types()
 
 ```
@@ -4864,7 +4965,7 @@ client.events.get_types()
 </details>
 
 ## Jobs
-<details><summary><code>client.jobs.<a href="src/polytomic/jobs/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.jobs.<a href="src/polytomic/jobs/client.py">get</a>(...) -> JobResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -4878,14 +4979,17 @@ client.events.get_types()
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.jobs.get(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
     type="createmodel",
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
 
 ```
@@ -4902,7 +5006,7 @@ client.jobs.get(
 <dl>
 <dd>
 
-**id:** `str` 
+**type:** `str` 
     
 </dd>
 </dl>
@@ -4910,7 +5014,7 @@ client.jobs.get(
 <dl>
 <dd>
 
-**type:** `str` 
+**id:** `str` 
     
 </dd>
 </dl>
@@ -4931,7 +5035,7 @@ client.jobs.get(
 </details>
 
 ## Identity
-<details><summary><code>client.identity.<a href="src/polytomic/identity/client.py">get</a>()</code></summary>
+<details><summary><code>client.identity.<a href="src/polytomic/identity/client.py">get</a>() -> GetIdentityResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -4959,11 +5063,14 @@ Returns information about the caller's identity.
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.identity.get()
 
 ```
@@ -4993,7 +5100,7 @@ client.identity.get()
 </details>
 
 ## Notifications
-<details><summary><code>client.notifications.<a href="src/polytomic/notifications/client.py">get_global_error_subscribers</a>()</code></summary>
+<details><summary><code>client.notifications.<a href="src/polytomic/notifications/client.py">get_global_error_subscribers</a>() -> V4GlobalErrorSubscribersResponse</code></summary>
 <dl>
 <dd>
 
@@ -5007,11 +5114,14 @@ client.identity.get()
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.notifications.get_global_error_subscribers()
 
 ```
@@ -5040,7 +5150,7 @@ client.notifications.get_global_error_subscribers()
 </dl>
 </details>
 
-<details><summary><code>client.notifications.<a href="src/polytomic/notifications/client.py">set_global_error_subscribers</a>(...)</code></summary>
+<details><summary><code>client.notifications.<a href="src/polytomic/notifications/client.py">set_global_error_subscribers</a>(...) -> V4GlobalErrorSubscribersResponse</code></summary>
 <dl>
 <dd>
 
@@ -5054,11 +5164,14 @@ client.notifications.get_global_error_subscribers()
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.notifications.set_global_error_subscribers()
 
 ```
@@ -5075,7 +5188,7 @@ client.notifications.set_global_error_subscribers()
 <dl>
 <dd>
 
-**emails:** `typing.Optional[typing.Sequence[str]]` 
+**emails:** `typing.Optional[typing.List[str]]` 
     
 </dd>
 </dl>
@@ -5096,7 +5209,7 @@ client.notifications.set_global_error_subscribers()
 </details>
 
 ## Organization
-<details><summary><code>client.organization.<a href="src/polytomic/organization/client.py">list</a>()</code></summary>
+<details><summary><code>client.organization.<a href="src/polytomic/organization/client.py">list</a>() -> OrganizationsEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -5126,11 +5239,14 @@ client.notifications.set_global_error_subscribers()
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.organization.list()
 
 ```
@@ -5159,7 +5275,7 @@ client.organization.list()
 </dl>
 </details>
 
-<details><summary><code>client.organization.<a href="src/polytomic/organization/client.py">create</a>(...)</code></summary>
+<details><summary><code>client.organization.<a href="src/polytomic/organization/client.py">create</a>(...) -> OrganizationEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -5189,11 +5305,14 @@ client.organization.list()
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.organization.create(
     name="My Organization",
 )
@@ -5272,7 +5391,7 @@ client.organization.create(
 </dl>
 </details>
 
-<details><summary><code>client.organization.<a href="src/polytomic/organization/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.organization.<a href="src/polytomic/organization/client.py">get</a>(...) -> OrganizationEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -5302,11 +5421,14 @@ client.organization.create(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.organization.get(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -5345,7 +5467,7 @@ client.organization.get(
 </dl>
 </details>
 
-<details><summary><code>client.organization.<a href="src/polytomic/organization/client.py">update</a>(...)</code></summary>
+<details><summary><code>client.organization.<a href="src/polytomic/organization/client.py">update</a>(...) -> OrganizationEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -5375,11 +5497,14 @@ client.organization.get(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.organization.update(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     name="My Organization",
@@ -5497,11 +5622,14 @@ client.organization.update(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.organization.remove(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -5541,7 +5669,7 @@ client.organization.remove(
 </details>
 
 ## Users
-<details><summary><code>client.users.<a href="src/polytomic/users/client.py">list</a>(...)</code></summary>
+<details><summary><code>client.users.<a href="src/polytomic/users/client.py">list</a>(...) -> ListUsersEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -5555,11 +5683,14 @@ client.organization.remove(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.users.list(
     org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -5598,7 +5729,7 @@ client.users.list(
 </dl>
 </details>
 
-<details><summary><code>client.users.<a href="src/polytomic/users/client.py">create</a>(...)</code></summary>
+<details><summary><code>client.users.<a href="src/polytomic/users/client.py">create</a>(...) -> UserEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -5612,11 +5743,14 @@ client.users.list(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.users.create(
     org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     email="mail@example.com",
@@ -5660,7 +5794,7 @@ client.users.create(
 <dl>
 <dd>
 
-**role_ids:** `typing.Optional[typing.Sequence[str]]` 
+**role_ids:** `typing.Optional[typing.List[str]]` 
     
 </dd>
 </dl>
@@ -5680,7 +5814,7 @@ client.users.create(
 </dl>
 </details>
 
-<details><summary><code>client.users.<a href="src/polytomic/users/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.users.<a href="src/polytomic/users/client.py">get</a>(...) -> UserEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -5694,14 +5828,17 @@ client.users.create(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.users.get(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
     org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
 
 ```
@@ -5718,7 +5855,7 @@ client.users.get(
 <dl>
 <dd>
 
-**id:** `str` 
+**org_id:** `str` 
     
 </dd>
 </dl>
@@ -5726,7 +5863,7 @@ client.users.get(
 <dl>
 <dd>
 
-**org_id:** `str` 
+**id:** `str` 
     
 </dd>
 </dl>
@@ -5746,7 +5883,7 @@ client.users.get(
 </dl>
 </details>
 
-<details><summary><code>client.users.<a href="src/polytomic/users/client.py">update</a>(...)</code></summary>
+<details><summary><code>client.users.<a href="src/polytomic/users/client.py">update</a>(...) -> UserEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -5760,14 +5897,17 @@ client.users.get(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.users.update(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
     org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
     email="mail@example.com",
 )
 
@@ -5785,7 +5925,7 @@ client.users.update(
 <dl>
 <dd>
 
-**id:** `str` 
+**org_id:** `str` 
     
 </dd>
 </dl>
@@ -5793,7 +5933,7 @@ client.users.update(
 <dl>
 <dd>
 
-**org_id:** `str` 
+**id:** `str` 
     
 </dd>
 </dl>
@@ -5817,7 +5957,7 @@ client.users.update(
 <dl>
 <dd>
 
-**role_ids:** `typing.Optional[typing.Sequence[str]]` 
+**role_ids:** `typing.Optional[typing.List[str]]` 
     
 </dd>
 </dl>
@@ -5837,7 +5977,7 @@ client.users.update(
 </dl>
 </details>
 
-<details><summary><code>client.users.<a href="src/polytomic/users/client.py">remove</a>(...)</code></summary>
+<details><summary><code>client.users.<a href="src/polytomic/users/client.py">remove</a>(...) -> UserEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -5851,14 +5991,17 @@ client.users.update(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.users.remove(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
     org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
 
 ```
@@ -5875,7 +6018,7 @@ client.users.remove(
 <dl>
 <dd>
 
-**id:** `str` 
+**org_id:** `str` 
     
 </dd>
 </dl>
@@ -5883,7 +6026,7 @@ client.users.remove(
 <dl>
 <dd>
 
-**org_id:** `str` 
+**id:** `str` 
     
 </dd>
 </dl>
@@ -5903,7 +6046,7 @@ client.users.remove(
 </dl>
 </details>
 
-<details><summary><code>client.users.<a href="src/polytomic/users/client.py">create_api_key</a>(...)</code></summary>
+<details><summary><code>client.users.<a href="src/polytomic/users/client.py">create_api_key</a>(...) -> ApiKeyResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -5933,11 +6076,14 @@ client.users.remove(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.users.create_api_key(
     org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
@@ -5995,7 +6141,7 @@ client.users.create_api_key(
 </details>
 
 ## Webhooks
-<details><summary><code>client.webhooks.<a href="src/polytomic/webhooks/client.py">list</a>()</code></summary>
+<details><summary><code>client.webhooks.<a href="src/polytomic/webhooks/client.py">list</a>() -> WebhookListEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -6027,11 +6173,14 @@ Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) 
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.webhooks.list()
 
 ```
@@ -6060,7 +6209,7 @@ client.webhooks.list()
 </dl>
 </details>
 
-<details><summary><code>client.webhooks.<a href="src/polytomic/webhooks/client.py">create</a>(...)</code></summary>
+<details><summary><code>client.webhooks.<a href="src/polytomic/webhooks/client.py">create</a>(...) -> WebhookEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -6092,11 +6241,14 @@ Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) 
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.webhooks.create(
     endpoint="https://example.com/webhook",
     secret="secret",
@@ -6152,7 +6304,7 @@ client.webhooks.create(
 </dl>
 </details>
 
-<details><summary><code>client.webhooks.<a href="src/polytomic/webhooks/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.webhooks.<a href="src/polytomic/webhooks/client.py">get</a>(...) -> WebhookEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -6184,11 +6336,14 @@ Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) 
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.webhooks.get(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -6227,7 +6382,7 @@ client.webhooks.get(
 </dl>
 </details>
 
-<details><summary><code>client.webhooks.<a href="src/polytomic/webhooks/client.py">update</a>(...)</code></summary>
+<details><summary><code>client.webhooks.<a href="src/polytomic/webhooks/client.py">update</a>(...) -> WebhookEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -6259,11 +6414,14 @@ Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) 
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.webhooks.update(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     endpoint="https://example.com/webhook",
@@ -6342,11 +6500,14 @@ client.webhooks.update(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.webhooks.remove(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -6385,7 +6546,7 @@ client.webhooks.remove(
 </dl>
 </details>
 
-<details><summary><code>client.webhooks.<a href="src/polytomic/webhooks/client.py">disable</a>(...)</code></summary>
+<details><summary><code>client.webhooks.<a href="src/polytomic/webhooks/client.py">disable</a>(...) -> WebhookEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -6399,11 +6560,14 @@ client.webhooks.remove(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.webhooks.disable(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -6442,7 +6606,7 @@ client.webhooks.disable(
 </dl>
 </details>
 
-<details><summary><code>client.webhooks.<a href="src/polytomic/webhooks/client.py">enable</a>(...)</code></summary>
+<details><summary><code>client.webhooks.<a href="src/polytomic/webhooks/client.py">enable</a>(...) -> WebhookEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -6456,11 +6620,14 @@ client.webhooks.disable(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.webhooks.enable(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -6500,7 +6667,7 @@ client.webhooks.enable(
 </details>
 
 ## BulkSync Executions
-<details><summary><code>client.bulk_sync.executions.<a href="src/polytomic/bulk_sync/executions/client.py">list_status</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.executions.<a href="src/polytomic/bulk_sync/executions/client.py">list_status</a>(...) -> ListBulkSyncExecutionStatusEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -6514,11 +6681,14 @@ client.webhooks.enable(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.executions.list_status(
     all_=True,
     active=True,
@@ -6538,7 +6708,7 @@ client.bulk_sync.executions.list_status(
 <dl>
 <dd>
 
-**all_:** `typing.Optional[bool]` — Return the execution status of all syncs in the organization
+**all:** `typing.Optional[bool]` — Return the execution status of all syncs in the organization
     
 </dd>
 </dl>
@@ -6574,7 +6744,7 @@ client.bulk_sync.executions.list_status(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.executions.<a href="src/polytomic/bulk_sync/executions/client.py">list</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.executions.<a href="src/polytomic/bulk_sync/executions/client.py">list</a>(...) -> ListBulkSyncExecutionsEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -6588,11 +6758,14 @@ client.bulk_sync.executions.list_status(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.executions.list(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     page_token="AmkYh8v0jR5B3kls2Qcc9y8MjrPmvR4CvaK7H0F4rEwqvg76K==",
@@ -6667,7 +6840,7 @@ client.bulk_sync.executions.list(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.executions.<a href="src/polytomic/bulk_sync/executions/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.executions.<a href="src/polytomic/bulk_sync/executions/client.py">get</a>(...) -> BulkSyncExecutionEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -6681,11 +6854,14 @@ client.bulk_sync.executions.list(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.executions.get(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     exec_id="248df4b7-aa70-47b8-a036-33ac447e668d",
@@ -6733,7 +6909,7 @@ client.bulk_sync.executions.get(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.executions.<a href="src/polytomic/bulk_sync/executions/client.py">cancel</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.executions.<a href="src/polytomic/bulk_sync/executions/client.py">cancel</a>(...) -> CancelBulkSyncResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -6747,11 +6923,14 @@ client.bulk_sync.executions.get(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.executions.cancel(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     exec_id="248df4b7-aa70-47b8-a036-33ac447e668d",
@@ -6799,7 +6978,7 @@ client.bulk_sync.executions.cancel(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.executions.<a href="src/polytomic/bulk_sync/executions/client.py">get_logs</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.executions.<a href="src/polytomic/bulk_sync/executions/client.py">get_logs</a>(...) -> V4BulkSyncExecutionLogsEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -6813,11 +6992,14 @@ client.bulk_sync.executions.cancel(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.executions.get_logs(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
@@ -6865,7 +7047,7 @@ client.bulk_sync.executions.get_logs(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.executions.<a href="src/polytomic/bulk_sync/executions/client.py">export_logs</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.executions.<a href="src/polytomic/bulk_sync/executions/client.py">export_logs</a>(...) -> V4ExportSyncLogsEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -6879,11 +7061,14 @@ client.bulk_sync.executions.get_logs(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.executions.export_logs(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
@@ -6940,7 +7125,7 @@ client.bulk_sync.executions.export_logs(
 </details>
 
 ## BulkSync Schemas
-<details><summary><code>client.bulk_sync.schemas.<a href="src/polytomic/bulk_sync/schemas/client.py">list</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.schemas.<a href="src/polytomic/bulk_sync/schemas/client.py">list</a>(...) -> ListBulkSchema</code></summary>
 <dl>
 <dd>
 
@@ -6954,11 +7139,14 @@ client.bulk_sync.executions.export_logs(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.schemas.list(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -6985,7 +7173,7 @@ client.bulk_sync.schemas.list(
 <dl>
 <dd>
 
-**filters:** `typing.Optional[typing.Dict[str, typing.Optional[str]]]` 
+**filters:** `typing.Optional[typing.Dict[str, str]]` 
     
 </dd>
 </dl>
@@ -7005,7 +7193,7 @@ client.bulk_sync.schemas.list(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.schemas.<a href="src/polytomic/bulk_sync/schemas/client.py">patch</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.schemas.<a href="src/polytomic/bulk_sync/schemas/client.py">patch</a>(...) -> ListBulkSchema</code></summary>
 <dl>
 <dd>
 
@@ -7019,11 +7207,14 @@ client.bulk_sync.schemas.list(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.schemas.patch(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -7050,7 +7241,7 @@ client.bulk_sync.schemas.patch(
 <dl>
 <dd>
 
-**schemas:** `typing.Optional[typing.Sequence[BulkSchema]]` 
+**schemas:** `typing.Optional[typing.List[BulkSchema]]` 
     
 </dd>
 </dl>
@@ -7070,7 +7261,7 @@ client.bulk_sync.schemas.patch(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.schemas.<a href="src/polytomic/bulk_sync/schemas/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.schemas.<a href="src/polytomic/bulk_sync/schemas/client.py">get</a>(...) -> BulkSchemaEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -7084,11 +7275,14 @@ client.bulk_sync.schemas.patch(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.schemas.get(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     schema_id="Contact",
@@ -7136,7 +7330,7 @@ client.bulk_sync.schemas.get(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.schemas.<a href="src/polytomic/bulk_sync/schemas/client.py">update</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.schemas.<a href="src/polytomic/bulk_sync/schemas/client.py">update</a>(...) -> BulkSchemaEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -7150,11 +7344,14 @@ client.bulk_sync.schemas.get(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.schemas.update(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     schema_id="contact",
@@ -7190,7 +7387,7 @@ client.bulk_sync.schemas.update(
 <dl>
 <dd>
 
-**data_cutoff_timestamp:** `typing.Optional[dt.datetime]` 
+**data_cutoff_timestamp:** `typing.Optional[datetime.datetime]` 
     
 </dd>
 </dl>
@@ -7214,7 +7411,7 @@ client.bulk_sync.schemas.update(
 <dl>
 <dd>
 
-**fields:** `typing.Optional[typing.Sequence[UpdateBulkField]]` 
+**fields:** `typing.Optional[typing.List[UpdateBulkField]]` 
     
 </dd>
 </dl>
@@ -7222,7 +7419,7 @@ client.bulk_sync.schemas.update(
 <dl>
 <dd>
 
-**filters:** `typing.Optional[typing.Sequence[BulkFilter]]` 
+**filters:** `typing.Optional[typing.List[BulkFilter2]]` 
     
 </dd>
 </dl>
@@ -7266,7 +7463,7 @@ client.bulk_sync.schemas.update(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.schemas.<a href="src/polytomic/bulk_sync/schemas/client.py">cancel</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.schemas.<a href="src/polytomic/bulk_sync/schemas/client.py">cancel</a>(...) -> CancelBulkSyncResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -7280,11 +7477,14 @@ client.bulk_sync.schemas.update(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.schemas.cancel(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     schema_id="schema_id",
@@ -7333,7 +7533,7 @@ client.bulk_sync.schemas.cancel(
 </details>
 
 ## BulkSync Schedules
-<details><summary><code>client.bulk_sync.schedules.<a href="src/polytomic/bulk_sync/schedules/client.py">list</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.schedules.<a href="src/polytomic/bulk_sync/schedules/client.py">list</a>(...) -> SchedulesEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -7347,11 +7547,14 @@ client.bulk_sync.schemas.cancel(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.schedules.list(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -7390,7 +7593,7 @@ client.bulk_sync.schedules.list(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.schedules.<a href="src/polytomic/bulk_sync/schedules/client.py">create</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.schedules.<a href="src/polytomic/bulk_sync/schedules/client.py">create</a>(...) -> ScheduleEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -7404,11 +7607,14 @@ client.bulk_sync.schedules.list(
 
 ```python
 from polytomic import Polytomic, V4BulkSyncScheduleApi
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.schedules.create(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     schedule=V4BulkSyncScheduleApi(
@@ -7458,7 +7664,7 @@ client.bulk_sync.schedules.create(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.schedules.<a href="src/polytomic/bulk_sync/schedules/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.schedules.<a href="src/polytomic/bulk_sync/schedules/client.py">get</a>(...) -> ScheduleEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -7472,11 +7678,14 @@ client.bulk_sync.schedules.create(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.schedules.get(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     schedule_id="248df4b7-aa70-47b8-a036-33ac447e668d",
@@ -7524,7 +7733,7 @@ client.bulk_sync.schedules.get(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.schedules.<a href="src/polytomic/bulk_sync/schedules/client.py">update</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.schedules.<a href="src/polytomic/bulk_sync/schedules/client.py">update</a>(...) -> ScheduleEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -7538,11 +7747,14 @@ client.bulk_sync.schedules.get(
 
 ```python
 from polytomic import Polytomic, V4BulkSyncScheduleApi
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.schedules.update(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     schedule_id="248df4b7-aa70-47b8-a036-33ac447e668d",
@@ -7615,11 +7827,14 @@ client.bulk_sync.schedules.update(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.bulk_sync.schedules.delete(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     schedule_id="248df4b7-aa70-47b8-a036-33ac447e668d",
@@ -7668,7 +7883,7 @@ client.bulk_sync.schedules.delete(
 </details>
 
 ## ModelSync Targets
-<details><summary><code>client.model_sync.targets.<a href="src/polytomic/model_sync/targets/client.py">get_target</a>(...)</code></summary>
+<details><summary><code>client.model_sync.targets.<a href="src/polytomic/model_sync/targets/client.py">get_target</a>(...) -> GetConnectionMetaEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -7682,11 +7897,14 @@ client.bulk_sync.schedules.delete(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.model_sync.targets.get_target(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -7741,7 +7959,7 @@ client.model_sync.targets.get_target(
 </dl>
 </details>
 
-<details><summary><code>client.model_sync.targets.<a href="src/polytomic/model_sync/targets/client.py">get_target_fields</a>(...)</code></summary>
+<details><summary><code>client.model_sync.targets.<a href="src/polytomic/model_sync/targets/client.py">get_target_fields</a>(...) -> TargetResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -7755,11 +7973,14 @@ client.model_sync.targets.get_target(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.model_sync.targets.get_target_fields(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     target="database.table",
@@ -7816,7 +8037,7 @@ client.model_sync.targets.get_target_fields(
 </dl>
 </details>
 
-<details><summary><code>client.model_sync.targets.<a href="src/polytomic/model_sync/targets/client.py">list</a>(...)</code></summary>
+<details><summary><code>client.model_sync.targets.<a href="src/polytomic/model_sync/targets/client.py">list</a>(...) -> V4TargetObjectsResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -7860,11 +8081,14 @@ what operations the mode supports.
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.model_sync.targets.list(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -7903,7 +8127,7 @@ client.model_sync.targets.list(
 </dl>
 </details>
 
-<details><summary><code>client.model_sync.targets.<a href="src/polytomic/model_sync/targets/client.py">get_create_property</a>(...)</code></summary>
+<details><summary><code>client.model_sync.targets.<a href="src/polytomic/model_sync/targets/client.py">get_create_property</a>(...) -> V4TargetPropertyValuesEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -7960,11 +8184,14 @@ sync](https://apidocs.polytomic.com/2024-02-08/api-reference/model-sync/create).
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.model_sync.targets.get_create_property(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     property="property",
@@ -8013,7 +8240,7 @@ client.model_sync.targets.get_create_property(
 </details>
 
 ## ModelSync Executions
-<details><summary><code>client.model_sync.executions.<a href="src/polytomic/model_sync/executions/client.py">list</a>(...)</code></summary>
+<details><summary><code>client.model_sync.executions.<a href="src/polytomic/model_sync/executions/client.py">list</a>(...) -> ListExecutionResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -8027,11 +8254,14 @@ client.model_sync.targets.get_create_property(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.model_sync.executions.list(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     page_token="AmkYh8v0jR5B3kls2Qcc9y8MjrPmvR4CvaK7H0F4rEwqvg76K==",
@@ -8097,7 +8327,7 @@ client.model_sync.executions.list(
 </dl>
 </details>
 
-<details><summary><code>client.model_sync.executions.<a href="src/polytomic/model_sync/executions/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.model_sync.executions.<a href="src/polytomic/model_sync/executions/client.py">get</a>(...) -> GetExecutionResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -8111,11 +8341,14 @@ client.model_sync.executions.list(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.model_sync.executions.get(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
@@ -8163,7 +8396,7 @@ client.model_sync.executions.get(
 </dl>
 </details>
 
-<details><summary><code>client.model_sync.executions.<a href="src/polytomic/model_sync/executions/client.py">update</a>(...)</code></summary>
+<details><summary><code>client.model_sync.executions.<a href="src/polytomic/model_sync/executions/client.py">update</a>(...) -> GetExecutionResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -8177,11 +8410,14 @@ client.model_sync.executions.get(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.model_sync.executions.update(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
@@ -8238,7 +8474,7 @@ client.model_sync.executions.update(
 </dl>
 </details>
 
-<details><summary><code>client.model_sync.executions.<a href="src/polytomic/model_sync/executions/client.py">get_log_urls</a>(...)</code></summary>
+<details><summary><code>client.model_sync.executions.<a href="src/polytomic/model_sync/executions/client.py">get_log_urls</a>(...) -> ExecutionLogsResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -8252,11 +8488,14 @@ client.model_sync.executions.update(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.model_sync.executions.get_log_urls(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
@@ -8327,11 +8566,14 @@ client.model_sync.executions.get_log_urls(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.model_sync.executions.get_logs(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     id="0ecd09c1-b901-4d27-9053-f0367c427254",
@@ -8398,7 +8640,7 @@ client.model_sync.executions.get_logs(
 </details>
 
 ## Permissions Policies
-<details><summary><code>client.permissions.policies.<a href="src/polytomic/permissions/policies/client.py">list</a>()</code></summary>
+<details><summary><code>client.permissions.policies.<a href="src/polytomic/permissions/policies/client.py">list</a>() -> ListPoliciesResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -8412,11 +8654,14 @@ client.model_sync.executions.get_logs(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.permissions.policies.list()
 
 ```
@@ -8445,7 +8690,7 @@ client.permissions.policies.list()
 </dl>
 </details>
 
-<details><summary><code>client.permissions.policies.<a href="src/polytomic/permissions/policies/client.py">create</a>(...)</code></summary>
+<details><summary><code>client.permissions.policies.<a href="src/polytomic/permissions/policies/client.py">create</a>(...) -> PolicyResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -8459,11 +8704,14 @@ client.permissions.policies.list()
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.permissions.policies.create(
     name="Custom",
 )
@@ -8498,7 +8746,7 @@ client.permissions.policies.create(
 <dl>
 <dd>
 
-**policy_actions:** `typing.Optional[typing.Sequence[PolicyAction]]` 
+**policy_actions:** `typing.Optional[typing.List[PolicyAction]]` 
     
 </dd>
 </dl>
@@ -8518,7 +8766,7 @@ client.permissions.policies.create(
 </dl>
 </details>
 
-<details><summary><code>client.permissions.policies.<a href="src/polytomic/permissions/policies/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.permissions.policies.<a href="src/polytomic/permissions/policies/client.py">get</a>(...) -> PolicyResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -8532,11 +8780,14 @@ client.permissions.policies.create(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.permissions.policies.get(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -8575,7 +8826,7 @@ client.permissions.policies.get(
 </dl>
 </details>
 
-<details><summary><code>client.permissions.policies.<a href="src/polytomic/permissions/policies/client.py">update</a>(...)</code></summary>
+<details><summary><code>client.permissions.policies.<a href="src/polytomic/permissions/policies/client.py">update</a>(...) -> PolicyResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -8589,11 +8840,14 @@ client.permissions.policies.get(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.permissions.policies.update(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     name="Custom",
@@ -8637,7 +8891,7 @@ client.permissions.policies.update(
 <dl>
 <dd>
 
-**policy_actions:** `typing.Optional[typing.Sequence[PolicyAction]]` 
+**policy_actions:** `typing.Optional[typing.List[PolicyAction]]` 
     
 </dd>
 </dl>
@@ -8671,11 +8925,14 @@ client.permissions.policies.update(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.permissions.policies.remove(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -8715,7 +8972,7 @@ client.permissions.policies.remove(
 </details>
 
 ## Permissions Roles
-<details><summary><code>client.permissions.roles.<a href="src/polytomic/permissions/roles/client.py">list</a>()</code></summary>
+<details><summary><code>client.permissions.roles.<a href="src/polytomic/permissions/roles/client.py">list</a>() -> RoleListResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -8729,11 +8986,14 @@ client.permissions.policies.remove(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.permissions.roles.list()
 
 ```
@@ -8762,7 +9022,7 @@ client.permissions.roles.list()
 </dl>
 </details>
 
-<details><summary><code>client.permissions.roles.<a href="src/polytomic/permissions/roles/client.py">create</a>(...)</code></summary>
+<details><summary><code>client.permissions.roles.<a href="src/polytomic/permissions/roles/client.py">create</a>(...) -> RoleResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -8776,11 +9036,14 @@ client.permissions.roles.list()
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.permissions.roles.create(
     name="Custom",
 )
@@ -8827,7 +9090,7 @@ client.permissions.roles.create(
 </dl>
 </details>
 
-<details><summary><code>client.permissions.roles.<a href="src/polytomic/permissions/roles/client.py">get</a>(...)</code></summary>
+<details><summary><code>client.permissions.roles.<a href="src/polytomic/permissions/roles/client.py">get</a>(...) -> RoleResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -8841,11 +9104,14 @@ client.permissions.roles.create(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.permissions.roles.get(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -8884,7 +9150,7 @@ client.permissions.roles.get(
 </dl>
 </details>
 
-<details><summary><code>client.permissions.roles.<a href="src/polytomic/permissions/roles/client.py">update</a>(...)</code></summary>
+<details><summary><code>client.permissions.roles.<a href="src/polytomic/permissions/roles/client.py">update</a>(...) -> RoleResponseEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -8898,11 +9164,14 @@ client.permissions.roles.get(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.permissions.roles.update(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     name="Custom",
@@ -8972,11 +9241,14 @@ client.permissions.roles.update(
 
 ```python
 from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
 
 client = Polytomic(
-    version="YOUR_VERSION",
-    token="YOUR_TOKEN",
+    token="<token>",
+    version="<X-Polytomic-Version>",
+    environment=PolytomicEnvironment.DEFAULT,
 )
+
 client.permissions.roles.remove(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
