@@ -2,4 +2,7 @@
 
 import typing
 
-V2EnricherConfiguration = typing.Dict[str, typing.Optional[typing.Any]]
+V2EnricherConfiguration = typing.Dict[str, typing.Any]
+"""
+Similar to a model configuration, this configures the enricher. For example, if you wanted to use Apollo to enrich people, you would send `{"object": "people"}` as the configuration. Each enricher configuration can be found in the connection configuration docs.
+"""

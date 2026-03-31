@@ -2,4 +2,7 @@
 
 import typing
 
-V2SampleRecord = typing.Dict[str, typing.Dict[str, typing.Optional[typing.Any]]]
+V2SampleRecord = typing.Dict[str, typing.Dict[str, typing.Any]]
+"""
+A map of `fieldSource` -> `fieldName: fieldValue`. Because there may be field name conflicts between the base model and enrichments, the base model fields are placed in a map under the model ID. Fields from enrichments are placed under the enricher ID.
+"""
