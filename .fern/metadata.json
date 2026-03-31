@@ -1,0 +1,10 @@
+{
+  "cliVersion": "4.48.1",
+  "generatorName": "fernapi/fern-python-sdk",
+  "generatorVersion": "4.64.1",
+  "generatorConfig": {
+    "client_class_name": "Polytomic"
+  },
+  "originGitCommit": "9cf88dbd156f6c881693d8273fa764c1ba18020f",
+  "sdkVersion": "1.16.2"
+}
