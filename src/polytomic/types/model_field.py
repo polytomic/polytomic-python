@@ -3,14 +3,14 @@
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 import datetime as dt
-from .common_output_actor import CommonOutputActor
+from .output_actor import OutputActor
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
 class ModelField(UniversalBaseModel):
     created_at: typing.Optional[dt.datetime] = None
-    created_by: typing.Optional[CommonOutputActor] = None
+    created_by: typing.Optional[OutputActor] = None
     description: typing.Optional[str] = None
     example: typing.Optional[typing.Optional[typing.Any]] = None
     id: typing.Optional[str] = None

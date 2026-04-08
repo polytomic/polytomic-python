@@ -211,13 +211,13 @@ class UsersClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> UserEnvelope:
+    def get(self, org_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> UserEnvelope:
         """
         Parameters
         ----------
-        id : str
-
         org_id : str
+
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -236,8 +236,8 @@ class UsersClient:
             token="YOUR_TOKEN",
         )
         client.users.get(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
             org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -301,8 +301,8 @@ class UsersClient:
 
     def update(
         self,
-        id: str,
         org_id: str,
+        id: str,
         *,
         email: str,
         role: typing.Optional[str] = OMIT,
@@ -312,9 +312,9 @@ class UsersClient:
         """
         Parameters
         ----------
-        id : str
-
         org_id : str
+
+        id : str
 
         email : str
 
@@ -339,8 +339,8 @@ class UsersClient:
             token="YOUR_TOKEN",
         )
         client.users.update(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
             org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
             email="mail@example.com",
         )
         """
@@ -412,13 +412,13 @@ class UsersClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def remove(self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> UserEnvelope:
+    def remove(self, org_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> UserEnvelope:
         """
         Parameters
         ----------
-        id : str
-
         org_id : str
+
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -437,8 +437,8 @@ class UsersClient:
             token="YOUR_TOKEN",
         )
         client.users.remove(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
             org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -566,6 +566,16 @@ class UsersClient:
                         RestErrResponse,
                         parse_obj_as(
                             type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
                             object_=_response.json(),
                         ),
                     )
@@ -801,14 +811,14 @@ class AsyncUsersClient:
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     async def get(
-        self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, org_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> UserEnvelope:
         """
         Parameters
         ----------
-        id : str
-
         org_id : str
+
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -832,8 +842,8 @@ class AsyncUsersClient:
 
         async def main() -> None:
             await client.users.get(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="248df4b7-aa70-47b8-a036-33ac447e668d",
             )
 
 
@@ -900,8 +910,8 @@ class AsyncUsersClient:
 
     async def update(
         self,
-        id: str,
         org_id: str,
+        id: str,
         *,
         email: str,
         role: typing.Optional[str] = OMIT,
@@ -911,9 +921,9 @@ class AsyncUsersClient:
         """
         Parameters
         ----------
-        id : str
-
         org_id : str
+
+        id : str
 
         email : str
 
@@ -943,8 +953,8 @@ class AsyncUsersClient:
 
         async def main() -> None:
             await client.users.update(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 email="mail@example.com",
             )
 
@@ -1020,14 +1030,14 @@ class AsyncUsersClient:
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     async def remove(
-        self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, org_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> UserEnvelope:
         """
         Parameters
         ----------
-        id : str
-
         org_id : str
+
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1051,8 +1061,8 @@ class AsyncUsersClient:
 
         async def main() -> None:
             await client.users.remove(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="248df4b7-aa70-47b8-a036-33ac447e668d",
             )
 
 
@@ -1191,6 +1201,16 @@ class AsyncUsersClient:
                         RestErrResponse,
                         parse_obj_as(
                             type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
                             object_=_response.json(),
                         ),
                     )

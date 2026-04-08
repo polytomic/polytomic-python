@@ -26,7 +26,7 @@ class V4RunQueryResult(UniversalBaseModel):
 
     id: typing.Optional[str] = pydantic.Field(default=None)
     """
-    The ID of the query task.
+    The ID of the query task. Poll GET /api/queries/{id} until the task reaches done or failed to retrieve results.
     """
 
     results: typing.Optional[typing.List[typing.Dict[str, typing.Optional[typing.Any]]]] = pydantic.Field(default=None)

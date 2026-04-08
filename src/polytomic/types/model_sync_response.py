@@ -3,7 +3,7 @@
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 import datetime as dt
-from .common_output_actor import CommonOutputActor
+from .output_actor import OutputActor
 from .model_sync_field import ModelSyncField
 from .filter import Filter
 from .identity import Identity
@@ -18,7 +18,7 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 class ModelSyncResponse(UniversalBaseModel):
     active: typing.Optional[bool] = None
     created_at: typing.Optional[dt.datetime] = None
-    created_by: typing.Optional[CommonOutputActor] = None
+    created_by: typing.Optional[OutputActor] = None
     encryption_passphrase: typing.Optional[str] = None
     fields: typing.Optional[typing.List[ModelSyncField]] = None
     filter_logic: typing.Optional[str] = None
@@ -42,7 +42,7 @@ class ModelSyncResponse(UniversalBaseModel):
     sync_all_records: typing.Optional[bool] = None
     target: typing.Optional[Target] = None
     updated_at: typing.Optional[dt.datetime] = None
-    updated_by: typing.Optional[CommonOutputActor] = None
+    updated_by: typing.Optional[OutputActor] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

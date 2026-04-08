@@ -3,13 +3,18 @@
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 from .supported_bulk_mode import SupportedBulkMode
-from ..core.pydantic_utilities import IS_PYDANTIC_V2
+from .bulk_resync_mode import BulkResyncMode
 import pydantic
+from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
 class BulkSyncDest(UniversalBaseModel):
     configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = None
     modes: typing.Optional[typing.List[SupportedBulkMode]] = None
+    supported_resync_modes: typing.Optional[typing.List[BulkResyncMode]] = pydantic.Field(default=None)
+    """
+    Resync modes supported by this destination (refetch, resync, rebuild).
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

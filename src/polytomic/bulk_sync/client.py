@@ -19,7 +19,7 @@ from ..types.bulk_discover import BulkDiscover
 import datetime as dt
 from ..types.bulk_sync_mode import BulkSyncMode
 from ..types.bulk_normalize_names import BulkNormalizeNames
-from .types.v_2_create_bulk_sync_request_schemas_item import V2CreateBulkSyncRequestSchemasItem
+from .types.v2create_bulk_sync_request_schemas_item import V2CreateBulkSyncRequestSchemasItem
 from ..types.bulk_sync_response_envelope import BulkSyncResponseEnvelope
 from ..core.serialization import convert_and_respect_annotation_metadata
 from ..errors.bad_request_error import BadRequestError
@@ -27,10 +27,11 @@ from ..errors.forbidden_error import ForbiddenError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..core.jsonable_encoder import jsonable_encoder
 from ..errors.not_found_error import NotFoundError
-from .types.v_2_update_bulk_sync_request_schemas_item import V2UpdateBulkSyncRequestSchemasItem
+from .types.v2update_bulk_sync_request_schemas_item import V2UpdateBulkSyncRequestSchemasItem
 from ..types.activate_sync_envelope import ActivateSyncEnvelope
 from ..types.cancel_bulk_sync_response_envelope import CancelBulkSyncResponseEnvelope
 from ..types.bulk_fetch_mode import BulkFetchMode
+from ..types.bulk_resync_mode import BulkResyncMode
 from ..types.bulk_sync_execution_envelope import BulkSyncExecutionEnvelope
 from ..errors.conflict_error import ConflictError
 from ..types.bulk_sync_status_envelope import BulkSyncStatusEnvelope
@@ -898,6 +899,7 @@ class BulkSyncClient:
         *,
         fetch_mode: typing.Optional[BulkFetchMode] = OMIT,
         resync: typing.Optional[bool] = OMIT,
+        resync_mode: typing.Optional[BulkResyncMode] = OMIT,
         schemas: typing.Optional[typing.Sequence[str]] = OMIT,
         test: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
@@ -910,6 +912,9 @@ class BulkSyncClient:
         fetch_mode : typing.Optional[BulkFetchMode]
 
         resync : typing.Optional[bool]
+            Deprecated: use resync_mode instead. Equivalent to resync_mode=rebuild.
+
+        resync_mode : typing.Optional[BulkResyncMode]
 
         schemas : typing.Optional[typing.Sequence[str]]
 
@@ -941,6 +946,7 @@ class BulkSyncClient:
             json={
                 "fetch_mode": fetch_mode,
                 "resync": resync,
+                "resync_mode": resync_mode,
                 "schemas": schemas,
                 "test": test,
             },
@@ -2163,6 +2169,7 @@ class AsyncBulkSyncClient:
         *,
         fetch_mode: typing.Optional[BulkFetchMode] = OMIT,
         resync: typing.Optional[bool] = OMIT,
+        resync_mode: typing.Optional[BulkResyncMode] = OMIT,
         schemas: typing.Optional[typing.Sequence[str]] = OMIT,
         test: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
@@ -2175,6 +2182,9 @@ class AsyncBulkSyncClient:
         fetch_mode : typing.Optional[BulkFetchMode]
 
         resync : typing.Optional[bool]
+            Deprecated: use resync_mode instead. Equivalent to resync_mode=rebuild.
+
+        resync_mode : typing.Optional[BulkResyncMode]
 
         schemas : typing.Optional[typing.Sequence[str]]
 
@@ -2214,6 +2224,7 @@ class AsyncBulkSyncClient:
             json={
                 "fetch_mode": fetch_mode,
                 "resync": resync,
+                "resync_mode": resync_mode,
                 "schemas": schemas,
                 "test": test,
             },

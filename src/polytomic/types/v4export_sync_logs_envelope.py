@@ -2,7 +2,7 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .v_4_export_sync_logs_response import V4ExportSyncLogsResponse
+from .v4export_sync_logs_response import V4ExportSyncLogsResponse
 from .job_response import JobResponse
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic

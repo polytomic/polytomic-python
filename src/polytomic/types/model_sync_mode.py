@@ -3,5 +3,5 @@
 import typing
 
 ModelSyncMode = typing.Union[
-    typing.Literal["create", "update", "updateOrCreate", "replace", "append", "remove"], typing.Any
+    typing.Literal["create", "update", "updateOrCreate", "replace", "append", "remove", "snapshot"], typing.Any
 ]

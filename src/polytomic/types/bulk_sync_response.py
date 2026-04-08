@@ -8,7 +8,7 @@ import typing
 from .bulk_discover import BulkDiscover
 import pydantic
 import datetime as dt
-from .common_output_actor import CommonOutputActor
+from .output_actor import OutputActor
 from .bulk_sync_mode import BulkSyncMode
 from .bulk_normalize_names import BulkNormalizeNames
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
@@ -24,7 +24,7 @@ class BulkSyncResponse(UniversalBaseModel):
     """
 
     created_at: typing.Optional[dt.datetime] = None
-    created_by: typing.Optional[CommonOutputActor] = None
+    created_by: typing.Optional[OutputActor] = None
     data_cutoff_timestamp: typing.Optional[dt.datetime] = None
     destination_configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = pydantic.Field(
         default=None
@@ -67,7 +67,7 @@ class BulkSyncResponse(UniversalBaseModel):
 
     source_connection_id: typing.Optional[str] = None
     updated_at: typing.Optional[dt.datetime] = None
-    updated_by: typing.Optional[CommonOutputActor] = None
+    updated_by: typing.Optional[OutputActor] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
