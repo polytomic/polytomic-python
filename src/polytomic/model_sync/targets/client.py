@@ -16,8 +16,8 @@ from ...errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError as core_api_error_ApiError
 from ...types.target_response_envelope import TargetResponseEnvelope
-from ...types.v_4_target_objects_response_envelope import V4TargetObjectsResponseEnvelope
-from ...types.v_4_target_property_values_envelope import V4TargetPropertyValuesEnvelope
+from ...types.v4target_objects_response_envelope import V4TargetObjectsResponseEnvelope
+from ...types.v4target_property_values_envelope import V4TargetPropertyValuesEnvelope
 from ...core.client_wrapper import AsyncClientWrapper
 
 
@@ -60,6 +60,8 @@ class TargetsClient:
         )
         client.model_sync.targets.get_target(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            type="type",
+            search="search",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -528,6 +530,8 @@ class AsyncTargetsClient:
         async def main() -> None:
             await client.model_sync.targets.get_target(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                type="type",
+                search="search",
             )
 
 

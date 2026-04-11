@@ -843,7 +843,15 @@ client.bulk_sync.start(
 <dl>
 <dd>
 
-**resync:** `typing.Optional[bool]` 
+**resync:** `typing.Optional[bool]` — Deprecated: use resync_mode instead. Equivalent to resync_mode=rebuild.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**resync_mode:** `typing.Optional[BulkResyncMode]` 
     
 </dd>
 </dl>
@@ -1953,9 +1961,25 @@ client.connections.get_parameter_values(
 </dl>
 </details>
 
-<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">api_v_2_create_shared_connection</a>(...)</code></summary>
+<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">create_shared_connection</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+> 🚧 Requires partner key
+>
+> Shared connections can only be created by using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -1972,9 +1996,9 @@ client = Polytomic(
     version="YOUR_VERSION",
     token="YOUR_TOKEN",
 )
-client.connections.api_v_2_create_shared_connection(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+client.connections.create_shared_connection(
+    parent_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    child_organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
 
 ```
@@ -1991,7 +2015,7 @@ client.connections.api_v_2_create_shared_connection(
 <dl>
 <dd>
 
-**id:** `str` 
+**parent_connection_id:** `str` 
     
 </dd>
 </dl>
@@ -1999,7 +2023,7 @@ client.connections.api_v_2_create_shared_connection(
 <dl>
 <dd>
 
-**organization_id:** `str` 
+**child_organization_id:** `str` 
     
 </dd>
 </dl>
@@ -2027,10 +2051,81 @@ client.connections.api_v_2_create_shared_connection(
 </dl>
 </details>
 
+<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">list_shared_connections</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+
+client = Polytomic(
+    version="YOUR_VERSION",
+    token="YOUR_TOKEN",
+)
+client.connections.list_shared_connections(
+    parent_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**parent_connection_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## QueryRunner
 <details><summary><code>client.query_runner.<a href="src/polytomic/query_runner/client.py">run_query</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Submit a query for asynchronous execution against the connection. The initial response may only contain the query task id and status. Poll GET /api/queries/{id} with the returned id to retrieve completion status, fields, and results.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -2098,6 +2193,20 @@ client.query_runner.run_query(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Fetch the latest status for a submitted query and, once complete, return fields and paginated results. Use the query id returned by POST /api/connections/{connection_id}/query.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -2115,6 +2224,7 @@ client = Polytomic(
 )
 client.query_runner.get_query(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    page="page",
 )
 
 ```
@@ -2888,6 +2998,7 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.models.preview(
+    async_=True,
     configuration={"table": "public.users"},
     connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     name="Users",
@@ -3090,6 +3201,7 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.models.create(
+    async_=True,
     configuration={"table": "public.users"},
     connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     name="Users",
@@ -3246,6 +3358,7 @@ client = Polytomic(
 )
 client.models.get(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    async_=True,
 )
 
 ```
@@ -3484,6 +3597,7 @@ client = Polytomic(
 )
 client.models.remove(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    async_=True,
 )
 
 ```
@@ -3563,6 +3677,7 @@ client = Polytomic(
 )
 client.models.sample(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    async_=True,
 )
 
 ```
@@ -3759,6 +3874,7 @@ client = Polytomic(
 )
 client.model_sync.list(
     active=True,
+    mode="create",
     target_connection_id="0b155265-c537-44c9-9359-a3ceb468a4da",
 )
 
@@ -4742,12 +4858,14 @@ client = Polytomic(
 )
 client.events.list(
     organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    type="type",
     starting_after=datetime.datetime.fromisoformat(
         "2020-01-01 00:00:00+00:00",
     ),
     ending_before=datetime.datetime.fromisoformat(
         "2020-01-01 00:00:00+00:00",
     ),
+    limit=1,
 )
 
 ```
@@ -4902,7 +5020,7 @@ client.jobs.get(
 <dl>
 <dd>
 
-**id:** `str` 
+**type:** `str` 
     
 </dd>
 </dl>
@@ -4910,7 +5028,7 @@ client.jobs.get(
 <dl>
 <dd>
 
-**type:** `str` 
+**id:** `str` 
     
 </dd>
 </dl>
@@ -5718,7 +5836,7 @@ client.users.get(
 <dl>
 <dd>
 
-**id:** `str` 
+**org_id:** `str` 
     
 </dd>
 </dl>
@@ -5726,7 +5844,7 @@ client.users.get(
 <dl>
 <dd>
 
-**org_id:** `str` 
+**id:** `str` 
     
 </dd>
 </dl>
@@ -5785,7 +5903,7 @@ client.users.update(
 <dl>
 <dd>
 
-**id:** `str` 
+**org_id:** `str` 
     
 </dd>
 </dl>
@@ -5793,7 +5911,7 @@ client.users.update(
 <dl>
 <dd>
 
-**org_id:** `str` 
+**id:** `str` 
     
 </dd>
 </dl>
@@ -5875,7 +5993,7 @@ client.users.remove(
 <dl>
 <dd>
 
-**id:** `str` 
+**org_id:** `str` 
     
 </dd>
 </dl>
@@ -5883,7 +6001,7 @@ client.users.remove(
 <dl>
 <dd>
 
-**org_id:** `str` 
+**id:** `str` 
     
 </dd>
 </dl>
@@ -6887,6 +7005,7 @@ client = Polytomic(
 client.bulk_sync.executions.export_logs(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    notify=True,
 )
 
 ```
@@ -7689,6 +7808,8 @@ client = Polytomic(
 )
 client.model_sync.targets.get_target(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    type="type",
+    search="search",
 )
 
 ```

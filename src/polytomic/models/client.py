@@ -15,8 +15,8 @@ from ..errors.not_found_error import NotFoundError
 from ..errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError as core_api_error_ApiError
-from ..types.v_2_enricher_configuration import V2EnricherConfiguration
-from ..types.v_2_get_enrichment_input_fields_response_envelope import V2GetEnrichmentInputFieldsResponseEnvelope
+from ..types.v2enricher_configuration import V2EnricherConfiguration
+from ..types.v2get_enrichment_input_fields_response_envelope import V2GetEnrichmentInputFieldsResponseEnvelope
 from ..types.model_model_field_request import ModelModelFieldRequest
 from ..types.enrichment import Enrichment
 from ..types.model_relation import ModelRelation
@@ -306,6 +306,7 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.preview(
+            async_=True,
             configuration={"table": "public.users"},
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="Users",
@@ -519,6 +520,7 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.create(
+            async_=True,
             configuration={"table": "public.users"},
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="Users",
@@ -635,6 +637,7 @@ class ModelsClient:
         )
         client.models.get(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            async_=True,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -880,6 +883,7 @@ class ModelsClient:
         )
         client.models.remove(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            async_=True,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -968,6 +972,7 @@ class ModelsClient:
         )
         client.models.sample(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            async_=True,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1330,6 +1335,7 @@ class AsyncModelsClient:
 
         async def main() -> None:
             await client.models.preview(
+                async_=True,
                 configuration={"table": "public.users"},
                 connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 name="Users",
@@ -1559,6 +1565,7 @@ class AsyncModelsClient:
 
         async def main() -> None:
             await client.models.create(
+                async_=True,
                 configuration={"table": "public.users"},
                 connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 name="Users",
@@ -1683,6 +1690,7 @@ class AsyncModelsClient:
         async def main() -> None:
             await client.models.get(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                async_=True,
             )
 
 
@@ -1944,6 +1952,7 @@ class AsyncModelsClient:
         async def main() -> None:
             await client.models.remove(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                async_=True,
             )
 
 
@@ -2040,6 +2049,7 @@ class AsyncModelsClient:
         async def main() -> None:
             await client.models.sample(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                async_=True,
             )
 
 

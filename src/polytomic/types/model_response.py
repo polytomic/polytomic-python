@@ -3,7 +3,7 @@
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 import datetime as dt
-from .common_output_actor import CommonOutputActor
+from .output_actor import OutputActor
 from .enrichment import Enrichment
 from .model_field import ModelField
 from .label_label import LabelLabel
@@ -16,7 +16,7 @@ class ModelResponse(UniversalBaseModel):
     configuration: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = None
     connection_id: typing.Optional[str] = None
     created_at: typing.Optional[dt.datetime] = None
-    created_by: typing.Optional[CommonOutputActor] = None
+    created_by: typing.Optional[OutputActor] = None
     enricher: typing.Optional[Enrichment] = None
     fields: typing.Optional[typing.List[ModelField]] = None
     id: typing.Optional[str] = None
@@ -29,7 +29,7 @@ class ModelResponse(UniversalBaseModel):
     tracking_columns: typing.Optional[typing.List[str]] = None
     type: typing.Optional[str] = None
     updated_at: typing.Optional[dt.datetime] = None
-    updated_by: typing.Optional[CommonOutputActor] = None
+    updated_by: typing.Optional[OutputActor] = None
     version: typing.Optional[int] = None
 
     if IS_PYDANTIC_V2:

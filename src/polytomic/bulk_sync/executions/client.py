@@ -17,8 +17,8 @@ from ...types.bulk_sync_execution_envelope import BulkSyncExecutionEnvelope
 from ...types.cancel_bulk_sync_response_envelope import CancelBulkSyncResponseEnvelope
 from ...errors.forbidden_error import ForbiddenError
 from ...errors.internal_server_error import InternalServerError
-from ...types.v_4_bulk_sync_execution_logs_envelope import V4BulkSyncExecutionLogsEnvelope
-from ...types.v_4_export_sync_logs_envelope import V4ExportSyncLogsEnvelope
+from ...types.v4bulk_sync_execution_logs_envelope import V4BulkSyncExecutionLogsEnvelope
+from ...types.v4export_sync_logs_envelope import V4ExportSyncLogsEnvelope
 from ...errors.bad_request_error import BadRequestError
 from ...core.client_wrapper import AsyncClientWrapper
 
@@ -473,6 +473,7 @@ class ExecutionsClient:
         client.bulk_sync.executions.export_logs(
             sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            notify=True,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1033,6 +1034,7 @@ class AsyncExecutionsClient:
             await client.bulk_sync.executions.export_logs(
                 sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                notify=True,
             )
 
 

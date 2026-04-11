@@ -4,6 +4,7 @@ from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 import datetime as dt
 from .bulk_fetch_mode import BulkFetchMode
+from .bulk_output_disposition import BulkOutputDisposition
 from .bulk_sync_schema_execution import BulkSyncSchemaExecution
 from .bulk_execution_status import BulkExecutionStatus
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
@@ -19,6 +20,7 @@ class BulkSyncExecution(UniversalBaseModel):
     is_partial: typing.Optional[bool] = None
     is_resync: typing.Optional[bool] = None
     is_test: typing.Optional[bool] = None
+    output_disposition: typing.Optional[BulkOutputDisposition] = None
     record_count: typing.Optional[int] = None
     schemas: typing.Optional[typing.List[BulkSyncSchemaExecution]] = None
     started_at: typing.Optional[dt.datetime] = None

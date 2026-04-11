@@ -3,7 +3,7 @@
 import typing
 from ..core.client_wrapper import SyncClientWrapper
 from ..core.request_options import RequestOptions
-from ..types.v_4_run_query_envelope import V4RunQueryEnvelope
+from ..types.v4run_query_envelope import V4RunQueryEnvelope
 from ..core.jsonable_encoder import jsonable_encoder
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.bad_request_error import BadRequestError
@@ -14,7 +14,7 @@ from ..errors.not_found_error import NotFoundError
 from ..errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError as core_api_error_ApiError
-from ..types.v_4_query_results_envelope import V4QueryResultsEnvelope
+from ..types.v4query_results_envelope import V4QueryResultsEnvelope
 from ..core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -33,6 +33,8 @@ class QueryRunnerClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> V4RunQueryEnvelope:
         """
+        Submit a query for asynchronous execution against the connection. The initial response may only contain the query task id and status. Poll GET /api/queries/{id} with the returned id to retrieve completion status, fields, and results.
+
         Parameters
         ----------
         connection_id : str
@@ -132,6 +134,8 @@ class QueryRunnerClient:
         self, id: str, *, page: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> V4QueryResultsEnvelope:
         """
+        Fetch the latest status for a submitted query and, once complete, return fields and paginated results. Use the query id returned by POST /api/connections/{connection_id}/query.
+
         Parameters
         ----------
         id : str
@@ -156,6 +160,7 @@ class QueryRunnerClient:
         )
         client.query_runner.get_query(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            page="page",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -233,6 +238,8 @@ class AsyncQueryRunnerClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> V4RunQueryEnvelope:
         """
+        Submit a query for asynchronous execution against the connection. The initial response may only contain the query task id and status. Poll GET /api/queries/{id} with the returned id to retrieve completion status, fields, and results.
+
         Parameters
         ----------
         connection_id : str
@@ -340,6 +347,8 @@ class AsyncQueryRunnerClient:
         self, id: str, *, page: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> V4QueryResultsEnvelope:
         """
+        Fetch the latest status for a submitted query and, once complete, return fields and paginated results. Use the query id returned by POST /api/connections/{connection_id}/query.
+
         Parameters
         ----------
         id : str
@@ -369,6 +378,7 @@ class AsyncQueryRunnerClient:
         async def main() -> None:
             await client.query_runner.get_query(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                page="page",
             )
 
 

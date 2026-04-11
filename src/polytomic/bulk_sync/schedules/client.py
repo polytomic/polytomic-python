@@ -14,7 +14,7 @@ from ...errors.not_found_error import NotFoundError
 from ...errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError as core_api_error_ApiError
-from ...types.v_4_bulk_sync_schedule_api import V4BulkSyncScheduleApi
+from ...types.v4bulk_sync_schedule_api import V4BulkSyncScheduleApi
 from ...types.schedule_envelope import ScheduleEnvelope
 from ...core.serialization import convert_and_respect_annotation_metadata
 from ...errors.bad_request_error import BadRequestError

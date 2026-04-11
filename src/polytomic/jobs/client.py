@@ -22,14 +22,14 @@ class JobsClient:
         self._client_wrapper = client_wrapper
 
     def get(
-        self, id: str, type: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, type: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> JobResponseEnvelope:
         """
         Parameters
         ----------
-        id : str
-
         type : str
+
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -117,14 +117,14 @@ class AsyncJobsClient:
         self._client_wrapper = client_wrapper
 
     async def get(
-        self, id: str, type: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, type: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> JobResponseEnvelope:
         """
         Parameters
         ----------
-        id : str
-
         type : str
+
+        id : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.

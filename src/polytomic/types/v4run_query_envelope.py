@@ -2,18 +2,13 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .bulk_sync_execution import BulkSyncExecution
-from .bulk_sync_ingestion_status import BulkSyncIngestionStatus
-import datetime as dt
+from .v4run_query_result import V4RunQueryResult
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class BulkSyncStatusResponse(UniversalBaseModel):
-    current_execution: typing.Optional[BulkSyncExecution] = None
-    ingestion_status: typing.Optional[BulkSyncIngestionStatus] = None
-    last_execution: typing.Optional[BulkSyncExecution] = None
-    next_execution_time: typing.Optional[dt.datetime] = None
+class V4RunQueryEnvelope(UniversalBaseModel):
+    data: typing.Optional[V4RunQueryResult] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

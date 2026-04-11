@@ -6,10 +6,8 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class CommonOutputActor(UniversalBaseModel):
-    id: typing.Optional[str] = None
-    name: typing.Optional[str] = None
-    type: typing.Optional[str] = None
+class V3BulkSyncSourceCapabilities(UniversalBaseModel):
+    supports_tracking_fields: typing.Optional[bool] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

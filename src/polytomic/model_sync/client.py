@@ -296,6 +296,7 @@ class ModelSyncClient:
         )
         client.model_sync.list(
             active=True,
+            mode="create",
             target_connection_id="0b155265-c537-44c9-9359-a3ceb468a4da",
         )
         """
@@ -1732,6 +1733,7 @@ class AsyncModelSyncClient:
         async def main() -> None:
             await client.model_sync.list(
                 active=True,
+                mode="create",
                 target_connection_id="0b155265-c537-44c9-9359-a3ceb468a4da",
             )
 

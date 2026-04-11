@@ -22,7 +22,7 @@ from ..errors.forbidden_error import ForbiddenError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.connect_card_response_envelope import ConnectCardResponseEnvelope
 from ..types.connection_response_envelope import ConnectionResponseEnvelope
-from ..types.v_2_create_shared_connection_response_envelope import V2CreateSharedConnectionResponseEnvelope
+from ..types.v2create_shared_connection_response_envelope import V2CreateSharedConnectionResponseEnvelope
 from ..core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -1145,20 +1145,24 @@ class ConnectionsClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def api_v_2_create_shared_connection(
+    def create_shared_connection(
         self,
-        id: str,
+        parent_connection_id: str,
         *,
-        organization_id: str,
+        child_organization_id: str,
         name: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> V2CreateSharedConnectionResponseEnvelope:
         """
+        > 🚧 Requires partner key
+        >
+        > Shared connections can only be created by using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+
         Parameters
         ----------
-        id : str
+        parent_connection_id : str
 
-        organization_id : str
+        child_organization_id : str
 
         name : typing.Optional[str]
 
@@ -1178,17 +1182,17 @@ class ConnectionsClient:
             version="YOUR_VERSION",
             token="YOUR_TOKEN",
         )
-        client.connections.api_v_2_create_shared_connection(
-            id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        client.connections.create_shared_connection(
+            parent_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            child_organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"api/connections/{jsonable_encoder(id)}/share",
+            f"api/connections/{jsonable_encoder(parent_connection_id)}/share",
             method="POST",
             json={
+                "child_organization_id": child_organization_id,
                 "name": name,
-                "organization_id": organization_id,
             },
             headers={
                 "content-type": "application/json",
@@ -1227,6 +1231,113 @@ class ConnectionsClient:
                 )
             if _response.status_code == 404:
                 raise NotFoundError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
+    def list_shared_connections(
+        self, parent_connection_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> ConnectionListResponseEnvelope:
+        """
+        Parameters
+        ----------
+        parent_connection_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ConnectionListResponseEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            version="YOUR_VERSION",
+            token="YOUR_TOKEN",
+        )
+        client.connections.list_shared_connections(
+            parent_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"api/connections/{jsonable_encoder(parent_connection_id)}/shared",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    ConnectionListResponseEnvelope,
+                    parse_obj_as(
+                        type_=ConnectionListResponseEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        RestErrResponse,
+                        parse_obj_as(
+                            type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
                     typing.cast(
                         types_api_error_ApiError,
                         parse_obj_as(
@@ -2459,20 +2570,24 @@ class AsyncConnectionsClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    async def api_v_2_create_shared_connection(
+    async def create_shared_connection(
         self,
-        id: str,
+        parent_connection_id: str,
         *,
-        organization_id: str,
+        child_organization_id: str,
         name: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> V2CreateSharedConnectionResponseEnvelope:
         """
+        > 🚧 Requires partner key
+        >
+        > Shared connections can only be created by using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+
         Parameters
         ----------
-        id : str
+        parent_connection_id : str
 
-        organization_id : str
+        child_organization_id : str
 
         name : typing.Optional[str]
 
@@ -2497,20 +2612,20 @@ class AsyncConnectionsClient:
 
 
         async def main() -> None:
-            await client.connections.api_v_2_create_shared_connection(
-                id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            await client.connections.create_shared_connection(
+                parent_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                child_organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             )
 
 
         asyncio.run(main())
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"api/connections/{jsonable_encoder(id)}/share",
+            f"api/connections/{jsonable_encoder(parent_connection_id)}/share",
             method="POST",
             json={
+                "child_organization_id": child_organization_id,
                 "name": name,
-                "organization_id": organization_id,
             },
             headers={
                 "content-type": "application/json",
@@ -2549,6 +2664,121 @@ class AsyncConnectionsClient:
                 )
             if _response.status_code == 404:
                 raise NotFoundError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
+        raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
+
+    async def list_shared_connections(
+        self, parent_connection_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> ConnectionListResponseEnvelope:
+        """
+        Parameters
+        ----------
+        parent_connection_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ConnectionListResponseEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            version="YOUR_VERSION",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.connections.list_shared_connections(
+                parent_connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"api/connections/{jsonable_encoder(parent_connection_id)}/shared",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                return typing.cast(
+                    ConnectionListResponseEnvelope,
+                    parse_obj_as(
+                        type_=ConnectionListResponseEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    typing.cast(
+                        RestErrResponse,
+                        parse_obj_as(
+                            type_=RestErrResponse,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    )
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
                     typing.cast(
                         types_api_error_ApiError,
                         parse_obj_as(

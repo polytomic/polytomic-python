@@ -65,12 +65,14 @@ class EventsClient:
         )
         client.events.list(
             organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            type="type",
             starting_after=datetime.datetime.fromisoformat(
                 "2020-01-01 00:00:00+00:00",
             ),
             ending_before=datetime.datetime.fromisoformat(
                 "2020-01-01 00:00:00+00:00",
             ),
+            limit=1,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -232,12 +234,14 @@ class AsyncEventsClient:
         async def main() -> None:
             await client.events.list(
                 organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                type="type",
                 starting_after=datetime.datetime.fromisoformat(
                     "2020-01-01 00:00:00+00:00",
                 ),
                 ending_before=datetime.datetime.fromisoformat(
                     "2020-01-01 00:00:00+00:00",
                 ),
+                limit=1,
             )
 
 
