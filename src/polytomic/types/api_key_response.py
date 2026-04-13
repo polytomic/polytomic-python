@@ -2,12 +2,15 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
+from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
 class ApiKeyResponse(UniversalBaseModel):
-    value: typing.Optional[str] = None
+    value: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Newly created API key. This value is shown only once; store it securely.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

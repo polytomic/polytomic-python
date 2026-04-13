@@ -17,8 +17,8 @@ from ...types.bulk_sync_execution_envelope import BulkSyncExecutionEnvelope
 from ...types.cancel_bulk_sync_response_envelope import CancelBulkSyncResponseEnvelope
 from ...errors.forbidden_error import ForbiddenError
 from ...errors.internal_server_error import InternalServerError
-from ...types.v4bulk_sync_execution_logs_envelope import V4BulkSyncExecutionLogsEnvelope
-from ...types.v4export_sync_logs_envelope import V4ExportSyncLogsEnvelope
+from ...types.v_4_bulk_sync_execution_logs_envelope import V4BulkSyncExecutionLogsEnvelope
+from ...types.v_4_export_sync_logs_envelope import V4ExportSyncLogsEnvelope
 from ...errors.bad_request_error import BadRequestError
 from ...core.client_wrapper import AsyncClientWrapper
 
@@ -36,16 +36,30 @@ class ExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListBulkSyncExecutionStatusEnvelope:
         """
+        Returns a concise per-schema status for one or more bulk syncs.
+
+        This endpoint is a summary view, not an execution-history view. Each schema is
+        represented at most once with its most recent execution status, and running
+        executions are preferred over older terminal ones.
+
+        Use this endpoint when you want a dashboard-style answer to "what is each sync
+        doing now?" If you need the full execution history or a single execution's
+        details, use [`GET /api/bulk/syncs/{id}/executions`](./list) or
+        [`GET /api/bulk/syncs/{id}/executions/{exec_id}`](./get) instead.
+
+        Setting `all=true` or `active=true` ignores any explicit `sync_id` filters and
+        expands the request to the caller's organization scope.
+
         Parameters
         ----------
         all_ : typing.Optional[bool]
-            Return the execution status of all syncs in the organization
+            When true, return status for every sync in the caller's organization. Overrides any sync_id values.
 
         active : typing.Optional[bool]
-            Return the execution status of all active syncs in the organization
+            When true, return status only for active syncs in the caller's organization. Overrides any sync_id values.
 
         sync_id : typing.Optional[typing.Union[str, typing.Sequence[str]]]
-            Return the execution status of the specified sync; this may be supplied multiple times.
+            Return status for the specified bulk sync. Repeat the parameter to target multiple syncs. Ignored if all or active is true.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -123,17 +137,38 @@ class ExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListBulkSyncExecutionsEnvelope:
         """
+        Lists executions for a bulk sync.
+
+        Results are ordered by start time descending by default. When more results are
+        available, the response includes an opaque `pagination.next_page_token`; pass it
+        back as the `page_token` query parameter to retrieve the next page. The `limit`
+        parameter is optional, and the maximum page size is 100 executions.
+
+        Use `only_terminal=true` to return only finished executions. In that mode,
+        executions are ordered by `updated_at` so recently completed runs appear first.
+
+        Use `ascending=true` to walk forward from the oldest execution instead of
+        starting with the newest execution.
+
+        For the full details of a single run — including per-schema execution status —
+        use [`GET /api/bulk/syncs/{id}/executions/{exec_id}`](../../../../../api-reference/bulk-sync/executions/get).
+
         Parameters
         ----------
         id : str
+            Unique identifier of the bulk sync.
 
         page_token : typing.Optional[str]
+            Pagination cursor returned in the previous response. Omit on the first request.
 
         only_terminal : typing.Optional[bool]
+            When true, only return executions that have finished. Terminal executions are ordered by updated_at.
 
         ascending : typing.Optional[bool]
+            When true, return executions from oldest to newest. Default is newest first.
 
         limit : typing.Optional[int]
+            Maximum number of executions to return. Capped at 100.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -208,11 +243,20 @@ class ExecutionsClient:
         self, id: str, exec_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> BulkSyncExecutionEnvelope:
         """
+        Returns a single bulk sync execution, including per-schema execution status.
+
+        The response includes a breakdown of each schema (table or object) that
+        participated in the execution, with its individual status, row counts, and any
+        error details. This makes it suitable for diagnosing partial failures where
+        some schemas succeeded while others did not.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the bulk sync.
 
         exec_id : str
+            Unique identifier of the execution.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -278,6 +322,14 @@ class ExecutionsClient:
         self, id: str, exec_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> CancelBulkSyncResponseEnvelope:
         """
+        Requests cancellation of a specific bulk sync execution.
+
+        Cancellation is asynchronous. A successful response means the cancellation
+        signal has been queued; the execution continues to run until the signal is
+        processed. Poll `GET /api/bulk/syncs/{id}/executions/{exec_id}` until the
+        execution reaches a terminal state (`completed`, `canceled`, or `failed`) to
+        confirm cancellation has taken effect.
+
         Parameters
         ----------
         id : str
@@ -370,11 +422,24 @@ class ExecutionsClient:
         self, sync_id: str, execution_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> V4BulkSyncExecutionLogsEnvelope:
         """
+        Returns signed URLs for the log files produced by a single bulk sync execution.
+
+        Each URL in the response is pre-signed and grants temporary read access to the
+        corresponding log file. URLs expire after a short period; if you need to access
+        a file after the URL has expired, call this endpoint again to obtain a fresh set
+        of signed URLs.
+
+        > 📘 To export logs asynchronously to a destination of your choice, use
+        > [`POST /api/bulk/syncs/{sync_id}/executions/{execution_id}/logs/export`](../../../../../../../api-reference/bulk-sync/executions/export-logs)
+        > instead.
+
         Parameters
         ----------
         sync_id : str
+            Unique identifier of the bulk sync.
 
         execution_id : str
+            Unique identifier of the execution whose log files should be listed.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -445,11 +510,27 @@ class ExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> V4ExportSyncLogsEnvelope:
         """
+        Starts an asynchronous job that packages the log files for a single bulk sync execution into a downloadable archive.
+
+        > 📘 Log export is asynchronous
+        >
+        > This endpoint starts a background job that packages an execution's log
+        > files into a downloadable archive. The first call typically returns a
+        > `job` descriptor instead of a completed result. Poll
+        > [`GET /api/jobs/exportlogs/{id}`](../../../../../../../../api-reference/jobs/get)
+        > with the returned `job_id` until `status` is `done`; the final response
+        > contains a signed `url` that can be used to download the archive.
+        >
+        > Set `notify=true` to also email the requesting user when the archive is
+        > ready.
+
         Parameters
         ----------
         sync_id : str
+            Unique identifier of the bulk sync.
 
         execution_id : str
+            Unique identifier of the execution whose logs should be exported.
 
         notify : typing.Optional[bool]
             Send a notification to the user when the logs are ready for download.
@@ -473,7 +554,6 @@ class ExecutionsClient:
         client.bulk_sync.executions.export_logs(
             sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            notify=True,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -552,16 +632,30 @@ class AsyncExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListBulkSyncExecutionStatusEnvelope:
         """
+        Returns a concise per-schema status for one or more bulk syncs.
+
+        This endpoint is a summary view, not an execution-history view. Each schema is
+        represented at most once with its most recent execution status, and running
+        executions are preferred over older terminal ones.
+
+        Use this endpoint when you want a dashboard-style answer to "what is each sync
+        doing now?" If you need the full execution history or a single execution's
+        details, use [`GET /api/bulk/syncs/{id}/executions`](./list) or
+        [`GET /api/bulk/syncs/{id}/executions/{exec_id}`](./get) instead.
+
+        Setting `all=true` or `active=true` ignores any explicit `sync_id` filters and
+        expands the request to the caller's organization scope.
+
         Parameters
         ----------
         all_ : typing.Optional[bool]
-            Return the execution status of all syncs in the organization
+            When true, return status for every sync in the caller's organization. Overrides any sync_id values.
 
         active : typing.Optional[bool]
-            Return the execution status of all active syncs in the organization
+            When true, return status only for active syncs in the caller's organization. Overrides any sync_id values.
 
         sync_id : typing.Optional[typing.Union[str, typing.Sequence[str]]]
-            Return the execution status of the specified sync; this may be supplied multiple times.
+            Return status for the specified bulk sync. Repeat the parameter to target multiple syncs. Ignored if all or active is true.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -647,17 +741,38 @@ class AsyncExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListBulkSyncExecutionsEnvelope:
         """
+        Lists executions for a bulk sync.
+
+        Results are ordered by start time descending by default. When more results are
+        available, the response includes an opaque `pagination.next_page_token`; pass it
+        back as the `page_token` query parameter to retrieve the next page. The `limit`
+        parameter is optional, and the maximum page size is 100 executions.
+
+        Use `only_terminal=true` to return only finished executions. In that mode,
+        executions are ordered by `updated_at` so recently completed runs appear first.
+
+        Use `ascending=true` to walk forward from the oldest execution instead of
+        starting with the newest execution.
+
+        For the full details of a single run — including per-schema execution status —
+        use [`GET /api/bulk/syncs/{id}/executions/{exec_id}`](../../../../../api-reference/bulk-sync/executions/get).
+
         Parameters
         ----------
         id : str
+            Unique identifier of the bulk sync.
 
         page_token : typing.Optional[str]
+            Pagination cursor returned in the previous response. Omit on the first request.
 
         only_terminal : typing.Optional[bool]
+            When true, only return executions that have finished. Terminal executions are ordered by updated_at.
 
         ascending : typing.Optional[bool]
+            When true, return executions from oldest to newest. Default is newest first.
 
         limit : typing.Optional[int]
+            Maximum number of executions to return. Capped at 100.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -740,11 +855,20 @@ class AsyncExecutionsClient:
         self, id: str, exec_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> BulkSyncExecutionEnvelope:
         """
+        Returns a single bulk sync execution, including per-schema execution status.
+
+        The response includes a breakdown of each schema (table or object) that
+        participated in the execution, with its individual status, row counts, and any
+        error details. This makes it suitable for diagnosing partial failures where
+        some schemas succeeded while others did not.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the bulk sync.
 
         exec_id : str
+            Unique identifier of the execution.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -818,6 +942,14 @@ class AsyncExecutionsClient:
         self, id: str, exec_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> CancelBulkSyncResponseEnvelope:
         """
+        Requests cancellation of a specific bulk sync execution.
+
+        Cancellation is asynchronous. A successful response means the cancellation
+        signal has been queued; the execution continues to run until the signal is
+        processed. Poll `GET /api/bulk/syncs/{id}/executions/{exec_id}` until the
+        execution reaches a terminal state (`completed`, `canceled`, or `failed`) to
+        confirm cancellation has taken effect.
+
         Parameters
         ----------
         id : str
@@ -918,11 +1050,24 @@ class AsyncExecutionsClient:
         self, sync_id: str, execution_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> V4BulkSyncExecutionLogsEnvelope:
         """
+        Returns signed URLs for the log files produced by a single bulk sync execution.
+
+        Each URL in the response is pre-signed and grants temporary read access to the
+        corresponding log file. URLs expire after a short period; if you need to access
+        a file after the URL has expired, call this endpoint again to obtain a fresh set
+        of signed URLs.
+
+        > 📘 To export logs asynchronously to a destination of your choice, use
+        > [`POST /api/bulk/syncs/{sync_id}/executions/{execution_id}/logs/export`](../../../../../../../api-reference/bulk-sync/executions/export-logs)
+        > instead.
+
         Parameters
         ----------
         sync_id : str
+            Unique identifier of the bulk sync.
 
         execution_id : str
+            Unique identifier of the execution whose log files should be listed.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1001,11 +1146,27 @@ class AsyncExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> V4ExportSyncLogsEnvelope:
         """
+        Starts an asynchronous job that packages the log files for a single bulk sync execution into a downloadable archive.
+
+        > 📘 Log export is asynchronous
+        >
+        > This endpoint starts a background job that packages an execution's log
+        > files into a downloadable archive. The first call typically returns a
+        > `job` descriptor instead of a completed result. Poll
+        > [`GET /api/jobs/exportlogs/{id}`](../../../../../../../../api-reference/jobs/get)
+        > with the returned `job_id` until `status` is `done`; the final response
+        > contains a signed `url` that can be used to download the archive.
+        >
+        > Set `notify=true` to also email the requesting user when the archive is
+        > ready.
+
         Parameters
         ----------
         sync_id : str
+            Unique identifier of the bulk sync.
 
         execution_id : str
+            Unique identifier of the execution whose logs should be exported.
 
         notify : typing.Optional[bool]
             Send a notification to the user when the logs are ready for download.
@@ -1034,7 +1195,6 @@ class AsyncExecutionsClient:
             await client.bulk_sync.executions.export_logs(
                 sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                notify=True,
             )
 
 

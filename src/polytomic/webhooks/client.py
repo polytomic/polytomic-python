@@ -27,11 +27,14 @@ class WebhooksClient:
 
     def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookListEnvelope:
         """
-        Webooks can be set up using the webhook API endpoints. Currently, only one
-        webhook may be created per organization. The webhook will be called for events
-        in that organization.
+        Lists the webhooks for the caller's organization.
 
-        Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
+        > 📘 One webhook per organization
+        >
+        > An organization can register a single webhook, which receives every event
+        > produced in that organization. See the
+        > [Events documentation](../../guides/events) for the
+        > list of event types and payload shapes.
 
         Parameters
         ----------
@@ -101,11 +104,14 @@ class WebhooksClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> WebhookEnvelope:
         """
-        Webooks can be set up using the webhook API endpoints. Currently, only one
-        webhook may be created per organization. The webhook will be called for events
-        in that organization.
+        Creates the organization's webhook.
 
-        Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
+        > 📘 One webhook per organization
+        >
+        > An organization can register a single webhook, which receives every event
+        > produced in that organization. See the
+        > [Events documentation](../../guides/events) for the
+        > list of event types and payload shapes.
 
         Parameters
         ----------
@@ -196,11 +202,14 @@ class WebhooksClient:
 
     def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookEnvelope:
         """
-        Webooks can be set up using the webhook API endpoints. Currently, only one
-        webhook may be created per organization. The webhook will be called for events
-        in that organization.
+        Returns a single webhook by ID.
 
-        Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
+        > 📘 One webhook per organization
+        >
+        > An organization can register a single webhook, which receives every event
+        > produced in that organization. See the
+        > [Events documentation](../../../guides/events) for the
+        > list of event types and payload shapes.
 
         Parameters
         ----------
@@ -275,11 +284,14 @@ class WebhooksClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> WebhookEnvelope:
         """
-        Webooks can be set up using the webhook API endpoints. Currently, only one
-        webhook may be created per organization. The webhook will be called for events
-        in that organization.
+        Updates an existing webhook.
 
-        Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
+        > 📘 One webhook per organization
+        >
+        > An organization can register a single webhook, which receives every event
+        > produced in that organization. See the
+        > [Events documentation](../../../guides/events) for the
+        > list of event types and payload shapes.
 
         Parameters
         ----------
@@ -373,6 +385,19 @@ class WebhooksClient:
 
     def remove(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
+        Deletes a webhook.
+
+        > 📘 One webhook per organization
+        >
+        > An organization can register a single webhook, which receives every event
+        > produced in that organization. See the
+        > [Events documentation](../../../guides/events) for the
+        > list of event types and payload shapes.
+
+        Deletion is permanent. To stop delivery without losing the webhook
+        configuration, use
+        [`POST /api/webhooks/{id}/disable`](./disable/post) instead.
+
         Parameters
         ----------
         id : str
@@ -441,6 +466,20 @@ class WebhooksClient:
 
     def disable(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookEnvelope:
         """
+        Disables a webhook without deleting it.
+
+        > 📘 One webhook per organization
+        >
+        > An organization can register a single webhook, which receives every event
+        > produced in that organization. See the
+        > [Events documentation](../../../../guides/events) for the
+        > list of event types and payload shapes.
+
+        Events are not queued while the webhook is disabled — any activity that occurs
+        during the disabled period is not delivered retroactively. To resume
+        delivery, re-enable the webhook using
+        [`POST /api/webhooks/{id}/enable`](../../../../api-reference/webhooks/enable).
+
         Parameters
         ----------
         id : str
@@ -516,6 +555,18 @@ class WebhooksClient:
 
     def enable(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookEnvelope:
         """
+        Re-enables a previously disabled webhook.
+
+        > 📘 One webhook per organization
+        >
+        > An organization can register a single webhook, which receives every event
+        > produced in that organization. See the
+        > [Events documentation](../../../../guides/events) for the
+        > list of event types and payload shapes.
+
+        Delivery resumes from the next event generated after this call. Events that
+        occurred while the webhook was disabled are not replayed.
+
         Parameters
         ----------
         id : str
@@ -596,11 +647,14 @@ class AsyncWebhooksClient:
 
     async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookListEnvelope:
         """
-        Webooks can be set up using the webhook API endpoints. Currently, only one
-        webhook may be created per organization. The webhook will be called for events
-        in that organization.
+        Lists the webhooks for the caller's organization.
 
-        Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
+        > 📘 One webhook per organization
+        >
+        > An organization can register a single webhook, which receives every event
+        > produced in that organization. See the
+        > [Events documentation](../../guides/events) for the
+        > list of event types and payload shapes.
 
         Parameters
         ----------
@@ -678,11 +732,14 @@ class AsyncWebhooksClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> WebhookEnvelope:
         """
-        Webooks can be set up using the webhook API endpoints. Currently, only one
-        webhook may be created per organization. The webhook will be called for events
-        in that organization.
+        Creates the organization's webhook.
 
-        Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
+        > 📘 One webhook per organization
+        >
+        > An organization can register a single webhook, which receives every event
+        > produced in that organization. See the
+        > [Events documentation](../../guides/events) for the
+        > list of event types and payload shapes.
 
         Parameters
         ----------
@@ -781,11 +838,14 @@ class AsyncWebhooksClient:
 
     async def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookEnvelope:
         """
-        Webooks can be set up using the webhook API endpoints. Currently, only one
-        webhook may be created per organization. The webhook will be called for events
-        in that organization.
+        Returns a single webhook by ID.
 
-        Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
+        > 📘 One webhook per organization
+        >
+        > An organization can register a single webhook, which receives every event
+        > produced in that organization. See the
+        > [Events documentation](../../../guides/events) for the
+        > list of event types and payload shapes.
 
         Parameters
         ----------
@@ -868,11 +928,14 @@ class AsyncWebhooksClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> WebhookEnvelope:
         """
-        Webooks can be set up using the webhook API endpoints. Currently, only one
-        webhook may be created per organization. The webhook will be called for events
-        in that organization.
+        Updates an existing webhook.
 
-        Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
+        > 📘 One webhook per organization
+        >
+        > An organization can register a single webhook, which receives every event
+        > produced in that organization. See the
+        > [Events documentation](../../../guides/events) for the
+        > list of event types and payload shapes.
 
         Parameters
         ----------
@@ -974,6 +1037,19 @@ class AsyncWebhooksClient:
 
     async def remove(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
+        Deletes a webhook.
+
+        > 📘 One webhook per organization
+        >
+        > An organization can register a single webhook, which receives every event
+        > produced in that organization. See the
+        > [Events documentation](../../../guides/events) for the
+        > list of event types and payload shapes.
+
+        Deletion is permanent. To stop delivery without losing the webhook
+        configuration, use
+        [`POST /api/webhooks/{id}/disable`](./disable/post) instead.
+
         Parameters
         ----------
         id : str
@@ -1050,6 +1126,20 @@ class AsyncWebhooksClient:
 
     async def disable(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookEnvelope:
         """
+        Disables a webhook without deleting it.
+
+        > 📘 One webhook per organization
+        >
+        > An organization can register a single webhook, which receives every event
+        > produced in that organization. See the
+        > [Events documentation](../../../../guides/events) for the
+        > list of event types and payload shapes.
+
+        Events are not queued while the webhook is disabled — any activity that occurs
+        during the disabled period is not delivered retroactively. To resume
+        delivery, re-enable the webhook using
+        [`POST /api/webhooks/{id}/enable`](../../../../api-reference/webhooks/enable).
+
         Parameters
         ----------
         id : str
@@ -1133,6 +1223,18 @@ class AsyncWebhooksClient:
 
     async def enable(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> WebhookEnvelope:
         """
+        Re-enables a previously disabled webhook.
+
+        > 📘 One webhook per organization
+        >
+        > An organization can register a single webhook, which receives every event
+        > produced in that organization. See the
+        > [Events documentation](../../../../guides/events) for the
+        > list of event types and payload shapes.
+
+        Delivery resumes from the next event generated after this call. Events that
+        occurred while the webhook was disabled are not replayed.
+
         Parameters
         ----------
         id : str

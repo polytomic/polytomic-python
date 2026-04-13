@@ -2,15 +2,15 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .v4run_query_result import V4RunQueryResult
-from .pagination import Pagination
-from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
+from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
-class V4QueryResultsEnvelope(UniversalBaseModel):
-    data: typing.Optional[V4RunQueryResult] = None
-    links: typing.Optional[Pagination] = None
+class V4GlobalErrorSubscribersResponse(UniversalBaseModel):
+    emails: typing.Optional[typing.List[str]] = pydantic.Field(default=None)
+    """
+    Email addresses subscribed to global sync error notifications for the organization.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

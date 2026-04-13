@@ -57,11 +57,20 @@ class ModelSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetModelSyncSourceMetaEnvelope:
         """
+        Describes the source configuration available on a connection for use as a model sync source.
+
+        Use this endpoint before creating a model to understand what configuration is
+        available. Once you have a configuration, resolve the fields available for
+        sync mapping with
+        [`GET /api/connections/{id}/modelsync/source/fields`](./fields/get).
+
         Parameters
         ----------
         id : str
+            Unique identifier of the connection.
 
         params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+            Query parameters used to incrementally refine a dependent source configuration. Keys correspond to configuration fields returned by previous calls to this endpoint.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -163,11 +172,26 @@ class ModelSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ModelFieldResponse:
         """
+        Returns the source fields available on a connection for a given source configuration.
+
+        Pass the model's source configuration as query parameters to resolve the
+        fields that the connection will expose for that specific configuration. The
+        returned fields are what can be referenced in sync field mappings.
+
+        > 📘 Results depend on the source configuration you supply. A different
+        > table or query in the configuration may return a completely different field
+        > list.
+
+        The available source configuration parameters are described by
+        [`GET /api/connections/{id}/modelsync/source`](../../../../../../api-reference/model-sync/get-source).
+
         Parameters
         ----------
         id : str
+            Unique identifier of the connection.
 
         params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+            Source configuration, matching the params used with GET /api/connections/{id}/modelsync/source, that selects the specific source to return fields for.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -270,6 +294,21 @@ class ModelSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListModelSyncResponseEnvelope:
         """
+        Lists all model syncs in the caller's organization.
+
+        Results are ordered by `updated_at` descending, with `id` used as a tiebreaker.
+        If more results are available, the response includes `pagination.next_page_token`.
+        Pass that token back unchanged to continue from the last item you received.
+
+        The token is opaque. Do not construct or edit it yourself.
+
+        The `limit` is capped at 50. Values above that cap are reduced to 50, and
+        non-positive values fall back to the same default.
+
+        This endpoint returns syncs visible to the current caller's organization scope.
+        To inspect a specific sync in more detail, follow up with
+        [`GET /api/syncs/{id}`](./get).
+
         Parameters
         ----------
         active : typing.Optional[bool]
@@ -296,7 +335,6 @@ class ModelSyncClient:
         )
         client.model_sync.list(
             active=True,
-            mode="create",
             target_connection_id="0b155265-c537-44c9-9359-a3ceb468a4da",
         )
         """
@@ -387,6 +425,8 @@ class ModelSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ModelSyncResponseEnvelope:
         """
+        Creates a new model sync.
+
         Create a new sync from one or more models to a destination.
 
         All of the functionality described in [the product
@@ -395,8 +435,8 @@ class ModelSyncClient:
 
         Guides:
 
-        - [Model sync (Reverse ETL) from Snowflake query to Salesforce](https://apidocs.polytomic.com/2024-02-08/guides/code-examples/model-sync-reverse-etl-from-snowflake-query-to-salesforce)
-        - [Joined model sync from Postgres, Airtable, and Stripe to Hubspot](https://apidocs.polytomic.com/2024-02-08/guides/code-examples/joined-model-sync-from-postgres-airtable-and-stripe-to-hubspot)
+        - [Model sync (Reverse ETL) from Snowflake query to Salesforce](../../guides/code-examples/model-sync-reverse-etl-from-snowflake-query-to-salesforce)
+        - [Joined model sync from Postgres, Airtable, and Stripe to Hubspot](../../guides/code-examples/joined-model-sync-from-postgres-airtable-and-stripe-to-hubspot)
 
         ## Targets (Destinations)
 
@@ -416,10 +456,10 @@ class ModelSyncClient:
 
         Some connections support additional configuration for targets. For example,
         [Salesforce
-        connections](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/connections/salesforce#target)
+        connections](../../guides/configuring-your-connections/connections/salesforce#target)
         support optionally specifying the ingestion API to use. The target specific
         options are passed as `configuration`; consult the [integration
-        guides](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/overview)
+        guides](../../guides/configuring-your-connections/overview)
         for details about specific connection configurations.
 
         ### Creating a new target
@@ -629,6 +669,12 @@ class ModelSyncClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ScheduleOptionResponseEnvelope:
         """
+        Returns the schedule types available when creating or updating a model sync.
+
+        Use the `type` identifiers returned by this endpoint in the `schedule` field
+        when creating or updating a sync via
+        [`POST /api/syncs`](../../../api-reference/model-sync/create) or [`PUT /api/syncs/{id}`](../../../api-reference/model-sync/update).
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
@@ -690,6 +736,12 @@ class ModelSyncClient:
 
     def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> ModelSyncResponseEnvelope:
         """
+        Returns a single model sync by ID.
+
+        To check whether a sync is currently running or has recently completed, use
+        [`GET /api/syncs/{id}/status`](./status/get). For the full history of
+        executions, use [`GET /api/syncs/{id}/executions`](./executions/get).
+
         Parameters
         ----------
         id : str
@@ -787,6 +839,22 @@ class ModelSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ModelSyncResponseEnvelope:
         """
+        Updates a model sync's configuration.
+
+        Updating a model sync is a **full replacement** of the sync's configuration.
+        Every field in the request body is written to the sync; any field you omit is
+        cleared or reset to its default value.
+
+        To make a partial change — for example, toggling `active` or adjusting a
+        single field mapping — fetch the current sync with
+        [`GET /api/syncs/{id}`](../../../api-reference/model-sync/get),
+        modify the fields you want to change, and send the complete object back in
+        the update request.
+
+        Updates to `active`, `schedule`, and `policies` take effect immediately.
+        Changes to source fields, target configuration, filters, or field mappings
+        take effect on the sync's next execution.
+
         Parameters
         ----------
         id : str
@@ -983,6 +1051,12 @@ class ModelSyncClient:
 
     def remove(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
+        Deletes a model sync, cancelling any running executions.
+
+        Deletion is permanent. Any running execution is cancelled before the sync
+        record is removed. Deleted syncs cannot be recovered; recreate them using
+        [`POST /api/syncs`](../../../api-reference/model-sync/create) if needed.
+
         Parameters
         ----------
         id : str
@@ -1073,6 +1147,15 @@ class ModelSyncClient:
         self, id: str, *, active: bool, request_options: typing.Optional[RequestOptions] = None
     ) -> ActivateSyncEnvelope:
         """
+        Sets whether a model sync is active.
+
+        Only active syncs execute on schedule or in response to a manual trigger. Set
+        `active` to `false` to pause a sync without deleting it.
+
+        > 📘 Deactivating a sync does not cancel an execution that is already in
+        > progress. Use [`POST /api/syncs/{id}/cancel`](../../../../api-reference/model-sync/cancel) to stop a
+        > running execution.
+
         Parameters
         ----------
         id : str
@@ -1167,6 +1250,14 @@ class ModelSyncClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> CancelModelSyncResponseEnvelope:
         """
+        Requests cancellation of any running executions on a model sync.
+
+        Cancellation is asynchronous. A successful response means the cancellation
+        signal has been queued; the running execution continues until the signal is
+        processed. Poll `GET /api/syncs/{id}/status` until the current execution
+        reaches a terminal state (`completed`, `canceled`, or `failed`) to confirm
+        cancellation has taken effect.
+
         Parameters
         ----------
         id : str
@@ -1261,6 +1352,8 @@ class ModelSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> StartModelSyncResponseEnvelope:
         """
+        Starts a new execution of a model sync.
+
         > 🚧 Force full resync
         >
         > Use caution when setting the `resync` parameter to `true`. This will force a full resync of the data from the source system. This can be a time-consuming operation and may impact the performance of the source system. It is recommended to only use this option when necessary.
@@ -1385,6 +1478,12 @@ class ModelSyncClient:
 
     def get_status(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> SyncStatusEnvelope:
         """
+        Returns the current status of a model sync.
+
+        The response includes a summary of the most recent execution, including its
+        start time, completion time, and record counts. For the complete execution
+        history, use [`GET /api/syncs/{id}/executions`](../../../../api-reference/model-sync/executions/list).
+
         Parameters
         ----------
         id : str
@@ -1473,11 +1572,20 @@ class AsyncModelSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetModelSyncSourceMetaEnvelope:
         """
+        Describes the source configuration available on a connection for use as a model sync source.
+
+        Use this endpoint before creating a model to understand what configuration is
+        available. Once you have a configuration, resolve the fields available for
+        sync mapping with
+        [`GET /api/connections/{id}/modelsync/source/fields`](./fields/get).
+
         Parameters
         ----------
         id : str
+            Unique identifier of the connection.
 
         params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+            Query parameters used to incrementally refine a dependent source configuration. Keys correspond to configuration fields returned by previous calls to this endpoint.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1587,11 +1695,26 @@ class AsyncModelSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ModelFieldResponse:
         """
+        Returns the source fields available on a connection for a given source configuration.
+
+        Pass the model's source configuration as query parameters to resolve the
+        fields that the connection will expose for that specific configuration. The
+        returned fields are what can be referenced in sync field mappings.
+
+        > 📘 Results depend on the source configuration you supply. A different
+        > table or query in the configuration may return a completely different field
+        > list.
+
+        The available source configuration parameters are described by
+        [`GET /api/connections/{id}/modelsync/source`](../../../../../../api-reference/model-sync/get-source).
+
         Parameters
         ----------
         id : str
+            Unique identifier of the connection.
 
         params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+            Source configuration, matching the params used with GET /api/connections/{id}/modelsync/source, that selects the specific source to return fields for.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1702,6 +1825,21 @@ class AsyncModelSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListModelSyncResponseEnvelope:
         """
+        Lists all model syncs in the caller's organization.
+
+        Results are ordered by `updated_at` descending, with `id` used as a tiebreaker.
+        If more results are available, the response includes `pagination.next_page_token`.
+        Pass that token back unchanged to continue from the last item you received.
+
+        The token is opaque. Do not construct or edit it yourself.
+
+        The `limit` is capped at 50. Values above that cap are reduced to 50, and
+        non-positive values fall back to the same default.
+
+        This endpoint returns syncs visible to the current caller's organization scope.
+        To inspect a specific sync in more detail, follow up with
+        [`GET /api/syncs/{id}`](./get).
+
         Parameters
         ----------
         active : typing.Optional[bool]
@@ -1733,7 +1871,6 @@ class AsyncModelSyncClient:
         async def main() -> None:
             await client.model_sync.list(
                 active=True,
-                mode="create",
                 target_connection_id="0b155265-c537-44c9-9359-a3ceb468a4da",
             )
 
@@ -1827,6 +1964,8 @@ class AsyncModelSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ModelSyncResponseEnvelope:
         """
+        Creates a new model sync.
+
         Create a new sync from one or more models to a destination.
 
         All of the functionality described in [the product
@@ -1835,8 +1974,8 @@ class AsyncModelSyncClient:
 
         Guides:
 
-        - [Model sync (Reverse ETL) from Snowflake query to Salesforce](https://apidocs.polytomic.com/2024-02-08/guides/code-examples/model-sync-reverse-etl-from-snowflake-query-to-salesforce)
-        - [Joined model sync from Postgres, Airtable, and Stripe to Hubspot](https://apidocs.polytomic.com/2024-02-08/guides/code-examples/joined-model-sync-from-postgres-airtable-and-stripe-to-hubspot)
+        - [Model sync (Reverse ETL) from Snowflake query to Salesforce](../../guides/code-examples/model-sync-reverse-etl-from-snowflake-query-to-salesforce)
+        - [Joined model sync from Postgres, Airtable, and Stripe to Hubspot](../../guides/code-examples/joined-model-sync-from-postgres-airtable-and-stripe-to-hubspot)
 
         ## Targets (Destinations)
 
@@ -1856,10 +1995,10 @@ class AsyncModelSyncClient:
 
         Some connections support additional configuration for targets. For example,
         [Salesforce
-        connections](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/connections/salesforce#target)
+        connections](../../guides/configuring-your-connections/connections/salesforce#target)
         support optionally specifying the ingestion API to use. The target specific
         options are passed as `configuration`; consult the [integration
-        guides](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/overview)
+        guides](../../guides/configuring-your-connections/overview)
         for details about specific connection configurations.
 
         ### Creating a new target
@@ -2077,6 +2216,12 @@ class AsyncModelSyncClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ScheduleOptionResponseEnvelope:
         """
+        Returns the schedule types available when creating or updating a model sync.
+
+        Use the `type` identifiers returned by this endpoint in the `schedule` field
+        when creating or updating a sync via
+        [`POST /api/syncs`](../../../api-reference/model-sync/create) or [`PUT /api/syncs/{id}`](../../../api-reference/model-sync/update).
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
@@ -2148,6 +2293,12 @@ class AsyncModelSyncClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ModelSyncResponseEnvelope:
         """
+        Returns a single model sync by ID.
+
+        To check whether a sync is currently running or has recently completed, use
+        [`GET /api/syncs/{id}/status`](./status/get). For the full history of
+        executions, use [`GET /api/syncs/{id}/executions`](./executions/get).
+
         Parameters
         ----------
         id : str
@@ -2253,6 +2404,22 @@ class AsyncModelSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ModelSyncResponseEnvelope:
         """
+        Updates a model sync's configuration.
+
+        Updating a model sync is a **full replacement** of the sync's configuration.
+        Every field in the request body is written to the sync; any field you omit is
+        cleared or reset to its default value.
+
+        To make a partial change — for example, toggling `active` or adjusting a
+        single field mapping — fetch the current sync with
+        [`GET /api/syncs/{id}`](../../../api-reference/model-sync/get),
+        modify the fields you want to change, and send the complete object back in
+        the update request.
+
+        Updates to `active`, `schedule`, and `policies` take effect immediately.
+        Changes to source fields, target configuration, filters, or field mappings
+        take effect on the sync's next execution.
+
         Parameters
         ----------
         id : str
@@ -2457,6 +2624,12 @@ class AsyncModelSyncClient:
 
     async def remove(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
+        Deletes a model sync, cancelling any running executions.
+
+        Deletion is permanent. Any running execution is cancelled before the sync
+        record is removed. Deleted syncs cannot be recovered; recreate them using
+        [`POST /api/syncs`](../../../api-reference/model-sync/create) if needed.
+
         Parameters
         ----------
         id : str
@@ -2555,6 +2728,15 @@ class AsyncModelSyncClient:
         self, id: str, *, active: bool, request_options: typing.Optional[RequestOptions] = None
     ) -> ActivateSyncEnvelope:
         """
+        Sets whether a model sync is active.
+
+        Only active syncs execute on schedule or in response to a manual trigger. Set
+        `active` to `false` to pause a sync without deleting it.
+
+        > 📘 Deactivating a sync does not cancel an execution that is already in
+        > progress. Use [`POST /api/syncs/{id}/cancel`](../../../../api-reference/model-sync/cancel) to stop a
+        > running execution.
+
         Parameters
         ----------
         id : str
@@ -2657,6 +2839,14 @@ class AsyncModelSyncClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> CancelModelSyncResponseEnvelope:
         """
+        Requests cancellation of any running executions on a model sync.
+
+        Cancellation is asynchronous. A successful response means the cancellation
+        signal has been queued; the running execution continues until the signal is
+        processed. Poll `GET /api/syncs/{id}/status` until the current execution
+        reaches a terminal state (`completed`, `canceled`, or `failed`) to confirm
+        cancellation has taken effect.
+
         Parameters
         ----------
         id : str
@@ -2759,6 +2949,8 @@ class AsyncModelSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> StartModelSyncResponseEnvelope:
         """
+        Starts a new execution of a model sync.
+
         > 🚧 Force full resync
         >
         > Use caution when setting the `resync` parameter to `true`. This will force a full resync of the data from the source system. This can be a time-consuming operation and may impact the performance of the source system. It is recommended to only use this option when necessary.
@@ -2893,6 +3085,12 @@ class AsyncModelSyncClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> SyncStatusEnvelope:
         """
+        Returns the current status of a model sync.
+
+        The response includes a summary of the most recent execution, including its
+        start time, completion time, and record counts. For the complete execution
+        history, use [`GET /api/syncs/{id}/executions`](../../../../api-reference/model-sync/executions/list).
+
         Parameters
         ----------
         id : str

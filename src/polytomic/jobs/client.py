@@ -22,14 +22,28 @@ class JobsClient:
         self._client_wrapper = client_wrapper
 
     def get(
-        self, type: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, id: str, type: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> JobResponseEnvelope:
         """
+        Returns the current state of an asynchronous job.
+
+        This endpoint is used as a polling target by other asynchronous workflows such
+        as model preview and log export. The caller must know the job `type` and `id`
+        that were returned when the job was created.
+
+        If the job is still running, the response returns `status: running` and may not
+        include a `result` yet. Once complete, `status` becomes `done` or `failed`.
+
+        Only specific job types are supported by this endpoint. Passing an unknown
+        `type` returns `400`.
+
         Parameters
         ----------
-        type : str
-
         id : str
+            Unique identifier of the job (usually returned by whichever endpoint started the job).
+
+        type : str
+            Job type. One of: createmodel, updatemodel, previewmodel, samplemodel, exportlogs.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -117,14 +131,28 @@ class AsyncJobsClient:
         self._client_wrapper = client_wrapper
 
     async def get(
-        self, type: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, id: str, type: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> JobResponseEnvelope:
         """
+        Returns the current state of an asynchronous job.
+
+        This endpoint is used as a polling target by other asynchronous workflows such
+        as model preview and log export. The caller must know the job `type` and `id`
+        that were returned when the job was created.
+
+        If the job is still running, the response returns `status: running` and may not
+        include a `result` yet. Once complete, `status` becomes `done` or `failed`.
+
+        Only specific job types are supported by this endpoint. Passing an unknown
+        `type` returns `400`.
+
         Parameters
         ----------
-        type : str
-
         id : str
+            Unique identifier of the job (usually returned by whichever endpoint started the job).
+
+        type : str
+            Job type. One of: createmodel, updatemodel, previewmodel, samplemodel, exportlogs.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.

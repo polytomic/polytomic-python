@@ -2,14 +2,25 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
+from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
 class SourceMeta(UniversalBaseModel):
-    has_items: typing.Optional[bool] = None
-    items: typing.Optional[typing.List[typing.Optional[typing.Any]]] = None
-    requires_one_of: typing.Optional[typing.List[str]] = None
+    has_items: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True when items is non-empty. Callers should present the values as a picker.
+    """
+
+    items: typing.Optional[typing.List[typing.Optional[typing.Any]]] = pydantic.Field(default=None)
+    """
+    Valid values the caller may choose for this configuration item.
+    """
+
+    requires_one_of: typing.Optional[typing.List[str]] = pydantic.Field(default=None)
+    """
+    Other configuration items this item depends on; exactly one of the listed items must also be selected.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

@@ -4,6 +4,31 @@
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists bulk syncs in the caller's organization.
+
+Results are returned as a single `data` array. This version of the endpoint
+supports the `active` filter but does not support cursor pagination, `limit`,
+or `page_token` query parameters.
+
+If you need a cursor-paginated bulk sync list, use API version `2025-09-18` or
+later.
+
+> 📘 To retrieve a specific sync, use
+> [`GET /api/bulk/syncs/{id}`](../../../api-reference/bulk-sync/get)
+> instead of filtering the list client-side.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -37,7 +62,7 @@ client.bulk_sync.list(
 <dl>
 <dd>
 
-**active:** `typing.Optional[bool]` 
+**active:** `typing.Optional[bool]` — Filter to only active (true) or only paused (false) syncs. Omit to return both.
     
 </dd>
 </dl>
@@ -69,9 +94,9 @@ client.bulk_sync.list(
 <dl>
 <dd>
 
-Create a new Bulk Sync from a source to a destination (data warehouse, database, or cloud storage bucket like S3).
+Creates a new bulk sync from a source connection to a destination connection.
 
-Bulk Syncs are used for the ELT pattern (Extract, Load, and Transform), where you want to sync un-transformed data to your data warehouses, databases, or cloud storage buckets like S3.
+Bulk syncs are used for the ELT pattern (Extract, Load, and Transform), where you want to sync un-transformed data to your data warehouses, databases, or cloud storage buckets like S3.
 
 All of the functionality described in [the product
 documentation](https://docs.polytomic.com/docs/bulk-syncs) is configurable via
@@ -79,9 +104,9 @@ the API.
 
 Sample code examples:
 
-- [Bulk sync (ELT) from Salesforce to S3](https://apidocs.polytomic.com/guides/code-examples/bulk-sync-elt-from-salesforce-to-s-3)
-- [Bulk sync (ELT) from Salesforce to Snowflake](https://apidocs.polytomic.com/guides/code-examples/bulk-sync-elt-from-salesforce-to-snowflake)
-- [Bulk sync (ELT) from HubSpot to PostgreSQL](https://apidocs.polytomic.com/guides/code-examples/bulk-sync-elt-from-hub-spot-to-postgre-sql)
+- [Bulk sync (ELT) from Salesforce to S3](../../../guides/code-examples/bulk-sync-elt-from-salesforce-to-s-3)
+- [Bulk sync (ELT) from Salesforce to Snowflake](../../../guides/code-examples/bulk-sync-elt-from-salesforce-to-snowflake)
+- [Bulk sync (ELT) from HubSpot to PostgreSQL](../../../guides/code-examples/bulk-sync-elt-from-hub-spot-to-postgre-sql)
 
 ## Connection specific configuration
 
@@ -93,8 +118,24 @@ The `source_configuration` is optional. It allows configuration for how
 Polytomic reads data from the source connection. This will not be available for
 integrations that do not support additional configuration.
 
-Consult the [connection configurations](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/overview)
-to see configurations for particular integrations (for example, [here](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/connections/postgre-sql#source-1) is the available source configuration for the PostgreSQL bulk sync source).
+Consult the [connection configurations](../../../guides/configuring-your-connections/overview)
+to see configurations for particular integrations (for example, [here](../../../guides/configuring-your-connections/connections/postgre-sql#source-1) is the available source configuration for the PostgreSQL bulk sync source).
+
+## Defaults and selection behavior
+
+If `schemas` is omitted, the sync is created with all available source schemas
+selected. Pass `schemas` explicitly if you want the initial sync to include
+only a subset of tables or objects.
+
+Schedule times are interpreted in UTC.
+
+When omitted, automatic discovery defaults are conservative:
+
+- `automatically_add_new_objects` defaults to not enabling newly discovered
+  source objects automatically.
+- `automatically_add_new_fields` defaults to enabling newly discovered fields
+  on already selected objects.
+- `normalize_names` defaults to enabled.
 </dd>
 </dl>
 </dd>
@@ -307,6 +348,28 @@ client.bulk_sync.create(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns a single bulk sync by ID.
+
+The response includes the sync's top-level configuration — source, destination,
+schedules, and discovery settings.
+
+- To check whether the sync is running and see the most-recent execution result,
+  use [`GET /api/bulk/syncs/{id}/status`](../../../../api-reference/bulk-sync/get-status).
+- To inspect which schemas are selected and how they are configured, use
+  [`GET /api/bulk/syncs/{id}/schemas`](../../../../api-reference/bulk-sync/schemas/list).
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -381,9 +444,41 @@ client.bulk_sync.get(
 <dl>
 <dd>
 
+Updates an existing bulk sync's top-level configuration.
+
+Updating a bulk sync is a **full replacement** of the sync's top-level
+configuration. Every field in the request body is written to the sync; any
+field you omit is cleared or reset to its default value.
+
+To make a partial change — for example, toggling `active` or swapping a
+schedule — fetch the current sync with
+[`GET /api/bulk/syncs/{id}`](./get),
+modify the fields you want to change, and send the complete object back in
+the update request.
+
+Updates to `active`, `schedules`, and `policies` take effect immediately.
+Changes to source or destination configuration take effect on the sync's
+next execution.
+
+Because omitted fields are reset to their defaults, the discovery and
+naming options behave the same as on create when left out:
+
+- `automatically_add_new_objects` resets to not enabling newly discovered
+  source objects automatically.
+- `automatically_add_new_fields` resets to enabling newly discovered
+  fields on already selected objects.
+- `normalize_names` resets to enabled.
+
+Send the existing values explicitly if you want to preserve a non-default or
+non-empty setting, including schema and field selections.
+
 > 📘 Updating schemas
 >
-> Schema updates can be performed using the [Update Bulk Sync Schemas](https://apidocs.polytomic.com/api-reference/bulk-sync/schemas/patch) endpoint.
+> Schema updates are not performed through this endpoint. Use the
+> [Update Bulk Sync Schemas](./schemas/patch)
+> endpoint to change a subset of schemas, or
+> [Update Bulk Sync Schema](./schemas/%7Bschema_id%7D/put)
+> to replace a single schema's configuration.
 </dd>
 </dl>
 </dd>
@@ -605,6 +700,26 @@ client.bulk_sync.update(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Deletes a bulk sync, cancelling any running executions.
+
+Any execution that is currently running is cancelled before the sync record is
+removed.
+
+> 🚧 All associated schedules, schema configurations, and execution history are
+> deleted along with the sync.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -670,6 +785,29 @@ client.bulk_sync.remove(
 <details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">activate</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Sets whether a bulk sync is active.
+
+Only active syncs are eligible to execute on their configured schedule.
+Deactivating a sync prevents future scheduled runs and requests cancellation of
+any execution that is currently in progress.
+
+> 📘 To start or stop a running execution directly, use
+> [`POST /api/bulk/syncs/{id}/executions`](../../../../../api-reference/bulk-sync/start)
+> or
+> [`POST /api/bulk/syncs/{id}/cancel`](../../../../../api-reference/bulk-sync/cancel).
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -737,6 +875,26 @@ client.bulk_sync.activate(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Requests cancellation of any running executions on a bulk sync.
+
+Cancellation is asynchronous. A successful response means the cancellation
+signal has been queued; the running execution continues until the signal is
+processed. Poll `GET /api/bulk/syncs/{id}/status` until the current execution
+reaches a terminal state (`completed`, `canceled`, or `failed`) to confirm
+cancellation has taken effect.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -794,6 +952,35 @@ client.bulk_sync.cancel(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Starts a new execution of a bulk sync.
+
+This endpoint returns the execution record immediately after the run is queued
+or started. Use the execution ID with the bulk-sync execution endpoints if you
+need to monitor progress in detail.
+
+## Execution modes
+
+- Set `test=true` to validate the sync without writing to the destination.
+- Use `resync_mode` for destructive or full-refresh style reruns.
+- `test` and `resync_mode` are mutually exclusive.
+
+The legacy `resync` boolean is no longer accepted on this v5 endpoint. Send
+`resync_mode` instead.
+
+If another execution is already running, the endpoint returns `409 Conflict`.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -827,7 +1014,7 @@ client.bulk_sync.start(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the bulk sync.
     
 </dd>
 </dl>
@@ -859,7 +1046,7 @@ client.bulk_sync.start(
 <dl>
 <dd>
 
-**schemas:** `typing.Optional[typing.Sequence[str]]` 
+**schemas:** `typing.Optional[typing.Sequence[str]]` — Optional list of schema IDs to include in this execution. If empty, all enabled schemas are included.
     
 </dd>
 </dl>
@@ -867,7 +1054,7 @@ client.bulk_sync.start(
 <dl>
 <dd>
 
-**test:** `typing.Optional[bool]` 
+**test:** `typing.Optional[bool]` — When true, runs a test execution that validates the configuration without writing to the destination. Mutually exclusive with resync and resync_mode.
     
 </dd>
 </dl>
@@ -890,6 +1077,30 @@ client.bulk_sync.start(
 <details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">get_status</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the current status of a bulk sync.
+
+The response includes the sync's current active/inactive state together with
+information about the most recent execution — its status, start time, and any
+errors — making this endpoint well-suited for health checks and monitoring
+dashboards.
+
+For the complete execution history, use
+[`GET /api/bulk/syncs/{id}/executions`](../../../../../api-reference/bulk-sync/executions/list).
+For the full details of a specific run, including per-schema breakdowns, use
+[`GET /api/bulk/syncs/{id}/executions/{exec_id}`](../../../../../api-reference/bulk-sync/executions/get).
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -924,7 +1135,7 @@ client.bulk_sync.get_status(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the bulk sync.
     
 </dd>
 </dl>
@@ -947,6 +1158,33 @@ client.bulk_sync.get_status(
 <details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">get_source</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists the schemas (tables or objects) available on a connection for use as a bulk sync source, optionally including per-schema field details.
+
+The response reflects what the
+connection currently has cached; if the upstream source has changed, trigger
+a refresh first with
+[`POST /api/connections/{id}/schemas/refresh`](../../../../../api-reference/schemas/refresh).
+
+These are the schemas available for selection, not the schemas already
+configured on any particular sync. To inspect schemas on a running sync, use
+[`GET /api/bulk/syncs/{id}/schemas`](../../../../../api-reference/bulk-sync/schemas/list).
+
+Pass `include_fields=true` to receive per-schema field details in a single call.
+Omit it when you only need the schema list, as field enumeration can be slow for
+large sources.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -982,7 +1220,7 @@ client.bulk_sync.get_source(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the connection.
     
 </dd>
 </dl>
@@ -990,7 +1228,7 @@ client.bulk_sync.get_source(
 <dl>
 <dd>
 
-**include_fields:** `typing.Optional[bool]` 
+**include_fields:** `typing.Optional[bool]` — When true, include per-schema field lists in the response. Set to false for a smaller payload when field details are not needed.
     
 </dd>
 </dl>
@@ -1013,6 +1251,30 @@ client.bulk_sync.get_source(
 <details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">get_destination</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Describes the destination configuration schema a connection accepts when used as a bulk sync destination.
+
+The response is a JSON Schema object describing the shape of the
+`destination_configuration` field you must supply when
+[creating](../../../../../api-reference/bulk-sync/create) or
+[updating](../../../../../api-reference/bulk-sync/update) a bulk sync that uses this
+connection as its destination. Required fields vary by connection type.
+
+> 📘 Fetch this endpoint once per connection type rather than once per sync.
+> The configuration schema is the same for all syncs sharing the same
+> destination connection.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -1072,6 +1334,27 @@ client.bulk_sync.get_destination(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists all connection types supported by this deployment.
+
+Each entry includes per-type metadata:
+
+- The available operations the connection type supports.
+- Its category.
+- Whether the connection type is enabled for the caller's organization.
+- Which modes (source, destination, enrichment) it can act as.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -1119,6 +1402,27 @@ client.connections.get_types()
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the JSON schema for a connection type.
+
+This schema is intended for building forms or validating configuration payloads
+client-side. It describes the structure Polytomic expects when you create or
+update a connection of the given type.
+
+The response is metadata about the shape of the configuration, not a live
+connection instance and not a set of current credential values.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -1152,7 +1456,7 @@ client.connections.get_connection_type_schema(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Connection type identifier (e.g. postgresql, salesforce, hubspot).
     
 </dd>
 </dl>
@@ -1175,6 +1479,28 @@ client.connections.get_connection_type_schema(
 <details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">get_type_parameter_values</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns completion values for parameter fields on a connection type.
+
+This endpoint is useful during connection setup, before a connection exists or
+before you want to persist it. The supplied `parameters` are applied to a
+temporary in-memory connection shape and used to resolve dependent options.
+
+When an endpoint requires upstream authorization before it can return values,
+Polytomic returns an error instead of guessing. In that case, complete the
+authorization flow first and call the endpoint again.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -1266,6 +1592,29 @@ client.connections.get_type_parameter_values(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists every connection in the caller's organization, with sensitive fields redacted.
+
+Sensitive configuration values — passwords, API tokens, private keys — are
+redacted from all responses. To understand which fields a connection type
+exposes, consult the parameter schema returned by
+[`GET /api/connection_types`](../../api-reference/connections/get-types).
+
+To inspect the data objects available on a specific connection, use
+[`POST /api/connections/{id}/schemas/refresh`](../../api-reference/schemas/refresh)
+followed by [`GET /api/connections/{id}/schemas/status`](../../api-reference/schemas/get-status).
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -1312,6 +1661,30 @@ client.connections.list()
 <details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">create</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Creates a new connection of the specified type.
+
+Use [`GET /api/connection_types`](../../api-reference/connections/get-types) to retrieve the
+list of available types and their parameter schemas. The `configuration`
+object is type-specific; consult the [integration
+guides](../../guides/configuring-your-connections/overview)
+for the required and optional fields for each type.
+
+> 📘 Polytomic validates the connection against the upstream service
+> immediately on creation. The request will fail if the credentials or
+> endpoint cannot be reached.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -1442,15 +1815,11 @@ client.connections.create(
 <dl>
 <dd>
 
-Creates a new request for [Polytomic Connect](https://www.polytomic.com/connect).
-
-This endpoint configures a Polytomic Connect request and returns the URL to
-redirect users to. This allows embedding Polytomic connection authorization in
-other applications.
+Creates a Polytomic Connect session and returns a redirect URL that embeds the Connect modal.
 
 See also:
 
-- [Embedding authentication](https://apidocs.polytomic.com/2024-02-08/guides/embedding-authentication), a guide to using Polytomic Connect.
+- [Embedding authentication](../../../guides/embedding-authentication), a guide to using Polytomic Connect.
 </dd>
 </dl>
 </dd>
@@ -1571,6 +1940,17 @@ client.connections.connect(
 <dd>
 
 Tests a connection configuration.
+
+This endpoint is useful for setup flows that want to verify credentials before
+persisting them.
+
+If you provide `connection_id`, Polytomic starts from the saved configuration
+for that connection and then applies the request's `configuration` values on
+top. This lets callers test a partial change without resending every existing
+field.
+
+The request does not persist any configuration changes even when validation
+succeeds.
 </dd>
 </dl>
 </dd>
@@ -1656,6 +2036,25 @@ client.connections.test_connection(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns a single connection by ID, with sensitive fields redacted.
+
+To inspect the schemas available on this connection, trigger a refresh with
+[`POST /api/connections/{id}/schemas/refresh`](./schemas/refresh/post) and
+track progress via
+[`GET /api/connections/{id}/schemas/status`](./schemas/status/get).
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -1712,6 +2111,33 @@ client.connections.get(
 <details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">update</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Updates a connection's configuration.
+
+Updating a connection is a **full replacement** of its configuration. Any
+`configuration` field you omit is cleared. To make a partial change, fetch
+the current connection with
+[`GET /api/connections/{id}`](./get), apply your edits, and send the
+complete object back.
+
+> 📘 The connection is re-validated against the upstream service after every
+> update. The request will fail if the new credentials or endpoint cannot be
+> reached.
+
+Syncs that are already running when the update is submitted are not
+interrupted; the updated configuration takes effect on their next execution.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -1842,6 +2268,25 @@ client.connections.update(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Deletes a connection.
+
+> 🚧 Deleting a connection that is referenced by fieldsets, syncs, bulk
+> syncs, or schedules returns `422 connection in use` unless you pass
+> `force=true`. With `force=true`, the API deletes those dependent
+> resources before removing the connection.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -1908,6 +2353,29 @@ client.connections.remove(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns completion values for parameter fields on a persisted connection.
+
+Use this endpoint when the available options for one parameter depend on the
+connection's saved credentials or previously selected settings. For example,
+after a connection is authorized, the upstream service may be able to return
+lists of databases, schemas, or similar selectable values.
+
+For new setup flows, prefer
+[`POST /api/connection_types/{type}/parameter_values`](./get-type-parameter-values),
+which lets you resolve completions before the connection has been created.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -1973,9 +2441,11 @@ client.connections.get_parameter_values(
 <dl>
 <dd>
 
+Shares a connection with another organization in the caller's partner account.
+
 > 🚧 Requires partner key
 >
-> Shared connections can only be created by using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+> Shared connections can only be created by using [partner keys](../../../../guides/obtaining-api-keys#partner-keys).
 </dd>
 </dl>
 </dd>
@@ -2055,6 +2525,20 @@ client.connections.create_shared_connection(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists shared copies of a connection.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -2121,7 +2605,15 @@ client.connections.list_shared_connections(
 <dl>
 <dd>
 
-Submit a query for asynchronous execution against the connection. The initial response may only contain the query task id and status. Poll GET /api/queries/{id} with the returned id to retrieve completion status, fields, and results.
+Submits a query for asynchronous execution against the connection.
+
+This endpoint returns immediately with a query task ID. It does not wait for
+the query to finish. Poll [`GET /api/queries/{id}`](./get-query) until `status`
+reaches `done` or `failed`.
+
+Only the user who created the query can fetch its results later. Query results
+are stored temporarily and may expire; use the `expires` field from the result
+endpoint to understand how long they will remain available.
 </dd>
 </dl>
 </dd>
@@ -2161,7 +2653,7 @@ client.query_runner.run_query(
 <dl>
 <dd>
 
-**connection_id:** `str` 
+**connection_id:** `str` — Unique identifier of the connection to run the query against.
     
 </dd>
 </dl>
@@ -2201,7 +2693,19 @@ client.query_runner.run_query(
 <dl>
 <dd>
 
-Fetch the latest status for a submitted query and, once complete, return fields and paginated results. Use the query id returned by POST /api/connections/{connection_id}/query.
+Fetches the latest status for a submitted query and, once complete, returns fields and paginated results.
+
+This endpoint is the second step of the query-runner flow. First call
+[`POST /api/connections/{connection_id}/query`](./run-query),
+then poll this endpoint with the returned ID.
+
+Results may be paginated across multiple blobs. When that happens, use the
+opaque `links.next` and `links.previous` URLs exactly as returned. Do not try to
+construct the `page` token yourself.
+
+If the query is still running, the response may include only status metadata.
+If the task is complete but the caller is not the same user that created it,
+the endpoint returns `404`.
 </dd>
 </dl>
 </dd>
@@ -2224,7 +2728,6 @@ client = Polytomic(
 )
 client.query_runner.get_query(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    page="page",
 )
 
 ```
@@ -2241,7 +2744,7 @@ client.query_runner.get_query(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the query task, as returned by POST /api/connections/{connection_id}/query.
     
 </dd>
 </dl>
@@ -2249,7 +2752,7 @@ client.query_runner.get_query(
 <dl>
 <dd>
 
-**page:** `typing.Optional[str]` 
+**page:** `typing.Optional[str]` — Opaque pagination token returned in the links.next or links.previous URL of the previous response.
     
 </dd>
 </dl>
@@ -2273,6 +2776,30 @@ client.query_runner.get_query(
 <details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">upsert_field</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Creates or updates user-defined fields on a schema, matched by field_id.
+
+Fields are matched by `field_id`. Reusing an existing `field_id` updates that
+field; using a new `field_id` creates a new user-defined field.
+
+This makes the endpoint safe to retry when you are intentionally upserting the
+same field definitions. It is not a patch-by-position operation.
+
+If some fields succeed and others fail, the endpoint can return a partial
+success response. Validate the response status and message rather than assuming
+the whole batch was applied uniformly.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -2308,7 +2835,7 @@ client.schemas.upsert_field(
 <dl>
 <dd>
 
-**connection_id:** `str` 
+**connection_id:** `str` — Unique identifier of the connection.
     
 </dd>
 </dl>
@@ -2316,7 +2843,7 @@ client.schemas.upsert_field(
 <dl>
 <dd>
 
-**schema_id:** `str` 
+**schema_id:** `str` — Identifier of the schema the fields belong to.
     
 </dd>
 </dl>
@@ -2324,7 +2851,7 @@ client.schemas.upsert_field(
 <dl>
 <dd>
 
-**fields:** `typing.Optional[typing.Sequence[V4UserFieldRequest]]` 
+**fields:** `typing.Optional[typing.Sequence[V4UserFieldRequest]]` — Fields to create or update on the schema. Existing user-defined fields with the same field_id are replaced.
     
 </dd>
 </dl>
@@ -2347,6 +2874,29 @@ client.schemas.upsert_field(
 <details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">delete_field</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Removes a user-defined field from a schema.
+
+Only user-defined fields — those created via
+[`POST /api/connections/{connection_id}/schemas/{schema_id}/fields`](../../../../../../../api-reference/schemas/upsert-field)
+— can be removed through this endpoint. Fields detected automatically from
+the source cannot be deleted here; they are managed through schema refresh.
+
+> 🚧 Deleting a field that is referenced in an active sync mapping may cause
+> that sync to error on its next execution. Remove or update any dependent
+> mappings before deleting the field.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -2383,7 +2933,7 @@ client.schemas.delete_field(
 <dl>
 <dd>
 
-**connection_id:** `str` 
+**connection_id:** `str` — Unique identifier of the connection.
     
 </dd>
 </dl>
@@ -2391,7 +2941,7 @@ client.schemas.delete_field(
 <dl>
 <dd>
 
-**schema_id:** `str` 
+**schema_id:** `str` — Identifier of the schema the field belongs to.
     
 </dd>
 </dl>
@@ -2399,7 +2949,7 @@ client.schemas.delete_field(
 <dl>
 <dd>
 
-**field_id:** `str` 
+**field_id:** `str` — Identifier of the user-defined field to delete.
     
 </dd>
 </dl>
@@ -2422,6 +2972,31 @@ client.schemas.delete_field(
 <details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">set_primary_keys</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Overrides the primary key detected on a schema.
+
+This is a full replacement: the keys you supply become the complete override
+set, replacing any previously configured overrides. Omitting a key that was
+previously set removes it.
+
+Primary key overrides are useful when the source does not expose a primary
+key or when the source-detected key is not the correct deduplication
+identifier for your use case.
+
+> 📘 To revert to the source-detected primary keys and remove all overrides,
+> use [`DELETE /api/connections/{connection_id}/schemas/{schema_id}/primary_keys`](./delete).
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -2457,7 +3032,7 @@ client.schemas.set_primary_keys(
 <dl>
 <dd>
 
-**connection_id:** `str` 
+**connection_id:** `str` — Unique identifier of the connection.
     
 </dd>
 </dl>
@@ -2465,7 +3040,7 @@ client.schemas.set_primary_keys(
 <dl>
 <dd>
 
-**schema_id:** `str` 
+**schema_id:** `str` — Identifier of the schema whose primary keys are being overridden.
     
 </dd>
 </dl>
@@ -2473,7 +3048,7 @@ client.schemas.set_primary_keys(
 <dl>
 <dd>
 
-**fields:** `typing.Optional[typing.Sequence[SchemaPrimaryKeyOverrideInput]]` 
+**fields:** `typing.Optional[typing.Sequence[SchemaPrimaryKeyOverrideInput]]` — Ordered list of source fields that together form the primary key. Replaces any existing override; supply an empty list to clear.
     
 </dd>
 </dl>
@@ -2505,7 +3080,11 @@ client.schemas.set_primary_keys(
 <dl>
 <dd>
 
-Delete all primary key overrides for a schema. After this call the schema will use the primary keys detected from the source connection, if any.
+Deletes all primary key overrides for a schema, reverting to the primary keys detected from the source.
+
+To replace the overrides with a new set rather than clearing them entirely,
+use [`PUT /api/connections/{connection_id}/schemas/{schema_id}/primary_keys`](./put)
+instead.
 </dd>
 </dl>
 </dd>
@@ -2545,7 +3124,7 @@ client.schemas.reset_primary_keys(
 <dl>
 <dd>
 
-**connection_id:** `str` 
+**connection_id:** `str` — Unique identifier of the connection.
     
 </dd>
 </dl>
@@ -2553,7 +3132,7 @@ client.schemas.reset_primary_keys(
 <dl>
 <dd>
 
-**schema_id:** `str` 
+**schema_id:** `str` — Identifier of the schema whose primary key override should be cleared.
     
 </dd>
 </dl>
@@ -2576,6 +3155,39 @@ client.schemas.reset_primary_keys(
 <details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">refresh</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Refreshes a connection's cached schemas.
+
+Call this when the upstream source has added, removed, or changed tables,
+objects, or fields and you need Polytomic to re-inspect the connection before
+creating or updating sync configuration.
+
+This endpoint does not return the refreshed schemas directly. Follow the
+`Location` header or poll [`GET /api/connections/{id}/schemas/status`](./get-status)
+until the refresh completes, then fetch the schemas you need.
+
+> 📘 Schema refresh is asynchronous
+>
+> This endpoint kicks off a background refresh of the connection's cached
+> schemas and returns a `Location` header pointing at
+> [`GET /api/connections/{id}/schemas/status`](../../../../../api-reference/schemas/get-status).
+> Poll that endpoint until `cache_status` transitions from `refreshing` to
+> `fresh` (or until `last_refresh_finished` advances past
+> `last_refresh_started`) to observe completion.
+>
+> Only connections whose current health status is healthy may be refreshed.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -2610,7 +3222,7 @@ client.schemas.refresh(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the connection whose schema cache should be refreshed.
     
 </dd>
 </dl>
@@ -2642,7 +3254,23 @@ client.schemas.refresh(
 <dl>
 <dd>
 
-Polytomic periodically inspects the schemas for connections to discover new fields and update metadata. This endpoint returns the current inspection status.
+Returns the current schema inspection status for a connection.
+
+Poll this endpoint after calling
+[`POST /api/connections/{id}/schemas/refresh`](../../../../../api-reference/schemas/refresh) to track
+progress. When `status` transitions to `completed`, the refreshed schemas
+are available for use in sync configuration.
+
+> 📘 Schema refresh is asynchronous
+>
+> This endpoint kicks off a background refresh of the connection's cached
+> schemas and returns a `Location` header pointing at
+> [`GET /api/connections/{id}/schemas/status`](../../../../../api-reference/schemas/get-status).
+> Poll that endpoint until `cache_status` transitions from `refreshing` to
+> `fresh` (or until `last_refresh_finished` advances past
+> `last_refresh_started`) to observe completion.
+>
+> Only connections whose current health status is healthy may be refreshed.
 </dd>
 </dl>
 </dd>
@@ -2681,7 +3309,7 @@ client.schemas.get_status(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the connection whose schema cache status should be returned.
     
 </dd>
 </dl>
@@ -2704,6 +3332,28 @@ client.schemas.get_status(
 <details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">get</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns a single schema on a connection.
+
+The schema is returned from the connection's cached schema set. If the
+upstream source has changed since the last inspection, the result may be
+stale.
+
+> 📘 Trigger [`POST /api/connections/{id}/schemas/refresh`](../../../../../api-reference/schemas/refresh)
+> and wait for it to complete before fetching this endpoint if you need
+> up-to-date field definitions.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -2739,7 +3389,7 @@ client.schemas.get(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the connection.
     
 </dd>
 </dl>
@@ -2747,7 +3397,7 @@ client.schemas.get(
 <dl>
 <dd>
 
-**schema_id:** `str` 
+**schema_id:** `str` — Identifier of the schema within the connection. Format depends on the connection type (e.g. schema.table for databases, object name for SaaS backends).
     
 </dd>
 </dl>
@@ -2770,6 +3420,31 @@ client.schemas.get(
 <details><summary><code>client.schemas.<a href="src/polytomic/schemas/client.py">get_records</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns a sample of records from a schema on a connection.
+
+The sample is intended for previewing the shape and values of data before
+committing to a sync configuration, not for full data export.
+
+> 🚧 The sample is not guaranteed to be representative of the full dataset.
+> Row selection is implementation-defined and may differ across connection
+> types.
+
+> 📘 If the schema's field definitions are stale, refresh them first with
+> [`POST /api/connections/{id}/schemas/refresh`](../../../../../../api-reference/schemas/refresh) to ensure
+> the sample aligns with the current schema structure.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -2805,7 +3480,7 @@ client.schemas.get_records(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the connection.
     
 </dd>
 </dl>
@@ -2813,7 +3488,7 @@ client.schemas.get_records(
 <dl>
 <dd>
 
-**schema_id:** `str` 
+**schema_id:** `str` — Identifier of the schema within the connection.
     
 </dd>
 </dl>
@@ -2837,6 +3512,32 @@ client.schemas.get_records(
 <details><summary><code>client.models.<a href="src/polytomic/models/client.py">get_enrichment_source</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Describes the enrichment source configuration available on a connection.
+
+Not all connections support enrichment. Call this endpoint to determine
+whether a connection can serve as an enrichment source in a model sync and,
+if so, what configuration it accepts.
+
+> ⚠️ If the connection does not support enrichment, this endpoint returns
+> `404`. Check for that status before attempting to configure an enrichment
+> source on a sync.
+
+When a connection does support enrichment, the response describes the
+configuration fields required to set it up. Pass those values in the
+`enrichment` block when creating or updating a model sync.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -2871,7 +3572,7 @@ client.models.get_enrichment_source(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the connection.
     
 </dd>
 </dl>
@@ -2879,7 +3580,7 @@ client.models.get_enrichment_source(
 <dl>
 <dd>
 
-**params:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]` 
+**params:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]` — Query parameters used to incrementally refine a dependent source configuration. Keys correspond to configuration fields returned by previous calls to this endpoint.
     
 </dd>
 </dl>
@@ -2911,7 +3612,13 @@ client.models.get_enrichment_source(
 <dl>
 <dd>
 
-For a given connection and enrichment configuration, provides the valid sets of input fields.
+Returns the valid input field sets for an enrichment configuration on a connection.
+
+When configuring an enrichment source in a model sync, use this endpoint to
+discover which input fields the enrichment connection requires. Pass the
+proposed enrichment configuration in the request body; the response lists the
+valid input field sets that map your model's fields to the enrichment service's
+expected inputs.
 </dd>
 </dl>
 </dd>
@@ -2982,6 +3689,25 @@ client.models.post(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Submits a job that previews the fields a model would expose without persisting it.
+
+The response contains a job ID that resolves to the list of fields the model
+would expose. Poll the job until it completes to retrieve the field list. The
+model is not persisted — this endpoint is useful for validating a query or
+configuration before calling [`POST /api/models`](../../api-reference/models/create) to save it.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -2998,7 +3724,6 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.models.preview(
-    async_=True,
     configuration={"table": "public.users"},
     connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     name="Users",
@@ -3138,6 +3863,29 @@ client.models.preview(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists all models in the caller's organization.
+
+Results are ordered by `updated_at` descending, with `id` used as a tiebreaker.
+If more results are available, the response includes `pagination.next_page_token`.
+Pass that token back unchanged to continue from the last item you received.
+
+The token is opaque. Do not construct or edit it yourself.
+
+The `limit` is capped at 50. Values above that cap are reduced to 50, and
+non-positive values fall back to the same default.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -3185,6 +3933,28 @@ client.models.list()
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Creates a new model.
+
+A model defines a query or view over a connection's data — for example, a SQL
+query, a filtered object, or a joined dataset. Models are used as sources when
+creating model syncs.
+
+The connection referenced by `connection_id` must have source capabilities. Use
+[`GET /api/connection_types/{id}`](../../api-reference/connections/get-connection-type-schema) to check
+whether a connection type supports use as a source.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -3201,7 +3971,6 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.models.create(
-    async_=True,
     configuration={"table": "public.users"},
     connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     name="Users",
@@ -3341,6 +4110,24 @@ client.models.create(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns a single model by ID, including its source fields, identity, and filters.
+
+The response includes the model's source fields, identity column, and any
+configured filters. To preview the data a model would return without saving
+changes, use [`GET /api/models/{id}/sample`](./sample/get).
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -3358,7 +4145,6 @@ client = Polytomic(
 )
 client.models.get(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    async_=True,
 )
 
 ```
@@ -3406,6 +4192,31 @@ client.models.get(
 <details><summary><code>client.models.<a href="src/polytomic/models/client.py">update</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Updates a model's configuration.
+
+Updating a model is a **full replacement** of its configuration. Every field in
+the request body is written to the model; any field you omit is cleared or reset
+to its default value.
+
+To make a partial change, fetch the current model with
+[`GET /api/models/{id}`](./get), modify the fields you want to change, and send
+the complete object back in the update request.
+
+Changes to source fields, filters, or the identity column take effect on the
+next sync execution that uses this model.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -3580,6 +4391,23 @@ client.models.update(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Deletes a model.
+
+> 🚧 Deleting a model used by one or more syncs will break those syncs. Remove
+> or reconfigure any syncs that reference this model before deleting it.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -3597,7 +4425,6 @@ client = Polytomic(
 )
 client.models.remove(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    async_=True,
 )
 
 ```
@@ -3654,7 +4481,11 @@ client.models.remove(
 <dl>
 <dd>
 
-Returns sample records from the model. The first ten records that the source provides will be returned after being enriched (if applicable). Synchronous requests must complete within 10s. If either querying or enrichment exceeds 10s, please use the async option.
+Returns a sample of records from a model.
+
+Synchronous requests must complete within 10 seconds. If the source query or
+enrichment step can exceed that budget, use the asynchronous option so the
+work runs as a background job.
 </dd>
 </dl>
 </dd>
@@ -3677,7 +4508,6 @@ client = Polytomic(
 )
 client.models.sample(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    async_=True,
 )
 
 ```
@@ -3727,6 +4557,25 @@ client.models.sample(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Describes the source configuration available on a connection for use as a model sync source.
+
+Use this endpoint before creating a model to understand what configuration is
+available. Once you have a configuration, resolve the fields available for
+sync mapping with
+[`GET /api/connections/{id}/modelsync/source/fields`](./fields/get).
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -3760,7 +4609,7 @@ client.model_sync.get_source(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the connection.
     
 </dd>
 </dl>
@@ -3768,7 +4617,7 @@ client.model_sync.get_source(
 <dl>
 <dd>
 
-**params:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]` 
+**params:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]` — Query parameters used to incrementally refine a dependent source configuration. Keys correspond to configuration fields returned by previous calls to this endpoint.
     
 </dd>
 </dl>
@@ -3791,6 +4640,31 @@ client.model_sync.get_source(
 <details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">get_source_fields</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the source fields available on a connection for a given source configuration.
+
+Pass the model's source configuration as query parameters to resolve the
+fields that the connection will expose for that specific configuration. The
+returned fields are what can be referenced in sync field mappings.
+
+> 📘 Results depend on the source configuration you supply. A different
+> table or query in the configuration may return a completely different field
+> list.
+
+The available source configuration parameters are described by
+[`GET /api/connections/{id}/modelsync/source`](../../../../../../api-reference/model-sync/get-source).
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -3825,7 +4699,7 @@ client.model_sync.get_source_fields(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the connection.
     
 </dd>
 </dl>
@@ -3833,7 +4707,7 @@ client.model_sync.get_source_fields(
 <dl>
 <dd>
 
-**params:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]` 
+**params:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]` — Source configuration, matching the params used with GET /api/connections/{id}/modelsync/source, that selects the specific source to return fields for.
     
 </dd>
 </dl>
@@ -3857,6 +4731,33 @@ client.model_sync.get_source_fields(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists all model syncs in the caller's organization.
+
+Results are ordered by `updated_at` descending, with `id` used as a tiebreaker.
+If more results are available, the response includes `pagination.next_page_token`.
+Pass that token back unchanged to continue from the last item you received.
+
+The token is opaque. Do not construct or edit it yourself.
+
+The `limit` is capped at 50. Values above that cap are reduced to 50, and
+non-positive values fall back to the same default.
+
+This endpoint returns syncs visible to the current caller's organization scope.
+To inspect a specific sync in more detail, follow up with
+[`GET /api/syncs/{id}`](./get).
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -3874,7 +4775,6 @@ client = Polytomic(
 )
 client.model_sync.list(
     active=True,
-    mode="create",
     target_connection_id="0b155265-c537-44c9-9359-a3ceb468a4da",
 )
 
@@ -3940,6 +4840,8 @@ client.model_sync.list(
 <dl>
 <dd>
 
+Creates a new model sync.
+
 Create a new sync from one or more models to a destination.
 
 All of the functionality described in [the product
@@ -3948,8 +4850,8 @@ configurable via the API.
 
 Guides:
 
-- [Model sync (Reverse ETL) from Snowflake query to Salesforce](https://apidocs.polytomic.com/2024-02-08/guides/code-examples/model-sync-reverse-etl-from-snowflake-query-to-salesforce)
-- [Joined model sync from Postgres, Airtable, and Stripe to Hubspot](https://apidocs.polytomic.com/2024-02-08/guides/code-examples/joined-model-sync-from-postgres-airtable-and-stripe-to-hubspot)
+- [Model sync (Reverse ETL) from Snowflake query to Salesforce](../../guides/code-examples/model-sync-reverse-etl-from-snowflake-query-to-salesforce)
+- [Joined model sync from Postgres, Airtable, and Stripe to Hubspot](../../guides/code-examples/joined-model-sync-from-postgres-airtable-and-stripe-to-hubspot)
 
 ## Targets (Destinations)
 
@@ -3969,10 +4871,10 @@ The `target` object in the request specifies information about the sync destinat
 
 Some connections support additional configuration for targets. For example,
 [Salesforce
-connections](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/connections/salesforce#target)
+connections](../../guides/configuring-your-connections/connections/salesforce#target)
 support optionally specifying the ingestion API to use. The target specific
 options are passed as `configuration`; consult the [integration
-guides](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/overview)
+guides](../../guides/configuring-your-connections/overview)
 for details about specific connection configurations.
 
 ### Creating a new target
@@ -4196,6 +5098,24 @@ client.model_sync.create(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the schedule types available when creating or updating a model sync.
+
+Use the `type` identifiers returned by this endpoint in the `schedule` field
+when creating or updating a sync via
+[`POST /api/syncs`](../../../api-reference/model-sync/create) or [`PUT /api/syncs/{id}`](../../../api-reference/model-sync/update).
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -4242,6 +5162,24 @@ client.model_sync.get_schedule_options()
 <details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">get</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns a single model sync by ID.
+
+To check whether a sync is currently running or has recently completed, use
+[`GET /api/syncs/{id}/status`](./status/get). For the full history of
+executions, use [`GET /api/syncs/{id}/executions`](./executions/get).
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -4299,6 +5237,34 @@ client.model_sync.get(
 <details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">update</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Updates a model sync's configuration.
+
+Updating a model sync is a **full replacement** of the sync's configuration.
+Every field in the request body is written to the sync; any field you omit is
+cleared or reset to its default value.
+
+To make a partial change — for example, toggling `active` or adjusting a
+single field mapping — fetch the current sync with
+[`GET /api/syncs/{id}`](../../../api-reference/model-sync/get),
+modify the fields you want to change, and send the complete object back in
+the update request.
+
+Updates to `active`, `schedule`, and `policies` take effect immediately.
+Changes to source fields, target configuration, filters, or field mappings
+take effect on the sync's next execution.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -4504,6 +5470,24 @@ client.model_sync.update(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Deletes a model sync, cancelling any running executions.
+
+Deletion is permanent. Any running execution is cancelled before the sync
+record is removed. Deleted syncs cannot be recovered; recreate them using
+[`POST /api/syncs`](../../../api-reference/model-sync/create) if needed.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -4560,6 +5544,27 @@ client.model_sync.remove(
 <details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">activate</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Sets whether a model sync is active.
+
+Only active syncs execute on schedule or in response to a manual trigger. Set
+`active` to `false` to pause a sync without deleting it.
+
+> 📘 Deactivating a sync does not cancel an execution that is already in
+> progress. Use [`POST /api/syncs/{id}/cancel`](../../../../api-reference/model-sync/cancel) to stop a
+> running execution.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -4627,6 +5632,26 @@ client.model_sync.activate(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Requests cancellation of any running executions on a model sync.
+
+Cancellation is asynchronous. A successful response means the cancellation
+signal has been queued; the running execution continues until the signal is
+processed. Poll `GET /api/syncs/{id}/status` until the current execution
+reaches a terminal state (`completed`, `canceled`, or `failed`) to confirm
+cancellation has taken effect.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -4691,6 +5716,8 @@ client.model_sync.cancel(
 
 <dl>
 <dd>
+
+Starts a new execution of a model sync.
 
 > 🚧 Force full resync
 >
@@ -4781,6 +5808,24 @@ client.model_sync.start(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the current status of a model sync.
+
+The response includes a summary of the most recent execution, including its
+start time, completion time, and record counts. For the complete execution
+history, use [`GET /api/syncs/{id}/executions`](../../../../api-reference/model-sync/executions/list).
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -4839,6 +5884,31 @@ client.model_sync.get_status(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists audit events for the caller's organization.
+
+Results are paginated. If more events are available, the response includes
+`pagination.next_page_token`; pass that token back unchanged to continue from
+the last item you received.
+
+Filter by event type using the `event_type` query parameter. Pass one of the
+identifiers returned by [`GET /api/events_types`](../../api-reference/events/get-types) to
+narrow results to a specific category of activity.
+
+> 📘 Events reflect audit activity scoped to the caller's organization.
+> The log captures both user-initiated and API-initiated actions.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -4858,14 +5928,12 @@ client = Polytomic(
 )
 client.events.list(
     organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    type="type",
     starting_after=datetime.datetime.fromisoformat(
         "2020-01-01 00:00:00+00:00",
     ),
     ending_before=datetime.datetime.fromisoformat(
         "2020-01-01 00:00:00+00:00",
     ),
-    limit=1,
 )
 
 ```
@@ -4882,7 +5950,7 @@ client.events.list(
 <dl>
 <dd>
 
-**organization_id:** `typing.Optional[str]` 
+**organization_id:** `typing.Optional[str]` — Organization to list events for. Only used by system callers; normal and partner callers are always scoped to their own organization.
     
 </dd>
 </dl>
@@ -4890,7 +5958,7 @@ client.events.list(
 <dl>
 <dd>
 
-**type:** `typing.Optional[str]` 
+**type:** `typing.Optional[str]` — Filter to a single event type. Use GET /api/events_types to list valid values.
     
 </dd>
 </dl>
@@ -4898,7 +5966,7 @@ client.events.list(
 <dl>
 <dd>
 
-**starting_after:** `typing.Optional[dt.datetime]` 
+**starting_after:** `typing.Optional[dt.datetime]` — Return events created strictly after this timestamp.
     
 </dd>
 </dl>
@@ -4906,7 +5974,7 @@ client.events.list(
 <dl>
 <dd>
 
-**ending_before:** `typing.Optional[dt.datetime]` 
+**ending_before:** `typing.Optional[dt.datetime]` — Return events created strictly before this timestamp.
     
 </dd>
 </dl>
@@ -4914,7 +5982,7 @@ client.events.list(
 <dl>
 <dd>
 
-**limit:** `typing.Optional[int]` 
+**limit:** `typing.Optional[int]` — Maximum number of events to return. Default 10, maximum 100.
     
 </dd>
 </dl>
@@ -4937,6 +6005,23 @@ client.events.list(
 <details><summary><code>client.events.<a href="src/polytomic/events/client.py">get_types</a>()</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the set of event type identifiers supported by GET /api/events.
+
+Use the identifiers returned here as the `event_type` filter value when calling
+[`GET /api/events`](../../api-reference/events/list).
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -4986,6 +6071,30 @@ client.events.get_types()
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the current state of an asynchronous job.
+
+This endpoint is used as a polling target by other asynchronous workflows such
+as model preview and log export. The caller must know the job `type` and `id`
+that were returned when the job was created.
+
+If the job is still running, the response returns `status: running` and may not
+include a `result` yet. Once complete, `status` becomes `done` or `failed`.
+
+Only specific job types are supported by this endpoint. Passing an unknown
+`type` returns `400`.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -5020,7 +6129,7 @@ client.jobs.get(
 <dl>
 <dd>
 
-**type:** `str` 
+**id:** `str` — Unique identifier of the job (usually returned by whichever endpoint started the job).
     
 </dd>
 </dl>
@@ -5028,7 +6137,7 @@ client.jobs.get(
 <dl>
 <dd>
 
-**id:** `str` 
+**type:** `str` — Job type. One of: createmodel, updatemodel, previewmodel, samplemodel, exportlogs.
     
 </dd>
 </dl>
@@ -5061,7 +6170,17 @@ client.jobs.get(
 <dl>
 <dd>
 
-Returns information about the caller's identity.
+Returns information about the authenticated caller and, if applicable, the organization they are scoped to.
+
+Use this endpoint to confirm which kind of credential is being used before
+calling endpoints with stricter authorization rules.
+
+For user-scoped credentials, the response includes the resolved user and
+organization details. For non-user keys, the response identifies the key class
+with the corresponding boolean flags instead of impersonating a user.
+
+This endpoint is especially useful when debugging why a request is being
+accepted or rejected by endpoints that are limited to particular caller types.
 </dd>
 </dl>
 </dd>
@@ -5115,6 +6234,23 @@ client.identity.get()
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the list of email addresses subscribed to global sync error notifications for the caller's organization.
+
+To update the subscriber list, use
+[`PUT /api/notifications/global-error-subscribers`](./put).
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -5162,6 +6298,26 @@ client.notifications.get_global_error_subscribers()
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Replaces the list of email addresses subscribed to global sync error notifications for the caller's organization.
+
+This is a **full replacement** — the request body becomes the complete
+subscriber list. To add or remove a single address without affecting others,
+fetch the current list with
+[`GET /api/notifications/global-error-subscribers`](./get), apply your change,
+and send the modified list back.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -5193,7 +6349,7 @@ client.notifications.set_global_error_subscribers()
 <dl>
 <dd>
 
-**emails:** `typing.Optional[typing.Sequence[str]]` 
+**emails:** `typing.Optional[typing.Sequence[str]]` — Email addresses to subscribe to global sync error notifications. Replaces the current subscriber list; pass an empty list to unsubscribe everyone.
     
 </dd>
 </dl>
@@ -5226,9 +6382,19 @@ client.notifications.set_global_error_subscribers()
 <dl>
 <dd>
 
+Lists organizations accessible to the caller.
+
 > 🚧 Requires partner key
 >
-> Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+> This endpoint is only accessible using [partner keys](../../guides/obtaining-api-keys#partner-keys).
+
+The result depends on the caller type:
+
+- User-scoped callers receive their current organization.
+- Partner callers receive the organizations available within their partner
+  scope.
+- Deployment-level callers may receive a broader organization list, depending
+  on deployment configuration.
 </dd>
 </dl>
 </dd>
@@ -5289,9 +6455,11 @@ client.organization.list()
 <dl>
 <dd>
 
+Creates a new organization under the calling partner account, optionally configuring SSO or OIDC at creation time.
+
 > 🚧 Requires partner key
 >
-> Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+> This endpoint is only accessible using [partner keys](../../guides/obtaining-api-keys#partner-keys).
 </dd>
 </dl>
 </dd>
@@ -5330,7 +6498,7 @@ client.organization.create(
 <dl>
 <dd>
 
-**name:** `str` 
+**name:** `str` — Human-readable name of the organization. Must be unique across the partner account.
     
 </dd>
 </dl>
@@ -5338,7 +6506,7 @@ client.organization.create(
 <dl>
 <dd>
 
-**client_id:** `typing.Optional[str]` 
+**client_id:** `typing.Optional[str]` — OIDC client ID issued by the identity provider.
     
 </dd>
 </dl>
@@ -5346,7 +6514,7 @@ client.organization.create(
 <dl>
 <dd>
 
-**client_secret:** `typing.Optional[str]` 
+**client_secret:** `typing.Optional[str]` — OIDC client secret issued by the identity provider. Write-only; never returned in responses.
     
 </dd>
 </dl>
@@ -5354,7 +6522,7 @@ client.organization.create(
 <dl>
 <dd>
 
-**issuer:** `typing.Optional[str]` 
+**issuer:** `typing.Optional[str]` — OIDC issuer URL for organizations using OpenID Connect single sign-on.
     
 </dd>
 </dl>
@@ -5362,7 +6530,7 @@ client.organization.create(
 <dl>
 <dd>
 
-**sso_domain:** `typing.Optional[str]` 
+**sso_domain:** `typing.Optional[str]` — Email domain used to match users to this organization during SSO sign-in.
     
 </dd>
 </dl>
@@ -5370,7 +6538,7 @@ client.organization.create(
 <dl>
 <dd>
 
-**sso_org_id:** `typing.Optional[str]` 
+**sso_org_id:** `typing.Optional[str]` — WorkOS organization identifier linking this organization to its SAML/SSO configuration.
     
 </dd>
 </dl>
@@ -5402,9 +6570,11 @@ client.organization.create(
 <dl>
 <dd>
 
+Returns a single organization by ID.
+
 > 🚧 Requires partner key
 >
-> Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+> This endpoint is only accessible using [partner keys](../../../guides/obtaining-api-keys#partner-keys).
 </dd>
 </dl>
 </dd>
@@ -5443,7 +6613,7 @@ client.organization.get(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the organization.
     
 </dd>
 </dl>
@@ -5475,9 +6645,11 @@ client.organization.get(
 <dl>
 <dd>
 
+Updates an organization's configuration.
+
 > 🚧 Requires partner key
 >
-> Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+> This endpoint is only accessible using [partner keys](../../../guides/obtaining-api-keys#partner-keys).
 </dd>
 </dl>
 </dd>
@@ -5517,7 +6689,7 @@ client.organization.update(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the organization to update.
     
 </dd>
 </dl>
@@ -5525,7 +6697,7 @@ client.organization.update(
 <dl>
 <dd>
 
-**name:** `str` 
+**name:** `str` — Human-readable name of the organization. Must be unique across the partner account.
     
 </dd>
 </dl>
@@ -5533,7 +6705,7 @@ client.organization.update(
 <dl>
 <dd>
 
-**client_id:** `typing.Optional[str]` 
+**client_id:** `typing.Optional[str]` — OIDC client ID issued by the identity provider.
     
 </dd>
 </dl>
@@ -5541,7 +6713,7 @@ client.organization.update(
 <dl>
 <dd>
 
-**client_secret:** `typing.Optional[str]` 
+**client_secret:** `typing.Optional[str]` — OIDC client secret issued by the identity provider. Write-only; never returned in responses.
     
 </dd>
 </dl>
@@ -5549,7 +6721,7 @@ client.organization.update(
 <dl>
 <dd>
 
-**issuer:** `typing.Optional[str]` 
+**issuer:** `typing.Optional[str]` — OIDC issuer URL for organizations using OpenID Connect single sign-on.
     
 </dd>
 </dl>
@@ -5557,7 +6729,7 @@ client.organization.update(
 <dl>
 <dd>
 
-**sso_domain:** `typing.Optional[str]` 
+**sso_domain:** `typing.Optional[str]` — Email domain used to match users to this organization during SSO sign-in.
     
 </dd>
 </dl>
@@ -5565,7 +6737,7 @@ client.organization.update(
 <dl>
 <dd>
 
-**sso_org_id:** `typing.Optional[str]` 
+**sso_org_id:** `typing.Optional[str]` — WorkOS organization identifier linking this organization to its SAML/SSO configuration.
     
 </dd>
 </dl>
@@ -5597,9 +6769,13 @@ client.organization.update(
 <dl>
 <dd>
 
+Deletes an organization.
+
 > 🚧 Requires partner key
 >
-> Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+> This endpoint is only accessible using [partner keys](../../../guides/obtaining-api-keys#partner-keys).
+
+Partner callers cannot delete their own owner organization.
 </dd>
 </dl>
 </dd>
@@ -5638,7 +6814,7 @@ client.organization.remove(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the organization.
     
 </dd>
 </dl>
@@ -5662,6 +6838,24 @@ client.organization.remove(
 <details><summary><code>client.users.<a href="src/polytomic/users/client.py">list</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists all users in the specified organization.
+
+> 🚧 Requires partner key
+>
+> User endpoints are only accessible using [partner keys](../../../../guides/obtaining-api-keys#partner-keys).
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -5696,7 +6890,7 @@ client.users.list(
 <dl>
 <dd>
 
-**org_id:** `str` 
+**org_id:** `str` — Unique identifier of the organization whose users should be listed.
     
 </dd>
 </dl>
@@ -5719,6 +6913,24 @@ client.users.list(
 <details><summary><code>client.users.<a href="src/polytomic/users/client.py">create</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Creates a new user in the specified organization and assigns the requested permissions roles.
+
+> 🚧 Requires partner key
+>
+> User endpoints are only accessible using [partner keys](../../../../guides/obtaining-api-keys#partner-keys).
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -5754,7 +6966,7 @@ client.users.create(
 <dl>
 <dd>
 
-**org_id:** `str` 
+**org_id:** `str` — Unique identifier of the organization the user belongs to.
     
 </dd>
 </dl>
@@ -5762,7 +6974,7 @@ client.users.create(
 <dl>
 <dd>
 
-**email:** `str` 
+**email:** `str` — Email address used to sign the user in and receive notifications.
     
 </dd>
 </dl>
@@ -5770,7 +6982,7 @@ client.users.create(
 <dl>
 <dd>
 
-**role:** `typing.Optional[str]` 
+**role:** `typing.Optional[str]` — Deprecated legacy role name. Use role_ids instead; setting both role and role_ids in the same request is rejected.
     
 </dd>
 </dl>
@@ -5778,7 +6990,7 @@ client.users.create(
 <dl>
 <dd>
 
-**role_ids:** `typing.Optional[typing.Sequence[str]]` 
+**role_ids:** `typing.Optional[typing.Sequence[str]]` — Identifiers of the permissions roles to assign to the user. Must contain at least one entry when provided.
     
 </dd>
 </dl>
@@ -5801,6 +7013,24 @@ client.users.create(
 <details><summary><code>client.users.<a href="src/polytomic/users/client.py">get</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns a single user in the specified organization.
+
+> 🚧 Requires partner key
+>
+> User endpoints are only accessible using [partner keys](../../../../../guides/obtaining-api-keys#partner-keys).
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -5836,7 +7066,7 @@ client.users.get(
 <dl>
 <dd>
 
-**org_id:** `str` 
+**id:** `str` — Unique identifier of the user.
     
 </dd>
 </dl>
@@ -5844,7 +7074,7 @@ client.users.get(
 <dl>
 <dd>
 
-**id:** `str` 
+**org_id:** `str` — Unique identifier of the organization the user belongs to.
     
 </dd>
 </dl>
@@ -5867,6 +7097,24 @@ client.users.get(
 <details><summary><code>client.users.<a href="src/polytomic/users/client.py">update</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Updates a user's assigned permissions roles.
+
+> 🚧 Requires partner key
+>
+> User endpoints are only accessible using [partner keys](../../../../../guides/obtaining-api-keys#partner-keys).
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -5903,7 +7151,7 @@ client.users.update(
 <dl>
 <dd>
 
-**org_id:** `str` 
+**id:** `str` — Unique identifier of the user to update.
     
 </dd>
 </dl>
@@ -5911,7 +7159,7 @@ client.users.update(
 <dl>
 <dd>
 
-**id:** `str` 
+**org_id:** `str` — Unique identifier of the organization the user belongs to.
     
 </dd>
 </dl>
@@ -5919,7 +7167,7 @@ client.users.update(
 <dl>
 <dd>
 
-**email:** `str` 
+**email:** `str` — Email address used to sign the user in and receive notifications.
     
 </dd>
 </dl>
@@ -5927,7 +7175,7 @@ client.users.update(
 <dl>
 <dd>
 
-**role:** `typing.Optional[str]` 
+**role:** `typing.Optional[str]` — Deprecated legacy role name. Use role_ids instead; setting both role and role_ids in the same request is rejected.
     
 </dd>
 </dl>
@@ -5935,7 +7183,7 @@ client.users.update(
 <dl>
 <dd>
 
-**role_ids:** `typing.Optional[typing.Sequence[str]]` 
+**role_ids:** `typing.Optional[typing.Sequence[str]]` — Identifiers of the permissions roles to assign to the user. Must contain at least one entry when provided.
     
 </dd>
 </dl>
@@ -5958,6 +7206,24 @@ client.users.update(
 <details><summary><code>client.users.<a href="src/polytomic/users/client.py">remove</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Deletes a user from the specified organization.
+
+> 🚧 Requires partner key
+>
+> User endpoints are only accessible using [partner keys](../../../../../guides/obtaining-api-keys#partner-keys).
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -5993,7 +7259,7 @@ client.users.remove(
 <dl>
 <dd>
 
-**org_id:** `str` 
+**id:** `str` — Unique identifier of the user.
     
 </dd>
 </dl>
@@ -6001,7 +7267,7 @@ client.users.remove(
 <dl>
 <dd>
 
-**id:** `str` 
+**org_id:** `str` — Unique identifier of the organization the user belongs to.
     
 </dd>
 </dl>
@@ -6033,9 +7299,11 @@ client.users.remove(
 <dl>
 <dd>
 
+Issues a new API key for the specified user.
+
 > 🚧 Requires partner key
 >
-> User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+> User endpoints are only accessible using [partner keys](../../../../../../guides/obtaining-api-keys#partner-keys).
 </dd>
 </dl>
 </dd>
@@ -6076,7 +7344,7 @@ client.users.create_api_key(
 <dl>
 <dd>
 
-**org_id:** `str` 
+**org_id:** `str` — Unique identifier of the organization the user belongs to.
     
 </dd>
 </dl>
@@ -6084,7 +7352,7 @@ client.users.create_api_key(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the user the key will be issued for.
     
 </dd>
 </dl>
@@ -6092,7 +7360,7 @@ client.users.create_api_key(
 <dl>
 <dd>
 
-**force:** `typing.Optional[bool]` 
+**force:** `typing.Optional[bool]` — If true, revoke any existing API key for the user before creating a new one.
     
 </dd>
 </dl>
@@ -6125,11 +7393,14 @@ client.users.create_api_key(
 <dl>
 <dd>
 
-Webooks can be set up using the webhook API endpoints. Currently, only one
-webhook may be created per organization. The webhook will be called for events
-in that organization.
+Lists the webhooks for the caller's organization.
 
-Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
+> 📘 One webhook per organization
+>
+> An organization can register a single webhook, which receives every event
+> produced in that organization. See the
+> [Events documentation](../../guides/events) for the
+> list of event types and payload shapes.
 </dd>
 </dl>
 </dd>
@@ -6190,11 +7461,14 @@ client.webhooks.list()
 <dl>
 <dd>
 
-Webooks can be set up using the webhook API endpoints. Currently, only one
-webhook may be created per organization. The webhook will be called for events
-in that organization.
+Creates the organization's webhook.
 
-Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
+> 📘 One webhook per organization
+>
+> An organization can register a single webhook, which receives every event
+> produced in that organization. See the
+> [Events documentation](../../guides/events) for the
+> list of event types and payload shapes.
 </dd>
 </dl>
 </dd>
@@ -6282,11 +7556,14 @@ client.webhooks.create(
 <dl>
 <dd>
 
-Webooks can be set up using the webhook API endpoints. Currently, only one
-webhook may be created per organization. The webhook will be called for events
-in that organization.
+Returns a single webhook by ID.
 
-Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
+> 📘 One webhook per organization
+>
+> An organization can register a single webhook, which receives every event
+> produced in that organization. See the
+> [Events documentation](../../../guides/events) for the
+> list of event types and payload shapes.
 </dd>
 </dl>
 </dd>
@@ -6357,11 +7634,14 @@ client.webhooks.get(
 <dl>
 <dd>
 
-Webooks can be set up using the webhook API endpoints. Currently, only one
-webhook may be created per organization. The webhook will be called for events
-in that organization.
+Updates an existing webhook.
 
-Consult the [Events documentation](https://apidocs.polytomic.com/guides/events) for more information.
+> 📘 One webhook per organization
+>
+> An organization can register a single webhook, which receives every event
+> produced in that organization. See the
+> [Events documentation](../../../guides/events) for the
+> list of event types and payload shapes.
 </dd>
 </dl>
 </dd>
@@ -6450,6 +7730,31 @@ client.webhooks.update(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Deletes a webhook.
+
+> 📘 One webhook per organization
+>
+> An organization can register a single webhook, which receives every event
+> produced in that organization. See the
+> [Events documentation](../../../guides/events) for the
+> list of event types and payload shapes.
+
+Deletion is permanent. To stop delivery without losing the webhook
+configuration, use
+[`POST /api/webhooks/{id}/disable`](./disable/post) instead.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -6507,6 +7812,32 @@ client.webhooks.remove(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Disables a webhook without deleting it.
+
+> 📘 One webhook per organization
+>
+> An organization can register a single webhook, which receives every event
+> produced in that organization. See the
+> [Events documentation](../../../../guides/events) for the
+> list of event types and payload shapes.
+
+Events are not queued while the webhook is disabled — any activity that occurs
+during the disabled period is not delivered retroactively. To resume
+delivery, re-enable the webhook using
+[`POST /api/webhooks/{id}/enable`](../../../../api-reference/webhooks/enable).
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -6563,6 +7894,30 @@ client.webhooks.disable(
 <details><summary><code>client.webhooks.<a href="src/polytomic/webhooks/client.py">enable</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Re-enables a previously disabled webhook.
+
+> 📘 One webhook per organization
+>
+> An organization can register a single webhook, which receives every event
+> produced in that organization. See the
+> [Events documentation](../../../../guides/events) for the
+> list of event types and payload shapes.
+
+Delivery resumes from the next event generated after this call. Events that
+occurred while the webhook was disabled are not replayed.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -6622,6 +7977,32 @@ client.webhooks.enable(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns a concise per-schema status for one or more bulk syncs.
+
+This endpoint is a summary view, not an execution-history view. Each schema is
+represented at most once with its most recent execution status, and running
+executions are preferred over older terminal ones.
+
+Use this endpoint when you want a dashboard-style answer to "what is each sync
+doing now?" If you need the full execution history or a single execution's
+details, use [`GET /api/bulk/syncs/{id}/executions`](./list) or
+[`GET /api/bulk/syncs/{id}/executions/{exec_id}`](./get) instead.
+
+Setting `all=true` or `active=true` ignores any explicit `sync_id` filters and
+expands the request to the caller's organization scope.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -6656,7 +8037,7 @@ client.bulk_sync.executions.list_status(
 <dl>
 <dd>
 
-**all_:** `typing.Optional[bool]` — Return the execution status of all syncs in the organization
+**all_:** `typing.Optional[bool]` — When true, return status for every sync in the caller's organization. Overrides any sync_id values.
     
 </dd>
 </dl>
@@ -6664,7 +8045,7 @@ client.bulk_sync.executions.list_status(
 <dl>
 <dd>
 
-**active:** `typing.Optional[bool]` — Return the execution status of all active syncs in the organization
+**active:** `typing.Optional[bool]` — When true, return status only for active syncs in the caller's organization. Overrides any sync_id values.
     
 </dd>
 </dl>
@@ -6672,7 +8053,7 @@ client.bulk_sync.executions.list_status(
 <dl>
 <dd>
 
-**sync_id:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` — Return the execution status of the specified sync; this may be supplied multiple times.
+**sync_id:** `typing.Optional[typing.Union[str, typing.Sequence[str]]]` — Return status for the specified bulk sync. Repeat the parameter to target multiple syncs. Ignored if all or active is true.
     
 </dd>
 </dl>
@@ -6695,6 +8076,34 @@ client.bulk_sync.executions.list_status(
 <details><summary><code>client.bulk_sync.executions.<a href="src/polytomic/bulk_sync/executions/client.py">list</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists executions for a bulk sync.
+
+Results are ordered by start time descending by default. When more results are
+available, the response includes an opaque `pagination.next_page_token`; pass it
+back as the `page_token` query parameter to retrieve the next page. The `limit`
+parameter is optional, and the maximum page size is 100 executions.
+
+Use `only_terminal=true` to return only finished executions. In that mode,
+executions are ordered by `updated_at` so recently completed runs appear first.
+
+Use `ascending=true` to walk forward from the oldest execution instead of
+starting with the newest execution.
+
+For the full details of a single run — including per-schema execution status —
+use [`GET /api/bulk/syncs/{id}/executions/{exec_id}`](../../../../../api-reference/bulk-sync/executions/get).
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -6733,7 +8142,7 @@ client.bulk_sync.executions.list(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the bulk sync.
     
 </dd>
 </dl>
@@ -6741,7 +8150,7 @@ client.bulk_sync.executions.list(
 <dl>
 <dd>
 
-**page_token:** `typing.Optional[str]` 
+**page_token:** `typing.Optional[str]` — Pagination cursor returned in the previous response. Omit on the first request.
     
 </dd>
 </dl>
@@ -6749,7 +8158,7 @@ client.bulk_sync.executions.list(
 <dl>
 <dd>
 
-**only_terminal:** `typing.Optional[bool]` 
+**only_terminal:** `typing.Optional[bool]` — When true, only return executions that have finished. Terminal executions are ordered by updated_at.
     
 </dd>
 </dl>
@@ -6757,7 +8166,7 @@ client.bulk_sync.executions.list(
 <dl>
 <dd>
 
-**ascending:** `typing.Optional[bool]` 
+**ascending:** `typing.Optional[bool]` — When true, return executions from oldest to newest. Default is newest first.
     
 </dd>
 </dl>
@@ -6765,7 +8174,7 @@ client.bulk_sync.executions.list(
 <dl>
 <dd>
 
-**limit:** `typing.Optional[int]` 
+**limit:** `typing.Optional[int]` — Maximum number of executions to return. Capped at 100.
     
 </dd>
 </dl>
@@ -6788,6 +8197,25 @@ client.bulk_sync.executions.list(
 <details><summary><code>client.bulk_sync.executions.<a href="src/polytomic/bulk_sync/executions/client.py">get</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns a single bulk sync execution, including per-schema execution status.
+
+The response includes a breakdown of each schema (table or object) that
+participated in the execution, with its individual status, row counts, and any
+error details. This makes it suitable for diagnosing partial failures where
+some schemas succeeded while others did not.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -6823,7 +8251,7 @@ client.bulk_sync.executions.get(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the bulk sync.
     
 </dd>
 </dl>
@@ -6831,7 +8259,7 @@ client.bulk_sync.executions.get(
 <dl>
 <dd>
 
-**exec_id:** `str` 
+**exec_id:** `str` — Unique identifier of the execution.
     
 </dd>
 </dl>
@@ -6854,6 +8282,26 @@ client.bulk_sync.executions.get(
 <details><summary><code>client.bulk_sync.executions.<a href="src/polytomic/bulk_sync/executions/client.py">cancel</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Requests cancellation of a specific bulk sync execution.
+
+Cancellation is asynchronous. A successful response means the cancellation
+signal has been queued; the execution continues to run until the signal is
+processed. Poll `GET /api/bulk/syncs/{id}/executions/{exec_id}` until the
+execution reaches a terminal state (`completed`, `canceled`, or `failed`) to
+confirm cancellation has taken effect.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -6921,6 +8369,29 @@ client.bulk_sync.executions.cancel(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns signed URLs for the log files produced by a single bulk sync execution.
+
+Each URL in the response is pre-signed and grants temporary read access to the
+corresponding log file. URLs expire after a short period; if you need to access
+a file after the URL has expired, call this endpoint again to obtain a fresh set
+of signed URLs.
+
+> 📘 To export logs asynchronously to a destination of your choice, use
+> [`POST /api/bulk/syncs/{sync_id}/executions/{execution_id}/logs/export`](../../../../../../../api-reference/bulk-sync/executions/export-logs)
+> instead.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -6955,7 +8426,7 @@ client.bulk_sync.executions.get_logs(
 <dl>
 <dd>
 
-**sync_id:** `str` 
+**sync_id:** `str` — Unique identifier of the bulk sync.
     
 </dd>
 </dl>
@@ -6963,7 +8434,7 @@ client.bulk_sync.executions.get_logs(
 <dl>
 <dd>
 
-**execution_id:** `str` 
+**execution_id:** `str` — Unique identifier of the execution whose log files should be listed.
     
 </dd>
 </dl>
@@ -6987,6 +8458,32 @@ client.bulk_sync.executions.get_logs(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Starts an asynchronous job that packages the log files for a single bulk sync execution into a downloadable archive.
+
+> 📘 Log export is asynchronous
+>
+> This endpoint starts a background job that packages an execution's log
+> files into a downloadable archive. The first call typically returns a
+> `job` descriptor instead of a completed result. Poll
+> [`GET /api/jobs/exportlogs/{id}`](../../../../../../../../api-reference/jobs/get)
+> with the returned `job_id` until `status` is `done`; the final response
+> contains a signed `url` that can be used to download the archive.
+>
+> Set `notify=true` to also email the requesting user when the archive is
+> ready.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -7005,7 +8502,6 @@ client = Polytomic(
 client.bulk_sync.executions.export_logs(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    notify=True,
 )
 
 ```
@@ -7022,7 +8518,7 @@ client.bulk_sync.executions.export_logs(
 <dl>
 <dd>
 
-**sync_id:** `str` 
+**sync_id:** `str` — Unique identifier of the bulk sync.
     
 </dd>
 </dl>
@@ -7030,7 +8526,7 @@ client.bulk_sync.executions.export_logs(
 <dl>
 <dd>
 
-**execution_id:** `str` 
+**execution_id:** `str` — Unique identifier of the execution whose logs should be exported.
     
 </dd>
 </dl>
@@ -7062,6 +8558,31 @@ client.bulk_sync.executions.export_logs(
 <details><summary><code>client.bulk_sync.schemas.<a href="src/polytomic/bulk_sync/schemas/client.py">list</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists the schemas configured on a bulk sync.
+
+This endpoint returns the schemas that have been added to and configured on this
+specific bulk sync — not the full set of schemas available from the source
+connection. To discover what the source connection exposes, use the source
+schemas endpoint for the relevant connection type.
+
+Each schema in the response includes its sync mode, field selections, and any
+custom configuration applied via
+[`PATCH /api/bulk/syncs/{id}/schemas`](../../../../../api-reference/bulk-sync/schemas/patch)
+or
+[`PUT /api/bulk/syncs/{id}/schemas/{schema_id}`](../../../../../api-reference/bulk-sync/schemas/update).
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -7096,7 +8617,7 @@ client.bulk_sync.schemas.list(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the bulk sync.
     
 </dd>
 </dl>
@@ -7104,7 +8625,7 @@ client.bulk_sync.schemas.list(
 <dl>
 <dd>
 
-**filters:** `typing.Optional[typing.Dict[str, typing.Optional[str]]]` 
+**filters:** `typing.Optional[typing.Dict[str, typing.Optional[str]]]` — Optional filters applied to the returned schemas. Supports enabled=true to return only enabled schemas and enabled=false to return only disabled schemas.
     
 </dd>
 </dl>
@@ -7127,6 +8648,34 @@ client.bulk_sync.schemas.list(
 <details><summary><code>client.bulk_sync.schemas.<a href="src/polytomic/bulk_sync/schemas/client.py">patch</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Patches one or more schemas on a bulk sync at once.
+
+Only schemas explicitly included in the request body are modified; schemas
+omitted from the request are left unchanged. This makes PATCH the right choice
+when you want to update a subset of tables without affecting the rest of the
+sync's schema configuration.
+
+Within each provided schema, omitting `fields` enables all available fields on
+that schema. To control which fields are enabled, include the `fields` array
+with explicit `enabled` values for each field.
+
+> 📘 To replace a single schema's configuration in full (clearing any fields you
+> omit), use
+> [`PUT /api/bulk/syncs/{id}/schemas/{schema_id}`](../../../../../api-reference/bulk-sync/schemas/update)
+> instead.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -7161,7 +8710,7 @@ client.bulk_sync.schemas.patch(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the bulk sync.
     
 </dd>
 </dl>
@@ -7169,7 +8718,7 @@ client.bulk_sync.schemas.patch(
 <dl>
 <dd>
 
-**schemas:** `typing.Optional[typing.Sequence[BulkSchema]]` 
+**schemas:** `typing.Optional[typing.Sequence[BulkSchema]]` — Schemas to patch. Schemas are matched by id; only schemas present in this list are updated.
     
 </dd>
 </dl>
@@ -7192,6 +8741,29 @@ client.bulk_sync.schemas.patch(
 <details><summary><code>client.bulk_sync.schemas.<a href="src/polytomic/bulk_sync/schemas/client.py">get</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the configuration of a single schema on a bulk sync.
+
+Returns the sync mode, field selections, and any other configuration applied to
+this schema on the bulk sync.
+
+To modify the configuration, use
+[`PATCH /api/bulk/syncs/{id}/schemas`](../../../../../../api-reference/bulk-sync/schemas/patch)
+for a partial update across multiple schemas, or
+[`PUT /api/bulk/syncs/{id}/schemas/{schema_id}`](../../../../../../api-reference/bulk-sync/schemas/update)
+to fully replace this schema's configuration.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -7227,7 +8799,7 @@ client.bulk_sync.schemas.get(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the bulk sync.
     
 </dd>
 </dl>
@@ -7235,7 +8807,7 @@ client.bulk_sync.schemas.get(
 <dl>
 <dd>
 
-**schema_id:** `str` 
+**schema_id:** `str` — Source-side schema identifier.
     
 </dd>
 </dl>
@@ -7258,6 +8830,34 @@ client.bulk_sync.schemas.get(
 <details><summary><code>client.bulk_sync.schemas.<a href="src/polytomic/bulk_sync/schemas/client.py">update</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Replaces the configuration of a single schema on a bulk sync.
+
+This is a full replacement: every field in the request body is written to the
+schema, and any field you omit is cleared or reset to its default. Fetch the
+current configuration with
+[`GET /api/bulk/syncs/{id}/schemas/{schema_id}`](../../../../../../api-reference/bulk-sync/schemas/get)
+first if you want to preserve existing settings while changing only a subset.
+
+Omitting `fields` enables all available fields on the schema. To control which
+fields are enabled, include the `fields` array with explicit `enabled` values.
+
+> 📘 To update multiple schemas in a single request without affecting others,
+> use the partial-update endpoint
+> [`PATCH /api/bulk/syncs/{id}/schemas`](../../../../../../api-reference/bulk-sync/schemas/patch)
+> instead.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -7293,7 +8893,7 @@ client.bulk_sync.schemas.update(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the bulk sync.
     
 </dd>
 </dl>
@@ -7301,7 +8901,7 @@ client.bulk_sync.schemas.update(
 <dl>
 <dd>
 
-**schema_id:** `str` 
+**schema_id:** `str` — Source-side schema identifier.
     
 </dd>
 </dl>
@@ -7309,7 +8909,7 @@ client.bulk_sync.schemas.update(
 <dl>
 <dd>
 
-**data_cutoff_timestamp:** `typing.Optional[dt.datetime]` 
+**data_cutoff_timestamp:** `typing.Optional[dt.datetime]` — Per-schema cutoff. Records older than this timestamp are excluded from sync runs.
     
 </dd>
 </dl>
@@ -7317,7 +8917,7 @@ client.bulk_sync.schemas.update(
 <dl>
 <dd>
 
-**disable_data_cutoff:** `typing.Optional[bool]` 
+**disable_data_cutoff:** `typing.Optional[bool]` — When true, the sync ignores any configured data_cutoff_timestamp for this schema.
     
 </dd>
 </dl>
@@ -7325,7 +8925,7 @@ client.bulk_sync.schemas.update(
 <dl>
 <dd>
 
-**enabled:** `typing.Optional[bool]` 
+**enabled:** `typing.Optional[bool]` — Whether this schema is included in sync runs.
     
 </dd>
 </dl>
@@ -7333,7 +8933,7 @@ client.bulk_sync.schemas.update(
 <dl>
 <dd>
 
-**fields:** `typing.Optional[typing.Sequence[UpdateBulkField]]` 
+**fields:** `typing.Optional[typing.Sequence[UpdateBulkField]]` — Field-level configuration. Supplying an empty list enables every field discovered on the source.
     
 </dd>
 </dl>
@@ -7341,7 +8941,7 @@ client.bulk_sync.schemas.update(
 <dl>
 <dd>
 
-**filters:** `typing.Optional[typing.Sequence[BulkFilter]]` 
+**filters:** `typing.Optional[typing.Sequence[BulkFilter]]` — Row-level filters applied when reading from the source.
     
 </dd>
 </dl>
@@ -7349,7 +8949,7 @@ client.bulk_sync.schemas.update(
 <dl>
 <dd>
 
-**partition_key:** `typing.Optional[str]` 
+**partition_key:** `typing.Optional[str]` — Source field used to partition rows when writing to the destination.
     
 </dd>
 </dl>
@@ -7357,7 +8957,7 @@ client.bulk_sync.schemas.update(
 <dl>
 <dd>
 
-**tracking_field:** `typing.Optional[str]` 
+**tracking_field:** `typing.Optional[str]` — Source field used to detect changes between incremental sync runs.
     
 </dd>
 </dl>
@@ -7388,6 +8988,27 @@ client.bulk_sync.schemas.update(
 <details><summary><code>client.bulk_sync.schemas.<a href="src/polytomic/bulk_sync/schemas/client.py">cancel</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Requests cancellation of any running executions for a specific schema on a bulk sync.
+
+Cancellation is asynchronous. A successful response means the cancellation
+signal for this schema has been queued; the schema's in-flight work continues
+until the signal is processed. Poll
+`GET /api/bulk/syncs/{id}/schemas/{schema_id}` and the parent execution via
+`GET /api/bulk/syncs/{id}/status` to confirm the schema has reached a terminal
+state.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -7456,6 +9077,23 @@ client.bulk_sync.schemas.cancel(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists all schedules configured for a bulk sync.
+
+A bulk sync can have multiple schedules attached; this endpoint returns all
+of them. Schedule times are returned in UTC.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -7489,7 +9127,7 @@ client.bulk_sync.schedules.list(
 <dl>
 <dd>
 
-**sync_id:** `str` 
+**sync_id:** `str` — Unique identifier of the bulk sync whose schedules should be returned.
     
 </dd>
 </dl>
@@ -7512,6 +9150,27 @@ client.bulk_sync.schedules.list(
 <details><summary><code>client.bulk_sync.schedules.<a href="src/polytomic/bulk_sync/schedules/client.py">create</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Adds a new schedule to a bulk sync.
+
+A bulk sync can have multiple schedules attached; adding one here does not
+replace existing schedules. Schedule times are interpreted in UTC.
+
+Creating a schedule only affects future automatic executions. To run the
+sync immediately, call
+[`POST /api/bulk/syncs/{id}/executions`](../../../../../api-reference/bulk-sync/start).
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -7549,7 +9208,7 @@ client.bulk_sync.schedules.create(
 <dl>
 <dd>
 
-**sync_id:** `str` 
+**sync_id:** `str` — Unique identifier of the bulk sync to add a schedule to.
     
 </dd>
 </dl>
@@ -7580,6 +9239,27 @@ client.bulk_sync.schedules.create(
 <details><summary><code>client.bulk_sync.schedules.<a href="src/polytomic/bulk_sync/schedules/client.py">get</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns a single schedule configured on a bulk sync.
+
+Schedule times are returned in UTC.
+
+To see all schedules on this sync, use
+[`GET /api/bulk/syncs/{sync_id}/schedules`](../../../../../../api-reference/bulk-sync/schedules/list).
+To update the schedule, use
+[`PUT /api/bulk/syncs/{sync_id}/schedules/{schedule_id}`](../../../../../../api-reference/bulk-sync/schedules/update).
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -7615,7 +9295,7 @@ client.bulk_sync.schedules.get(
 <dl>
 <dd>
 
-**sync_id:** `str` 
+**sync_id:** `str` — Unique identifier of the bulk sync.
     
 </dd>
 </dl>
@@ -7623,7 +9303,7 @@ client.bulk_sync.schedules.get(
 <dl>
 <dd>
 
-**schedule_id:** `str` 
+**schedule_id:** `str` — Unique identifier of the schedule.
     
 </dd>
 </dl>
@@ -7646,6 +9326,24 @@ client.bulk_sync.schedules.get(
 <details><summary><code>client.bulk_sync.schedules.<a href="src/polytomic/bulk_sync/schedules/client.py">update</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Updates an existing schedule on a bulk sync.
+
+Updates replace the stored schedule. Send the full schedule definition
+rather than only the field you want to change. Schedule times are
+interpreted in UTC.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -7684,7 +9382,7 @@ client.bulk_sync.schedules.update(
 <dl>
 <dd>
 
-**sync_id:** `str` 
+**sync_id:** `str` — Unique identifier of the bulk sync.
     
 </dd>
 </dl>
@@ -7692,7 +9390,7 @@ client.bulk_sync.schedules.update(
 <dl>
 <dd>
 
-**schedule_id:** `str` 
+**schedule_id:** `str` — Unique identifier of the schedule to update.
     
 </dd>
 </dl>
@@ -7723,6 +9421,23 @@ client.bulk_sync.schedules.update(
 <details><summary><code>client.bulk_sync.schedules.<a href="src/polytomic/bulk_sync/schedules/client.py">delete</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Removes a schedule from a bulk sync.
+
+Deleting a schedule only stops future automatic executions. It does not
+cancel an execution that is already running.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -7758,7 +9473,7 @@ client.bulk_sync.schedules.delete(
 <dl>
 <dd>
 
-**sync_id:** `str` 
+**sync_id:** `str` — Unique identifier of the bulk sync.
     
 </dd>
 </dl>
@@ -7766,7 +9481,7 @@ client.bulk_sync.schedules.delete(
 <dl>
 <dd>
 
-**schedule_id:** `str` 
+**schedule_id:** `str` — Unique identifier of the schedule to delete.
     
 </dd>
 </dl>
@@ -7791,6 +9506,24 @@ client.bulk_sync.schedules.delete(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns target metadata for a connection.
+
+> 🚧 Deprecated
+>
+> Use `GET /api/connections/{id}/modelsync/targetobjects` instead.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -7808,8 +9541,6 @@ client = Polytomic(
 )
 client.model_sync.targets.get_target(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
-    type="type",
-    search="search",
 )
 
 ```
@@ -7826,7 +9557,7 @@ client.model_sync.targets.get_target(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the connection.
     
 </dd>
 </dl>
@@ -7834,7 +9565,7 @@ client.model_sync.targets.get_target(
 <dl>
 <dd>
 
-**type:** `typing.Optional[str]` 
+**type:** `typing.Optional[str]` — Target object type to query (e.g. schema name). When supplied, the response is narrowed to objects matching this type.
     
 </dd>
 </dl>
@@ -7842,7 +9573,7 @@ client.model_sync.targets.get_target(
 <dl>
 <dd>
 
-**search:** `typing.Optional[str]` 
+**search:** `typing.Optional[str]` — Substring filter applied to target object names. Combine with type to browse large schemas.
     
 </dd>
 </dl>
@@ -7865,6 +9596,32 @@ client.model_sync.targets.get_target(
 <details><summary><code>client.model_sync.targets.<a href="src/polytomic/model_sync/targets/client.py">get_target_fields</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns the fields of a specific target object on a connection.
+
+Pass the target object identifier to retrieve the fields available for
+mapping on that object. These are the destination fields you can reference
+when configuring field mappings in a model sync.
+
+> 📘 To list available target objects and their identifiers, use
+> [`GET /api/connections/{id}/modelsync/targetobjects`](../../../../../../api-reference/model-sync/targets/list).
+
+Fields returned here reflect the connection's current cached state. If the
+upstream object schema has changed, trigger a schema refresh with
+[`POST /api/connections/{id}/schemas/refresh`](../../../../../../api-reference/schemas/refresh)
+before calling this endpoint.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -7901,7 +9658,7 @@ client.model_sync.targets.get_target_fields(
 <dl>
 <dd>
 
-**id:** `str` 
+**id:** `str` — Unique identifier of the connection.
     
 </dd>
 </dl>
@@ -7909,7 +9666,7 @@ client.model_sync.targets.get_target_fields(
 <dl>
 <dd>
 
-**target:** `str` 
+**target:** `str` — Identifier of the target object (e.g. schema.table for a database destination, object name for a SaaS destination).
     
 </dd>
 </dl>
@@ -7917,7 +9674,7 @@ client.model_sync.targets.get_target_fields(
 <dl>
 <dd>
 
-**refresh:** `typing.Optional[bool]` 
+**refresh:** `typing.Optional[bool]` — When true, force a cache refresh of the target's schema before returning its fields.
     
 </dd>
 </dl>
@@ -7949,7 +9706,7 @@ client.model_sync.targets.get_target_fields(
 <dl>
 <dd>
 
-Returns available model sync destinations for a connection.
+Lists the target objects available on a connection for use as a model sync destination.
 
 If the connection supports creating new destinations, the `target_creation`
 object will contain information on what properties are required to create the
@@ -7958,7 +9715,7 @@ target.
 Target creation properties are all string values; the `enum` flag indicates if
 the property has a fixed set of valid values. When `enum` is `true`, the [Target
 Creation Property
-Values](https://apidocs.polytomic.com/2024-02-08/api-reference/model-sync/targets/get-create-property)
+Values](../../../../../api-reference/model-sync/targets/get-create-property)
 endpoint can be used to retrieve the valid values.
 
 ## Sync modes
@@ -8036,6 +9793,8 @@ client.model_sync.targets.list(
 <dl>
 <dd>
 
+Returns the valid values for a target-creation property on a connection that supports creating new target objects.
+
 Connections which support creating new sync target objects (destinations) will
 return `target_creation` with their [target object list](./list). This endpoint
 will return possible values for properties where `enum` is `true`.
@@ -8065,7 +9824,7 @@ member of the `values` array has a `label` and `value`. For exaample,
 ```
 
 The `value` for the selected option should be passed when [creating a
-sync](https://apidocs.polytomic.com/2024-02-08/api-reference/model-sync/create).
+sync](../../../../../../../api-reference/model-sync/create).
 </dd>
 </dl>
 </dd>
@@ -8137,6 +9896,30 @@ client.model_sync.targets.get_create_property(
 <details><summary><code>client.model_sync.executions.<a href="src/polytomic/model_sync/executions/client.py">list</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists executions for a model sync.
+
+Results are ordered by start time descending. If more results are available, the
+response includes `pagination.next_page_token`; pass that token back unchanged
+to continue paging.
+
+The token is opaque. Do not construct or edit it yourself.
+
+For full details about a specific execution — including record counts and error
+summaries — use
+[`GET /api/syncs/{sync_id}/executions/{id}`](./{id}/get).
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -8222,6 +10005,24 @@ client.model_sync.executions.list(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns a single model sync execution.
+
+For the log files produced by this execution, use
+[`GET /api/syncs/{sync_id}/executions/{id}/{type}`](../../../../../api-reference/model-sync/executions/get-log-urls) to retrieve
+signed URLs grouped by log category.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -8287,6 +10088,20 @@ client.model_sync.executions.get(
 <details><summary><code>client.model_sync.executions.<a href="src/polytomic/model_sync/executions/client.py">update</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Updates a model sync execution's state, used to retry or resolve stalled executions.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -8363,6 +10178,27 @@ client.model_sync.executions.update(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns signed URLs for every log file of a given type on a model sync execution.
+
+`{type}` identifies the log category, such as `errors` or `warnings`. The
+response contains a signed URL for each log file in that category.
+
+> 🚧 Signed URLs expire after a short period. If a URL has expired, re-request
+> it from this endpoint. To fetch a single file's URL directly, use
+> [`GET /api/syncs/{sync_id}/executions/{id}/{type}/{filename}`](../../../../../../api-reference/model-sync/executions/get-logs).
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -8437,6 +10273,23 @@ client.model_sync.executions.get_log_urls(
 <details><summary><code>client.model_sync.executions.<a href="src/polytomic/model_sync/executions/client.py">get_logs</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns a signed URL for a specific log file produced by a model sync execution.
+
+The URL is signed and expires after a short period. If it has expired before
+you download the file, call this endpoint again to obtain a fresh URL.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -8523,6 +10376,26 @@ client.model_sync.executions.get_logs(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists all policies in the caller's organization.
+
+Each policy binds one or more roles to a set of resources, controlling what
+actions members with those roles can perform on those resources.
+
+To inspect a specific policy in detail, use
+[`GET /api/permissions/policies/{id}`](./%7Bid%7D/get).
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -8569,6 +10442,25 @@ client.permissions.policies.list()
 <details><summary><code>client.permissions.policies.<a href="src/polytomic/permissions/policies/client.py">create</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Creates a new policy.
+
+A policy binds one or more roles to a set of resources, granting members who
+hold those roles the actions defined by them. Roles must already exist before
+they are referenced in a policy; create roles using
+[`POST /api/permissions/roles`](../../../api-reference/permissions/roles/create).
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -8643,6 +10535,23 @@ client.permissions.policies.create(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns a single policy by ID, including all action/role bindings it defines.
+
+Returns the full set of action/role bindings defined by the policy, including
+the resources it applies to.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -8699,6 +10608,26 @@ client.permissions.policies.get(
 <details><summary><code>client.permissions.policies.<a href="src/polytomic/permissions/policies/client.py">update</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Updates an existing policy.
+
+The update is a **full replacement** of the policy's bindings. Any role or
+resource binding not included in the request body is removed. To make a
+partial change, fetch the current policy with
+[`GET /api/permissions/policies/{id}`](./get), modify the relevant bindings,
+and send the complete object back.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -8782,6 +10711,23 @@ client.permissions.policies.update(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Deletes a policy.
+
+Deletion is permanent. Any access that was granted solely through this policy
+is revoked immediately for all users who depended on it.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -8840,6 +10786,27 @@ client.permissions.policies.remove(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists all permissions roles available in the caller's organization, including built-in system roles.
+
+System roles such as Admin and Member are always present in every organization
+and cannot be modified or deleted. Custom roles appear alongside them and can
+be created, updated, or removed as needed.
+
+To inspect or modify a specific role, use
+[`GET /api/permissions/roles/{id}`](./%7Bid%7D/get).
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -8886,6 +10853,26 @@ client.permissions.roles.list()
 <details><summary><code>client.permissions.roles.<a href="src/polytomic/permissions/roles/client.py">create</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Creates a new permissions role.
+
+Provide a `name` for the new role. The role is immediately available for use
+in permission policies.
+
+To attach the role to resources, create or update a policy using
+[`POST /api/permissions/policies`](../../../api-reference/permissions/policies/create).
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -8952,6 +10939,22 @@ client.permissions.roles.create(
 <dl>
 <dd>
 
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns a single permissions role by ID.
+
+Returns the role's name, action set, and whether it is a built-in system role.
+</dd>
+</dl>
+</dd>
+</dl>
+
 #### 🔌 Usage
 
 <dl>
@@ -9008,6 +11011,25 @@ client.permissions.roles.get(
 <details><summary><code>client.permissions.roles.<a href="src/polytomic/permissions/roles/client.py">update</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Updates an existing permissions role's name and action set.
+
+The update is a **full replacement** of the role definition.
+
+> 🚧 Built-in system roles (such as Admin and Member) cannot be updated.
+> Attempting to modify a system role returns an error.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -9082,6 +11104,28 @@ client.permissions.roles.update(
 <details><summary><code>client.permissions.roles.<a href="src/polytomic/permissions/roles/client.py">remove</a>(...)</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Deletes a permissions role.
+
+> 🚧 Built-in system roles (such as Admin and Member) cannot be deleted.
+> Attempting to delete a system role returns an error.
+
+Deleting a role does not automatically remove it from any policies that
+reference it. Update those policies separately using
+[`PUT /api/permissions/policies/{id}`](../../../../api-reference/permissions/policies/update) to avoid
+leaving stale role references.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 

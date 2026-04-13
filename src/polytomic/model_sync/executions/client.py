@@ -17,7 +17,7 @@ from ...errors.internal_server_error import InternalServerError
 from ...types.execution_status import ExecutionStatus
 from ...errors.bad_request_error import BadRequestError
 from ...errors.forbidden_error import ForbiddenError
-from ...types.v2execution_log_type import V2ExecutionLogType
+from ...types.v_2_execution_log_type import V2ExecutionLogType
 from ...types.execution_logs_response_envelope import ExecutionLogsResponseEnvelope
 from ...core.client_wrapper import AsyncClientWrapper
 
@@ -39,6 +39,18 @@ class ExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListExecutionResponseEnvelope:
         """
+        Lists executions for a model sync.
+
+        Results are ordered by start time descending. If more results are available, the
+        response includes `pagination.next_page_token`; pass that token back unchanged
+        to continue paging.
+
+        The token is opaque. Do not construct or edit it yourself.
+
+        For full details about a specific execution — including record counts and error
+        summaries — use
+        [`GET /api/syncs/{sync_id}/executions/{id}`](./{id}/get).
+
         Parameters
         ----------
         sync_id : str
@@ -120,6 +132,12 @@ class ExecutionsClient:
         self, sync_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> GetExecutionResponseEnvelope:
         """
+        Returns a single model sync execution.
+
+        For the log files produced by this execution, use
+        [`GET /api/syncs/{sync_id}/executions/{id}/{type}`](../../../../../api-reference/model-sync/executions/get-log-urls) to retrieve
+        signed URLs grouped by log category.
+
         Parameters
         ----------
         sync_id : str
@@ -200,6 +218,8 @@ class ExecutionsClient:
         self, sync_id: str, id: str, *, status: ExecutionStatus, request_options: typing.Optional[RequestOptions] = None
     ) -> GetExecutionResponseEnvelope:
         """
+        Updates a model sync execution's state, used to retry or resolve stalled executions.
+
         Parameters
         ----------
         sync_id : str
@@ -316,6 +336,15 @@ class ExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ExecutionLogsResponseEnvelope:
         """
+        Returns signed URLs for every log file of a given type on a model sync execution.
+
+        `{type}` identifies the log category, such as `errors` or `warnings`. The
+        response contains a signed URL for each log file in that category.
+
+        > 🚧 Signed URLs expire after a short period. If a URL has expired, re-request
+        > it from this endpoint. To fetch a single file's URL directly, use
+        > [`GET /api/syncs/{sync_id}/executions/{id}/{type}/{filename}`](../../../../../../api-reference/model-sync/executions/get-logs).
+
         Parameters
         ----------
         sync_id : str
@@ -415,6 +444,11 @@ class ExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
+        Returns a signed URL for a specific log file produced by a model sync execution.
+
+        The URL is signed and expires after a short period. If it has expired before
+        you download the file, call this endpoint again to obtain a fresh URL.
+
         Parameters
         ----------
         sync_id : str
@@ -515,6 +549,18 @@ class AsyncExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListExecutionResponseEnvelope:
         """
+        Lists executions for a model sync.
+
+        Results are ordered by start time descending. If more results are available, the
+        response includes `pagination.next_page_token`; pass that token back unchanged
+        to continue paging.
+
+        The token is opaque. Do not construct or edit it yourself.
+
+        For full details about a specific execution — including record counts and error
+        summaries — use
+        [`GET /api/syncs/{sync_id}/executions/{id}`](./{id}/get).
+
         Parameters
         ----------
         sync_id : str
@@ -604,6 +650,12 @@ class AsyncExecutionsClient:
         self, sync_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> GetExecutionResponseEnvelope:
         """
+        Returns a single model sync execution.
+
+        For the log files produced by this execution, use
+        [`GET /api/syncs/{sync_id}/executions/{id}/{type}`](../../../../../api-reference/model-sync/executions/get-log-urls) to retrieve
+        signed URLs grouped by log category.
+
         Parameters
         ----------
         sync_id : str
@@ -692,6 +744,8 @@ class AsyncExecutionsClient:
         self, sync_id: str, id: str, *, status: ExecutionStatus, request_options: typing.Optional[RequestOptions] = None
     ) -> GetExecutionResponseEnvelope:
         """
+        Updates a model sync execution's state, used to retry or resolve stalled executions.
+
         Parameters
         ----------
         sync_id : str
@@ -816,6 +870,15 @@ class AsyncExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ExecutionLogsResponseEnvelope:
         """
+        Returns signed URLs for every log file of a given type on a model sync execution.
+
+        `{type}` identifies the log category, such as `errors` or `warnings`. The
+        response contains a signed URL for each log file in that category.
+
+        > 🚧 Signed URLs expire after a short period. If a URL has expired, re-request
+        > it from this endpoint. To fetch a single file's URL directly, use
+        > [`GET /api/syncs/{sync_id}/executions/{id}/{type}/{filename}`](../../../../../../api-reference/model-sync/executions/get-logs).
+
         Parameters
         ----------
         sync_id : str
@@ -923,6 +986,11 @@ class AsyncExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
+        Returns a signed URL for a specific log file produced by a model sync execution.
+
+        The URL is signed and expires after a short period. If it has expired before
+        you download the file, call this endpoint again to obtain a fresh URL.
+
         Parameters
         ----------
         sync_id : str

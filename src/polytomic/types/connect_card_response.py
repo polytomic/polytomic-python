@@ -12,7 +12,10 @@ class ConnectCardResponse(UniversalBaseModel):
     URL to redirect the user to in order to create the new connection.
     """
 
-    token: typing.Optional[str] = None
+    token: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Opaque single-use token identifying the Connect session.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

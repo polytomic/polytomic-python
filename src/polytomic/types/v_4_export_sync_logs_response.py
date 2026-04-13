@@ -2,15 +2,15 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .v4export_sync_logs_response import V4ExportSyncLogsResponse
-from .job_response import JobResponse
-from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
+from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
-class V4ExportSyncLogsEnvelope(UniversalBaseModel):
-    data: typing.Optional[V4ExportSyncLogsResponse] = None
-    job: typing.Optional[JobResponse] = None
+class V4ExportSyncLogsResponse(UniversalBaseModel):
+    url: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Signed URL to download the exported log archive.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

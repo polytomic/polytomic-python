@@ -20,7 +20,17 @@ class IdentityClient:
 
     def get(self, *, request_options: typing.Optional[RequestOptions] = None) -> GetIdentityResponseEnvelope:
         """
-        Returns information about the caller's identity.
+        Returns information about the authenticated caller and, if applicable, the organization they are scoped to.
+
+        Use this endpoint to confirm which kind of credential is being used before
+        calling endpoints with stricter authorization rules.
+
+        For user-scoped credentials, the response includes the resolved user and
+        organization details. For non-user keys, the response identifies the key class
+        with the corresponding boolean flags instead of impersonating a user.
+
+        This endpoint is especially useful when debugging why a request is being
+        accepted or rejected by endpoints that are limited to particular caller types.
 
         Parameters
         ----------
@@ -88,7 +98,17 @@ class AsyncIdentityClient:
 
     async def get(self, *, request_options: typing.Optional[RequestOptions] = None) -> GetIdentityResponseEnvelope:
         """
-        Returns information about the caller's identity.
+        Returns information about the authenticated caller and, if applicable, the organization they are scoped to.
+
+        Use this endpoint to confirm which kind of credential is being used before
+        calling endpoints with stricter authorization rules.
+
+        For user-scoped credentials, the response includes the resolved user and
+        organization details. For non-user keys, the response identifies the key class
+        with the corresponding boolean flags instead of impersonating a user.
+
+        This endpoint is especially useful when debugging why a request is being
+        accepted or rejected by endpoints that are limited to particular caller types.
 
         Parameters
         ----------

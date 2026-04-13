@@ -5,19 +5,30 @@ import typing_extensions
 import typing
 import datetime as dt
 from ..core.serialization import FieldMetadata
+import pydantic
 from .bulk_sync_schema_execution_status import BulkSyncSchemaExecutionStatus
 from .bulk_execution_status import BulkExecutionStatus
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
-import pydantic
 
 
 class BulkSyncExecutionStatus(UniversalBaseModel):
     next_execution_time: typing_extensions.Annotated[
         typing.Optional[dt.datetime], FieldMetadata(alias="nextExecutionTime")
-    ] = None
-    schemas: typing.Optional[typing.List[BulkSyncSchemaExecutionStatus]] = None
+    ] = pydantic.Field(default=None)
+    """
+    Next scheduled execution time, if the sync has a schedule configured.
+    """
+
+    schemas: typing.Optional[typing.List[BulkSyncSchemaExecutionStatus]] = pydantic.Field(default=None)
+    """
+    Most recent execution status for each enabled schema in the sync.
+    """
+
     status: typing.Optional[BulkExecutionStatus] = None
-    sync_id: typing.Optional[str] = None
+    sync_id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Unique identifier of the bulk sync.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

@@ -3,7 +3,7 @@
 import typing
 from ..core.client_wrapper import SyncClientWrapper
 from ..core.request_options import RequestOptions
-from ..types.v4run_query_envelope import V4RunQueryEnvelope
+from ..types.v_4_run_query_envelope import V4RunQueryEnvelope
 from ..core.jsonable_encoder import jsonable_encoder
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.bad_request_error import BadRequestError
@@ -14,7 +14,7 @@ from ..errors.not_found_error import NotFoundError
 from ..errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError as core_api_error_ApiError
-from ..types.v4query_results_envelope import V4QueryResultsEnvelope
+from ..types.v_4_query_results_envelope import V4QueryResultsEnvelope
 from ..core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -33,11 +33,20 @@ class QueryRunnerClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> V4RunQueryEnvelope:
         """
-        Submit a query for asynchronous execution against the connection. The initial response may only contain the query task id and status. Poll GET /api/queries/{id} with the returned id to retrieve completion status, fields, and results.
+        Submits a query for asynchronous execution against the connection.
+
+        This endpoint returns immediately with a query task ID. It does not wait for
+        the query to finish. Poll [`GET /api/queries/{id}`](./get-query) until `status`
+        reaches `done` or `failed`.
+
+        Only the user who created the query can fetch its results later. Query results
+        are stored temporarily and may expire; use the `expires` field from the result
+        endpoint to understand how long they will remain available.
 
         Parameters
         ----------
         connection_id : str
+            Unique identifier of the connection to run the query against.
 
         query : typing.Optional[str]
             The query to execute against the connection.
@@ -134,13 +143,27 @@ class QueryRunnerClient:
         self, id: str, *, page: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> V4QueryResultsEnvelope:
         """
-        Fetch the latest status for a submitted query and, once complete, return fields and paginated results. Use the query id returned by POST /api/connections/{connection_id}/query.
+        Fetches the latest status for a submitted query and, once complete, returns fields and paginated results.
+
+        This endpoint is the second step of the query-runner flow. First call
+        [`POST /api/connections/{connection_id}/query`](./run-query),
+        then poll this endpoint with the returned ID.
+
+        Results may be paginated across multiple blobs. When that happens, use the
+        opaque `links.next` and `links.previous` URLs exactly as returned. Do not try to
+        construct the `page` token yourself.
+
+        If the query is still running, the response may include only status metadata.
+        If the task is complete but the caller is not the same user that created it,
+        the endpoint returns `404`.
 
         Parameters
         ----------
         id : str
+            Unique identifier of the query task, as returned by POST /api/connections/{connection_id}/query.
 
         page : typing.Optional[str]
+            Opaque pagination token returned in the links.next or links.previous URL of the previous response.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -160,7 +183,6 @@ class QueryRunnerClient:
         )
         client.query_runner.get_query(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            page="page",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -238,11 +260,20 @@ class AsyncQueryRunnerClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> V4RunQueryEnvelope:
         """
-        Submit a query for asynchronous execution against the connection. The initial response may only contain the query task id and status. Poll GET /api/queries/{id} with the returned id to retrieve completion status, fields, and results.
+        Submits a query for asynchronous execution against the connection.
+
+        This endpoint returns immediately with a query task ID. It does not wait for
+        the query to finish. Poll [`GET /api/queries/{id}`](./get-query) until `status`
+        reaches `done` or `failed`.
+
+        Only the user who created the query can fetch its results later. Query results
+        are stored temporarily and may expire; use the `expires` field from the result
+        endpoint to understand how long they will remain available.
 
         Parameters
         ----------
         connection_id : str
+            Unique identifier of the connection to run the query against.
 
         query : typing.Optional[str]
             The query to execute against the connection.
@@ -347,13 +378,27 @@ class AsyncQueryRunnerClient:
         self, id: str, *, page: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> V4QueryResultsEnvelope:
         """
-        Fetch the latest status for a submitted query and, once complete, return fields and paginated results. Use the query id returned by POST /api/connections/{connection_id}/query.
+        Fetches the latest status for a submitted query and, once complete, returns fields and paginated results.
+
+        This endpoint is the second step of the query-runner flow. First call
+        [`POST /api/connections/{connection_id}/query`](./run-query),
+        then poll this endpoint with the returned ID.
+
+        Results may be paginated across multiple blobs. When that happens, use the
+        opaque `links.next` and `links.previous` URLs exactly as returned. Do not try to
+        construct the `page` token yourself.
+
+        If the query is still running, the response may include only status metadata.
+        If the task is complete but the caller is not the same user that created it,
+        the endpoint returns `404`.
 
         Parameters
         ----------
         id : str
+            Unique identifier of the query task, as returned by POST /api/connections/{connection_id}/query.
 
         page : typing.Optional[str]
+            Opaque pagination token returned in the links.next or links.previous URL of the previous response.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -378,7 +423,6 @@ class AsyncQueryRunnerClient:
         async def main() -> None:
             await client.query_runner.get_query(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                page="page",
             )
 
 

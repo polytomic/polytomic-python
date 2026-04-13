@@ -13,7 +13,11 @@ class V4RunQueryResult(UniversalBaseModel):
     The number of rows returned by the query. This will not be returned until the query completes.
     """
 
-    error: typing.Optional[str] = None
+    error: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Error message if the query failed.
+    """
+
     expires: typing.Optional[str] = pydantic.Field(default=None)
     """
     The time at which the query will expire and be deleted. This will not be returned until the query completes.

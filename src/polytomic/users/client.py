@@ -29,9 +29,16 @@ class UsersClient:
 
     def list(self, org_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> ListUsersEnvelope:
         """
+        Lists all users in the specified organization.
+
+        > 🚧 Requires partner key
+        >
+        > User endpoints are only accessible using [partner keys](../../../../guides/obtaining-api-keys#partner-keys).
+
         Parameters
         ----------
         org_id : str
+            Unique identifier of the organization whose users should be listed.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -112,15 +119,25 @@ class UsersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UserEnvelope:
         """
+        Creates a new user in the specified organization and assigns the requested permissions roles.
+
+        > 🚧 Requires partner key
+        >
+        > User endpoints are only accessible using [partner keys](../../../../guides/obtaining-api-keys#partner-keys).
+
         Parameters
         ----------
         org_id : str
+            Unique identifier of the organization the user belongs to.
 
         email : str
+            Email address used to sign the user in and receive notifications.
 
         role : typing.Optional[str]
+            Deprecated legacy role name. Use role_ids instead; setting both role and role_ids in the same request is rejected.
 
         role_ids : typing.Optional[typing.Sequence[str]]
+            Identifiers of the permissions roles to assign to the user. Must contain at least one entry when provided.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -211,13 +228,21 @@ class UsersClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, org_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> UserEnvelope:
+    def get(self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> UserEnvelope:
         """
+        Returns a single user in the specified organization.
+
+        > 🚧 Requires partner key
+        >
+        > User endpoints are only accessible using [partner keys](../../../../../guides/obtaining-api-keys#partner-keys).
+
         Parameters
         ----------
-        org_id : str
-
         id : str
+            Unique identifier of the user.
+
+        org_id : str
+            Unique identifier of the organization the user belongs to.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -301,8 +326,8 @@ class UsersClient:
 
     def update(
         self,
-        org_id: str,
         id: str,
+        org_id: str,
         *,
         email: str,
         role: typing.Optional[str] = OMIT,
@@ -310,17 +335,28 @@ class UsersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UserEnvelope:
         """
+        Updates a user's assigned permissions roles.
+
+        > 🚧 Requires partner key
+        >
+        > User endpoints are only accessible using [partner keys](../../../../../guides/obtaining-api-keys#partner-keys).
+
         Parameters
         ----------
-        org_id : str
-
         id : str
+            Unique identifier of the user to update.
+
+        org_id : str
+            Unique identifier of the organization the user belongs to.
 
         email : str
+            Email address used to sign the user in and receive notifications.
 
         role : typing.Optional[str]
+            Deprecated legacy role name. Use role_ids instead; setting both role and role_ids in the same request is rejected.
 
         role_ids : typing.Optional[typing.Sequence[str]]
+            Identifiers of the permissions roles to assign to the user. Must contain at least one entry when provided.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -412,13 +448,21 @@ class UsersClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def remove(self, org_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> UserEnvelope:
+    def remove(self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> UserEnvelope:
         """
+        Deletes a user from the specified organization.
+
+        > 🚧 Requires partner key
+        >
+        > User endpoints are only accessible using [partner keys](../../../../../guides/obtaining-api-keys#partner-keys).
+
         Parameters
         ----------
-        org_id : str
-
         id : str
+            Unique identifier of the user.
+
+        org_id : str
+            Unique identifier of the organization the user belongs to.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -509,17 +553,22 @@ class UsersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ApiKeyResponseEnvelope:
         """
+        Issues a new API key for the specified user.
+
         > 🚧 Requires partner key
         >
-        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+        > User endpoints are only accessible using [partner keys](../../../../../../guides/obtaining-api-keys#partner-keys).
 
         Parameters
         ----------
         org_id : str
+            Unique identifier of the organization the user belongs to.
 
         id : str
+            Unique identifier of the user the key will be issued for.
 
         force : typing.Optional[bool]
+            If true, revoke any existing API key for the user before creating a new one.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -612,9 +661,16 @@ class AsyncUsersClient:
 
     async def list(self, org_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> ListUsersEnvelope:
         """
+        Lists all users in the specified organization.
+
+        > 🚧 Requires partner key
+        >
+        > User endpoints are only accessible using [partner keys](../../../../guides/obtaining-api-keys#partner-keys).
+
         Parameters
         ----------
         org_id : str
+            Unique identifier of the organization whose users should be listed.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -703,15 +759,25 @@ class AsyncUsersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UserEnvelope:
         """
+        Creates a new user in the specified organization and assigns the requested permissions roles.
+
+        > 🚧 Requires partner key
+        >
+        > User endpoints are only accessible using [partner keys](../../../../guides/obtaining-api-keys#partner-keys).
+
         Parameters
         ----------
         org_id : str
+            Unique identifier of the organization the user belongs to.
 
         email : str
+            Email address used to sign the user in and receive notifications.
 
         role : typing.Optional[str]
+            Deprecated legacy role name. Use role_ids instead; setting both role and role_ids in the same request is rejected.
 
         role_ids : typing.Optional[typing.Sequence[str]]
+            Identifiers of the permissions roles to assign to the user. Must contain at least one entry when provided.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -811,14 +877,22 @@ class AsyncUsersClient:
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     async def get(
-        self, org_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> UserEnvelope:
         """
+        Returns a single user in the specified organization.
+
+        > 🚧 Requires partner key
+        >
+        > User endpoints are only accessible using [partner keys](../../../../../guides/obtaining-api-keys#partner-keys).
+
         Parameters
         ----------
-        org_id : str
-
         id : str
+            Unique identifier of the user.
+
+        org_id : str
+            Unique identifier of the organization the user belongs to.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -910,8 +984,8 @@ class AsyncUsersClient:
 
     async def update(
         self,
-        org_id: str,
         id: str,
+        org_id: str,
         *,
         email: str,
         role: typing.Optional[str] = OMIT,
@@ -919,17 +993,28 @@ class AsyncUsersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UserEnvelope:
         """
+        Updates a user's assigned permissions roles.
+
+        > 🚧 Requires partner key
+        >
+        > User endpoints are only accessible using [partner keys](../../../../../guides/obtaining-api-keys#partner-keys).
+
         Parameters
         ----------
-        org_id : str
-
         id : str
+            Unique identifier of the user to update.
+
+        org_id : str
+            Unique identifier of the organization the user belongs to.
 
         email : str
+            Email address used to sign the user in and receive notifications.
 
         role : typing.Optional[str]
+            Deprecated legacy role name. Use role_ids instead; setting both role and role_ids in the same request is rejected.
 
         role_ids : typing.Optional[typing.Sequence[str]]
+            Identifiers of the permissions roles to assign to the user. Must contain at least one entry when provided.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1030,14 +1115,22 @@ class AsyncUsersClient:
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     async def remove(
-        self, org_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> UserEnvelope:
         """
+        Deletes a user from the specified organization.
+
+        > 🚧 Requires partner key
+        >
+        > User endpoints are only accessible using [partner keys](../../../../../guides/obtaining-api-keys#partner-keys).
+
         Parameters
         ----------
-        org_id : str
-
         id : str
+            Unique identifier of the user.
+
+        org_id : str
+            Unique identifier of the organization the user belongs to.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1136,17 +1229,22 @@ class AsyncUsersClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ApiKeyResponseEnvelope:
         """
+        Issues a new API key for the specified user.
+
         > 🚧 Requires partner key
         >
-        > User endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+        > User endpoints are only accessible using [partner keys](../../../../../../guides/obtaining-api-keys#partner-keys).
 
         Parameters
         ----------
         org_id : str
+            Unique identifier of the organization the user belongs to.
 
         id : str
+            Unique identifier of the user the key will be issued for.
 
         force : typing.Optional[bool]
+            If true, revoke any existing API key for the user before creating a new one.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.

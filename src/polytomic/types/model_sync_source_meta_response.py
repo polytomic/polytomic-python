@@ -3,15 +3,26 @@
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 from .configuration_value import ConfigurationValue
+import pydantic
 from .source_meta import SourceMeta
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
-import pydantic
 
 
 class ModelSyncSourceMetaResponse(UniversalBaseModel):
-    configuration: typing.Optional[typing.Dict[str, ConfigurationValue]] = None
-    items: typing.Optional[typing.Dict[str, typing.Optional[SourceMeta]]] = None
-    requires_one_of: typing.Optional[typing.List[str]] = None
+    configuration: typing.Optional[typing.Dict[str, ConfigurationValue]] = pydantic.Field(default=None)
+    """
+    Additional configuration fields available for this source, keyed by field name.
+    """
+
+    items: typing.Optional[typing.Dict[str, typing.Optional[SourceMeta]]] = pydantic.Field(default=None)
+    """
+    Map of configuration item name to its metadata (available values, required-one-of groups).
+    """
+
+    requires_one_of: typing.Optional[typing.List[str]] = pydantic.Field(default=None)
+    """
+    Configuration items where exactly one must be selected by the caller.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

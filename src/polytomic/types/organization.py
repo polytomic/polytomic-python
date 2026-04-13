@@ -2,16 +2,35 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
+from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
 class Organization(UniversalBaseModel):
-    id: typing.Optional[str] = None
-    issuer: typing.Optional[str] = None
-    name: typing.Optional[str] = None
-    sso_domain: typing.Optional[str] = None
-    sso_org_id: typing.Optional[str] = None
+    id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Unique identifier of the organization.
+    """
+
+    issuer: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    OIDC issuer URL for organizations using OpenID Connect single sign-on.
+    """
+
+    name: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Human-readable name of the organization.
+    """
+
+    sso_domain: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Email domain used to match users to this organization during SSO sign-in.
+    """
+
+    sso_org_id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    WorkOS organization identifier linking this organization to its SAML/SSO configuration.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

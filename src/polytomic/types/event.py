@@ -3,17 +3,32 @@
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
 import datetime as dt
+import pydantic
 from .event_body import EventBody
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
-import pydantic
 
 
 class Event(UniversalBaseModel):
-    created_at: typing.Optional[dt.datetime] = None
+    created_at: typing.Optional[dt.datetime] = pydantic.Field(default=None)
+    """
+    Timestamp the event was emitted.
+    """
+
     event: typing.Optional[EventBody] = None
-    id: typing.Optional[str] = None
-    organization_id: typing.Optional[str] = None
-    type: typing.Optional[str] = None
+    id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Unique identifier of the event.
+    """
+
+    organization_id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Organization the event belongs to.
+    """
+
+    type: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Event type identifier.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

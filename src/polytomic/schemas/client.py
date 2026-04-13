@@ -2,7 +2,7 @@
 
 import typing
 from ..core.client_wrapper import SyncClientWrapper
-from ..types.v4user_field_request import V4UserFieldRequest
+from ..types.v_4_user_field_request import V4UserFieldRequest
 from ..core.request_options import RequestOptions
 from ..core.jsonable_encoder import jsonable_encoder
 from ..core.serialization import convert_and_respect_annotation_metadata
@@ -39,13 +39,28 @@ class SchemasClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
+        Creates or updates user-defined fields on a schema, matched by field_id.
+
+        Fields are matched by `field_id`. Reusing an existing `field_id` updates that
+        field; using a new `field_id` creates a new user-defined field.
+
+        This makes the endpoint safe to retry when you are intentionally upserting the
+        same field definitions. It is not a patch-by-position operation.
+
+        If some fields succeed and others fail, the endpoint can return a partial
+        success response. Validate the response status and message rather than assuming
+        the whole batch was applied uniformly.
+
         Parameters
         ----------
         connection_id : str
+            Unique identifier of the connection.
 
         schema_id : str
+            Identifier of the schema the fields belong to.
 
         fields : typing.Optional[typing.Sequence[V4UserFieldRequest]]
+            Fields to create or update on the schema. Existing user-defined fields with the same field_id are replaced.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -138,13 +153,27 @@ class SchemasClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
+        Removes a user-defined field from a schema.
+
+        Only user-defined fields — those created via
+        [`POST /api/connections/{connection_id}/schemas/{schema_id}/fields`](../../../../../../../api-reference/schemas/upsert-field)
+        — can be removed through this endpoint. Fields detected automatically from
+        the source cannot be deleted here; they are managed through schema refresh.
+
+        > 🚧 Deleting a field that is referenced in an active sync mapping may cause
+        > that sync to error on its next execution. Remove or update any dependent
+        > mappings before deleting the field.
+
         Parameters
         ----------
         connection_id : str
+            Unique identifier of the connection.
 
         schema_id : str
+            Identifier of the schema the field belongs to.
 
         field_id : str
+            Identifier of the user-defined field to delete.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -229,13 +258,29 @@ class SchemasClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
+        Overrides the primary key detected on a schema.
+
+        This is a full replacement: the keys you supply become the complete override
+        set, replacing any previously configured overrides. Omitting a key that was
+        previously set removes it.
+
+        Primary key overrides are useful when the source does not expose a primary
+        key or when the source-detected key is not the correct deduplication
+        identifier for your use case.
+
+        > 📘 To revert to the source-detected primary keys and remove all overrides,
+        > use [`DELETE /api/connections/{connection_id}/schemas/{schema_id}/primary_keys`](./delete).
+
         Parameters
         ----------
         connection_id : str
+            Unique identifier of the connection.
 
         schema_id : str
+            Identifier of the schema whose primary keys are being overridden.
 
         fields : typing.Optional[typing.Sequence[SchemaPrimaryKeyOverrideInput]]
+            Ordered list of source fields that together form the primary key. Replaces any existing override; supply an empty list to clear.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -323,13 +368,19 @@ class SchemasClient:
         self, connection_id: str, schema_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
-        Delete all primary key overrides for a schema. After this call the schema will use the primary keys detected from the source connection, if any.
+        Deletes all primary key overrides for a schema, reverting to the primary keys detected from the source.
+
+        To replace the overrides with a new set rather than clearing them entirely,
+        use [`PUT /api/connections/{connection_id}/schemas/{schema_id}/primary_keys`](./put)
+        instead.
 
         Parameters
         ----------
         connection_id : str
+            Unique identifier of the connection.
 
         schema_id : str
+            Identifier of the schema whose primary key override should be cleared.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -406,9 +457,31 @@ class SchemasClient:
 
     def refresh(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
+        Refreshes a connection's cached schemas.
+
+        Call this when the upstream source has added, removed, or changed tables,
+        objects, or fields and you need Polytomic to re-inspect the connection before
+        creating or updating sync configuration.
+
+        This endpoint does not return the refreshed schemas directly. Follow the
+        `Location` header or poll [`GET /api/connections/{id}/schemas/status`](./get-status)
+        until the refresh completes, then fetch the schemas you need.
+
+        > 📘 Schema refresh is asynchronous
+        >
+        > This endpoint kicks off a background refresh of the connection's cached
+        > schemas and returns a `Location` header pointing at
+        > [`GET /api/connections/{id}/schemas/status`](../../../../../api-reference/schemas/get-status).
+        > Poll that endpoint until `cache_status` transitions from `refreshing` to
+        > `fresh` (or until `last_refresh_finished` advances past
+        > `last_refresh_started`) to observe completion.
+        >
+        > Only connections whose current health status is healthy may be refreshed.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the connection whose schema cache should be refreshed.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -486,11 +559,28 @@ class SchemasClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> BulkSyncSourceStatusEnvelope:
         """
-        Polytomic periodically inspects the schemas for connections to discover new fields and update metadata. This endpoint returns the current inspection status.
+        Returns the current schema inspection status for a connection.
+
+        Poll this endpoint after calling
+        [`POST /api/connections/{id}/schemas/refresh`](../../../../../api-reference/schemas/refresh) to track
+        progress. When `status` transitions to `completed`, the refreshed schemas
+        are available for use in sync configuration.
+
+        > 📘 Schema refresh is asynchronous
+        >
+        > This endpoint kicks off a background refresh of the connection's cached
+        > schemas and returns a `Location` header pointing at
+        > [`GET /api/connections/{id}/schemas/status`](../../../../../api-reference/schemas/get-status).
+        > Poll that endpoint until `cache_status` transitions from `refreshing` to
+        > `fresh` (or until `last_refresh_finished` advances past
+        > `last_refresh_started`) to observe completion.
+        >
+        > Only connections whose current health status is healthy may be refreshed.
 
         Parameters
         ----------
         id : str
+            Unique identifier of the connection whose schema cache status should be returned.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -575,11 +665,23 @@ class SchemasClient:
         self, id: str, schema_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> BulkSyncSourceSchemaEnvelope:
         """
+        Returns a single schema on a connection.
+
+        The schema is returned from the connection's cached schema set. If the
+        upstream source has changed since the last inspection, the result may be
+        stale.
+
+        > 📘 Trigger [`POST /api/connections/{id}/schemas/refresh`](../../../../../api-reference/schemas/refresh)
+        > and wait for it to complete before fetching this endpoint if you need
+        > up-to-date field definitions.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the connection.
 
         schema_id : str
+            Identifier of the schema within the connection. Format depends on the connection type (e.g. schema.table for databases, object name for SaaS backends).
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -665,11 +767,26 @@ class SchemasClient:
         self, id: str, schema_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> SchemaRecordsResponseEnvelope:
         """
+        Returns a sample of records from a schema on a connection.
+
+        The sample is intended for previewing the shape and values of data before
+        committing to a sync configuration, not for full data export.
+
+        > 🚧 The sample is not guaranteed to be representative of the full dataset.
+        > Row selection is implementation-defined and may differ across connection
+        > types.
+
+        > 📘 If the schema's field definitions are stale, refresh them first with
+        > [`POST /api/connections/{id}/schemas/refresh`](../../../../../../api-reference/schemas/refresh) to ensure
+        > the sample aligns with the current schema structure.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the connection.
 
         schema_id : str
+            Identifier of the schema within the connection.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -775,13 +892,28 @@ class AsyncSchemasClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
+        Creates or updates user-defined fields on a schema, matched by field_id.
+
+        Fields are matched by `field_id`. Reusing an existing `field_id` updates that
+        field; using a new `field_id` creates a new user-defined field.
+
+        This makes the endpoint safe to retry when you are intentionally upserting the
+        same field definitions. It is not a patch-by-position operation.
+
+        If some fields succeed and others fail, the endpoint can return a partial
+        success response. Validate the response status and message rather than assuming
+        the whole batch was applied uniformly.
+
         Parameters
         ----------
         connection_id : str
+            Unique identifier of the connection.
 
         schema_id : str
+            Identifier of the schema the fields belong to.
 
         fields : typing.Optional[typing.Sequence[V4UserFieldRequest]]
+            Fields to create or update on the schema. Existing user-defined fields with the same field_id are replaced.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -882,13 +1014,27 @@ class AsyncSchemasClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
+        Removes a user-defined field from a schema.
+
+        Only user-defined fields — those created via
+        [`POST /api/connections/{connection_id}/schemas/{schema_id}/fields`](../../../../../../../api-reference/schemas/upsert-field)
+        — can be removed through this endpoint. Fields detected automatically from
+        the source cannot be deleted here; they are managed through schema refresh.
+
+        > 🚧 Deleting a field that is referenced in an active sync mapping may cause
+        > that sync to error on its next execution. Remove or update any dependent
+        > mappings before deleting the field.
+
         Parameters
         ----------
         connection_id : str
+            Unique identifier of the connection.
 
         schema_id : str
+            Identifier of the schema the field belongs to.
 
         field_id : str
+            Identifier of the user-defined field to delete.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -981,13 +1127,29 @@ class AsyncSchemasClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
+        Overrides the primary key detected on a schema.
+
+        This is a full replacement: the keys you supply become the complete override
+        set, replacing any previously configured overrides. Omitting a key that was
+        previously set removes it.
+
+        Primary key overrides are useful when the source does not expose a primary
+        key or when the source-detected key is not the correct deduplication
+        identifier for your use case.
+
+        > 📘 To revert to the source-detected primary keys and remove all overrides,
+        > use [`DELETE /api/connections/{connection_id}/schemas/{schema_id}/primary_keys`](./delete).
+
         Parameters
         ----------
         connection_id : str
+            Unique identifier of the connection.
 
         schema_id : str
+            Identifier of the schema whose primary keys are being overridden.
 
         fields : typing.Optional[typing.Sequence[SchemaPrimaryKeyOverrideInput]]
+            Ordered list of source fields that together form the primary key. Replaces any existing override; supply an empty list to clear.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1083,13 +1245,19 @@ class AsyncSchemasClient:
         self, connection_id: str, schema_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
-        Delete all primary key overrides for a schema. After this call the schema will use the primary keys detected from the source connection, if any.
+        Deletes all primary key overrides for a schema, reverting to the primary keys detected from the source.
+
+        To replace the overrides with a new set rather than clearing them entirely,
+        use [`PUT /api/connections/{connection_id}/schemas/{schema_id}/primary_keys`](./put)
+        instead.
 
         Parameters
         ----------
         connection_id : str
+            Unique identifier of the connection.
 
         schema_id : str
+            Identifier of the schema whose primary key override should be cleared.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1174,9 +1342,31 @@ class AsyncSchemasClient:
 
     async def refresh(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
+        Refreshes a connection's cached schemas.
+
+        Call this when the upstream source has added, removed, or changed tables,
+        objects, or fields and you need Polytomic to re-inspect the connection before
+        creating or updating sync configuration.
+
+        This endpoint does not return the refreshed schemas directly. Follow the
+        `Location` header or poll [`GET /api/connections/{id}/schemas/status`](./get-status)
+        until the refresh completes, then fetch the schemas you need.
+
+        > 📘 Schema refresh is asynchronous
+        >
+        > This endpoint kicks off a background refresh of the connection's cached
+        > schemas and returns a `Location` header pointing at
+        > [`GET /api/connections/{id}/schemas/status`](../../../../../api-reference/schemas/get-status).
+        > Poll that endpoint until `cache_status` transitions from `refreshing` to
+        > `fresh` (or until `last_refresh_finished` advances past
+        > `last_refresh_started`) to observe completion.
+        >
+        > Only connections whose current health status is healthy may be refreshed.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the connection whose schema cache should be refreshed.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1262,11 +1452,28 @@ class AsyncSchemasClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> BulkSyncSourceStatusEnvelope:
         """
-        Polytomic periodically inspects the schemas for connections to discover new fields and update metadata. This endpoint returns the current inspection status.
+        Returns the current schema inspection status for a connection.
+
+        Poll this endpoint after calling
+        [`POST /api/connections/{id}/schemas/refresh`](../../../../../api-reference/schemas/refresh) to track
+        progress. When `status` transitions to `completed`, the refreshed schemas
+        are available for use in sync configuration.
+
+        > 📘 Schema refresh is asynchronous
+        >
+        > This endpoint kicks off a background refresh of the connection's cached
+        > schemas and returns a `Location` header pointing at
+        > [`GET /api/connections/{id}/schemas/status`](../../../../../api-reference/schemas/get-status).
+        > Poll that endpoint until `cache_status` transitions from `refreshing` to
+        > `fresh` (or until `last_refresh_finished` advances past
+        > `last_refresh_started`) to observe completion.
+        >
+        > Only connections whose current health status is healthy may be refreshed.
 
         Parameters
         ----------
         id : str
+            Unique identifier of the connection whose schema cache status should be returned.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1359,11 +1566,23 @@ class AsyncSchemasClient:
         self, id: str, schema_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> BulkSyncSourceSchemaEnvelope:
         """
+        Returns a single schema on a connection.
+
+        The schema is returned from the connection's cached schema set. If the
+        upstream source has changed since the last inspection, the result may be
+        stale.
+
+        > 📘 Trigger [`POST /api/connections/{id}/schemas/refresh`](../../../../../api-reference/schemas/refresh)
+        > and wait for it to complete before fetching this endpoint if you need
+        > up-to-date field definitions.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the connection.
 
         schema_id : str
+            Identifier of the schema within the connection. Format depends on the connection type (e.g. schema.table for databases, object name for SaaS backends).
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1457,11 +1676,26 @@ class AsyncSchemasClient:
         self, id: str, schema_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> SchemaRecordsResponseEnvelope:
         """
+        Returns a sample of records from a schema on a connection.
+
+        The sample is intended for previewing the shape and values of data before
+        committing to a sync configuration, not for full data export.
+
+        > 🚧 The sample is not guaranteed to be representative of the full dataset.
+        > Row selection is implementation-defined and may differ across connection
+        > types.
+
+        > 📘 If the schema's field definitions are stale, refresh them first with
+        > [`POST /api/connections/{id}/schemas/refresh`](../../../../../../api-reference/schemas/refresh) to ensure
+        > the sample aligns with the current schema structure.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the connection.
 
         schema_id : str
+            Identifier of the schema within the connection.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.

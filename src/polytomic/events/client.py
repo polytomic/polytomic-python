@@ -33,17 +33,35 @@ class EventsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> EventsEnvelope:
         """
+        Lists audit events for the caller's organization.
+
+        Results are paginated. If more events are available, the response includes
+        `pagination.next_page_token`; pass that token back unchanged to continue from
+        the last item you received.
+
+        Filter by event type using the `event_type` query parameter. Pass one of the
+        identifiers returned by [`GET /api/events_types`](../../api-reference/events/get-types) to
+        narrow results to a specific category of activity.
+
+        > 📘 Events reflect audit activity scoped to the caller's organization.
+        > The log captures both user-initiated and API-initiated actions.
+
         Parameters
         ----------
         organization_id : typing.Optional[str]
+            Organization to list events for. Only used by system callers; normal and partner callers are always scoped to their own organization.
 
         type : typing.Optional[str]
+            Filter to a single event type. Use GET /api/events_types to list valid values.
 
         starting_after : typing.Optional[dt.datetime]
+            Return events created strictly after this timestamp.
 
         ending_before : typing.Optional[dt.datetime]
+            Return events created strictly before this timestamp.
 
         limit : typing.Optional[int]
+            Maximum number of events to return. Default 10, maximum 100.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -65,14 +83,12 @@ class EventsClient:
         )
         client.events.list(
             organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            type="type",
             starting_after=datetime.datetime.fromisoformat(
                 "2020-01-01 00:00:00+00:00",
             ),
             ending_before=datetime.datetime.fromisoformat(
                 "2020-01-01 00:00:00+00:00",
             ),
-            limit=1,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -133,6 +149,11 @@ class EventsClient:
 
     def get_types(self, *, request_options: typing.Optional[RequestOptions] = None) -> EventTypesEnvelope:
         """
+        Returns the set of event type identifiers supported by GET /api/events.
+
+        Use the identifiers returned here as the `event_type` filter value when calling
+        [`GET /api/events`](../../api-reference/events/list).
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
@@ -198,17 +219,35 @@ class AsyncEventsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> EventsEnvelope:
         """
+        Lists audit events for the caller's organization.
+
+        Results are paginated. If more events are available, the response includes
+        `pagination.next_page_token`; pass that token back unchanged to continue from
+        the last item you received.
+
+        Filter by event type using the `event_type` query parameter. Pass one of the
+        identifiers returned by [`GET /api/events_types`](../../api-reference/events/get-types) to
+        narrow results to a specific category of activity.
+
+        > 📘 Events reflect audit activity scoped to the caller's organization.
+        > The log captures both user-initiated and API-initiated actions.
+
         Parameters
         ----------
         organization_id : typing.Optional[str]
+            Organization to list events for. Only used by system callers; normal and partner callers are always scoped to their own organization.
 
         type : typing.Optional[str]
+            Filter to a single event type. Use GET /api/events_types to list valid values.
 
         starting_after : typing.Optional[dt.datetime]
+            Return events created strictly after this timestamp.
 
         ending_before : typing.Optional[dt.datetime]
+            Return events created strictly before this timestamp.
 
         limit : typing.Optional[int]
+            Maximum number of events to return. Default 10, maximum 100.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -234,14 +273,12 @@ class AsyncEventsClient:
         async def main() -> None:
             await client.events.list(
                 organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                type="type",
                 starting_after=datetime.datetime.fromisoformat(
                     "2020-01-01 00:00:00+00:00",
                 ),
                 ending_before=datetime.datetime.fromisoformat(
                     "2020-01-01 00:00:00+00:00",
                 ),
-                limit=1,
             )
 
 
@@ -305,6 +342,11 @@ class AsyncEventsClient:
 
     async def get_types(self, *, request_options: typing.Optional[RequestOptions] = None) -> EventTypesEnvelope:
         """
+        Returns the set of event type identifiers supported by GET /api/events.
+
+        Use the identifiers returned here as the `event_type` filter value when calling
+        [`GET /api/events`](../../api-reference/events/list).
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]

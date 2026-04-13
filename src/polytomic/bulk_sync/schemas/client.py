@@ -40,11 +40,26 @@ class SchemasClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListBulkSchema:
         """
+        Lists the schemas configured on a bulk sync.
+
+        This endpoint returns the schemas that have been added to and configured on this
+        specific bulk sync — not the full set of schemas available from the source
+        connection. To discover what the source connection exposes, use the source
+        schemas endpoint for the relevant connection type.
+
+        Each schema in the response includes its sync mode, field selections, and any
+        custom configuration applied via
+        [`PATCH /api/bulk/syncs/{id}/schemas`](../../../../../api-reference/bulk-sync/schemas/patch)
+        or
+        [`PUT /api/bulk/syncs/{id}/schemas/{schema_id}`](../../../../../api-reference/bulk-sync/schemas/update).
+
         Parameters
         ----------
         id : str
+            Unique identifier of the bulk sync.
 
         filters : typing.Optional[typing.Dict[str, typing.Optional[str]]]
+            Optional filters applied to the returned schemas. Supports enabled=true to return only enabled schemas and enabled=false to return only disabled schemas.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -116,11 +131,29 @@ class SchemasClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListBulkSchema:
         """
+        Patches one or more schemas on a bulk sync at once.
+
+        Only schemas explicitly included in the request body are modified; schemas
+        omitted from the request are left unchanged. This makes PATCH the right choice
+        when you want to update a subset of tables without affecting the rest of the
+        sync's schema configuration.
+
+        Within each provided schema, omitting `fields` enables all available fields on
+        that schema. To control which fields are enabled, include the `fields` array
+        with explicit `enabled` values for each field.
+
+        > 📘 To replace a single schema's configuration in full (clearing any fields you
+        > omit), use
+        > [`PUT /api/bulk/syncs/{id}/schemas/{schema_id}`](../../../../../api-reference/bulk-sync/schemas/update)
+        > instead.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the bulk sync.
 
         schemas : typing.Optional[typing.Sequence[BulkSchema]]
+            Schemas to patch. Schemas are matched by id; only schemas present in this list are updated.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -224,11 +257,24 @@ class SchemasClient:
         self, id: str, schema_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> BulkSchemaEnvelope:
         """
+        Returns the configuration of a single schema on a bulk sync.
+
+        Returns the sync mode, field selections, and any other configuration applied to
+        this schema on the bulk sync.
+
+        To modify the configuration, use
+        [`PATCH /api/bulk/syncs/{id}/schemas`](../../../../../../api-reference/bulk-sync/schemas/patch)
+        for a partial update across multiple schemas, or
+        [`PUT /api/bulk/syncs/{id}/schemas/{schema_id}`](../../../../../../api-reference/bulk-sync/schemas/update)
+        to fully replace this schema's configuration.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the bulk sync.
 
         schema_id : str
+            Source-side schema identifier.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -306,25 +352,50 @@ class SchemasClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BulkSchemaEnvelope:
         """
+        Replaces the configuration of a single schema on a bulk sync.
+
+        This is a full replacement: every field in the request body is written to the
+        schema, and any field you omit is cleared or reset to its default. Fetch the
+        current configuration with
+        [`GET /api/bulk/syncs/{id}/schemas/{schema_id}`](../../../../../../api-reference/bulk-sync/schemas/get)
+        first if you want to preserve existing settings while changing only a subset.
+
+        Omitting `fields` enables all available fields on the schema. To control which
+        fields are enabled, include the `fields` array with explicit `enabled` values.
+
+        > 📘 To update multiple schemas in a single request without affecting others,
+        > use the partial-update endpoint
+        > [`PATCH /api/bulk/syncs/{id}/schemas`](../../../../../../api-reference/bulk-sync/schemas/patch)
+        > instead.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the bulk sync.
 
         schema_id : str
+            Source-side schema identifier.
 
         data_cutoff_timestamp : typing.Optional[dt.datetime]
+            Per-schema cutoff. Records older than this timestamp are excluded from sync runs.
 
         disable_data_cutoff : typing.Optional[bool]
+            When true, the sync ignores any configured data_cutoff_timestamp for this schema.
 
         enabled : typing.Optional[bool]
+            Whether this schema is included in sync runs.
 
         fields : typing.Optional[typing.Sequence[UpdateBulkField]]
+            Field-level configuration. Supplying an empty list enables every field discovered on the source.
 
         filters : typing.Optional[typing.Sequence[BulkFilter]]
+            Row-level filters applied when reading from the source.
 
         partition_key : typing.Optional[str]
+            Source field used to partition rows when writing to the destination.
 
         tracking_field : typing.Optional[str]
+            Source field used to detect changes between incremental sync runs.
 
         user_output_name : typing.Optional[str]
 
@@ -430,6 +501,15 @@ class SchemasClient:
         self, id: str, schema_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> CancelBulkSyncResponseEnvelope:
         """
+        Requests cancellation of any running executions for a specific schema on a bulk sync.
+
+        Cancellation is asynchronous. A successful response means the cancellation
+        signal for this schema has been queued; the schema's in-flight work continues
+        until the signal is processed. Poll
+        `GET /api/bulk/syncs/{id}/schemas/{schema_id}` and the parent execution via
+        `GET /api/bulk/syncs/{id}/status` to confirm the schema has reached a terminal
+        state.
+
         Parameters
         ----------
         id : str
@@ -531,11 +611,26 @@ class AsyncSchemasClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListBulkSchema:
         """
+        Lists the schemas configured on a bulk sync.
+
+        This endpoint returns the schemas that have been added to and configured on this
+        specific bulk sync — not the full set of schemas available from the source
+        connection. To discover what the source connection exposes, use the source
+        schemas endpoint for the relevant connection type.
+
+        Each schema in the response includes its sync mode, field selections, and any
+        custom configuration applied via
+        [`PATCH /api/bulk/syncs/{id}/schemas`](../../../../../api-reference/bulk-sync/schemas/patch)
+        or
+        [`PUT /api/bulk/syncs/{id}/schemas/{schema_id}`](../../../../../api-reference/bulk-sync/schemas/update).
+
         Parameters
         ----------
         id : str
+            Unique identifier of the bulk sync.
 
         filters : typing.Optional[typing.Dict[str, typing.Optional[str]]]
+            Optional filters applied to the returned schemas. Supports enabled=true to return only enabled schemas and enabled=false to return only disabled schemas.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -615,11 +710,29 @@ class AsyncSchemasClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ListBulkSchema:
         """
+        Patches one or more schemas on a bulk sync at once.
+
+        Only schemas explicitly included in the request body are modified; schemas
+        omitted from the request are left unchanged. This makes PATCH the right choice
+        when you want to update a subset of tables without affecting the rest of the
+        sync's schema configuration.
+
+        Within each provided schema, omitting `fields` enables all available fields on
+        that schema. To control which fields are enabled, include the `fields` array
+        with explicit `enabled` values for each field.
+
+        > 📘 To replace a single schema's configuration in full (clearing any fields you
+        > omit), use
+        > [`PUT /api/bulk/syncs/{id}/schemas/{schema_id}`](../../../../../api-reference/bulk-sync/schemas/update)
+        > instead.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the bulk sync.
 
         schemas : typing.Optional[typing.Sequence[BulkSchema]]
+            Schemas to patch. Schemas are matched by id; only schemas present in this list are updated.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -731,11 +844,24 @@ class AsyncSchemasClient:
         self, id: str, schema_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> BulkSchemaEnvelope:
         """
+        Returns the configuration of a single schema on a bulk sync.
+
+        Returns the sync mode, field selections, and any other configuration applied to
+        this schema on the bulk sync.
+
+        To modify the configuration, use
+        [`PATCH /api/bulk/syncs/{id}/schemas`](../../../../../../api-reference/bulk-sync/schemas/patch)
+        for a partial update across multiple schemas, or
+        [`PUT /api/bulk/syncs/{id}/schemas/{schema_id}`](../../../../../../api-reference/bulk-sync/schemas/update)
+        to fully replace this schema's configuration.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the bulk sync.
 
         schema_id : str
+            Source-side schema identifier.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -821,25 +947,50 @@ class AsyncSchemasClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BulkSchemaEnvelope:
         """
+        Replaces the configuration of a single schema on a bulk sync.
+
+        This is a full replacement: every field in the request body is written to the
+        schema, and any field you omit is cleared or reset to its default. Fetch the
+        current configuration with
+        [`GET /api/bulk/syncs/{id}/schemas/{schema_id}`](../../../../../../api-reference/bulk-sync/schemas/get)
+        first if you want to preserve existing settings while changing only a subset.
+
+        Omitting `fields` enables all available fields on the schema. To control which
+        fields are enabled, include the `fields` array with explicit `enabled` values.
+
+        > 📘 To update multiple schemas in a single request without affecting others,
+        > use the partial-update endpoint
+        > [`PATCH /api/bulk/syncs/{id}/schemas`](../../../../../../api-reference/bulk-sync/schemas/patch)
+        > instead.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the bulk sync.
 
         schema_id : str
+            Source-side schema identifier.
 
         data_cutoff_timestamp : typing.Optional[dt.datetime]
+            Per-schema cutoff. Records older than this timestamp are excluded from sync runs.
 
         disable_data_cutoff : typing.Optional[bool]
+            When true, the sync ignores any configured data_cutoff_timestamp for this schema.
 
         enabled : typing.Optional[bool]
+            Whether this schema is included in sync runs.
 
         fields : typing.Optional[typing.Sequence[UpdateBulkField]]
+            Field-level configuration. Supplying an empty list enables every field discovered on the source.
 
         filters : typing.Optional[typing.Sequence[BulkFilter]]
+            Row-level filters applied when reading from the source.
 
         partition_key : typing.Optional[str]
+            Source field used to partition rows when writing to the destination.
 
         tracking_field : typing.Optional[str]
+            Source field used to detect changes between incremental sync runs.
 
         user_output_name : typing.Optional[str]
 
@@ -953,6 +1104,15 @@ class AsyncSchemasClient:
         self, id: str, schema_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> CancelBulkSyncResponseEnvelope:
         """
+        Requests cancellation of any running executions for a specific schema on a bulk sync.
+
+        Cancellation is asynchronous. A successful response means the cancellation
+        signal for this schema has been queued; the schema's in-flight work continues
+        until the signal is processed. Poll
+        `GET /api/bulk/syncs/{id}/schemas/{schema_id}` and the parent execution via
+        `GET /api/bulk/syncs/{id}/status` to confirm the schema has reached a terminal
+        state.
+
         Parameters
         ----------
         id : str

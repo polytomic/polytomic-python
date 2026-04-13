@@ -2,16 +2,35 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
+from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
 class User(UniversalBaseModel):
-    email: typing.Optional[str] = None
-    id: typing.Optional[str] = None
-    organization_id: typing.Optional[str] = None
-    role: typing.Optional[str] = None
-    role_ids: typing.Optional[typing.List[str]] = None
+    email: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Email address used to sign in and receive notifications.
+    """
+
+    id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Unique identifier of the user.
+    """
+
+    organization_id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Unique identifier of the organization the user belongs to.
+    """
+
+    role: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Deprecated legacy role name. Use role_ids instead.
+    """
+
+    role_ids: typing.Optional[typing.List[str]] = pydantic.Field(default=None)
+    """
+    Identifiers of the permissions roles assigned to the user.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

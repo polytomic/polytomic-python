@@ -2,17 +2,28 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
+import pydantic
 from .work_task_status import WorkTaskStatus
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
-import pydantic
 
 
 class JobResponse(UniversalBaseModel):
-    error: typing.Optional[str] = None
-    job_id: typing.Optional[str] = None
+    error: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Error message if the job failed.
+    """
+
+    job_id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Identifier of the job.
+    """
+
     result: typing.Optional[typing.Optional[typing.Any]] = None
     status: typing.Optional[WorkTaskStatus] = None
-    type: typing.Optional[str] = None
+    type: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Job type. Matches the type used to fetch the job.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

@@ -5,7 +5,7 @@ from ..core.pydantic_utilities import UniversalBaseModel
 import typing_extensions
 import typing
 from ..core.serialization import FieldMetadata
-from .v2ordered_map_string_github_com_invopop_jsonschema_schema import (
+from .v_2_ordered_map_string_github_com_invopop_jsonschema_schema import (
     V2OrderedMapStringGithubComInvopopJsonschemaSchema,
 )
 from ..core.pydantic_utilities import IS_PYDANTIC_V2

@@ -2,16 +2,15 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
+from .v_4_export_sync_logs_response import V4ExportSyncLogsResponse
+from .job_response import JobResponse
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class V4UserFieldRequest(UniversalBaseModel):
-    example: typing.Optional[typing.Optional[typing.Any]] = None
-    field_id: str
-    label: str
-    path: typing.Optional[str] = None
-    type: str
+class V4ExportSyncLogsEnvelope(UniversalBaseModel):
+    data: typing.Optional[V4ExportSyncLogsResponse] = None
+    job: typing.Optional[JobResponse] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

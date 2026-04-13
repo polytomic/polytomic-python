@@ -16,8 +16,8 @@ from ...errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError as core_api_error_ApiError
 from ...types.target_response_envelope import TargetResponseEnvelope
-from ...types.v4target_objects_response_envelope import V4TargetObjectsResponseEnvelope
-from ...types.v4target_property_values_envelope import V4TargetPropertyValuesEnvelope
+from ...types.v_4_target_objects_response_envelope import V4TargetObjectsResponseEnvelope
+from ...types.v_4_target_property_values_envelope import V4TargetPropertyValuesEnvelope
 from ...core.client_wrapper import AsyncClientWrapper
 
 
@@ -34,13 +34,22 @@ class TargetsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetConnectionMetaEnvelope:
         """
+        Returns target metadata for a connection.
+
+        > 🚧 Deprecated
+        >
+        > Use `GET /api/connections/{id}/modelsync/targetobjects` instead.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the connection.
 
         type : typing.Optional[str]
+            Target object type to query (e.g. schema name). When supplied, the response is narrowed to objects matching this type.
 
         search : typing.Optional[str]
+            Substring filter applied to target object names. Combine with type to browse large schemas.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -60,8 +69,6 @@ class TargetsClient:
         )
         client.model_sync.targets.get_target(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            type="type",
-            search="search",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -146,13 +153,30 @@ class TargetsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> TargetResponseEnvelope:
         """
+        Returns the fields of a specific target object on a connection.
+
+        Pass the target object identifier to retrieve the fields available for
+        mapping on that object. These are the destination fields you can reference
+        when configuring field mappings in a model sync.
+
+        > 📘 To list available target objects and their identifiers, use
+        > [`GET /api/connections/{id}/modelsync/targetobjects`](../../../../../../api-reference/model-sync/targets/list).
+
+        Fields returned here reflect the connection's current cached state. If the
+        upstream object schema has changed, trigger a schema refresh with
+        [`POST /api/connections/{id}/schemas/refresh`](../../../../../../api-reference/schemas/refresh)
+        before calling this endpoint.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the connection.
 
         target : str
+            Identifier of the target object (e.g. schema.table for a database destination, object name for a SaaS destination).
 
         refresh : typing.Optional[bool]
+            When true, force a cache refresh of the target's schema before returning its fields.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -243,7 +267,7 @@ class TargetsClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> V4TargetObjectsResponseEnvelope:
         """
-        Returns available model sync destinations for a connection.
+        Lists the target objects available on a connection for use as a model sync destination.
 
         If the connection supports creating new destinations, the `target_creation`
         object will contain information on what properties are required to create the
@@ -252,7 +276,7 @@ class TargetsClient:
         Target creation properties are all string values; the `enum` flag indicates if
         the property has a fixed set of valid values. When `enum` is `true`, the [Target
         Creation Property
-        Values](https://apidocs.polytomic.com/2024-02-08/api-reference/model-sync/targets/get-create-property)
+        Values](../../../../../api-reference/model-sync/targets/get-create-property)
         endpoint can be used to retrieve the valid values.
 
         ## Sync modes
@@ -358,6 +382,8 @@ class TargetsClient:
         self, id: str, property: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> V4TargetPropertyValuesEnvelope:
         """
+        Returns the valid values for a target-creation property on a connection that supports creating new target objects.
+
         Connections which support creating new sync target objects (destinations) will
         return `target_creation` with their [target object list](./list). This endpoint
         will return possible values for properties where `enum` is `true`.
@@ -387,7 +413,7 @@ class TargetsClient:
         ```
 
         The `value` for the selected option should be passed when [creating a
-        sync](https://apidocs.polytomic.com/2024-02-08/api-reference/model-sync/create).
+        sync](../../../../../../../api-reference/model-sync/create).
 
         Parameters
         ----------
@@ -499,13 +525,22 @@ class AsyncTargetsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetConnectionMetaEnvelope:
         """
+        Returns target metadata for a connection.
+
+        > 🚧 Deprecated
+        >
+        > Use `GET /api/connections/{id}/modelsync/targetobjects` instead.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the connection.
 
         type : typing.Optional[str]
+            Target object type to query (e.g. schema name). When supplied, the response is narrowed to objects matching this type.
 
         search : typing.Optional[str]
+            Substring filter applied to target object names. Combine with type to browse large schemas.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -530,8 +565,6 @@ class AsyncTargetsClient:
         async def main() -> None:
             await client.model_sync.targets.get_target(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                type="type",
-                search="search",
             )
 
 
@@ -619,13 +652,30 @@ class AsyncTargetsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> TargetResponseEnvelope:
         """
+        Returns the fields of a specific target object on a connection.
+
+        Pass the target object identifier to retrieve the fields available for
+        mapping on that object. These are the destination fields you can reference
+        when configuring field mappings in a model sync.
+
+        > 📘 To list available target objects and their identifiers, use
+        > [`GET /api/connections/{id}/modelsync/targetobjects`](../../../../../../api-reference/model-sync/targets/list).
+
+        Fields returned here reflect the connection's current cached state. If the
+        upstream object schema has changed, trigger a schema refresh with
+        [`POST /api/connections/{id}/schemas/refresh`](../../../../../../api-reference/schemas/refresh)
+        before calling this endpoint.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the connection.
 
         target : str
+            Identifier of the target object (e.g. schema.table for a database destination, object name for a SaaS destination).
 
         refresh : typing.Optional[bool]
+            When true, force a cache refresh of the target's schema before returning its fields.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -724,7 +774,7 @@ class AsyncTargetsClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> V4TargetObjectsResponseEnvelope:
         """
-        Returns available model sync destinations for a connection.
+        Lists the target objects available on a connection for use as a model sync destination.
 
         If the connection supports creating new destinations, the `target_creation`
         object will contain information on what properties are required to create the
@@ -733,7 +783,7 @@ class AsyncTargetsClient:
         Target creation properties are all string values; the `enum` flag indicates if
         the property has a fixed set of valid values. When `enum` is `true`, the [Target
         Creation Property
-        Values](https://apidocs.polytomic.com/2024-02-08/api-reference/model-sync/targets/get-create-property)
+        Values](../../../../../api-reference/model-sync/targets/get-create-property)
         endpoint can be used to retrieve the valid values.
 
         ## Sync modes
@@ -847,6 +897,8 @@ class AsyncTargetsClient:
         self, id: str, property: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> V4TargetPropertyValuesEnvelope:
         """
+        Returns the valid values for a target-creation property on a connection that supports creating new target objects.
+
         Connections which support creating new sync target objects (destinations) will
         return `target_creation` with their [target object list](./list). This endpoint
         will return possible values for properties where `enum` is `true`.
@@ -876,7 +928,7 @@ class AsyncTargetsClient:
         ```
 
         The `value` for the selected option should be passed when [creating a
-        sync](https://apidocs.polytomic.com/2024-02-08/api-reference/model-sync/create).
+        sync](../../../../../../../api-reference/model-sync/create).
 
         Parameters
         ----------

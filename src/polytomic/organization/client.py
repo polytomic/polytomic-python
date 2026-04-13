@@ -29,9 +29,19 @@ class OrganizationClient:
 
     def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> OrganizationsEnvelope:
         """
+        Lists organizations accessible to the caller.
+
         > 🚧 Requires partner key
         >
-        > Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+        > This endpoint is only accessible using [partner keys](../../guides/obtaining-api-keys#partner-keys).
+
+        The result depends on the caller type:
+
+        - User-scoped callers receive their current organization.
+        - Partner callers receive the organizations available within their partner
+          scope.
+        - Deployment-level callers may receive a broader organization list, depending
+          on deployment configuration.
 
         Parameters
         ----------
@@ -104,23 +114,31 @@ class OrganizationClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OrganizationEnvelope:
         """
+        Creates a new organization under the calling partner account, optionally configuring SSO or OIDC at creation time.
+
         > 🚧 Requires partner key
         >
-        > Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+        > This endpoint is only accessible using [partner keys](../../guides/obtaining-api-keys#partner-keys).
 
         Parameters
         ----------
         name : str
+            Human-readable name of the organization. Must be unique across the partner account.
 
         client_id : typing.Optional[str]
+            OIDC client ID issued by the identity provider.
 
         client_secret : typing.Optional[str]
+            OIDC client secret issued by the identity provider. Write-only; never returned in responses.
 
         issuer : typing.Optional[str]
+            OIDC issuer URL for organizations using OpenID Connect single sign-on.
 
         sso_domain : typing.Optional[str]
+            Email domain used to match users to this organization during SSO sign-in.
 
         sso_org_id : typing.Optional[str]
+            WorkOS organization identifier linking this organization to its SAML/SSO configuration.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -215,13 +233,16 @@ class OrganizationClient:
 
     def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> OrganizationEnvelope:
         """
+        Returns a single organization by ID.
+
         > 🚧 Requires partner key
         >
-        > Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+        > This endpoint is only accessible using [partner keys](../../../guides/obtaining-api-keys#partner-keys).
 
         Parameters
         ----------
         id : str
+            Unique identifier of the organization.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -305,25 +326,34 @@ class OrganizationClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OrganizationEnvelope:
         """
+        Updates an organization's configuration.
+
         > 🚧 Requires partner key
         >
-        > Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+        > This endpoint is only accessible using [partner keys](../../../guides/obtaining-api-keys#partner-keys).
 
         Parameters
         ----------
         id : str
+            Unique identifier of the organization to update.
 
         name : str
+            Human-readable name of the organization. Must be unique across the partner account.
 
         client_id : typing.Optional[str]
+            OIDC client ID issued by the identity provider.
 
         client_secret : typing.Optional[str]
+            OIDC client secret issued by the identity provider. Write-only; never returned in responses.
 
         issuer : typing.Optional[str]
+            OIDC issuer URL for organizations using OpenID Connect single sign-on.
 
         sso_domain : typing.Optional[str]
+            Email domain used to match users to this organization during SSO sign-in.
 
         sso_org_id : typing.Optional[str]
+            WorkOS organization identifier linking this organization to its SAML/SSO configuration.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -429,13 +459,18 @@ class OrganizationClient:
 
     def remove(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
+        Deletes an organization.
+
         > 🚧 Requires partner key
         >
-        > Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+        > This endpoint is only accessible using [partner keys](../../../guides/obtaining-api-keys#partner-keys).
+
+        Partner callers cannot delete their own owner organization.
 
         Parameters
         ----------
         id : str
+            Unique identifier of the organization.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -516,9 +551,19 @@ class AsyncOrganizationClient:
 
     async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> OrganizationsEnvelope:
         """
+        Lists organizations accessible to the caller.
+
         > 🚧 Requires partner key
         >
-        > Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+        > This endpoint is only accessible using [partner keys](../../guides/obtaining-api-keys#partner-keys).
+
+        The result depends on the caller type:
+
+        - User-scoped callers receive their current organization.
+        - Partner callers receive the organizations available within their partner
+          scope.
+        - Deployment-level callers may receive a broader organization list, depending
+          on deployment configuration.
 
         Parameters
         ----------
@@ -599,23 +644,31 @@ class AsyncOrganizationClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OrganizationEnvelope:
         """
+        Creates a new organization under the calling partner account, optionally configuring SSO or OIDC at creation time.
+
         > 🚧 Requires partner key
         >
-        > Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+        > This endpoint is only accessible using [partner keys](../../guides/obtaining-api-keys#partner-keys).
 
         Parameters
         ----------
         name : str
+            Human-readable name of the organization. Must be unique across the partner account.
 
         client_id : typing.Optional[str]
+            OIDC client ID issued by the identity provider.
 
         client_secret : typing.Optional[str]
+            OIDC client secret issued by the identity provider. Write-only; never returned in responses.
 
         issuer : typing.Optional[str]
+            OIDC issuer URL for organizations using OpenID Connect single sign-on.
 
         sso_domain : typing.Optional[str]
+            Email domain used to match users to this organization during SSO sign-in.
 
         sso_org_id : typing.Optional[str]
+            WorkOS organization identifier linking this organization to its SAML/SSO configuration.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -718,13 +771,16 @@ class AsyncOrganizationClient:
 
     async def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> OrganizationEnvelope:
         """
+        Returns a single organization by ID.
+
         > 🚧 Requires partner key
         >
-        > Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+        > This endpoint is only accessible using [partner keys](../../../guides/obtaining-api-keys#partner-keys).
 
         Parameters
         ----------
         id : str
+            Unique identifier of the organization.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -816,25 +872,34 @@ class AsyncOrganizationClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> OrganizationEnvelope:
         """
+        Updates an organization's configuration.
+
         > 🚧 Requires partner key
         >
-        > Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+        > This endpoint is only accessible using [partner keys](../../../guides/obtaining-api-keys#partner-keys).
 
         Parameters
         ----------
         id : str
+            Unique identifier of the organization to update.
 
         name : str
+            Human-readable name of the organization. Must be unique across the partner account.
 
         client_id : typing.Optional[str]
+            OIDC client ID issued by the identity provider.
 
         client_secret : typing.Optional[str]
+            OIDC client secret issued by the identity provider. Write-only; never returned in responses.
 
         issuer : typing.Optional[str]
+            OIDC issuer URL for organizations using OpenID Connect single sign-on.
 
         sso_domain : typing.Optional[str]
+            Email domain used to match users to this organization during SSO sign-in.
 
         sso_org_id : typing.Optional[str]
+            WorkOS organization identifier linking this organization to its SAML/SSO configuration.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -948,13 +1013,18 @@ class AsyncOrganizationClient:
 
     async def remove(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
+        Deletes an organization.
+
         > 🚧 Requires partner key
         >
-        > Organization endpoints are only accessible using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+        > This endpoint is only accessible using [partner keys](../../../guides/obtaining-api-keys#partner-keys).
+
+        Partner callers cannot delete their own owner organization.
 
         Parameters
         ----------
         id : str
+            Unique identifier of the organization.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.

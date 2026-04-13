@@ -19,7 +19,7 @@ from ..types.bulk_discover import BulkDiscover
 import datetime as dt
 from ..types.bulk_sync_mode import BulkSyncMode
 from ..types.bulk_normalize_names import BulkNormalizeNames
-from .types.v2create_bulk_sync_request_schemas_item import V2CreateBulkSyncRequestSchemasItem
+from .types.v_2_create_bulk_sync_request_schemas_item import V2CreateBulkSyncRequestSchemasItem
 from ..types.bulk_sync_response_envelope import BulkSyncResponseEnvelope
 from ..core.serialization import convert_and_respect_annotation_metadata
 from ..errors.bad_request_error import BadRequestError
@@ -27,7 +27,7 @@ from ..errors.forbidden_error import ForbiddenError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..core.jsonable_encoder import jsonable_encoder
 from ..errors.not_found_error import NotFoundError
-from .types.v2update_bulk_sync_request_schemas_item import V2UpdateBulkSyncRequestSchemasItem
+from .types.v_2_update_bulk_sync_request_schemas_item import V2UpdateBulkSyncRequestSchemasItem
 from ..types.activate_sync_envelope import ActivateSyncEnvelope
 from ..types.cancel_bulk_sync_response_envelope import CancelBulkSyncResponseEnvelope
 from ..types.bulk_fetch_mode import BulkFetchMode
@@ -57,9 +57,23 @@ class BulkSyncClient:
         self, *, active: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> BulkSyncListEnvelope:
         """
+        Lists bulk syncs in the caller's organization.
+
+        Results are returned as a single `data` array. This version of the endpoint
+        supports the `active` filter but does not support cursor pagination, `limit`,
+        or `page_token` query parameters.
+
+        If you need a cursor-paginated bulk sync list, use API version `2025-09-18` or
+        later.
+
+        > 📘 To retrieve a specific sync, use
+        > [`GET /api/bulk/syncs/{id}`](../../../api-reference/bulk-sync/get)
+        > instead of filtering the list client-side.
+
         Parameters
         ----------
         active : typing.Optional[bool]
+            Filter to only active (true) or only paused (false) syncs. Omit to return both.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -148,9 +162,9 @@ class BulkSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BulkSyncResponseEnvelope:
         """
-        Create a new Bulk Sync from a source to a destination (data warehouse, database, or cloud storage bucket like S3).
+        Creates a new bulk sync from a source connection to a destination connection.
 
-        Bulk Syncs are used for the ELT pattern (Extract, Load, and Transform), where you want to sync un-transformed data to your data warehouses, databases, or cloud storage buckets like S3.
+        Bulk syncs are used for the ELT pattern (Extract, Load, and Transform), where you want to sync un-transformed data to your data warehouses, databases, or cloud storage buckets like S3.
 
         All of the functionality described in [the product
         documentation](https://docs.polytomic.com/docs/bulk-syncs) is configurable via
@@ -158,9 +172,9 @@ class BulkSyncClient:
 
         Sample code examples:
 
-        - [Bulk sync (ELT) from Salesforce to S3](https://apidocs.polytomic.com/guides/code-examples/bulk-sync-elt-from-salesforce-to-s-3)
-        - [Bulk sync (ELT) from Salesforce to Snowflake](https://apidocs.polytomic.com/guides/code-examples/bulk-sync-elt-from-salesforce-to-snowflake)
-        - [Bulk sync (ELT) from HubSpot to PostgreSQL](https://apidocs.polytomic.com/guides/code-examples/bulk-sync-elt-from-hub-spot-to-postgre-sql)
+        - [Bulk sync (ELT) from Salesforce to S3](../../../guides/code-examples/bulk-sync-elt-from-salesforce-to-s-3)
+        - [Bulk sync (ELT) from Salesforce to Snowflake](../../../guides/code-examples/bulk-sync-elt-from-salesforce-to-snowflake)
+        - [Bulk sync (ELT) from HubSpot to PostgreSQL](../../../guides/code-examples/bulk-sync-elt-from-hub-spot-to-postgre-sql)
 
         ## Connection specific configuration
 
@@ -172,8 +186,24 @@ class BulkSyncClient:
         Polytomic reads data from the source connection. This will not be available for
         integrations that do not support additional configuration.
 
-        Consult the [connection configurations](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/overview)
-        to see configurations for particular integrations (for example, [here](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/connections/postgre-sql#source-1) is the available source configuration for the PostgreSQL bulk sync source).
+        Consult the [connection configurations](../../../guides/configuring-your-connections/overview)
+        to see configurations for particular integrations (for example, [here](../../../guides/configuring-your-connections/connections/postgre-sql#source-1) is the available source configuration for the PostgreSQL bulk sync source).
+
+        ## Defaults and selection behavior
+
+        If `schemas` is omitted, the sync is created with all available source schemas
+        selected. Pass `schemas` explicitly if you want the initial sync to include
+        only a subset of tables or objects.
+
+        Schedule times are interpreted in UTC.
+
+        When omitted, automatic discovery defaults are conservative:
+
+        - `automatically_add_new_objects` defaults to not enabling newly discovered
+          source objects automatically.
+        - `automatically_add_new_fields` defaults to enabling newly discovered fields
+          on already selected objects.
+        - `normalize_names` defaults to enabled.
 
         Parameters
         ----------
@@ -351,6 +381,16 @@ class BulkSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BulkSyncResponseEnvelope:
         """
+        Returns a single bulk sync by ID.
+
+        The response includes the sync's top-level configuration — source, destination,
+        schedules, and discovery settings.
+
+        - To check whether the sync is running and see the most-recent execution result,
+          use [`GET /api/bulk/syncs/{id}/status`](../../../../api-reference/bulk-sync/get-status).
+        - To inspect which schemas are selected and how they are configured, use
+          [`GET /api/bulk/syncs/{id}/schemas`](../../../../api-reference/bulk-sync/schemas/list).
+
         Parameters
         ----------
         id : str
@@ -446,9 +486,41 @@ class BulkSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BulkSyncResponseEnvelope:
         """
+        Updates an existing bulk sync's top-level configuration.
+
+        Updating a bulk sync is a **full replacement** of the sync's top-level
+        configuration. Every field in the request body is written to the sync; any
+        field you omit is cleared or reset to its default value.
+
+        To make a partial change — for example, toggling `active` or swapping a
+        schedule — fetch the current sync with
+        [`GET /api/bulk/syncs/{id}`](./get),
+        modify the fields you want to change, and send the complete object back in
+        the update request.
+
+        Updates to `active`, `schedules`, and `policies` take effect immediately.
+        Changes to source or destination configuration take effect on the sync's
+        next execution.
+
+        Because omitted fields are reset to their defaults, the discovery and
+        naming options behave the same as on create when left out:
+
+        - `automatically_add_new_objects` resets to not enabling newly discovered
+          source objects automatically.
+        - `automatically_add_new_fields` resets to enabling newly discovered
+          fields on already selected objects.
+        - `normalize_names` resets to enabled.
+
+        Send the existing values explicitly if you want to preserve a non-default or
+        non-empty setting, including schema and field selections.
+
         > 📘 Updating schemas
         >
-        > Schema updates can be performed using the [Update Bulk Sync Schemas](https://apidocs.polytomic.com/api-reference/bulk-sync/schemas/patch) endpoint.
+        > Schema updates are not performed through this endpoint. Use the
+        > [Update Bulk Sync Schemas](./schemas/patch)
+        > endpoint to change a subset of schemas, or
+        > [Update Bulk Sync Schema](./schemas/%7Bschema_id%7D/put)
+        > to replace a single schema's configuration.
 
         Parameters
         ----------
@@ -629,6 +701,14 @@ class BulkSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
+        Deletes a bulk sync, cancelling any running executions.
+
+        Any execution that is currently running is cancelled before the sync record is
+        removed.
+
+        > 🚧 All associated schedules, schema configurations, and execution history are
+        > deleted along with the sync.
+
         Parameters
         ----------
         id : str
@@ -715,6 +795,17 @@ class BulkSyncClient:
         self, id: str, *, active: bool, request_options: typing.Optional[RequestOptions] = None
     ) -> ActivateSyncEnvelope:
         """
+        Sets whether a bulk sync is active.
+
+        Only active syncs are eligible to execute on their configured schedule.
+        Deactivating a sync prevents future scheduled runs and requests cancellation of
+        any execution that is currently in progress.
+
+        > 📘 To start or stop a running execution directly, use
+        > [`POST /api/bulk/syncs/{id}/executions`](../../../../../api-reference/bulk-sync/start)
+        > or
+        > [`POST /api/bulk/syncs/{id}/cancel`](../../../../../api-reference/bulk-sync/cancel).
+
         Parameters
         ----------
         id : str
@@ -809,6 +900,14 @@ class BulkSyncClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> CancelBulkSyncResponseEnvelope:
         """
+        Requests cancellation of any running executions on a bulk sync.
+
+        Cancellation is asynchronous. A successful response means the cancellation
+        signal has been queued; the running execution continues until the signal is
+        processed. Poll `GET /api/bulk/syncs/{id}/status` until the current execution
+        reaches a terminal state (`completed`, `canceled`, or `failed`) to confirm
+        cancellation has taken effect.
+
         Parameters
         ----------
         id : str
@@ -905,9 +1004,27 @@ class BulkSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BulkSyncExecutionEnvelope:
         """
+        Starts a new execution of a bulk sync.
+
+        This endpoint returns the execution record immediately after the run is queued
+        or started. Use the execution ID with the bulk-sync execution endpoints if you
+        need to monitor progress in detail.
+
+        ## Execution modes
+
+        - Set `test=true` to validate the sync without writing to the destination.
+        - Use `resync_mode` for destructive or full-refresh style reruns.
+        - `test` and `resync_mode` are mutually exclusive.
+
+        The legacy `resync` boolean is no longer accepted on this v5 endpoint. Send
+        `resync_mode` instead.
+
+        If another execution is already running, the endpoint returns `409 Conflict`.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the bulk sync.
 
         fetch_mode : typing.Optional[BulkFetchMode]
 
@@ -917,8 +1034,10 @@ class BulkSyncClient:
         resync_mode : typing.Optional[BulkResyncMode]
 
         schemas : typing.Optional[typing.Sequence[str]]
+            Optional list of schema IDs to include in this execution. If empty, all enabled schemas are included.
 
         test : typing.Optional[bool]
+            When true, runs a test execution that validates the configuration without writing to the destination. Mutually exclusive with resync and resync_mode.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1002,9 +1121,22 @@ class BulkSyncClient:
 
     def get_status(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> BulkSyncStatusEnvelope:
         """
+        Returns the current status of a bulk sync.
+
+        The response includes the sync's current active/inactive state together with
+        information about the most recent execution — its status, start time, and any
+        errors — making this endpoint well-suited for health checks and monitoring
+        dashboards.
+
+        For the complete execution history, use
+        [`GET /api/bulk/syncs/{id}/executions`](../../../../../api-reference/bulk-sync/executions/list).
+        For the full details of a specific run, including per-schema breakdowns, use
+        [`GET /api/bulk/syncs/{id}/executions/{exec_id}`](../../../../../api-reference/bulk-sync/executions/get).
+
         Parameters
         ----------
         id : str
+            Unique identifier of the bulk sync.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1083,11 +1215,28 @@ class BulkSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BulkSyncSourceEnvelope:
         """
+        Lists the schemas (tables or objects) available on a connection for use as a bulk sync source, optionally including per-schema field details.
+
+        The response reflects what the
+        connection currently has cached; if the upstream source has changed, trigger
+        a refresh first with
+        [`POST /api/connections/{id}/schemas/refresh`](../../../../../api-reference/schemas/refresh).
+
+        These are the schemas available for selection, not the schemas already
+        configured on any particular sync. To inspect schemas on a running sync, use
+        [`GET /api/bulk/syncs/{id}/schemas`](../../../../../api-reference/bulk-sync/schemas/list).
+
+        Pass `include_fields=true` to receive per-schema field details in a single call.
+        Omit it when you only need the schema list, as field enumeration can be slow for
+        large sources.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the connection.
 
         include_fields : typing.Optional[bool]
+            When true, include per-schema field lists in the response. Set to false for a smaller payload when field details are not needed.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1176,6 +1325,18 @@ class BulkSyncClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> BulkSyncDestEnvelope:
         """
+        Describes the destination configuration schema a connection accepts when used as a bulk sync destination.
+
+        The response is a JSON Schema object describing the shape of the
+        `destination_configuration` field you must supply when
+        [creating](../../../../../api-reference/bulk-sync/create) or
+        [updating](../../../../../api-reference/bulk-sync/update) a bulk sync that uses this
+        connection as its destination. Required fields vary by connection type.
+
+        > 📘 Fetch this endpoint once per connection type rather than once per sync.
+        > The configuration schema is the same for all syncs sharing the same
+        > destination connection.
+
         Parameters
         ----------
         id : str
@@ -1271,9 +1432,23 @@ class AsyncBulkSyncClient:
         self, *, active: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> BulkSyncListEnvelope:
         """
+        Lists bulk syncs in the caller's organization.
+
+        Results are returned as a single `data` array. This version of the endpoint
+        supports the `active` filter but does not support cursor pagination, `limit`,
+        or `page_token` query parameters.
+
+        If you need a cursor-paginated bulk sync list, use API version `2025-09-18` or
+        later.
+
+        > 📘 To retrieve a specific sync, use
+        > [`GET /api/bulk/syncs/{id}`](../../../api-reference/bulk-sync/get)
+        > instead of filtering the list client-side.
+
         Parameters
         ----------
         active : typing.Optional[bool]
+            Filter to only active (true) or only paused (false) syncs. Omit to return both.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1370,9 +1545,9 @@ class AsyncBulkSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BulkSyncResponseEnvelope:
         """
-        Create a new Bulk Sync from a source to a destination (data warehouse, database, or cloud storage bucket like S3).
+        Creates a new bulk sync from a source connection to a destination connection.
 
-        Bulk Syncs are used for the ELT pattern (Extract, Load, and Transform), where you want to sync un-transformed data to your data warehouses, databases, or cloud storage buckets like S3.
+        Bulk syncs are used for the ELT pattern (Extract, Load, and Transform), where you want to sync un-transformed data to your data warehouses, databases, or cloud storage buckets like S3.
 
         All of the functionality described in [the product
         documentation](https://docs.polytomic.com/docs/bulk-syncs) is configurable via
@@ -1380,9 +1555,9 @@ class AsyncBulkSyncClient:
 
         Sample code examples:
 
-        - [Bulk sync (ELT) from Salesforce to S3](https://apidocs.polytomic.com/guides/code-examples/bulk-sync-elt-from-salesforce-to-s-3)
-        - [Bulk sync (ELT) from Salesforce to Snowflake](https://apidocs.polytomic.com/guides/code-examples/bulk-sync-elt-from-salesforce-to-snowflake)
-        - [Bulk sync (ELT) from HubSpot to PostgreSQL](https://apidocs.polytomic.com/guides/code-examples/bulk-sync-elt-from-hub-spot-to-postgre-sql)
+        - [Bulk sync (ELT) from Salesforce to S3](../../../guides/code-examples/bulk-sync-elt-from-salesforce-to-s-3)
+        - [Bulk sync (ELT) from Salesforce to Snowflake](../../../guides/code-examples/bulk-sync-elt-from-salesforce-to-snowflake)
+        - [Bulk sync (ELT) from HubSpot to PostgreSQL](../../../guides/code-examples/bulk-sync-elt-from-hub-spot-to-postgre-sql)
 
         ## Connection specific configuration
 
@@ -1394,8 +1569,24 @@ class AsyncBulkSyncClient:
         Polytomic reads data from the source connection. This will not be available for
         integrations that do not support additional configuration.
 
-        Consult the [connection configurations](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/overview)
-        to see configurations for particular integrations (for example, [here](https://apidocs.polytomic.com/2024-02-08/guides/configuring-your-connections/connections/postgre-sql#source-1) is the available source configuration for the PostgreSQL bulk sync source).
+        Consult the [connection configurations](../../../guides/configuring-your-connections/overview)
+        to see configurations for particular integrations (for example, [here](../../../guides/configuring-your-connections/connections/postgre-sql#source-1) is the available source configuration for the PostgreSQL bulk sync source).
+
+        ## Defaults and selection behavior
+
+        If `schemas` is omitted, the sync is created with all available source schemas
+        selected. Pass `schemas` explicitly if you want the initial sync to include
+        only a subset of tables or objects.
+
+        Schedule times are interpreted in UTC.
+
+        When omitted, automatic discovery defaults are conservative:
+
+        - `automatically_add_new_objects` defaults to not enabling newly discovered
+          source objects automatically.
+        - `automatically_add_new_fields` defaults to enabling newly discovered fields
+          on already selected objects.
+        - `normalize_names` defaults to enabled.
 
         Parameters
         ----------
@@ -1581,6 +1772,16 @@ class AsyncBulkSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BulkSyncResponseEnvelope:
         """
+        Returns a single bulk sync by ID.
+
+        The response includes the sync's top-level configuration — source, destination,
+        schedules, and discovery settings.
+
+        - To check whether the sync is running and see the most-recent execution result,
+          use [`GET /api/bulk/syncs/{id}/status`](../../../../api-reference/bulk-sync/get-status).
+        - To inspect which schemas are selected and how they are configured, use
+          [`GET /api/bulk/syncs/{id}/schemas`](../../../../api-reference/bulk-sync/schemas/list).
+
         Parameters
         ----------
         id : str
@@ -1684,9 +1885,41 @@ class AsyncBulkSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BulkSyncResponseEnvelope:
         """
+        Updates an existing bulk sync's top-level configuration.
+
+        Updating a bulk sync is a **full replacement** of the sync's top-level
+        configuration. Every field in the request body is written to the sync; any
+        field you omit is cleared or reset to its default value.
+
+        To make a partial change — for example, toggling `active` or swapping a
+        schedule — fetch the current sync with
+        [`GET /api/bulk/syncs/{id}`](./get),
+        modify the fields you want to change, and send the complete object back in
+        the update request.
+
+        Updates to `active`, `schedules`, and `policies` take effect immediately.
+        Changes to source or destination configuration take effect on the sync's
+        next execution.
+
+        Because omitted fields are reset to their defaults, the discovery and
+        naming options behave the same as on create when left out:
+
+        - `automatically_add_new_objects` resets to not enabling newly discovered
+          source objects automatically.
+        - `automatically_add_new_fields` resets to enabling newly discovered
+          fields on already selected objects.
+        - `normalize_names` resets to enabled.
+
+        Send the existing values explicitly if you want to preserve a non-default or
+        non-empty setting, including schema and field selections.
+
         > 📘 Updating schemas
         >
-        > Schema updates can be performed using the [Update Bulk Sync Schemas](https://apidocs.polytomic.com/api-reference/bulk-sync/schemas/patch) endpoint.
+        > Schema updates are not performed through this endpoint. Use the
+        > [Update Bulk Sync Schemas](./schemas/patch)
+        > endpoint to change a subset of schemas, or
+        > [Update Bulk Sync Schema](./schemas/%7Bschema_id%7D/put)
+        > to replace a single schema's configuration.
 
         Parameters
         ----------
@@ -1875,6 +2108,14 @@ class AsyncBulkSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
+        Deletes a bulk sync, cancelling any running executions.
+
+        Any execution that is currently running is cancelled before the sync record is
+        removed.
+
+        > 🚧 All associated schedules, schema configurations, and execution history are
+        > deleted along with the sync.
+
         Parameters
         ----------
         id : str
@@ -1969,6 +2210,17 @@ class AsyncBulkSyncClient:
         self, id: str, *, active: bool, request_options: typing.Optional[RequestOptions] = None
     ) -> ActivateSyncEnvelope:
         """
+        Sets whether a bulk sync is active.
+
+        Only active syncs are eligible to execute on their configured schedule.
+        Deactivating a sync prevents future scheduled runs and requests cancellation of
+        any execution that is currently in progress.
+
+        > 📘 To start or stop a running execution directly, use
+        > [`POST /api/bulk/syncs/{id}/executions`](../../../../../api-reference/bulk-sync/start)
+        > or
+        > [`POST /api/bulk/syncs/{id}/cancel`](../../../../../api-reference/bulk-sync/cancel).
+
         Parameters
         ----------
         id : str
@@ -2071,6 +2323,14 @@ class AsyncBulkSyncClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> CancelBulkSyncResponseEnvelope:
         """
+        Requests cancellation of any running executions on a bulk sync.
+
+        Cancellation is asynchronous. A successful response means the cancellation
+        signal has been queued; the running execution continues until the signal is
+        processed. Poll `GET /api/bulk/syncs/{id}/status` until the current execution
+        reaches a terminal state (`completed`, `canceled`, or `failed`) to confirm
+        cancellation has taken effect.
+
         Parameters
         ----------
         id : str
@@ -2175,9 +2435,27 @@ class AsyncBulkSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BulkSyncExecutionEnvelope:
         """
+        Starts a new execution of a bulk sync.
+
+        This endpoint returns the execution record immediately after the run is queued
+        or started. Use the execution ID with the bulk-sync execution endpoints if you
+        need to monitor progress in detail.
+
+        ## Execution modes
+
+        - Set `test=true` to validate the sync without writing to the destination.
+        - Use `resync_mode` for destructive or full-refresh style reruns.
+        - `test` and `resync_mode` are mutually exclusive.
+
+        The legacy `resync` boolean is no longer accepted on this v5 endpoint. Send
+        `resync_mode` instead.
+
+        If another execution is already running, the endpoint returns `409 Conflict`.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the bulk sync.
 
         fetch_mode : typing.Optional[BulkFetchMode]
 
@@ -2187,8 +2465,10 @@ class AsyncBulkSyncClient:
         resync_mode : typing.Optional[BulkResyncMode]
 
         schemas : typing.Optional[typing.Sequence[str]]
+            Optional list of schema IDs to include in this execution. If empty, all enabled schemas are included.
 
         test : typing.Optional[bool]
+            When true, runs a test execution that validates the configuration without writing to the destination. Mutually exclusive with resync and resync_mode.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -2282,9 +2562,22 @@ class AsyncBulkSyncClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> BulkSyncStatusEnvelope:
         """
+        Returns the current status of a bulk sync.
+
+        The response includes the sync's current active/inactive state together with
+        information about the most recent execution — its status, start time, and any
+        errors — making this endpoint well-suited for health checks and monitoring
+        dashboards.
+
+        For the complete execution history, use
+        [`GET /api/bulk/syncs/{id}/executions`](../../../../../api-reference/bulk-sync/executions/list).
+        For the full details of a specific run, including per-schema breakdowns, use
+        [`GET /api/bulk/syncs/{id}/executions/{exec_id}`](../../../../../api-reference/bulk-sync/executions/get).
+
         Parameters
         ----------
         id : str
+            Unique identifier of the bulk sync.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -2371,11 +2664,28 @@ class AsyncBulkSyncClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BulkSyncSourceEnvelope:
         """
+        Lists the schemas (tables or objects) available on a connection for use as a bulk sync source, optionally including per-schema field details.
+
+        The response reflects what the
+        connection currently has cached; if the upstream source has changed, trigger
+        a refresh first with
+        [`POST /api/connections/{id}/schemas/refresh`](../../../../../api-reference/schemas/refresh).
+
+        These are the schemas available for selection, not the schemas already
+        configured on any particular sync. To inspect schemas on a running sync, use
+        [`GET /api/bulk/syncs/{id}/schemas`](../../../../../api-reference/bulk-sync/schemas/list).
+
+        Pass `include_fields=true` to receive per-schema field details in a single call.
+        Omit it when you only need the schema list, as field enumeration can be slow for
+        large sources.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the connection.
 
         include_fields : typing.Optional[bool]
+            When true, include per-schema field lists in the response. Set to false for a smaller payload when field details are not needed.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -2472,6 +2782,18 @@ class AsyncBulkSyncClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> BulkSyncDestEnvelope:
         """
+        Describes the destination configuration schema a connection accepts when used as a bulk sync destination.
+
+        The response is a JSON Schema object describing the shape of the
+        `destination_configuration` field you must supply when
+        [creating](../../../../../api-reference/bulk-sync/create) or
+        [updating](../../../../../api-reference/bulk-sync/update) a bulk sync that uses this
+        connection as its destination. Required fields vary by connection type.
+
+        > 📘 Fetch this endpoint once per connection type rather than once per sync.
+        > The configuration schema is the same for all syncs sharing the same
+        > destination connection.
+
         Parameters
         ----------
         id : str

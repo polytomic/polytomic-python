@@ -3,7 +3,7 @@
 import typing
 from ..core.client_wrapper import SyncClientWrapper
 from ..core.request_options import RequestOptions
-from ..types.v4global_error_subscribers_response import V4GlobalErrorSubscribersResponse
+from ..types.v_4_global_error_subscribers_response import V4GlobalErrorSubscribersResponse
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.unauthorized_error import UnauthorizedError
 from ..types.rest_err_response import RestErrResponse
@@ -26,6 +26,11 @@ class NotificationsClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> V4GlobalErrorSubscribersResponse:
         """
+        Returns the list of email addresses subscribed to global sync error notifications for the caller's organization.
+
+        To update the subscriber list, use
+        [`PUT /api/notifications/global-error-subscribers`](./put).
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
@@ -92,9 +97,18 @@ class NotificationsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> V4GlobalErrorSubscribersResponse:
         """
+        Replaces the list of email addresses subscribed to global sync error notifications for the caller's organization.
+
+        This is a **full replacement** — the request body becomes the complete
+        subscriber list. To add or remove a single address without affecting others,
+        fetch the current list with
+        [`GET /api/notifications/global-error-subscribers`](./get), apply your change,
+        and send the modified list back.
+
         Parameters
         ----------
         emails : typing.Optional[typing.Sequence[str]]
+            Email addresses to subscribe to global sync error notifications. Replaces the current subscriber list; pass an empty list to unsubscribe everyone.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -179,6 +193,11 @@ class AsyncNotificationsClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> V4GlobalErrorSubscribersResponse:
         """
+        Returns the list of email addresses subscribed to global sync error notifications for the caller's organization.
+
+        To update the subscriber list, use
+        [`PUT /api/notifications/global-error-subscribers`](./put).
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
@@ -253,9 +272,18 @@ class AsyncNotificationsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> V4GlobalErrorSubscribersResponse:
         """
+        Replaces the list of email addresses subscribed to global sync error notifications for the caller's organization.
+
+        This is a **full replacement** — the request body becomes the complete
+        subscriber list. To add or remove a single address without affecting others,
+        fetch the current list with
+        [`GET /api/notifications/global-error-subscribers`](./get), apply your change,
+        and send the modified list back.
+
         Parameters
         ----------
         emails : typing.Optional[typing.Sequence[str]]
+            Email addresses to subscribe to global sync error notifications. Replaces the current subscriber list; pass an empty list to unsubscribe everyone.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.

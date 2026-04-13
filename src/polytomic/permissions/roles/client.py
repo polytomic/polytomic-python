@@ -28,6 +28,15 @@ class RolesClient:
 
     def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> RoleListResponseEnvelope:
         """
+        Lists all permissions roles available in the caller's organization, including built-in system roles.
+
+        System roles such as Admin and Member are always present in every organization
+        and cannot be modified or deleted. Custom roles appear alongside them and can
+        be created, updated, or removed as needed.
+
+        To inspect or modify a specific role, use
+        [`GET /api/permissions/roles/{id}`](./%7Bid%7D/get).
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
@@ -95,6 +104,14 @@ class RolesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> RoleResponseEnvelope:
         """
+        Creates a new permissions role.
+
+        Provide a `name` for the new role. The role is immediately available for use
+        in permission policies.
+
+        To attach the role to resources, create or update a policy using
+        [`POST /api/permissions/policies`](../../../api-reference/permissions/policies/create).
+
         Parameters
         ----------
         name : str
@@ -200,6 +217,10 @@ class RolesClient:
 
     def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> RoleResponseEnvelope:
         """
+        Returns a single permissions role by ID.
+
+        Returns the role's name, action set, and whether it is a built-in system role.
+
         Parameters
         ----------
         id : str
@@ -272,6 +293,13 @@ class RolesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> RoleResponseEnvelope:
         """
+        Updates an existing permissions role's name and action set.
+
+        The update is a **full replacement** of the role definition.
+
+        > 🚧 Built-in system roles (such as Admin and Member) cannot be updated.
+        > Attempting to modify a system role returns an error.
+
         Parameters
         ----------
         id : str
@@ -380,6 +408,16 @@ class RolesClient:
 
     def remove(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
+        Deletes a permissions role.
+
+        > 🚧 Built-in system roles (such as Admin and Member) cannot be deleted.
+        > Attempting to delete a system role returns an error.
+
+        Deleting a role does not automatically remove it from any policies that
+        reference it. Update those policies separately using
+        [`PUT /api/permissions/policies/{id}`](../../../../api-reference/permissions/policies/update) to avoid
+        leaving stale role references.
+
         Parameters
         ----------
         id : str
@@ -463,6 +501,15 @@ class AsyncRolesClient:
 
     async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> RoleListResponseEnvelope:
         """
+        Lists all permissions roles available in the caller's organization, including built-in system roles.
+
+        System roles such as Admin and Member are always present in every organization
+        and cannot be modified or deleted. Custom roles appear alongside them and can
+        be created, updated, or removed as needed.
+
+        To inspect or modify a specific role, use
+        [`GET /api/permissions/roles/{id}`](./%7Bid%7D/get).
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
@@ -538,6 +585,14 @@ class AsyncRolesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> RoleResponseEnvelope:
         """
+        Creates a new permissions role.
+
+        Provide a `name` for the new role. The role is immediately available for use
+        in permission policies.
+
+        To attach the role to resources, create or update a policy using
+        [`POST /api/permissions/policies`](../../../api-reference/permissions/policies/create).
+
         Parameters
         ----------
         name : str
@@ -651,6 +706,10 @@ class AsyncRolesClient:
 
     async def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> RoleResponseEnvelope:
         """
+        Returns a single permissions role by ID.
+
+        Returns the role's name, action set, and whether it is a built-in system role.
+
         Parameters
         ----------
         id : str
@@ -731,6 +790,13 @@ class AsyncRolesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> RoleResponseEnvelope:
         """
+        Updates an existing permissions role's name and action set.
+
+        The update is a **full replacement** of the role definition.
+
+        > 🚧 Built-in system roles (such as Admin and Member) cannot be updated.
+        > Attempting to modify a system role returns an error.
+
         Parameters
         ----------
         id : str
@@ -847,6 +913,16 @@ class AsyncRolesClient:
 
     async def remove(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
+        Deletes a permissions role.
+
+        > 🚧 Built-in system roles (such as Admin and Member) cannot be deleted.
+        > Attempting to delete a system role returns an error.
+
+        Deleting a role does not automatically remove it from any policies that
+        reference it. Update those policies separately using
+        [`PUT /api/permissions/policies/{id}`](../../../../api-reference/permissions/policies/update) to avoid
+        leaving stale role references.
+
         Parameters
         ----------
         id : str

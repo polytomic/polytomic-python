@@ -11,19 +11,48 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
 class BulkSyncSchemaExecutionStatus(UniversalBaseModel):
-    completed_at: typing.Optional[dt.datetime] = None
-    error_count: typing.Optional[int] = None
+    completed_at: typing.Optional[dt.datetime] = pydantic.Field(default=None)
+    """
+    Timestamp when the most recent execution finished. Null while the execution is still running.
+    """
+
+    error_count: typing.Optional[int] = pydantic.Field(default=None)
+    """
+    Number of errors emitted during the most recent execution.
+    """
+
     execution_id: typing.Optional[str] = pydantic.Field(default=None)
     """
     ID of the most recent execution for the schema.
     """
 
-    record_count: typing.Optional[int] = None
-    schema_: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="schema")] = None
-    started_at: typing.Optional[dt.datetime] = None
+    record_count: typing.Optional[int] = pydantic.Field(default=None)
+    """
+    Number of records processed in the most recent execution.
+    """
+
+    schema_: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="schema")] = pydantic.Field(
+        default=None
+    )
+    """
+    Schema (table or object) identifier.
+    """
+
+    started_at: typing.Optional[dt.datetime] = pydantic.Field(default=None)
+    """
+    Timestamp when the most recent execution started.
+    """
+
     status: typing.Optional[BulkSchemaExecutionStatus] = None
-    status_message: typing.Optional[str] = None
-    warning_count: typing.Optional[int] = None
+    status_message: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Human-readable detail for the current status (e.g. an error message when status is failed).
+    """
+
+    warning_count: typing.Optional[int] = pydantic.Field(default=None)
+    """
+    Number of warnings emitted during the most recent execution.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

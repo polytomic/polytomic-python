@@ -22,7 +22,7 @@ from ..errors.forbidden_error import ForbiddenError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.connect_card_response_envelope import ConnectCardResponseEnvelope
 from ..types.connection_response_envelope import ConnectionResponseEnvelope
-from ..types.v2create_shared_connection_response_envelope import V2CreateSharedConnectionResponseEnvelope
+from ..types.v_2_create_shared_connection_response_envelope import V2CreateSharedConnectionResponseEnvelope
 from ..core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -35,6 +35,15 @@ class ConnectionsClient:
 
     def get_types(self, *, request_options: typing.Optional[RequestOptions] = None) -> ConnectionTypeResponseEnvelope:
         """
+        Lists all connection types supported by this deployment.
+
+        Each entry includes per-type metadata:
+
+        - The available operations the connection type supports.
+        - Its category.
+        - Whether the connection type is enabled for the caller's organization.
+        - Which modes (source, destination, enrichment) it can act as.
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
@@ -98,9 +107,19 @@ class ConnectionsClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> JsonschemaSchema:
         """
+        Returns the JSON schema for a connection type.
+
+        This schema is intended for building forms or validating configuration payloads
+        client-side. It describes the structure Polytomic expects when you create or
+        update a connection of the given type.
+
+        The response is metadata about the shape of the configuration, not a live
+        connection instance and not a set of current credential values.
+
         Parameters
         ----------
         id : str
+            Connection type identifier (e.g. postgresql, salesforce, hubspot).
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -182,6 +201,16 @@ class ConnectionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ConnectionParameterValuesResponseEnvelope:
         """
+        Returns completion values for parameter fields on a connection type.
+
+        This endpoint is useful during connection setup, before a connection exists or
+        before you want to persist it. The supplied `parameters` are applied to a
+        temporary in-memory connection shape and used to resolve dependent options.
+
+        When an endpoint requires upstream authorization before it can return values,
+        Polytomic returns an error instead of guessing. In that case, complete the
+        authorization flow first and call the endpoint again.
+
         Parameters
         ----------
         type : str
@@ -286,6 +315,17 @@ class ConnectionsClient:
 
     def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ConnectionListResponseEnvelope:
         """
+        Lists every connection in the caller's organization, with sensitive fields redacted.
+
+        Sensitive configuration values — passwords, API tokens, private keys — are
+        redacted from all responses. To understand which fields a connection type
+        exposes, consult the parameter schema returned by
+        [`GET /api/connection_types`](../../api-reference/connections/get-types).
+
+        To inspect the data objects available on a specific connection, use
+        [`POST /api/connections/{id}/schemas/refresh`](../../api-reference/schemas/refresh)
+        followed by [`GET /api/connections/{id}/schemas/status`](../../api-reference/schemas/get-status).
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
@@ -359,6 +399,18 @@ class ConnectionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CreateConnectionResponseEnvelope:
         """
+        Creates a new connection of the specified type.
+
+        Use [`GET /api/connection_types`](../../api-reference/connections/get-types) to retrieve the
+        list of available types and their parameter schemas. The `configuration`
+        object is type-specific; consult the [integration
+        guides](../../guides/configuring-your-connections/overview)
+        for the required and optional fields for each type.
+
+        > 📘 Polytomic validates the connection against the upstream service
+        > immediately on creation. The request will fail if the credentials or
+        > endpoint cannot be reached.
+
         Parameters
         ----------
         configuration : typing.Dict[str, typing.Optional[typing.Any]]
@@ -504,15 +556,11 @@ class ConnectionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ConnectCardResponseEnvelope:
         """
-        Creates a new request for [Polytomic Connect](https://www.polytomic.com/connect).
-
-        This endpoint configures a Polytomic Connect request and returns the URL to
-        redirect users to. This allows embedding Polytomic connection authorization in
-        other applications.
+        Creates a Polytomic Connect session and returns a redirect URL that embeds the Connect modal.
 
         See also:
 
-        - [Embedding authentication](https://apidocs.polytomic.com/2024-02-08/guides/embedding-authentication), a guide to using Polytomic Connect.
+        - [Embedding authentication](../../../guides/embedding-authentication), a guide to using Polytomic Connect.
 
         Parameters
         ----------
@@ -640,6 +688,17 @@ class ConnectionsClient:
         """
         Tests a connection configuration.
 
+        This endpoint is useful for setup flows that want to verify credentials before
+        persisting them.
+
+        If you provide `connection_id`, Polytomic starts from the saved configuration
+        for that connection and then applies the request's `configuration` values on
+        top. This lets callers test a partial change without resending every existing
+        field.
+
+        The request does not persist any configuration changes even when validation
+        succeeds.
+
         Parameters
         ----------
         configuration : typing.Dict[str, typing.Optional[typing.Any]]
@@ -741,6 +800,13 @@ class ConnectionsClient:
 
     def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> ConnectionResponseEnvelope:
         """
+        Returns a single connection by ID, with sensitive fields redacted.
+
+        To inspect the schemas available on this connection, trigger a refresh with
+        [`POST /api/connections/{id}/schemas/refresh`](./schemas/refresh/post) and
+        track progress via
+        [`GET /api/connections/{id}/schemas/status`](./schemas/status/get).
+
         Parameters
         ----------
         id : str
@@ -829,6 +895,21 @@ class ConnectionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CreateConnectionResponseEnvelope:
         """
+        Updates a connection's configuration.
+
+        Updating a connection is a **full replacement** of its configuration. Any
+        `configuration` field you omit is cleared. To make a partial change, fetch
+        the current connection with
+        [`GET /api/connections/{id}`](./get), apply your edits, and send the
+        complete object back.
+
+        > 📘 The connection is re-validated against the upstream service after every
+        > update. The request will fail if the new credentials or endpoint cannot be
+        > reached.
+
+        Syncs that are already running when the update is submitted are not
+        interrupted; the updated configuration takes effect on their next execution.
+
         Parameters
         ----------
         id : str
@@ -976,6 +1057,13 @@ class ConnectionsClient:
         self, id: str, *, force: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
+        Deletes a connection.
+
+        > 🚧 Deleting a connection that is referenced by fieldsets, syncs, bulk
+        > syncs, or schedules returns `422 connection in use` unless you pass
+        > `force=true`. With `force=true`, the API deletes those dependent
+        > resources before removing the connection.
+
         Parameters
         ----------
         id : str
@@ -1072,6 +1160,17 @@ class ConnectionsClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ConnectionParameterValuesResponseEnvelope:
         """
+        Returns completion values for parameter fields on a persisted connection.
+
+        Use this endpoint when the available options for one parameter depend on the
+        connection's saved credentials or previously selected settings. For example,
+        after a connection is authorized, the upstream service may be able to return
+        lists of databases, schemas, or similar selectable values.
+
+        For new setup flows, prefer
+        [`POST /api/connection_types/{type}/parameter_values`](./get-type-parameter-values),
+        which lets you resolve completions before the connection has been created.
+
         Parameters
         ----------
         id : str
@@ -1154,9 +1253,11 @@ class ConnectionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> V2CreateSharedConnectionResponseEnvelope:
         """
+        Shares a connection with another organization in the caller's partner account.
+
         > 🚧 Requires partner key
         >
-        > Shared connections can only be created by using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+        > Shared connections can only be created by using [partner keys](../../../../guides/obtaining-api-keys#partner-keys).
 
         Parameters
         ----------
@@ -1268,6 +1369,8 @@ class ConnectionsClient:
         self, parent_connection_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ConnectionListResponseEnvelope:
         """
+        Lists shared copies of a connection.
+
         Parameters
         ----------
         parent_connection_id : str
@@ -1370,6 +1473,15 @@ class AsyncConnectionsClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ConnectionTypeResponseEnvelope:
         """
+        Lists all connection types supported by this deployment.
+
+        Each entry includes per-type metadata:
+
+        - The available operations the connection type supports.
+        - Its category.
+        - Whether the connection type is enabled for the caller's organization.
+        - Which modes (source, destination, enrichment) it can act as.
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
@@ -1441,9 +1553,19 @@ class AsyncConnectionsClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> JsonschemaSchema:
         """
+        Returns the JSON schema for a connection type.
+
+        This schema is intended for building forms or validating configuration payloads
+        client-side. It describes the structure Polytomic expects when you create or
+        update a connection of the given type.
+
+        The response is metadata about the shape of the configuration, not a live
+        connection instance and not a set of current credential values.
+
         Parameters
         ----------
         id : str
+            Connection type identifier (e.g. postgresql, salesforce, hubspot).
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1533,6 +1655,16 @@ class AsyncConnectionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ConnectionParameterValuesResponseEnvelope:
         """
+        Returns completion values for parameter fields on a connection type.
+
+        This endpoint is useful during connection setup, before a connection exists or
+        before you want to persist it. The supplied `parameters` are applied to a
+        temporary in-memory connection shape and used to resolve dependent options.
+
+        When an endpoint requires upstream authorization before it can return values,
+        Polytomic returns an error instead of guessing. In that case, complete the
+        authorization flow first and call the endpoint again.
+
         Parameters
         ----------
         type : str
@@ -1645,6 +1777,17 @@ class AsyncConnectionsClient:
 
     async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ConnectionListResponseEnvelope:
         """
+        Lists every connection in the caller's organization, with sensitive fields redacted.
+
+        Sensitive configuration values — passwords, API tokens, private keys — are
+        redacted from all responses. To understand which fields a connection type
+        exposes, consult the parameter schema returned by
+        [`GET /api/connection_types`](../../api-reference/connections/get-types).
+
+        To inspect the data objects available on a specific connection, use
+        [`POST /api/connections/{id}/schemas/refresh`](../../api-reference/schemas/refresh)
+        followed by [`GET /api/connections/{id}/schemas/status`](../../api-reference/schemas/get-status).
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
@@ -1726,6 +1869,18 @@ class AsyncConnectionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CreateConnectionResponseEnvelope:
         """
+        Creates a new connection of the specified type.
+
+        Use [`GET /api/connection_types`](../../api-reference/connections/get-types) to retrieve the
+        list of available types and their parameter schemas. The `configuration`
+        object is type-specific; consult the [integration
+        guides](../../guides/configuring-your-connections/overview)
+        for the required and optional fields for each type.
+
+        > 📘 Polytomic validates the connection against the upstream service
+        > immediately on creation. The request will fail if the credentials or
+        > endpoint cannot be reached.
+
         Parameters
         ----------
         configuration : typing.Dict[str, typing.Optional[typing.Any]]
@@ -1879,15 +2034,11 @@ class AsyncConnectionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ConnectCardResponseEnvelope:
         """
-        Creates a new request for [Polytomic Connect](https://www.polytomic.com/connect).
-
-        This endpoint configures a Polytomic Connect request and returns the URL to
-        redirect users to. This allows embedding Polytomic connection authorization in
-        other applications.
+        Creates a Polytomic Connect session and returns a redirect URL that embeds the Connect modal.
 
         See also:
 
-        - [Embedding authentication](https://apidocs.polytomic.com/2024-02-08/guides/embedding-authentication), a guide to using Polytomic Connect.
+        - [Embedding authentication](../../../guides/embedding-authentication), a guide to using Polytomic Connect.
 
         Parameters
         ----------
@@ -2023,6 +2174,17 @@ class AsyncConnectionsClient:
         """
         Tests a connection configuration.
 
+        This endpoint is useful for setup flows that want to verify credentials before
+        persisting them.
+
+        If you provide `connection_id`, Polytomic starts from the saved configuration
+        for that connection and then applies the request's `configuration` values on
+        top. This lets callers test a partial change without resending every existing
+        field.
+
+        The request does not persist any configuration changes even when validation
+        succeeds.
+
         Parameters
         ----------
         configuration : typing.Dict[str, typing.Optional[typing.Any]]
@@ -2134,6 +2296,13 @@ class AsyncConnectionsClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ConnectionResponseEnvelope:
         """
+        Returns a single connection by ID, with sensitive fields redacted.
+
+        To inspect the schemas available on this connection, trigger a refresh with
+        [`POST /api/connections/{id}/schemas/refresh`](./schemas/refresh/post) and
+        track progress via
+        [`GET /api/connections/{id}/schemas/status`](./schemas/status/get).
+
         Parameters
         ----------
         id : str
@@ -2230,6 +2399,21 @@ class AsyncConnectionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CreateConnectionResponseEnvelope:
         """
+        Updates a connection's configuration.
+
+        Updating a connection is a **full replacement** of its configuration. Any
+        `configuration` field you omit is cleared. To make a partial change, fetch
+        the current connection with
+        [`GET /api/connections/{id}`](./get), apply your edits, and send the
+        complete object back.
+
+        > 📘 The connection is re-validated against the upstream service after every
+        > update. The request will fail if the new credentials or endpoint cannot be
+        > reached.
+
+        Syncs that are already running when the update is submitted are not
+        interrupted; the updated configuration takes effect on their next execution.
+
         Parameters
         ----------
         id : str
@@ -2385,6 +2569,13 @@ class AsyncConnectionsClient:
         self, id: str, *, force: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
+        Deletes a connection.
+
+        > 🚧 Deleting a connection that is referenced by fieldsets, syncs, bulk
+        > syncs, or schedules returns `422 connection in use` unless you pass
+        > `force=true`. With `force=true`, the API deletes those dependent
+        > resources before removing the connection.
+
         Parameters
         ----------
         id : str
@@ -2489,6 +2680,17 @@ class AsyncConnectionsClient:
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ConnectionParameterValuesResponseEnvelope:
         """
+        Returns completion values for parameter fields on a persisted connection.
+
+        Use this endpoint when the available options for one parameter depend on the
+        connection's saved credentials or previously selected settings. For example,
+        after a connection is authorized, the upstream service may be able to return
+        lists of databases, schemas, or similar selectable values.
+
+        For new setup flows, prefer
+        [`POST /api/connection_types/{type}/parameter_values`](./get-type-parameter-values),
+        which lets you resolve completions before the connection has been created.
+
         Parameters
         ----------
         id : str
@@ -2579,9 +2781,11 @@ class AsyncConnectionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> V2CreateSharedConnectionResponseEnvelope:
         """
+        Shares a connection with another organization in the caller's partner account.
+
         > 🚧 Requires partner key
         >
-        > Shared connections can only be created by using [partner keys](https://apidocs.polytomic.com/guides/obtaining-api-keys#partner-keys).
+        > Shared connections can only be created by using [partner keys](../../../../guides/obtaining-api-keys#partner-keys).
 
         Parameters
         ----------
@@ -2701,6 +2905,8 @@ class AsyncConnectionsClient:
         self, parent_connection_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ConnectionListResponseEnvelope:
         """
+        Lists shared copies of a connection.
+
         Parameters
         ----------
         parent_connection_id : str

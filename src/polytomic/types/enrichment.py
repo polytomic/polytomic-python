@@ -2,10 +2,10 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .v2enricher_configuration import V2EnricherConfiguration
+from .v_2_enricher_configuration import V2EnricherConfiguration
 import pydantic
 from .model_field import ModelField
-from .v2enricher_mapping import V2EnricherMapping
+from .v_2_enricher_mapping import V2EnricherMapping
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 

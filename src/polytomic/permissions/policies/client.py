@@ -30,6 +30,14 @@ class PoliciesClient:
 
     def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ListPoliciesResponseEnvelope:
         """
+        Lists all policies in the caller's organization.
+
+        Each policy binds one or more roles to a set of resources, controlling what
+        actions members with those roles can perform on those resources.
+
+        To inspect a specific policy in detail, use
+        [`GET /api/permissions/policies/{id}`](./%7Bid%7D/get).
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
@@ -98,6 +106,13 @@ class PoliciesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> PolicyResponseEnvelope:
         """
+        Creates a new policy.
+
+        A policy binds one or more roles to a set of resources, granting members who
+        hold those roles the actions defined by them. Roles must already exist before
+        they are referenced in a policy; create roles using
+        [`POST /api/permissions/roles`](../../../api-reference/permissions/roles/create).
+
         Parameters
         ----------
         name : str
@@ -208,6 +223,11 @@ class PoliciesClient:
 
     def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> PolicyResponseEnvelope:
         """
+        Returns a single policy by ID, including all action/role bindings it defines.
+
+        Returns the full set of action/role bindings defined by the policy, including
+        the resources it applies to.
+
         Parameters
         ----------
         id : str
@@ -291,6 +311,14 @@ class PoliciesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> PolicyResponseEnvelope:
         """
+        Updates an existing policy.
+
+        The update is a **full replacement** of the policy's bindings. Any role or
+        resource binding not included in the request body is removed. To make a
+        partial change, fetch the current policy with
+        [`GET /api/permissions/policies/{id}`](./get), modify the relevant bindings,
+        and send the complete object back.
+
         Parameters
         ----------
         id : str
@@ -404,6 +432,11 @@ class PoliciesClient:
 
     def remove(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
+        Deletes a policy.
+
+        Deletion is permanent. Any access that was granted solely through this policy
+        is revoked immediately for all users who depended on it.
+
         Parameters
         ----------
         id : str
@@ -487,6 +520,14 @@ class AsyncPoliciesClient:
 
     async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ListPoliciesResponseEnvelope:
         """
+        Lists all policies in the caller's organization.
+
+        Each policy binds one or more roles to a set of resources, controlling what
+        actions members with those roles can perform on those resources.
+
+        To inspect a specific policy in detail, use
+        [`GET /api/permissions/policies/{id}`](./%7Bid%7D/get).
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
@@ -563,6 +604,13 @@ class AsyncPoliciesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> PolicyResponseEnvelope:
         """
+        Creates a new policy.
+
+        A policy binds one or more roles to a set of resources, granting members who
+        hold those roles the actions defined by them. Roles must already exist before
+        they are referenced in a policy; create roles using
+        [`POST /api/permissions/roles`](../../../api-reference/permissions/roles/create).
+
         Parameters
         ----------
         name : str
@@ -681,6 +729,11 @@ class AsyncPoliciesClient:
 
     async def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> PolicyResponseEnvelope:
         """
+        Returns a single policy by ID, including all action/role bindings it defines.
+
+        Returns the full set of action/role bindings defined by the policy, including
+        the resources it applies to.
+
         Parameters
         ----------
         id : str
@@ -772,6 +825,14 @@ class AsyncPoliciesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> PolicyResponseEnvelope:
         """
+        Updates an existing policy.
+
+        The update is a **full replacement** of the policy's bindings. Any role or
+        resource binding not included in the request body is removed. To make a
+        partial change, fetch the current policy with
+        [`GET /api/permissions/policies/{id}`](./get), modify the relevant bindings,
+        and send the complete object back.
+
         Parameters
         ----------
         id : str
@@ -893,6 +954,11 @@ class AsyncPoliciesClient:
 
     async def remove(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
         """
+        Deletes a policy.
+
+        Deletion is permanent. Any access that was granted solely through this policy
+        is revoked immediately for all users who depended on it.
+
         Parameters
         ----------
         id : str

@@ -14,7 +14,7 @@ from ...errors.not_found_error import NotFoundError
 from ...errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError as core_api_error_ApiError
-from ...types.v4bulk_sync_schedule_api import V4BulkSyncScheduleApi
+from ...types.v_4_bulk_sync_schedule_api import V4BulkSyncScheduleApi
 from ...types.schedule_envelope import ScheduleEnvelope
 from ...core.serialization import convert_and_respect_annotation_metadata
 from ...errors.bad_request_error import BadRequestError
@@ -30,9 +30,15 @@ class SchedulesClient:
 
     def list(self, sync_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> SchedulesEnvelope:
         """
+        Lists all schedules configured for a bulk sync.
+
+        A bulk sync can have multiple schedules attached; this endpoint returns all
+        of them. Schedule times are returned in UTC.
+
         Parameters
         ----------
         sync_id : str
+            Unique identifier of the bulk sync whose schedules should be returned.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -117,9 +123,19 @@ class SchedulesClient:
         self, sync_id: str, *, schedule: V4BulkSyncScheduleApi, request_options: typing.Optional[RequestOptions] = None
     ) -> ScheduleEnvelope:
         """
+        Adds a new schedule to a bulk sync.
+
+        A bulk sync can have multiple schedules attached; adding one here does not
+        replace existing schedules. Schedule times are interpreted in UTC.
+
+        Creating a schedule only affects future automatic executions. To run the
+        sync immediately, call
+        [`POST /api/bulk/syncs/{id}/executions`](../../../../../api-reference/bulk-sync/start).
+
         Parameters
         ----------
         sync_id : str
+            Unique identifier of the bulk sync to add a schedule to.
 
         schedule : V4BulkSyncScheduleApi
 
@@ -228,11 +244,22 @@ class SchedulesClient:
         self, sync_id: str, schedule_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ScheduleEnvelope:
         """
+        Returns a single schedule configured on a bulk sync.
+
+        Schedule times are returned in UTC.
+
+        To see all schedules on this sync, use
+        [`GET /api/bulk/syncs/{sync_id}/schedules`](../../../../../../api-reference/bulk-sync/schedules/list).
+        To update the schedule, use
+        [`PUT /api/bulk/syncs/{sync_id}/schedules/{schedule_id}`](../../../../../../api-reference/bulk-sync/schedules/update).
+
         Parameters
         ----------
         sync_id : str
+            Unique identifier of the bulk sync.
 
         schedule_id : str
+            Unique identifier of the schedule.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -323,11 +350,19 @@ class SchedulesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ScheduleEnvelope:
         """
+        Updates an existing schedule on a bulk sync.
+
+        Updates replace the stored schedule. Send the full schedule definition
+        rather than only the field you want to change. Schedule times are
+        interpreted in UTC.
+
         Parameters
         ----------
         sync_id : str
+            Unique identifier of the bulk sync.
 
         schedule_id : str
+            Unique identifier of the schedule to update.
 
         schedule : V4BulkSyncScheduleApi
 
@@ -437,11 +472,18 @@ class SchedulesClient:
         self, sync_id: str, schedule_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
+        Removes a schedule from a bulk sync.
+
+        Deleting a schedule only stops future automatic executions. It does not
+        cancel an execution that is already running.
+
         Parameters
         ----------
         sync_id : str
+            Unique identifier of the bulk sync.
 
         schedule_id : str
+            Unique identifier of the schedule to delete.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -523,9 +565,15 @@ class AsyncSchedulesClient:
 
     async def list(self, sync_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> SchedulesEnvelope:
         """
+        Lists all schedules configured for a bulk sync.
+
+        A bulk sync can have multiple schedules attached; this endpoint returns all
+        of them. Schedule times are returned in UTC.
+
         Parameters
         ----------
         sync_id : str
+            Unique identifier of the bulk sync whose schedules should be returned.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -618,9 +666,19 @@ class AsyncSchedulesClient:
         self, sync_id: str, *, schedule: V4BulkSyncScheduleApi, request_options: typing.Optional[RequestOptions] = None
     ) -> ScheduleEnvelope:
         """
+        Adds a new schedule to a bulk sync.
+
+        A bulk sync can have multiple schedules attached; adding one here does not
+        replace existing schedules. Schedule times are interpreted in UTC.
+
+        Creating a schedule only affects future automatic executions. To run the
+        sync immediately, call
+        [`POST /api/bulk/syncs/{id}/executions`](../../../../../api-reference/bulk-sync/start).
+
         Parameters
         ----------
         sync_id : str
+            Unique identifier of the bulk sync to add a schedule to.
 
         schedule : V4BulkSyncScheduleApi
 
@@ -737,11 +795,22 @@ class AsyncSchedulesClient:
         self, sync_id: str, schedule_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> ScheduleEnvelope:
         """
+        Returns a single schedule configured on a bulk sync.
+
+        Schedule times are returned in UTC.
+
+        To see all schedules on this sync, use
+        [`GET /api/bulk/syncs/{sync_id}/schedules`](../../../../../../api-reference/bulk-sync/schedules/list).
+        To update the schedule, use
+        [`PUT /api/bulk/syncs/{sync_id}/schedules/{schedule_id}`](../../../../../../api-reference/bulk-sync/schedules/update).
+
         Parameters
         ----------
         sync_id : str
+            Unique identifier of the bulk sync.
 
         schedule_id : str
+            Unique identifier of the schedule.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -840,11 +909,19 @@ class AsyncSchedulesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ScheduleEnvelope:
         """
+        Updates an existing schedule on a bulk sync.
+
+        Updates replace the stored schedule. Send the full schedule definition
+        rather than only the field you want to change. Schedule times are
+        interpreted in UTC.
+
         Parameters
         ----------
         sync_id : str
+            Unique identifier of the bulk sync.
 
         schedule_id : str
+            Unique identifier of the schedule to update.
 
         schedule : V4BulkSyncScheduleApi
 
@@ -962,11 +1039,18 @@ class AsyncSchedulesClient:
         self, sync_id: str, schedule_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
+        Removes a schedule from a bulk sync.
+
+        Deleting a schedule only stops future automatic executions. It does not
+        cancel an execution that is already running.
+
         Parameters
         ----------
         sync_id : str
+            Unique identifier of the bulk sync.
 
         schedule_id : str
+            Unique identifier of the schedule to delete.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.

@@ -4,19 +4,43 @@ from ..core.pydantic_utilities import UniversalBaseModel
 import typing_extensions
 import typing
 from ..core.serialization import FieldMetadata
+import pydantic
 from .schedule_frequency import ScheduleFrequency
 from .bulk_selective_mode import BulkSelectiveMode
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
-import pydantic
 
 
 class V4BulkSyncScheduleApi(UniversalBaseModel):
-    day_of_month: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="dayOfMonth")] = None
-    day_of_week: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="dayOfWeek")] = None
+    day_of_month: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="dayOfMonth")] = pydantic.Field(
+        default=None
+    )
+    """
+    Day of the month (1-31) for monthly schedules.
+    """
+
+    day_of_week: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="dayOfWeek")] = pydantic.Field(
+        default=None
+    )
+    """
+    Day of the week for weekly schedules.
+    """
+
     frequency: ScheduleFrequency
-    hour: typing.Optional[str] = None
-    minute: typing.Optional[str] = None
-    month: typing.Optional[str] = None
+    hour: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Hour of the day (0-23, in UTC) the schedule fires.
+    """
+
+    minute: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Minute of the hour (0-59) the schedule fires.
+    """
+
+    month: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Month of the year (1-12) for yearly schedules.
+    """
+
     selective_mode: typing_extensions.Annotated[
         typing.Optional[BulkSelectiveMode], FieldMetadata(alias="selectiveMode")
     ] = None

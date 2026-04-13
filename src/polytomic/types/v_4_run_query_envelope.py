@@ -2,12 +2,13 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
+from .v_4_run_query_result import V4RunQueryResult
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 
 
-class V4ExportSyncLogsResponse(UniversalBaseModel):
-    url: typing.Optional[str] = None
+class V4RunQueryEnvelope(UniversalBaseModel):
+    data: typing.Optional[V4RunQueryResult] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

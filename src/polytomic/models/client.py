@@ -15,8 +15,8 @@ from ..errors.not_found_error import NotFoundError
 from ..errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError as core_api_error_ApiError
-from ..types.v2enricher_configuration import V2EnricherConfiguration
-from ..types.v2get_enrichment_input_fields_response_envelope import V2GetEnrichmentInputFieldsResponseEnvelope
+from ..types.v_2_enricher_configuration import V2EnricherConfiguration
+from ..types.v_2_get_enrichment_input_fields_response_envelope import V2GetEnrichmentInputFieldsResponseEnvelope
 from ..types.model_model_field_request import ModelModelFieldRequest
 from ..types.enrichment import Enrichment
 from ..types.model_relation import ModelRelation
@@ -42,11 +42,27 @@ class ModelsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetModelSyncSourceMetaEnvelope:
         """
+        Describes the enrichment source configuration available on a connection.
+
+        Not all connections support enrichment. Call this endpoint to determine
+        whether a connection can serve as an enrichment source in a model sync and,
+        if so, what configuration it accepts.
+
+        > ⚠️ If the connection does not support enrichment, this endpoint returns
+        > `404`. Check for that status before attempting to configure an enrichment
+        > source on a sync.
+
+        When a connection does support enrichment, the response describes the
+        configuration fields required to set it up. Pass those values in the
+        `enrichment` block when creating or updating a model sync.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the connection.
 
         params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+            Query parameters used to incrementally refine a dependent source configuration. Keys correspond to configuration fields returned by previous calls to this endpoint.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -148,7 +164,13 @@ class ModelsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> V2GetEnrichmentInputFieldsResponseEnvelope:
         """
-        For a given connection and enrichment configuration, provides the valid sets of input fields.
+        Returns the valid input field sets for an enrichment configuration on a connection.
+
+        When configuring an enrichment source in a model sync, use this endpoint to
+        discover which input fields the enrichment connection requires. Pass the
+        proposed enrichment configuration in the request body; the response lists the
+        valid input field sets that map your model's fields to the enrichment service's
+        expected inputs.
 
         Parameters
         ----------
@@ -261,6 +283,13 @@ class ModelsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ModelResponseEnvelope:
         """
+        Submits a job that previews the fields a model would expose without persisting it.
+
+        The response contains a job ID that resolves to the list of fields the model
+        would expose. Poll the job until it completes to retrieve the field list. The
+        model is not persisted — this endpoint is useful for validating a query or
+        configuration before calling [`POST /api/models`](../../api-reference/models/create) to save it.
+
         Parameters
         ----------
         configuration : typing.Dict[str, typing.Optional[typing.Any]]
@@ -306,7 +335,6 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.preview(
-            async_=True,
             configuration={"table": "public.users"},
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="Users",
@@ -397,6 +425,17 @@ class ModelsClient:
 
     def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ModelListResponseEnvelope:
         """
+        Lists all models in the caller's organization.
+
+        Results are ordered by `updated_at` descending, with `id` used as a tiebreaker.
+        If more results are available, the response includes `pagination.next_page_token`.
+        Pass that token back unchanged to continue from the last item you received.
+
+        The token is opaque. Do not construct or edit it yourself.
+
+        The `limit` is capped at 50. Values above that cap are reduced to 50, and
+        non-positive values fall back to the same default.
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
@@ -475,6 +514,16 @@ class ModelsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ModelResponseEnvelope:
         """
+        Creates a new model.
+
+        A model defines a query or view over a connection's data — for example, a SQL
+        query, a filtered object, or a joined dataset. Models are used as sources when
+        creating model syncs.
+
+        The connection referenced by `connection_id` must have source capabilities. Use
+        [`GET /api/connection_types/{id}`](../../api-reference/connections/get-connection-type-schema) to check
+        whether a connection type supports use as a source.
+
         Parameters
         ----------
         configuration : typing.Dict[str, typing.Optional[typing.Any]]
@@ -520,7 +569,6 @@ class ModelsClient:
             token="YOUR_TOKEN",
         )
         client.models.create(
-            async_=True,
             configuration={"table": "public.users"},
             connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             name="Users",
@@ -613,6 +661,12 @@ class ModelsClient:
         self, id: str, *, async_: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> ModelResponseEnvelope:
         """
+        Returns a single model by ID, including its source fields, identity, and filters.
+
+        The response includes the model's source fields, identity column, and any
+        configured filters. To preview the data a model would return without saving
+        changes, use [`GET /api/models/{id}/sample`](./sample/get).
+
         Parameters
         ----------
         id : str
@@ -637,7 +691,6 @@ class ModelsClient:
         )
         client.models.get(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            async_=True,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -713,6 +766,19 @@ class ModelsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ModelResponseEnvelope:
         """
+        Updates a model's configuration.
+
+        Updating a model is a **full replacement** of its configuration. Every field in
+        the request body is written to the model; any field you omit is cleared or reset
+        to its default value.
+
+        To make a partial change, fetch the current model with
+        [`GET /api/models/{id}`](./get), modify the fields you want to change, and send
+        the complete object back in the update request.
+
+        Changes to source fields, filters, or the identity column take effect on the
+        next sync execution that uses this model.
+
         Parameters
         ----------
         id : str
@@ -860,6 +926,11 @@ class ModelsClient:
         self, id: str, *, async_: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
+        Deletes a model.
+
+        > 🚧 Deleting a model used by one or more syncs will break those syncs. Remove
+        > or reconfigure any syncs that reference this model before deleting it.
+
         Parameters
         ----------
         id : str
@@ -883,7 +954,6 @@ class ModelsClient:
         )
         client.models.remove(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            async_=True,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -946,7 +1016,11 @@ class ModelsClient:
         self, id: str, *, async_: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> ModelSampleResponseEnvelope:
         """
-        Returns sample records from the model. The first ten records that the source provides will be returned after being enriched (if applicable). Synchronous requests must complete within 10s. If either querying or enrichment exceeds 10s, please use the async option.
+        Returns a sample of records from a model.
+
+        Synchronous requests must complete within 10 seconds. If the source query or
+        enrichment step can exceed that budget, use the asynchronous option so the
+        work runs as a background job.
 
         Parameters
         ----------
@@ -972,7 +1046,6 @@ class ModelsClient:
         )
         client.models.sample(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
-            async_=True,
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -1050,11 +1123,27 @@ class AsyncModelsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> GetModelSyncSourceMetaEnvelope:
         """
+        Describes the enrichment source configuration available on a connection.
+
+        Not all connections support enrichment. Call this endpoint to determine
+        whether a connection can serve as an enrichment source in a model sync and,
+        if so, what configuration it accepts.
+
+        > ⚠️ If the connection does not support enrichment, this endpoint returns
+        > `404`. Check for that status before attempting to configure an enrichment
+        > source on a sync.
+
+        When a connection does support enrichment, the response describes the
+        configuration fields required to set it up. Pass those values in the
+        `enrichment` block when creating or updating a model sync.
+
         Parameters
         ----------
         id : str
+            Unique identifier of the connection.
 
         params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+            Query parameters used to incrementally refine a dependent source configuration. Keys correspond to configuration fields returned by previous calls to this endpoint.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1164,7 +1253,13 @@ class AsyncModelsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> V2GetEnrichmentInputFieldsResponseEnvelope:
         """
-        For a given connection and enrichment configuration, provides the valid sets of input fields.
+        Returns the valid input field sets for an enrichment configuration on a connection.
+
+        When configuring an enrichment source in a model sync, use this endpoint to
+        discover which input fields the enrichment connection requires. Pass the
+        proposed enrichment configuration in the request body; the response lists the
+        valid input field sets that map your model's fields to the enrichment service's
+        expected inputs.
 
         Parameters
         ----------
@@ -1285,6 +1380,13 @@ class AsyncModelsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ModelResponseEnvelope:
         """
+        Submits a job that previews the fields a model would expose without persisting it.
+
+        The response contains a job ID that resolves to the list of fields the model
+        would expose. Poll the job until it completes to retrieve the field list. The
+        model is not persisted — this endpoint is useful for validating a query or
+        configuration before calling [`POST /api/models`](../../api-reference/models/create) to save it.
+
         Parameters
         ----------
         configuration : typing.Dict[str, typing.Optional[typing.Any]]
@@ -1335,7 +1437,6 @@ class AsyncModelsClient:
 
         async def main() -> None:
             await client.models.preview(
-                async_=True,
                 configuration={"table": "public.users"},
                 connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 name="Users",
@@ -1429,6 +1530,17 @@ class AsyncModelsClient:
 
     async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> ModelListResponseEnvelope:
         """
+        Lists all models in the caller's organization.
+
+        Results are ordered by `updated_at` descending, with `id` used as a tiebreaker.
+        If more results are available, the response includes `pagination.next_page_token`.
+        Pass that token back unchanged to continue from the last item you received.
+
+        The token is opaque. Do not construct or edit it yourself.
+
+        The `limit` is capped at 50. Values above that cap are reduced to 50, and
+        non-positive values fall back to the same default.
+
         Parameters
         ----------
         request_options : typing.Optional[RequestOptions]
@@ -1515,6 +1627,16 @@ class AsyncModelsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ModelResponseEnvelope:
         """
+        Creates a new model.
+
+        A model defines a query or view over a connection's data — for example, a SQL
+        query, a filtered object, or a joined dataset. Models are used as sources when
+        creating model syncs.
+
+        The connection referenced by `connection_id` must have source capabilities. Use
+        [`GET /api/connection_types/{id}`](../../api-reference/connections/get-connection-type-schema) to check
+        whether a connection type supports use as a source.
+
         Parameters
         ----------
         configuration : typing.Dict[str, typing.Optional[typing.Any]]
@@ -1565,7 +1687,6 @@ class AsyncModelsClient:
 
         async def main() -> None:
             await client.models.create(
-                async_=True,
                 configuration={"table": "public.users"},
                 connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 name="Users",
@@ -1661,6 +1782,12 @@ class AsyncModelsClient:
         self, id: str, *, async_: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> ModelResponseEnvelope:
         """
+        Returns a single model by ID, including its source fields, identity, and filters.
+
+        The response includes the model's source fields, identity column, and any
+        configured filters. To preview the data a model would return without saving
+        changes, use [`GET /api/models/{id}/sample`](./sample/get).
+
         Parameters
         ----------
         id : str
@@ -1690,7 +1817,6 @@ class AsyncModelsClient:
         async def main() -> None:
             await client.models.get(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                async_=True,
             )
 
 
@@ -1769,6 +1895,19 @@ class AsyncModelsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ModelResponseEnvelope:
         """
+        Updates a model's configuration.
+
+        Updating a model is a **full replacement** of its configuration. Every field in
+        the request body is written to the model; any field you omit is cleared or reset
+        to its default value.
+
+        To make a partial change, fetch the current model with
+        [`GET /api/models/{id}`](./get), modify the fields you want to change, and send
+        the complete object back in the update request.
+
+        Changes to source fields, filters, or the identity column take effect on the
+        next sync execution that uses this model.
+
         Parameters
         ----------
         id : str
@@ -1924,6 +2063,11 @@ class AsyncModelsClient:
         self, id: str, *, async_: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> None:
         """
+        Deletes a model.
+
+        > 🚧 Deleting a model used by one or more syncs will break those syncs. Remove
+        > or reconfigure any syncs that reference this model before deleting it.
+
         Parameters
         ----------
         id : str
@@ -1952,7 +2096,6 @@ class AsyncModelsClient:
         async def main() -> None:
             await client.models.remove(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                async_=True,
             )
 
 
@@ -2018,7 +2161,11 @@ class AsyncModelsClient:
         self, id: str, *, async_: typing.Optional[bool] = None, request_options: typing.Optional[RequestOptions] = None
     ) -> ModelSampleResponseEnvelope:
         """
-        Returns sample records from the model. The first ten records that the source provides will be returned after being enriched (if applicable). Synchronous requests must complete within 10s. If either querying or enrichment exceeds 10s, please use the async option.
+        Returns a sample of records from a model.
+
+        Synchronous requests must complete within 10 seconds. If the source query or
+        enrichment step can exceed that budget, use the asynchronous option so the
+        work runs as a background job.
 
         Parameters
         ----------
@@ -2049,7 +2196,6 @@ class AsyncModelsClient:
         async def main() -> None:
             await client.models.sample(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
-                async_=True,
             )
 
 

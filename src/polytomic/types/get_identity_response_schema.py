@@ -27,7 +27,11 @@ class GetIdentityResponseSchema(UniversalBaseModel):
     Whether the caller is using a partner key.
     """
 
-    is_system: typing.Optional[bool] = None
+    is_system: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    Whether the caller is a system actor.
+    """
+
     is_user: typing.Optional[bool] = pydantic.Field(default=None)
     """
     Whether the caller is a user.
@@ -43,7 +47,10 @@ class GetIdentityResponseSchema(UniversalBaseModel):
     The name of the organization the caller belongs to.
     """
 
-    role: typing.Optional[str] = None
+    role: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Deprecated legacy role name. Populated only for user callers.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
