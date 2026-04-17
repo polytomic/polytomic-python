@@ -17,7 +17,7 @@ from ...errors.internal_server_error import InternalServerError
 from ...types.execution_status import ExecutionStatus
 from ...errors.bad_request_error import BadRequestError
 from ...errors.forbidden_error import ForbiddenError
-from ...types.v_2_execution_log_type import V2ExecutionLogType
+from ...types.v2execution_log_type import V2ExecutionLogType
 from ...types.execution_logs_response_envelope import ExecutionLogsResponseEnvelope
 from ...core.client_wrapper import AsyncClientWrapper
 
@@ -49,7 +49,7 @@ class ExecutionsClient:
 
         For full details about a specific execution — including record counts and error
         summaries — use
-        [`GET /api/syncs/{sync_id}/executions/{id}`](./{id}/get).
+        [`GET /api/syncs/{sync_id}/executions/{id}`](../../../../api-reference/model-sync/executions/get).
 
         Parameters
         ----------
@@ -559,7 +559,7 @@ class AsyncExecutionsClient:
 
         For full details about a specific execution — including record counts and error
         summaries — use
-        [`GET /api/syncs/{sync_id}/executions/{id}`](./{id}/get).
+        [`GET /api/syncs/{sync_id}/executions/{id}`](../../../../api-reference/model-sync/executions/get).
 
         Parameters
         ----------

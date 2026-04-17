@@ -53,7 +53,7 @@ class Polytomic:
 
 
 
-    version : typing.Optional[str]
+    version : typing.Optional[typing.Any]
     token : typing.Union[str, typing.Callable[[], str]]
     timeout : typing.Optional[float]
         The timeout to be used, in seconds, for requests. By default the timeout is 60 seconds, unless a custom httpx client is used, in which case this default is not enforced.
@@ -79,15 +79,13 @@ class Polytomic:
         *,
         base_url: typing.Optional[str] = None,
         environment: PolytomicEnvironment = PolytomicEnvironment.DEFAULT,
-        version: typing.Optional[str] = None,
+        version: typing.Optional[typing.Any] = None,
         token: typing.Union[str, typing.Callable[[], str]],
         timeout: typing.Optional[float] = None,
         follow_redirects: typing.Optional[bool] = True,
         httpx_client: typing.Optional[httpx.Client] = None,
     ):
-        _defaulted_timeout = (
-            timeout if timeout is not None else 60 if httpx_client is None else httpx_client.timeout.read
-        )
+        _defaulted_timeout = timeout if timeout is not None else 60 if httpx_client is None else None
         self._client_wrapper = SyncClientWrapper(
             base_url=_get_base_url(base_url=base_url, environment=environment),
             version=version,
@@ -133,7 +131,7 @@ class AsyncPolytomic:
 
 
 
-    version : typing.Optional[str]
+    version : typing.Optional[typing.Any]
     token : typing.Union[str, typing.Callable[[], str]]
     timeout : typing.Optional[float]
         The timeout to be used, in seconds, for requests. By default the timeout is 60 seconds, unless a custom httpx client is used, in which case this default is not enforced.
@@ -159,15 +157,13 @@ class AsyncPolytomic:
         *,
         base_url: typing.Optional[str] = None,
         environment: PolytomicEnvironment = PolytomicEnvironment.DEFAULT,
-        version: typing.Optional[str] = None,
+        version: typing.Optional[typing.Any] = None,
         token: typing.Union[str, typing.Callable[[], str]],
         timeout: typing.Optional[float] = None,
         follow_redirects: typing.Optional[bool] = True,
         httpx_client: typing.Optional[httpx.AsyncClient] = None,
     ):
-        _defaulted_timeout = (
-            timeout if timeout is not None else 60 if httpx_client is None else httpx_client.timeout.read
-        )
+        _defaulted_timeout = timeout if timeout is not None else 60 if httpx_client is None else None
         self._client_wrapper = AsyncClientWrapper(
             base_url=_get_base_url(base_url=base_url, environment=environment),
             version=version,

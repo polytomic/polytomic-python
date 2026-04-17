@@ -36,7 +36,7 @@ class PoliciesClient:
         actions members with those roles can perform on those resources.
 
         To inspect a specific policy in detail, use
-        [`GET /api/permissions/policies/{id}`](./%7Bid%7D/get).
+        [`GET /api/permissions/policies/{id}`](../../../api-reference/permissions/policies/get).
 
         Parameters
         ----------
@@ -316,7 +316,7 @@ class PoliciesClient:
         The update is a **full replacement** of the policy's bindings. Any role or
         resource binding not included in the request body is removed. To make a
         partial change, fetch the current policy with
-        [`GET /api/permissions/policies/{id}`](./get), modify the relevant bindings,
+        [`GET /api/permissions/policies/{id}`](../../../../api-reference/permissions/policies/get), modify the relevant bindings,
         and send the complete object back.
 
         Parameters
@@ -526,7 +526,7 @@ class AsyncPoliciesClient:
         actions members with those roles can perform on those resources.
 
         To inspect a specific policy in detail, use
-        [`GET /api/permissions/policies/{id}`](./%7Bid%7D/get).
+        [`GET /api/permissions/policies/{id}`](../../../api-reference/permissions/policies/get).
 
         Parameters
         ----------
@@ -830,7 +830,7 @@ class AsyncPoliciesClient:
         The update is a **full replacement** of the policy's bindings. Any role or
         resource binding not included in the request body is removed. To make a
         partial change, fetch the current policy with
-        [`GET /api/permissions/policies/{id}`](./get), modify the relevant bindings,
+        [`GET /api/permissions/policies/{id}`](../../../../api-reference/permissions/policies/get), modify the relevant bindings,
         and send the complete object back.
 
         Parameters

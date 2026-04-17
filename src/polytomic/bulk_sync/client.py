@@ -19,7 +19,7 @@ from ..types.bulk_discover import BulkDiscover
 import datetime as dt
 from ..types.bulk_sync_mode import BulkSyncMode
 from ..types.bulk_normalize_names import BulkNormalizeNames
-from .types.v_2_create_bulk_sync_request_schemas_item import V2CreateBulkSyncRequestSchemasItem
+from .types.v2create_bulk_sync_request_schemas_item import V2CreateBulkSyncRequestSchemasItem
 from ..types.bulk_sync_response_envelope import BulkSyncResponseEnvelope
 from ..core.serialization import convert_and_respect_annotation_metadata
 from ..errors.bad_request_error import BadRequestError
@@ -27,7 +27,7 @@ from ..errors.forbidden_error import ForbiddenError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..core.jsonable_encoder import jsonable_encoder
 from ..errors.not_found_error import NotFoundError
-from .types.v_2_update_bulk_sync_request_schemas_item import V2UpdateBulkSyncRequestSchemasItem
+from .types.v2update_bulk_sync_request_schemas_item import V2UpdateBulkSyncRequestSchemasItem
 from ..types.activate_sync_envelope import ActivateSyncEnvelope
 from ..types.cancel_bulk_sync_response_envelope import CancelBulkSyncResponseEnvelope
 from ..types.bulk_fetch_mode import BulkFetchMode
@@ -494,7 +494,7 @@ class BulkSyncClient:
 
         To make a partial change — for example, toggling `active` or swapping a
         schedule — fetch the current sync with
-        [`GET /api/bulk/syncs/{id}`](./get),
+        [`GET /api/bulk/syncs/{id}`](../../../../api-reference/bulk-sync/get),
         modify the fields you want to change, and send the complete object back in
         the update request.
 
@@ -517,9 +517,9 @@ class BulkSyncClient:
         > 📘 Updating schemas
         >
         > Schema updates are not performed through this endpoint. Use the
-        > [Update Bulk Sync Schemas](./schemas/patch)
+        > [Update Bulk Sync Schemas](../../../../api-reference/bulk-sync/schemas/patch)
         > endpoint to change a subset of schemas, or
-        > [Update Bulk Sync Schema](./schemas/%7Bschema_id%7D/put)
+        > [Update Bulk Sync Schema](../../../../api-reference/bulk-sync/schemas/update)
         > to replace a single schema's configuration.
 
         Parameters
@@ -1893,7 +1893,7 @@ class AsyncBulkSyncClient:
 
         To make a partial change — for example, toggling `active` or swapping a
         schedule — fetch the current sync with
-        [`GET /api/bulk/syncs/{id}`](./get),
+        [`GET /api/bulk/syncs/{id}`](../../../../api-reference/bulk-sync/get),
         modify the fields you want to change, and send the complete object back in
         the update request.
 
@@ -1916,9 +1916,9 @@ class AsyncBulkSyncClient:
         > 📘 Updating schemas
         >
         > Schema updates are not performed through this endpoint. Use the
-        > [Update Bulk Sync Schemas](./schemas/patch)
+        > [Update Bulk Sync Schemas](../../../../api-reference/bulk-sync/schemas/patch)
         > endpoint to change a subset of schemas, or
-        > [Update Bulk Sync Schema](./schemas/%7Bschema_id%7D/put)
+        > [Update Bulk Sync Schema](../../../../api-reference/bulk-sync/schemas/update)
         > to replace a single schema's configuration.
 
         Parameters

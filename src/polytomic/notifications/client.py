@@ -3,7 +3,7 @@
 import typing
 from ..core.client_wrapper import SyncClientWrapper
 from ..core.request_options import RequestOptions
-from ..types.v_4_global_error_subscribers_response import V4GlobalErrorSubscribersResponse
+from ..types.v4global_error_subscribers_response import V4GlobalErrorSubscribersResponse
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.unauthorized_error import UnauthorizedError
 from ..types.rest_err_response import RestErrResponse
@@ -29,7 +29,7 @@ class NotificationsClient:
         Returns the list of email addresses subscribed to global sync error notifications for the caller's organization.
 
         To update the subscriber list, use
-        [`PUT /api/notifications/global-error-subscribers`](./put).
+        [`PUT /api/notifications/global-error-subscribers`](../../../api-reference/notifications/set-global-error-subscribers).
 
         Parameters
         ----------
@@ -102,7 +102,7 @@ class NotificationsClient:
         This is a **full replacement** — the request body becomes the complete
         subscriber list. To add or remove a single address without affecting others,
         fetch the current list with
-        [`GET /api/notifications/global-error-subscribers`](./get), apply your change,
+        [`GET /api/notifications/global-error-subscribers`](../../../api-reference/notifications/get-global-error-subscribers), apply your change,
         and send the modified list back.
 
         Parameters
@@ -196,7 +196,7 @@ class AsyncNotificationsClient:
         Returns the list of email addresses subscribed to global sync error notifications for the caller's organization.
 
         To update the subscriber list, use
-        [`PUT /api/notifications/global-error-subscribers`](./put).
+        [`PUT /api/notifications/global-error-subscribers`](../../../api-reference/notifications/set-global-error-subscribers).
 
         Parameters
         ----------
@@ -277,7 +277,7 @@ class AsyncNotificationsClient:
         This is a **full replacement** — the request body becomes the complete
         subscriber list. To add or remove a single address without affecting others,
         fetch the current list with
-        [`GET /api/notifications/global-error-subscribers`](./get), apply your change,
+        [`GET /api/notifications/global-error-subscribers`](../../../api-reference/notifications/get-global-error-subscribers), apply your change,
         and send the modified list back.
 
         Parameters

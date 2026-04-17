@@ -452,7 +452,7 @@ field you omit is cleared or reset to its default value.
 
 To make a partial change — for example, toggling `active` or swapping a
 schedule — fetch the current sync with
-[`GET /api/bulk/syncs/{id}`](./get),
+[`GET /api/bulk/syncs/{id}`](../../../../api-reference/bulk-sync/get),
 modify the fields you want to change, and send the complete object back in
 the update request.
 
@@ -475,9 +475,9 @@ non-empty setting, including schema and field selections.
 > 📘 Updating schemas
 >
 > Schema updates are not performed through this endpoint. Use the
-> [Update Bulk Sync Schemas](./schemas/patch)
+> [Update Bulk Sync Schemas](../../../../api-reference/bulk-sync/schemas/patch)
 > endpoint to change a subset of schemas, or
-> [Update Bulk Sync Schema](./schemas/%7Bschema_id%7D/put)
+> [Update Bulk Sync Schema](../../../../api-reference/bulk-sync/schemas/update)
 > to replace a single schema's configuration.
 </dd>
 </dl>
@@ -2047,9 +2047,9 @@ client.connections.test_connection(
 Returns a single connection by ID, with sensitive fields redacted.
 
 To inspect the schemas available on this connection, trigger a refresh with
-[`POST /api/connections/{id}/schemas/refresh`](./schemas/refresh/post) and
+[`POST /api/connections/{id}/schemas/refresh`](../../../api-reference/schemas/refresh) and
 track progress via
-[`GET /api/connections/{id}/schemas/status`](./schemas/status/get).
+[`GET /api/connections/{id}/schemas/status`](../../../api-reference/schemas/get-status).
 </dd>
 </dl>
 </dd>
@@ -2125,7 +2125,7 @@ Updates a connection's configuration.
 Updating a connection is a **full replacement** of its configuration. Any
 `configuration` field you omit is cleared. To make a partial change, fetch
 the current connection with
-[`GET /api/connections/{id}`](./get), apply your edits, and send the
+[`GET /api/connections/{id}`](../../../api-reference/connections/get), apply your edits, and send the
 complete object back.
 
 > 📘 The connection is re-validated against the upstream service after every
@@ -2369,7 +2369,7 @@ after a connection is authorized, the upstream service may be able to return
 lists of databases, schemas, or similar selectable values.
 
 For new setup flows, prefer
-[`POST /api/connection_types/{type}/parameter_values`](./get-type-parameter-values),
+[`POST /api/connection_types/{type}/parameter_values`](../../../../api-reference/connections/get-type-parameter-values),
 which lets you resolve completions before the connection has been created.
 </dd>
 </dl>
@@ -2608,7 +2608,7 @@ client.connections.list_shared_connections(
 Submits a query for asynchronous execution against the connection.
 
 This endpoint returns immediately with a query task ID. It does not wait for
-the query to finish. Poll [`GET /api/queries/{id}`](./get-query) until `status`
+the query to finish. Poll [`GET /api/queries/{id}`](../../../../api-reference/query-runner/get-query) until `status`
 reaches `done` or `failed`.
 
 Only the user who created the query can fetch its results later. Query results
@@ -2696,7 +2696,7 @@ client.query_runner.run_query(
 Fetches the latest status for a submitted query and, once complete, returns fields and paginated results.
 
 This endpoint is the second step of the query-runner flow. First call
-[`POST /api/connections/{connection_id}/query`](./run-query),
+[`POST /api/connections/{connection_id}/query`](../../../api-reference/query-runner/run-query),
 then poll this endpoint with the returned ID.
 
 Results may be paginated across multiple blobs. When that happens, use the
@@ -2728,6 +2728,7 @@ client = Polytomic(
 )
 client.query_runner.get_query(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    page="page",
 )
 
 ```
@@ -2992,7 +2993,7 @@ key or when the source-detected key is not the correct deduplication
 identifier for your use case.
 
 > 📘 To revert to the source-detected primary keys and remove all overrides,
-> use [`DELETE /api/connections/{connection_id}/schemas/{schema_id}/primary_keys`](./delete).
+> use [`DELETE /api/connections/{connection_id}/schemas/{schema_id}/primary_keys`](../../../../../../api-reference/schemas/reset-primary-keys).
 </dd>
 </dl>
 </dd>
@@ -3083,7 +3084,7 @@ client.schemas.set_primary_keys(
 Deletes all primary key overrides for a schema, reverting to the primary keys detected from the source.
 
 To replace the overrides with a new set rather than clearing them entirely,
-use [`PUT /api/connections/{connection_id}/schemas/{schema_id}/primary_keys`](./put)
+use [`PUT /api/connections/{connection_id}/schemas/{schema_id}/primary_keys`](../../../../../../api-reference/schemas/set-primary-keys)
 instead.
 </dd>
 </dl>
@@ -3171,7 +3172,7 @@ objects, or fields and you need Polytomic to re-inspect the connection before
 creating or updating sync configuration.
 
 This endpoint does not return the refreshed schemas directly. Follow the
-`Location` header or poll [`GET /api/connections/{id}/schemas/status`](./get-status)
+`Location` header or poll [`GET /api/connections/{id}/schemas/status`](../../../../../api-reference/schemas/get-status)
 until the refresh completes, then fetch the schemas you need.
 
 > 📘 Schema refresh is asynchronous
@@ -3724,6 +3725,7 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.models.preview(
+    async_=True,
     configuration={"table": "public.users"},
     connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     name="Users",
@@ -3971,6 +3973,7 @@ client = Polytomic(
     token="YOUR_TOKEN",
 )
 client.models.create(
+    async_=True,
     configuration={"table": "public.users"},
     connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     name="Users",
@@ -4122,7 +4125,7 @@ Returns a single model by ID, including its source fields, identity, and filters
 
 The response includes the model's source fields, identity column, and any
 configured filters. To preview the data a model would return without saving
-changes, use [`GET /api/models/{id}/sample`](./sample/get).
+changes, use [`GET /api/models/{id}/sample`](../../../api-reference/models/sample).
 </dd>
 </dl>
 </dd>
@@ -4145,6 +4148,7 @@ client = Polytomic(
 )
 client.models.get(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    async_=True,
 )
 
 ```
@@ -4208,7 +4212,7 @@ the request body is written to the model; any field you omit is cleared or reset
 to its default value.
 
 To make a partial change, fetch the current model with
-[`GET /api/models/{id}`](./get), modify the fields you want to change, and send
+[`GET /api/models/{id}`](../../../api-reference/models/get), modify the fields you want to change, and send
 the complete object back in the update request.
 
 Changes to source fields, filters, or the identity column take effect on the
@@ -4425,6 +4429,7 @@ client = Polytomic(
 )
 client.models.remove(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    async_=True,
 )
 
 ```
@@ -4508,6 +4513,7 @@ client = Polytomic(
 )
 client.models.sample(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    async_=True,
 )
 
 ```
@@ -4570,7 +4576,7 @@ Describes the source configuration available on a connection for use as a model 
 Use this endpoint before creating a model to understand what configuration is
 available. Once you have a configuration, resolve the fields available for
 sync mapping with
-[`GET /api/connections/{id}/modelsync/source/fields`](./fields/get).
+[`GET /api/connections/{id}/modelsync/source/fields`](../../../../../api-reference/model-sync/get-source-fields).
 </dd>
 </dl>
 </dd>
@@ -4752,7 +4758,7 @@ non-positive values fall back to the same default.
 
 This endpoint returns syncs visible to the current caller's organization scope.
 To inspect a specific sync in more detail, follow up with
-[`GET /api/syncs/{id}`](./get).
+[`GET /api/syncs/{id}`](../../api-reference/model-sync/get).
 </dd>
 </dl>
 </dd>
@@ -4775,6 +4781,7 @@ client = Polytomic(
 )
 client.model_sync.list(
     active=True,
+    mode="create",
     target_connection_id="0b155265-c537-44c9-9359-a3ceb468a4da",
 )
 
@@ -4858,7 +4865,7 @@ Guides:
 Polytomic refers to a model sync's destination as the "target object", or
 target. Target objects are identified by a connection ID and an object ID. You
 can retrieve a list of all target objects for a connection using the [Get Target
-Objects](./targets/list) endpoint.
+Objects](../../api-reference/model-sync/targets/list) endpoint.
 
 The `target` object in the request specifies information about the sync destination.
 
@@ -4896,7 +4903,7 @@ configuration for the new target.
 },
 ```
 
-The [Get Target List](./targets/list) endpoint returns information about whether
+The [Get Target List](../../api-reference/model-sync/targets/list) endpoint returns information about whether
 a connection supports target creation.
 </dd>
 </dl>
@@ -5174,8 +5181,8 @@ client.model_sync.get_schedule_options()
 Returns a single model sync by ID.
 
 To check whether a sync is currently running or has recently completed, use
-[`GET /api/syncs/{id}/status`](./status/get). For the full history of
-executions, use [`GET /api/syncs/{id}/executions`](./executions/get).
+[`GET /api/syncs/{id}/status`](../../../api-reference/model-sync/get-status). For the full history of
+executions, use [`GET /api/syncs/{id}/executions`](../../../api-reference/model-sync/executions/list).
 </dd>
 </dl>
 </dd>
@@ -5928,12 +5935,14 @@ client = Polytomic(
 )
 client.events.list(
     organization_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    type="type",
     starting_after=datetime.datetime.fromisoformat(
         "2020-01-01 00:00:00+00:00",
     ),
     ending_before=datetime.datetime.fromisoformat(
         "2020-01-01 00:00:00+00:00",
     ),
+    limit=1,
 )
 
 ```
@@ -6129,7 +6138,7 @@ client.jobs.get(
 <dl>
 <dd>
 
-**id:** `str` — Unique identifier of the job (usually returned by whichever endpoint started the job).
+**type:** `str` — Job type. One of: createmodel, updatemodel, previewmodel, samplemodel, exportlogs.
     
 </dd>
 </dl>
@@ -6137,7 +6146,7 @@ client.jobs.get(
 <dl>
 <dd>
 
-**type:** `str` — Job type. One of: createmodel, updatemodel, previewmodel, samplemodel, exportlogs.
+**id:** `str` — Unique identifier of the job (usually returned by whichever endpoint started the job).
     
 </dd>
 </dl>
@@ -6245,7 +6254,7 @@ client.identity.get()
 Returns the list of email addresses subscribed to global sync error notifications for the caller's organization.
 
 To update the subscriber list, use
-[`PUT /api/notifications/global-error-subscribers`](./put).
+[`PUT /api/notifications/global-error-subscribers`](../../../api-reference/notifications/set-global-error-subscribers).
 </dd>
 </dl>
 </dd>
@@ -6311,7 +6320,7 @@ Replaces the list of email addresses subscribed to global sync error notificatio
 This is a **full replacement** — the request body becomes the complete
 subscriber list. To add or remove a single address without affecting others,
 fetch the current list with
-[`GET /api/notifications/global-error-subscribers`](./get), apply your change,
+[`GET /api/notifications/global-error-subscribers`](../../../api-reference/notifications/get-global-error-subscribers), apply your change,
 and send the modified list back.
 </dd>
 </dl>
@@ -7066,7 +7075,7 @@ client.users.get(
 <dl>
 <dd>
 
-**id:** `str` — Unique identifier of the user.
+**org_id:** `str` — Unique identifier of the organization the user belongs to.
     
 </dd>
 </dl>
@@ -7074,7 +7083,7 @@ client.users.get(
 <dl>
 <dd>
 
-**org_id:** `str` — Unique identifier of the organization the user belongs to.
+**id:** `str` — Unique identifier of the user.
     
 </dd>
 </dl>
@@ -7151,7 +7160,7 @@ client.users.update(
 <dl>
 <dd>
 
-**id:** `str` — Unique identifier of the user to update.
+**org_id:** `str` — Unique identifier of the organization the user belongs to.
     
 </dd>
 </dl>
@@ -7159,7 +7168,7 @@ client.users.update(
 <dl>
 <dd>
 
-**org_id:** `str` — Unique identifier of the organization the user belongs to.
+**id:** `str` — Unique identifier of the user to update.
     
 </dd>
 </dl>
@@ -7259,7 +7268,7 @@ client.users.remove(
 <dl>
 <dd>
 
-**id:** `str` — Unique identifier of the user.
+**org_id:** `str` — Unique identifier of the organization the user belongs to.
     
 </dd>
 </dl>
@@ -7267,7 +7276,7 @@ client.users.remove(
 <dl>
 <dd>
 
-**org_id:** `str` — Unique identifier of the organization the user belongs to.
+**id:** `str` — Unique identifier of the user.
     
 </dd>
 </dl>
@@ -7749,7 +7758,7 @@ Deletes a webhook.
 
 Deletion is permanent. To stop delivery without losing the webhook
 configuration, use
-[`POST /api/webhooks/{id}/disable`](./disable/post) instead.
+[`POST /api/webhooks/{id}/disable`](../../../api-reference/webhooks/disable) instead.
 </dd>
 </dl>
 </dd>
@@ -7993,8 +8002,8 @@ executions are preferred over older terminal ones.
 
 Use this endpoint when you want a dashboard-style answer to "what is each sync
 doing now?" If you need the full execution history or a single execution's
-details, use [`GET /api/bulk/syncs/{id}/executions`](./list) or
-[`GET /api/bulk/syncs/{id}/executions/{exec_id}`](./get) instead.
+details, use [`GET /api/bulk/syncs/{id}/executions`](../../../../api-reference/bulk-sync/executions/list) or
+[`GET /api/bulk/syncs/{id}/executions/{exec_id}`](../../../../api-reference/bulk-sync/executions/get) instead.
 
 Setting `all=true` or `active=true` ignores any explicit `sync_id` filters and
 expands the request to the caller's organization scope.
@@ -8502,6 +8511,7 @@ client = Polytomic(
 client.bulk_sync.executions.export_logs(
     sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
     execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    notify=True,
 )
 
 ```
@@ -9541,6 +9551,8 @@ client = Polytomic(
 )
 client.model_sync.targets.get_target(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    type="type",
+    search="search",
 )
 
 ```
@@ -9796,7 +9808,7 @@ client.model_sync.targets.list(
 Returns the valid values for a target-creation property on a connection that supports creating new target objects.
 
 Connections which support creating new sync target objects (destinations) will
-return `target_creation` with their [target object list](./list). This endpoint
+return `target_creation` with their [target object list](../../../../../../../api-reference/model-sync/targets/list). This endpoint
 will return possible values for properties where `enum` is `true`.
 
 If the connection does not support creating new target objects, an HTTP 404 will
@@ -9915,7 +9927,7 @@ The token is opaque. Do not construct or edit it yourself.
 
 For full details about a specific execution — including record counts and error
 summaries — use
-[`GET /api/syncs/{sync_id}/executions/{id}`](./{id}/get).
+[`GET /api/syncs/{sync_id}/executions/{id}`](../../../../api-reference/model-sync/executions/get).
 </dd>
 </dl>
 </dd>
@@ -10390,7 +10402,7 @@ Each policy binds one or more roles to a set of resources, controlling what
 actions members with those roles can perform on those resources.
 
 To inspect a specific policy in detail, use
-[`GET /api/permissions/policies/{id}`](./%7Bid%7D/get).
+[`GET /api/permissions/policies/{id}`](../../../api-reference/permissions/policies/get).
 </dd>
 </dl>
 </dd>
@@ -10622,7 +10634,7 @@ Updates an existing policy.
 The update is a **full replacement** of the policy's bindings. Any role or
 resource binding not included in the request body is removed. To make a
 partial change, fetch the current policy with
-[`GET /api/permissions/policies/{id}`](./get), modify the relevant bindings,
+[`GET /api/permissions/policies/{id}`](../../../../api-reference/permissions/policies/get), modify the relevant bindings,
 and send the complete object back.
 </dd>
 </dl>
@@ -10801,7 +10813,7 @@ and cannot be modified or deleted. Custom roles appear alongside them and can
 be created, updated, or removed as needed.
 
 To inspect or modify a specific role, use
-[`GET /api/permissions/roles/{id}`](./%7Bid%7D/get).
+[`GET /api/permissions/roles/{id}`](../../../api-reference/permissions/roles/get).
 </dd>
 </dl>
 </dd>

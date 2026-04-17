@@ -2,7 +2,7 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .v_2_sample_record import V2SampleRecord
+from .v2sample_record import V2SampleRecord
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
 

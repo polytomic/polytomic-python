@@ -10,7 +10,7 @@ class BaseClientWrapper:
     def __init__(
         self,
         *,
-        version: typing.Optional[str] = None,
+        version: typing.Optional[typing.Any] = None,
         token: typing.Union[str, typing.Callable[[], str]],
         base_url: str,
         timeout: typing.Optional[float] = None,
@@ -22,10 +22,9 @@ class BaseClientWrapper:
 
     def get_headers(self) -> typing.Dict[str, str]:
         headers: typing.Dict[str, str] = {
-            "User-Agent": "polytomic/1.17.1",
             "X-Fern-Language": "Python",
             "X-Fern-SDK-Name": "polytomic",
-            "X-Fern-SDK-Version": "1.17.1",
+            "X-Fern-SDK-Version": "1.18.0",
         }
         if self._version is not None:
             headers["X-Polytomic-Version"] = self._version
@@ -49,7 +48,7 @@ class SyncClientWrapper(BaseClientWrapper):
     def __init__(
         self,
         *,
-        version: typing.Optional[str] = None,
+        version: typing.Optional[typing.Any] = None,
         token: typing.Union[str, typing.Callable[[], str]],
         base_url: str,
         timeout: typing.Optional[float] = None,
@@ -68,7 +67,7 @@ class AsyncClientWrapper(BaseClientWrapper):
     def __init__(
         self,
         *,
-        version: typing.Optional[str] = None,
+        version: typing.Optional[typing.Any] = None,
         token: typing.Union[str, typing.Callable[[], str]],
         base_url: str,
         timeout: typing.Optional[float] = None,

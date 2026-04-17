@@ -228,7 +228,7 @@ class UsersClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def get(self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> UserEnvelope:
+    def get(self, org_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> UserEnvelope:
         """
         Returns a single user in the specified organization.
 
@@ -238,11 +238,11 @@ class UsersClient:
 
         Parameters
         ----------
-        id : str
-            Unique identifier of the user.
-
         org_id : str
             Unique identifier of the organization the user belongs to.
+
+        id : str
+            Unique identifier of the user.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -326,8 +326,8 @@ class UsersClient:
 
     def update(
         self,
-        id: str,
         org_id: str,
+        id: str,
         *,
         email: str,
         role: typing.Optional[str] = OMIT,
@@ -343,11 +343,11 @@ class UsersClient:
 
         Parameters
         ----------
-        id : str
-            Unique identifier of the user to update.
-
         org_id : str
             Unique identifier of the organization the user belongs to.
+
+        id : str
+            Unique identifier of the user to update.
 
         email : str
             Email address used to sign the user in and receive notifications.
@@ -448,7 +448,7 @@ class UsersClient:
             raise core_api_error_ApiError(status_code=_response.status_code, body=_response.text)
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
-    def remove(self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> UserEnvelope:
+    def remove(self, org_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> UserEnvelope:
         """
         Deletes a user from the specified organization.
 
@@ -458,11 +458,11 @@ class UsersClient:
 
         Parameters
         ----------
-        id : str
-            Unique identifier of the user.
-
         org_id : str
             Unique identifier of the organization the user belongs to.
+
+        id : str
+            Unique identifier of the user.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -877,7 +877,7 @@ class AsyncUsersClient:
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     async def get(
-        self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, org_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> UserEnvelope:
         """
         Returns a single user in the specified organization.
@@ -888,11 +888,11 @@ class AsyncUsersClient:
 
         Parameters
         ----------
-        id : str
-            Unique identifier of the user.
-
         org_id : str
             Unique identifier of the organization the user belongs to.
+
+        id : str
+            Unique identifier of the user.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -984,8 +984,8 @@ class AsyncUsersClient:
 
     async def update(
         self,
-        id: str,
         org_id: str,
+        id: str,
         *,
         email: str,
         role: typing.Optional[str] = OMIT,
@@ -1001,11 +1001,11 @@ class AsyncUsersClient:
 
         Parameters
         ----------
-        id : str
-            Unique identifier of the user to update.
-
         org_id : str
             Unique identifier of the organization the user belongs to.
+
+        id : str
+            Unique identifier of the user to update.
 
         email : str
             Email address used to sign the user in and receive notifications.
@@ -1115,7 +1115,7 @@ class AsyncUsersClient:
         raise core_api_error_ApiError(status_code=_response.status_code, body=_response_json)
 
     async def remove(
-        self, id: str, org_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, org_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> UserEnvelope:
         """
         Deletes a user from the specified organization.
@@ -1126,11 +1126,11 @@ class AsyncUsersClient:
 
         Parameters
         ----------
-        id : str
-            Unique identifier of the user.
-
         org_id : str
             Unique identifier of the organization the user belongs to.
+
+        id : str
+            Unique identifier of the user.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.

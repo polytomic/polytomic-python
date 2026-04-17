@@ -16,8 +16,8 @@ from ...errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from ...core.api_error import ApiError as core_api_error_ApiError
 from ...types.target_response_envelope import TargetResponseEnvelope
-from ...types.v_4_target_objects_response_envelope import V4TargetObjectsResponseEnvelope
-from ...types.v_4_target_property_values_envelope import V4TargetPropertyValuesEnvelope
+from ...types.v4target_objects_response_envelope import V4TargetObjectsResponseEnvelope
+from ...types.v4target_property_values_envelope import V4TargetPropertyValuesEnvelope
 from ...core.client_wrapper import AsyncClientWrapper
 
 
@@ -69,6 +69,8 @@ class TargetsClient:
         )
         client.model_sync.targets.get_target(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            type="type",
+            search="search",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -385,7 +387,7 @@ class TargetsClient:
         Returns the valid values for a target-creation property on a connection that supports creating new target objects.
 
         Connections which support creating new sync target objects (destinations) will
-        return `target_creation` with their [target object list](./list). This endpoint
+        return `target_creation` with their [target object list](../../../../../../../api-reference/model-sync/targets/list). This endpoint
         will return possible values for properties where `enum` is `true`.
 
         If the connection does not support creating new target objects, an HTTP 404 will
@@ -565,6 +567,8 @@ class AsyncTargetsClient:
         async def main() -> None:
             await client.model_sync.targets.get_target(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                type="type",
+                search="search",
             )
 
 
@@ -900,7 +904,7 @@ class AsyncTargetsClient:
         Returns the valid values for a target-creation property on a connection that supports creating new target objects.
 
         Connections which support creating new sync target objects (destinations) will
-        return `target_creation` with their [target object list](./list). This endpoint
+        return `target_creation` with their [target object list](../../../../../../../api-reference/model-sync/targets/list). This endpoint
         will return possible values for properties where `enum` is `true`.
 
         If the connection does not support creating new target objects, an HTTP 404 will

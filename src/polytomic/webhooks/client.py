@@ -396,7 +396,7 @@ class WebhooksClient:
 
         Deletion is permanent. To stop delivery without losing the webhook
         configuration, use
-        [`POST /api/webhooks/{id}/disable`](./disable/post) instead.
+        [`POST /api/webhooks/{id}/disable`](../../../api-reference/webhooks/disable) instead.
 
         Parameters
         ----------
@@ -1048,7 +1048,7 @@ class AsyncWebhooksClient:
 
         Deletion is permanent. To stop delivery without losing the webhook
         configuration, use
-        [`POST /api/webhooks/{id}/disable`](./disable/post) instead.
+        [`POST /api/webhooks/{id}/disable`](../../../api-reference/webhooks/disable) instead.
 
         Parameters
         ----------

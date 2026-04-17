@@ -2,7 +2,7 @@
 
 import typing
 from ..core.client_wrapper import SyncClientWrapper
-from ..types.v_4_user_field_request import V4UserFieldRequest
+from ..types.v4user_field_request import V4UserFieldRequest
 from ..core.request_options import RequestOptions
 from ..core.jsonable_encoder import jsonable_encoder
 from ..core.serialization import convert_and_respect_annotation_metadata
@@ -269,7 +269,7 @@ class SchemasClient:
         identifier for your use case.
 
         > 📘 To revert to the source-detected primary keys and remove all overrides,
-        > use [`DELETE /api/connections/{connection_id}/schemas/{schema_id}/primary_keys`](./delete).
+        > use [`DELETE /api/connections/{connection_id}/schemas/{schema_id}/primary_keys`](../../../../../../api-reference/schemas/reset-primary-keys).
 
         Parameters
         ----------
@@ -371,7 +371,7 @@ class SchemasClient:
         Deletes all primary key overrides for a schema, reverting to the primary keys detected from the source.
 
         To replace the overrides with a new set rather than clearing them entirely,
-        use [`PUT /api/connections/{connection_id}/schemas/{schema_id}/primary_keys`](./put)
+        use [`PUT /api/connections/{connection_id}/schemas/{schema_id}/primary_keys`](../../../../../../api-reference/schemas/set-primary-keys)
         instead.
 
         Parameters
@@ -464,7 +464,7 @@ class SchemasClient:
         creating or updating sync configuration.
 
         This endpoint does not return the refreshed schemas directly. Follow the
-        `Location` header or poll [`GET /api/connections/{id}/schemas/status`](./get-status)
+        `Location` header or poll [`GET /api/connections/{id}/schemas/status`](../../../../../api-reference/schemas/get-status)
         until the refresh completes, then fetch the schemas you need.
 
         > 📘 Schema refresh is asynchronous
@@ -1138,7 +1138,7 @@ class AsyncSchemasClient:
         identifier for your use case.
 
         > 📘 To revert to the source-detected primary keys and remove all overrides,
-        > use [`DELETE /api/connections/{connection_id}/schemas/{schema_id}/primary_keys`](./delete).
+        > use [`DELETE /api/connections/{connection_id}/schemas/{schema_id}/primary_keys`](../../../../../../api-reference/schemas/reset-primary-keys).
 
         Parameters
         ----------
@@ -1248,7 +1248,7 @@ class AsyncSchemasClient:
         Deletes all primary key overrides for a schema, reverting to the primary keys detected from the source.
 
         To replace the overrides with a new set rather than clearing them entirely,
-        use [`PUT /api/connections/{connection_id}/schemas/{schema_id}/primary_keys`](./put)
+        use [`PUT /api/connections/{connection_id}/schemas/{schema_id}/primary_keys`](../../../../../../api-reference/schemas/set-primary-keys)
         instead.
 
         Parameters
@@ -1349,7 +1349,7 @@ class AsyncSchemasClient:
         creating or updating sync configuration.
 
         This endpoint does not return the refreshed schemas directly. Follow the
-        `Location` header or poll [`GET /api/connections/{id}/schemas/status`](./get-status)
+        `Location` header or poll [`GET /api/connections/{id}/schemas/status`](../../../../../api-reference/schemas/get-status)
         until the refresh completes, then fetch the schemas you need.
 
         > 📘 Schema refresh is asynchronous

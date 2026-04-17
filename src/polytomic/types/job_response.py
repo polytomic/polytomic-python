@@ -18,7 +18,11 @@ class JobResponse(UniversalBaseModel):
     Identifier of the job.
     """
 
-    result: typing.Optional[typing.Optional[typing.Any]] = None
+    result: typing.Optional[typing.Optional[typing.Any]] = pydantic.Field(default=None)
+    """
+    Job result. Shape depends on the job type; only populated once status is done.
+    """
+
     status: typing.Optional[WorkTaskStatus] = None
     type: typing.Optional[str] = pydantic.Field(default=None)
     """

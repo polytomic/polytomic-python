@@ -22,7 +22,7 @@ from ..errors.forbidden_error import ForbiddenError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.connect_card_response_envelope import ConnectCardResponseEnvelope
 from ..types.connection_response_envelope import ConnectionResponseEnvelope
-from ..types.v_2_create_shared_connection_response_envelope import V2CreateSharedConnectionResponseEnvelope
+from ..types.v2create_shared_connection_response_envelope import V2CreateSharedConnectionResponseEnvelope
 from ..core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -803,9 +803,9 @@ class ConnectionsClient:
         Returns a single connection by ID, with sensitive fields redacted.
 
         To inspect the schemas available on this connection, trigger a refresh with
-        [`POST /api/connections/{id}/schemas/refresh`](./schemas/refresh/post) and
+        [`POST /api/connections/{id}/schemas/refresh`](../../../api-reference/schemas/refresh) and
         track progress via
-        [`GET /api/connections/{id}/schemas/status`](./schemas/status/get).
+        [`GET /api/connections/{id}/schemas/status`](../../../api-reference/schemas/get-status).
 
         Parameters
         ----------
@@ -900,7 +900,7 @@ class ConnectionsClient:
         Updating a connection is a **full replacement** of its configuration. Any
         `configuration` field you omit is cleared. To make a partial change, fetch
         the current connection with
-        [`GET /api/connections/{id}`](./get), apply your edits, and send the
+        [`GET /api/connections/{id}`](../../../api-reference/connections/get), apply your edits, and send the
         complete object back.
 
         > 📘 The connection is re-validated against the upstream service after every
@@ -1168,7 +1168,7 @@ class ConnectionsClient:
         lists of databases, schemas, or similar selectable values.
 
         For new setup flows, prefer
-        [`POST /api/connection_types/{type}/parameter_values`](./get-type-parameter-values),
+        [`POST /api/connection_types/{type}/parameter_values`](../../../../api-reference/connections/get-type-parameter-values),
         which lets you resolve completions before the connection has been created.
 
         Parameters
@@ -2299,9 +2299,9 @@ class AsyncConnectionsClient:
         Returns a single connection by ID, with sensitive fields redacted.
 
         To inspect the schemas available on this connection, trigger a refresh with
-        [`POST /api/connections/{id}/schemas/refresh`](./schemas/refresh/post) and
+        [`POST /api/connections/{id}/schemas/refresh`](../../../api-reference/schemas/refresh) and
         track progress via
-        [`GET /api/connections/{id}/schemas/status`](./schemas/status/get).
+        [`GET /api/connections/{id}/schemas/status`](../../../api-reference/schemas/get-status).
 
         Parameters
         ----------
@@ -2404,7 +2404,7 @@ class AsyncConnectionsClient:
         Updating a connection is a **full replacement** of its configuration. Any
         `configuration` field you omit is cleared. To make a partial change, fetch
         the current connection with
-        [`GET /api/connections/{id}`](./get), apply your edits, and send the
+        [`GET /api/connections/{id}`](../../../api-reference/connections/get), apply your edits, and send the
         complete object back.
 
         > 📘 The connection is re-validated against the upstream service after every
@@ -2688,7 +2688,7 @@ class AsyncConnectionsClient:
         lists of databases, schemas, or similar selectable values.
 
         For new setup flows, prefer
-        [`POST /api/connection_types/{type}/parameter_values`](./get-type-parameter-values),
+        [`POST /api/connection_types/{type}/parameter_values`](../../../../api-reference/connections/get-type-parameter-values),
         which lets you resolve completions before the connection has been created.
 
         Parameters

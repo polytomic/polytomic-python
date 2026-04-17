@@ -35,7 +35,7 @@ class RolesClient:
         be created, updated, or removed as needed.
 
         To inspect or modify a specific role, use
-        [`GET /api/permissions/roles/{id}`](./%7Bid%7D/get).
+        [`GET /api/permissions/roles/{id}`](../../../api-reference/permissions/roles/get).
 
         Parameters
         ----------
@@ -508,7 +508,7 @@ class AsyncRolesClient:
         be created, updated, or removed as needed.
 
         To inspect or modify a specific role, use
-        [`GET /api/permissions/roles/{id}`](./%7Bid%7D/get).
+        [`GET /api/permissions/roles/{id}`](../../../api-reference/permissions/roles/get).
 
         Parameters
         ----------

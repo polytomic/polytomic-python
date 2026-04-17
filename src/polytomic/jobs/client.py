@@ -22,7 +22,7 @@ class JobsClient:
         self._client_wrapper = client_wrapper
 
     def get(
-        self, id: str, type: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, type: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> JobResponseEnvelope:
         """
         Returns the current state of an asynchronous job.
@@ -39,11 +39,11 @@ class JobsClient:
 
         Parameters
         ----------
-        id : str
-            Unique identifier of the job (usually returned by whichever endpoint started the job).
-
         type : str
             Job type. One of: createmodel, updatemodel, previewmodel, samplemodel, exportlogs.
+
+        id : str
+            Unique identifier of the job (usually returned by whichever endpoint started the job).
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -131,7 +131,7 @@ class AsyncJobsClient:
         self._client_wrapper = client_wrapper
 
     async def get(
-        self, id: str, type: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, type: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> JobResponseEnvelope:
         """
         Returns the current state of an asynchronous job.
@@ -148,11 +148,11 @@ class AsyncJobsClient:
 
         Parameters
         ----------
-        id : str
-            Unique identifier of the job (usually returned by whichever endpoint started the job).
-
         type : str
             Job type. One of: createmodel, updatemodel, previewmodel, samplemodel, exportlogs.
+
+        id : str
+            Unique identifier of the job (usually returned by whichever endpoint started the job).
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.

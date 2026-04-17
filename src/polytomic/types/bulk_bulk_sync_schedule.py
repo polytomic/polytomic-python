@@ -21,6 +21,7 @@ class BulkBulkSyncSchedule(UniversalBaseModel):
     deleted_by: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="deletedBy")] = None
     frequency: ScheduleFrequency
     hour: typing.Optional[str] = None
+    is_default: typing_extensions.Annotated[typing.Optional[bool], FieldMetadata(alias="isDefault")] = None
     minute: typing.Optional[str] = None
     month: typing.Optional[str] = None
     schemas: typing.Optional[typing.List[str]] = None

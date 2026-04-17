@@ -7,7 +7,11 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 
 
 class V4UserFieldRequest(UniversalBaseModel):
-    example: typing.Optional[typing.Optional[typing.Any]] = None
+    example: typing.Optional[typing.Optional[typing.Any]] = pydantic.Field(default=None)
+    """
+    Example value shown in the UI and used as a hint for downstream consumers.
+    """
+
     field_id: str = pydantic.Field()
     """
     Stable identifier for the user-defined field. Reuse an existing field_id to update a field in place.

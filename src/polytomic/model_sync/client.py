@@ -62,7 +62,7 @@ class ModelSyncClient:
         Use this endpoint before creating a model to understand what configuration is
         available. Once you have a configuration, resolve the fields available for
         sync mapping with
-        [`GET /api/connections/{id}/modelsync/source/fields`](./fields/get).
+        [`GET /api/connections/{id}/modelsync/source/fields`](../../../../../api-reference/model-sync/get-source-fields).
 
         Parameters
         ----------
@@ -307,7 +307,7 @@ class ModelSyncClient:
 
         This endpoint returns syncs visible to the current caller's organization scope.
         To inspect a specific sync in more detail, follow up with
-        [`GET /api/syncs/{id}`](./get).
+        [`GET /api/syncs/{id}`](../../api-reference/model-sync/get).
 
         Parameters
         ----------
@@ -335,6 +335,7 @@ class ModelSyncClient:
         )
         client.model_sync.list(
             active=True,
+            mode="create",
             target_connection_id="0b155265-c537-44c9-9359-a3ceb468a4da",
         )
         """
@@ -443,7 +444,7 @@ class ModelSyncClient:
         Polytomic refers to a model sync's destination as the "target object", or
         target. Target objects are identified by a connection ID and an object ID. You
         can retrieve a list of all target objects for a connection using the [Get Target
-        Objects](./targets/list) endpoint.
+        Objects](../../api-reference/model-sync/targets/list) endpoint.
 
         The `target` object in the request specifies information about the sync destination.
 
@@ -481,7 +482,7 @@ class ModelSyncClient:
         },
         ```
 
-        The [Get Target List](./targets/list) endpoint returns information about whether
+        The [Get Target List](../../api-reference/model-sync/targets/list) endpoint returns information about whether
         a connection supports target creation.
 
         Parameters
@@ -739,8 +740,8 @@ class ModelSyncClient:
         Returns a single model sync by ID.
 
         To check whether a sync is currently running or has recently completed, use
-        [`GET /api/syncs/{id}/status`](./status/get). For the full history of
-        executions, use [`GET /api/syncs/{id}/executions`](./executions/get).
+        [`GET /api/syncs/{id}/status`](../../../api-reference/model-sync/get-status). For the full history of
+        executions, use [`GET /api/syncs/{id}/executions`](../../../api-reference/model-sync/executions/list).
 
         Parameters
         ----------
@@ -1577,7 +1578,7 @@ class AsyncModelSyncClient:
         Use this endpoint before creating a model to understand what configuration is
         available. Once you have a configuration, resolve the fields available for
         sync mapping with
-        [`GET /api/connections/{id}/modelsync/source/fields`](./fields/get).
+        [`GET /api/connections/{id}/modelsync/source/fields`](../../../../../api-reference/model-sync/get-source-fields).
 
         Parameters
         ----------
@@ -1838,7 +1839,7 @@ class AsyncModelSyncClient:
 
         This endpoint returns syncs visible to the current caller's organization scope.
         To inspect a specific sync in more detail, follow up with
-        [`GET /api/syncs/{id}`](./get).
+        [`GET /api/syncs/{id}`](../../api-reference/model-sync/get).
 
         Parameters
         ----------
@@ -1871,6 +1872,7 @@ class AsyncModelSyncClient:
         async def main() -> None:
             await client.model_sync.list(
                 active=True,
+                mode="create",
                 target_connection_id="0b155265-c537-44c9-9359-a3ceb468a4da",
             )
 
@@ -1982,7 +1984,7 @@ class AsyncModelSyncClient:
         Polytomic refers to a model sync's destination as the "target object", or
         target. Target objects are identified by a connection ID and an object ID. You
         can retrieve a list of all target objects for a connection using the [Get Target
-        Objects](./targets/list) endpoint.
+        Objects](../../api-reference/model-sync/targets/list) endpoint.
 
         The `target` object in the request specifies information about the sync destination.
 
@@ -2020,7 +2022,7 @@ class AsyncModelSyncClient:
         },
         ```
 
-        The [Get Target List](./targets/list) endpoint returns information about whether
+        The [Get Target List](../../api-reference/model-sync/targets/list) endpoint returns information about whether
         a connection supports target creation.
 
         Parameters
@@ -2296,8 +2298,8 @@ class AsyncModelSyncClient:
         Returns a single model sync by ID.
 
         To check whether a sync is currently running or has recently completed, use
-        [`GET /api/syncs/{id}/status`](./status/get). For the full history of
-        executions, use [`GET /api/syncs/{id}/executions`](./executions/get).
+        [`GET /api/syncs/{id}/status`](../../../api-reference/model-sync/get-status). For the full history of
+        executions, use [`GET /api/syncs/{id}/executions`](../../../api-reference/model-sync/executions/list).
 
         Parameters
         ----------

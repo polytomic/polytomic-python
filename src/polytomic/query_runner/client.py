@@ -3,7 +3,7 @@
 import typing
 from ..core.client_wrapper import SyncClientWrapper
 from ..core.request_options import RequestOptions
-from ..types.v_4_run_query_envelope import V4RunQueryEnvelope
+from ..types.v4run_query_envelope import V4RunQueryEnvelope
 from ..core.jsonable_encoder import jsonable_encoder
 from ..core.pydantic_utilities import parse_obj_as
 from ..errors.bad_request_error import BadRequestError
@@ -14,7 +14,7 @@ from ..errors.not_found_error import NotFoundError
 from ..errors.internal_server_error import InternalServerError
 from json.decoder import JSONDecodeError
 from ..core.api_error import ApiError as core_api_error_ApiError
-from ..types.v_4_query_results_envelope import V4QueryResultsEnvelope
+from ..types.v4query_results_envelope import V4QueryResultsEnvelope
 from ..core.client_wrapper import AsyncClientWrapper
 
 # this is used as the default value for optional parameters
@@ -36,7 +36,7 @@ class QueryRunnerClient:
         Submits a query for asynchronous execution against the connection.
 
         This endpoint returns immediately with a query task ID. It does not wait for
-        the query to finish. Poll [`GET /api/queries/{id}`](./get-query) until `status`
+        the query to finish. Poll [`GET /api/queries/{id}`](../../../../api-reference/query-runner/get-query) until `status`
         reaches `done` or `failed`.
 
         Only the user who created the query can fetch its results later. Query results
@@ -146,7 +146,7 @@ class QueryRunnerClient:
         Fetches the latest status for a submitted query and, once complete, returns fields and paginated results.
 
         This endpoint is the second step of the query-runner flow. First call
-        [`POST /api/connections/{connection_id}/query`](./run-query),
+        [`POST /api/connections/{connection_id}/query`](../../../api-reference/query-runner/run-query),
         then poll this endpoint with the returned ID.
 
         Results may be paginated across multiple blobs. When that happens, use the
@@ -183,6 +183,7 @@ class QueryRunnerClient:
         )
         client.query_runner.get_query(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            page="page",
         )
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -263,7 +264,7 @@ class AsyncQueryRunnerClient:
         Submits a query for asynchronous execution against the connection.
 
         This endpoint returns immediately with a query task ID. It does not wait for
-        the query to finish. Poll [`GET /api/queries/{id}`](./get-query) until `status`
+        the query to finish. Poll [`GET /api/queries/{id}`](../../../../api-reference/query-runner/get-query) until `status`
         reaches `done` or `failed`.
 
         Only the user who created the query can fetch its results later. Query results
@@ -381,7 +382,7 @@ class AsyncQueryRunnerClient:
         Fetches the latest status for a submitted query and, once complete, returns fields and paginated results.
 
         This endpoint is the second step of the query-runner flow. First call
-        [`POST /api/connections/{connection_id}/query`](./run-query),
+        [`POST /api/connections/{connection_id}/query`](../../../api-reference/query-runner/run-query),
         then poll this endpoint with the returned ID.
 
         Results may be paginated across multiple blobs. When that happens, use the
@@ -423,6 +424,7 @@ class AsyncQueryRunnerClient:
         async def main() -> None:
             await client.query_runner.get_query(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                page="page",
             )
 
 

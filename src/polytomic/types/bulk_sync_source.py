@@ -2,7 +2,7 @@
 
 from ..core.pydantic_utilities import UniversalBaseModel
 import typing
-from .v_3_bulk_sync_source_capabilities import V3BulkSyncSourceCapabilities
+from .v3bulk_sync_source_capabilities import V3BulkSyncSourceCapabilities
 from .schema import Schema
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 import pydantic
