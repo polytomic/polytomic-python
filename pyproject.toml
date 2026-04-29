@@ -4,7 +4,7 @@ dynamic = ["version"]
 
 [tool.poetry]
 name = "polytomic"
-version = "25.9.0"
+version = "25.9.1"
 description = ""
 readme = "README.md"
 authors = []
