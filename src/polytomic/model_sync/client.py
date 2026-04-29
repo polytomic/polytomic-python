@@ -624,7 +624,7 @@ class ModelSyncClient:
         )
         return _response.data
 
-    def remove(
+    def delete(
         self,
         id: str,
         *,
@@ -659,11 +659,11 @@ class ModelSyncClient:
             "2025-09-18",
             token="YOUR_TOKEN",
         )
-        client.model_sync.remove(
+        client.model_sync.delete(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
         """
-        _response = self._raw_client.remove(id, idempotency_key=idempotency_key, request_options=request_options)
+        _response = self._raw_client.delete(id, idempotency_key=idempotency_key, request_options=request_options)
         return _response.data
 
     def activate(
@@ -1524,7 +1524,7 @@ class AsyncModelSyncClient:
         )
         return _response.data
 
-    async def remove(
+    async def delete(
         self,
         id: str,
         *,
@@ -1564,14 +1564,14 @@ class AsyncModelSyncClient:
 
 
         async def main() -> None:
-            await client.model_sync.remove(
+            await client.model_sync.delete(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.remove(id, idempotency_key=idempotency_key, request_options=request_options)
+        _response = await self._raw_client.delete(id, idempotency_key=idempotency_key, request_options=request_options)
         return _response.data
 
     async def activate(

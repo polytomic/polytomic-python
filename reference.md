@@ -707,7 +707,7 @@ client.bulk_sync.update(
 </dl>
 </details>
 
-<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">remove</a>(...)</code></summary>
+<details><summary><code>client.bulk_sync.<a href="src/polytomic/bulk_sync/client.py">delete</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -748,7 +748,7 @@ client = Polytomic(
     environment=PolytomicEnvironment.DEFAULT,
 )
 
-client.bulk_sync.remove(
+client.bulk_sync.delete(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     refresh_schemas=True,
 )
@@ -2299,7 +2299,7 @@ client.connections.update(
 </dl>
 </details>
 
-<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">remove</a>(...)</code></summary>
+<details><summary><code>client.connections.<a href="src/polytomic/connections/client.py">delete</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -2339,7 +2339,7 @@ client = Polytomic(
     environment=PolytomicEnvironment.DEFAULT,
 )
 
-client.connections.remove(
+client.connections.delete(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     force=True,
 )
@@ -3005,14 +3005,6 @@ client.query_runner.run_query(
 <dd>
 
 **query:** `typing.Optional[str]` — The query to execute against the connection.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**run_query_request_query:** `typing.Optional[str]` — The query to execute against the connection.
     
 </dd>
 </dl>
@@ -4604,7 +4596,7 @@ client.models.update(
 </dl>
 </details>
 
-<details><summary><code>client.models.<a href="src/polytomic/models/client.py">remove</a>(...)</code></summary>
+<details><summary><code>client.models.<a href="src/polytomic/models/client.py">delete</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -4642,7 +4634,7 @@ client = Polytomic(
     environment=PolytomicEnvironment.DEFAULT,
 )
 
-client.models.remove(
+client.models.delete(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     async_=True,
 )
@@ -5722,7 +5714,7 @@ client.model_sync.update(
 </dl>
 </details>
 
-<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">remove</a>(...)</code></summary>
+<details><summary><code>client.model_sync.<a href="src/polytomic/model_sync/client.py">delete</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -5761,7 +5753,7 @@ client = Polytomic(
     environment=PolytomicEnvironment.DEFAULT,
 )
 
-client.model_sync.remove(
+client.model_sync.delete(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
 
@@ -7345,7 +7337,7 @@ client.organization.update(
 </dl>
 </details>
 
-<details><summary><code>client.organization.<a href="src/polytomic/organization/client.py">remove</a>(...)</code></summary>
+<details><summary><code>client.organization.<a href="src/polytomic/organization/client.py">delete</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -7382,7 +7374,7 @@ client = Polytomic(
     environment=PolytomicEnvironment.DEFAULT,
 )
 
-client.organization.remove(
+client.organization.delete(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
 
@@ -7743,7 +7735,7 @@ client.users.update_current_org_user(
 </dl>
 </details>
 
-<details><summary><code>client.users.<a href="src/polytomic/users/client.py">remove_current_org_user</a>(...) -> UserEnvelope</code></summary>
+<details><summary><code>client.users.<a href="src/polytomic/users/client.py">delete_current_org_user</a>(...) -> UserEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -7782,7 +7774,7 @@ client = Polytomic(
     environment=PolytomicEnvironment.DEFAULT,
 )
 
-client.users.remove_current_org_user(
+client.users.delete_current_org_user(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
 
@@ -8204,7 +8196,7 @@ client.users.update(
 </dl>
 </details>
 
-<details><summary><code>client.users.<a href="src/polytomic/users/client.py">remove</a>(...) -> UserEnvelope</code></summary>
+<details><summary><code>client.users.<a href="src/polytomic/users/client.py">delete</a>(...) -> UserEnvelope</code></summary>
 <dl>
 <dd>
 
@@ -8247,7 +8239,7 @@ client = Polytomic(
     environment=PolytomicEnvironment.DEFAULT,
 )
 
-client.users.remove(
+client.users.delete(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
     org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
@@ -8742,7 +8734,7 @@ client.webhooks.update(
 </dl>
 </details>
 
-<details><summary><code>client.webhooks.<a href="src/polytomic/webhooks/client.py">remove</a>(...)</code></summary>
+<details><summary><code>client.webhooks.<a href="src/polytomic/webhooks/client.py">delete</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -8788,7 +8780,7 @@ client = Polytomic(
     environment=PolytomicEnvironment.DEFAULT,
 )
 
-client.webhooks.remove(
+client.webhooks.delete(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
 
@@ -11998,7 +11990,7 @@ client.permissions.policies.update(
 </dl>
 </details>
 
-<details><summary><code>client.permissions.policies.<a href="src/polytomic/permissions/policies/client.py">remove</a>(...)</code></summary>
+<details><summary><code>client.permissions.policies.<a href="src/polytomic/permissions/policies/client.py">delete</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -12036,7 +12028,7 @@ client = Polytomic(
     environment=PolytomicEnvironment.DEFAULT,
 )
 
-client.permissions.policies.remove(
+client.permissions.policies.delete(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
 
@@ -12402,7 +12394,7 @@ client.permissions.roles.update(
 </dl>
 </details>
 
-<details><summary><code>client.permissions.roles.<a href="src/polytomic/permissions/roles/client.py">remove</a>(...)</code></summary>
+<details><summary><code>client.permissions.roles.<a href="src/polytomic/permissions/roles/client.py">delete</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -12445,7 +12437,7 @@ client = Polytomic(
     environment=PolytomicEnvironment.DEFAULT,
 )
 
-client.permissions.roles.remove(
+client.permissions.roles.delete(
     id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
 

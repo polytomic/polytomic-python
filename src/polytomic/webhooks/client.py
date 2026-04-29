@@ -222,7 +222,7 @@ class WebhooksClient:
         )
         return _response.data
 
-    def remove(
+    def delete(
         self,
         id: str,
         *,
@@ -264,11 +264,11 @@ class WebhooksClient:
             "2025-09-18",
             token="YOUR_TOKEN",
         )
-        client.webhooks.remove(
+        client.webhooks.delete(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
         """
-        _response = self._raw_client.remove(id, idempotency_key=idempotency_key, request_options=request_options)
+        _response = self._raw_client.delete(id, idempotency_key=idempotency_key, request_options=request_options)
         return _response.data
 
     def disable(
@@ -614,7 +614,7 @@ class AsyncWebhooksClient:
         )
         return _response.data
 
-    async def remove(
+    async def delete(
         self,
         id: str,
         *,
@@ -661,14 +661,14 @@ class AsyncWebhooksClient:
 
 
         async def main() -> None:
-            await client.webhooks.remove(
+            await client.webhooks.delete(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.remove(id, idempotency_key=idempotency_key, request_options=request_options)
+        _response = await self._raw_client.delete(id, idempotency_key=idempotency_key, request_options=request_options)
         return _response.data
 
     async def disable(

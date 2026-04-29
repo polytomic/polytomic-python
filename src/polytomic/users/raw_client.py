@@ -389,7 +389,7 @@ class RawUsersClient:
             status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
         )
 
-    def remove_current_org_user(
+    def delete_current_org_user(
         self,
         id: str,
         *,
@@ -878,7 +878,7 @@ class RawUsersClient:
             status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
         )
 
-    def remove(
+    def delete(
         self,
         org_id: str,
         id: str,
@@ -1448,7 +1448,7 @@ class AsyncRawUsersClient:
             status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
         )
 
-    async def remove_current_org_user(
+    async def delete_current_org_user(
         self,
         id: str,
         *,
@@ -1937,7 +1937,7 @@ class AsyncRawUsersClient:
             status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
         )
 
-    async def remove(
+    async def delete(
         self,
         org_id: str,
         id: str,

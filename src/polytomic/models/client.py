@@ -528,7 +528,7 @@ class ModelsClient:
         )
         return _response.data
 
-    def remove(
+    def delete(
         self,
         id: str,
         *,
@@ -565,12 +565,12 @@ class ModelsClient:
             "2025-09-18",
             token="YOUR_TOKEN",
         )
-        client.models.remove(
+        client.models.delete(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             async_=True,
         )
         """
-        _response = self._raw_client.remove(
+        _response = self._raw_client.delete(
             id, async_=async_, idempotency_key=idempotency_key, request_options=request_options
         )
         return _response.data
@@ -1181,7 +1181,7 @@ class AsyncModelsClient:
         )
         return _response.data
 
-    async def remove(
+    async def delete(
         self,
         id: str,
         *,
@@ -1223,7 +1223,7 @@ class AsyncModelsClient:
 
 
         async def main() -> None:
-            await client.models.remove(
+            await client.models.delete(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 async_=True,
             )
@@ -1231,7 +1231,7 @@ class AsyncModelsClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.remove(
+        _response = await self._raw_client.delete(
             id, async_=async_, idempotency_key=idempotency_key, request_options=request_options
         )
         return _response.data

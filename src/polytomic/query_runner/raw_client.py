@@ -31,7 +31,6 @@ class RawQueryRunnerClient:
         connection_id: str,
         *,
         query: typing.Optional[str] = None,
-        run_query_request_query: typing.Optional[str] = OMIT,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[RunQueryEnvelope]:
@@ -54,9 +53,6 @@ class RawQueryRunnerClient:
         query : typing.Optional[str]
             The query to execute against the connection.
 
-        run_query_request_query : typing.Optional[str]
-            The query to execute against the connection.
-
         idempotency_key : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
@@ -73,9 +69,7 @@ class RawQueryRunnerClient:
             params={
                 "query": query,
             },
-            json={
-                "query": run_query_request_query,
-            },
+            json={},
             headers={
                 "content-type": "application/json",
                 "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
@@ -247,7 +241,6 @@ class AsyncRawQueryRunnerClient:
         connection_id: str,
         *,
         query: typing.Optional[str] = None,
-        run_query_request_query: typing.Optional[str] = OMIT,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[RunQueryEnvelope]:
@@ -270,9 +263,6 @@ class AsyncRawQueryRunnerClient:
         query : typing.Optional[str]
             The query to execute against the connection.
 
-        run_query_request_query : typing.Optional[str]
-            The query to execute against the connection.
-
         idempotency_key : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
@@ -289,9 +279,7 @@ class AsyncRawQueryRunnerClient:
             params={
                 "query": query,
             },
-            json={
-                "query": run_query_request_query,
-            },
+            json={},
             headers={
                 "content-type": "application/json",
                 "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,

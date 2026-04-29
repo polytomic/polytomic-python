@@ -496,7 +496,7 @@ class BulkSyncClient:
         )
         return _response.data
 
-    def remove(
+    def delete(
         self,
         id: str,
         *,
@@ -536,12 +536,12 @@ class BulkSyncClient:
             "2025-09-18",
             token="YOUR_TOKEN",
         )
-        client.bulk_sync.remove(
+        client.bulk_sync.delete(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             refresh_schemas=True,
         )
         """
-        _response = self._raw_client.remove(
+        _response = self._raw_client.delete(
             id, refresh_schemas=refresh_schemas, idempotency_key=idempotency_key, request_options=request_options
         )
         return _response.data
@@ -1382,7 +1382,7 @@ class AsyncBulkSyncClient:
         )
         return _response.data
 
-    async def remove(
+    async def delete(
         self,
         id: str,
         *,
@@ -1427,7 +1427,7 @@ class AsyncBulkSyncClient:
 
 
         async def main() -> None:
-            await client.bulk_sync.remove(
+            await client.bulk_sync.delete(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 refresh_schemas=True,
             )
@@ -1435,7 +1435,7 @@ class AsyncBulkSyncClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.remove(
+        _response = await self._raw_client.delete(
             id, refresh_schemas=refresh_schemas, idempotency_key=idempotency_key, request_options=request_options
         )
         return _response.data

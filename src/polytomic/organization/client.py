@@ -296,7 +296,7 @@ class OrganizationClient:
         )
         return _response.data
 
-    def remove(
+    def delete(
         self,
         id: str,
         *,
@@ -330,11 +330,11 @@ class OrganizationClient:
             "2025-09-18",
             token="YOUR_TOKEN",
         )
-        client.organization.remove(
+        client.organization.delete(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
         """
-        _response = self._raw_client.remove(id, idempotency_key=idempotency_key, request_options=request_options)
+        _response = self._raw_client.delete(id, idempotency_key=idempotency_key, request_options=request_options)
         return _response.data
 
 
@@ -662,7 +662,7 @@ class AsyncOrganizationClient:
         )
         return _response.data
 
-    async def remove(
+    async def delete(
         self,
         id: str,
         *,
@@ -701,12 +701,12 @@ class AsyncOrganizationClient:
 
 
         async def main() -> None:
-            await client.organization.remove(
+            await client.organization.delete(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.remove(id, idempotency_key=idempotency_key, request_options=request_options)
+        _response = await self._raw_client.delete(id, idempotency_key=idempotency_key, request_options=request_options)
         return _response.data

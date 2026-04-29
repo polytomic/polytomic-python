@@ -368,7 +368,7 @@ class RawWebhooksClient:
             status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
         )
 
-    def remove(
+    def delete(
         self,
         id: str,
         *,
@@ -996,7 +996,7 @@ class AsyncRawWebhooksClient:
             status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
         )
 
-    async def remove(
+    async def delete(
         self,
         id: str,
         *,

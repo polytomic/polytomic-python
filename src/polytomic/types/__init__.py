@@ -230,7 +230,6 @@ if typing.TYPE_CHECKING:
     from .util_enum_value import UtilEnumValue
     from .util_execution_status import UtilExecutionStatus
     from .util_field_type import UtilFieldType
-    from .v4run_query_request import V4RunQueryRequest
     from .webhook import Webhook
     from .webhook_envelope import WebhookEnvelope
     from .webhook_list_envelope import WebhookListEnvelope
@@ -458,7 +457,6 @@ _dynamic_imports: typing.Dict[str, str] = {
     "UtilEnumValue": ".util_enum_value",
     "UtilExecutionStatus": ".util_execution_status",
     "UtilFieldType": ".util_field_type",
-    "V4RunQueryRequest": ".v4run_query_request",
     "Webhook": ".webhook",
     "WebhookEnvelope": ".webhook_envelope",
     "WebhookListEnvelope": ".webhook_list_envelope",
@@ -710,7 +708,6 @@ __all__ = [
     "UtilEnumValue",
     "UtilExecutionStatus",
     "UtilFieldType",
-    "V4RunQueryRequest",
     "Webhook",
     "WebhookEnvelope",
     "WebhookListEnvelope",

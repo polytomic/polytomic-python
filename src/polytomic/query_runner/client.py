@@ -32,7 +32,6 @@ class QueryRunnerClient:
         connection_id: str,
         *,
         query: typing.Optional[str] = None,
-        run_query_request_query: typing.Optional[str] = OMIT,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> RunQueryEnvelope:
@@ -53,9 +52,6 @@ class QueryRunnerClient:
             Unique identifier of the connection to run the query against.
 
         query : typing.Optional[str]
-            The query to execute against the connection.
-
-        run_query_request_query : typing.Optional[str]
             The query to execute against the connection.
 
         idempotency_key : typing.Optional[str]
@@ -82,11 +78,7 @@ class QueryRunnerClient:
         )
         """
         _response = self._raw_client.run_query(
-            connection_id,
-            query=query,
-            run_query_request_query=run_query_request_query,
-            idempotency_key=idempotency_key,
-            request_options=request_options,
+            connection_id, query=query, idempotency_key=idempotency_key, request_options=request_options
         )
         return _response.data
 
@@ -161,7 +153,6 @@ class AsyncQueryRunnerClient:
         connection_id: str,
         *,
         query: typing.Optional[str] = None,
-        run_query_request_query: typing.Optional[str] = OMIT,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> RunQueryEnvelope:
@@ -182,9 +173,6 @@ class AsyncQueryRunnerClient:
             Unique identifier of the connection to run the query against.
 
         query : typing.Optional[str]
-            The query to execute against the connection.
-
-        run_query_request_query : typing.Optional[str]
             The query to execute against the connection.
 
         idempotency_key : typing.Optional[str]
@@ -219,11 +207,7 @@ class AsyncQueryRunnerClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.run_query(
-            connection_id,
-            query=query,
-            run_query_request_query=run_query_request_query,
-            idempotency_key=idempotency_key,
-            request_options=request_options,
+            connection_id, query=query, idempotency_key=idempotency_key, request_options=request_options
         )
         return _response.data
 

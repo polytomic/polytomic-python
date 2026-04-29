@@ -195,7 +195,7 @@ class UsersClient:
         )
         return _response.data
 
-    def remove_current_org_user(
+    def delete_current_org_user(
         self,
         id: str,
         *,
@@ -232,11 +232,11 @@ class UsersClient:
             "2025-09-18",
             token="YOUR_TOKEN",
         )
-        client.users.remove_current_org_user(
+        client.users.delete_current_org_user(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
         """
-        _response = self._raw_client.remove_current_org_user(
+        _response = self._raw_client.delete_current_org_user(
             id, idempotency_key=idempotency_key, request_options=request_options
         )
         return _response.data
@@ -459,7 +459,7 @@ class UsersClient:
         )
         return _response.data
 
-    def remove(
+    def delete(
         self,
         org_id: str,
         id: str,
@@ -504,12 +504,12 @@ class UsersClient:
             "2025-09-18",
             token="YOUR_TOKEN",
         )
-        client.users.remove(
+        client.users.delete(
             id="248df4b7-aa70-47b8-a036-33ac447e668d",
             org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
         )
         """
-        _response = self._raw_client.remove(
+        _response = self._raw_client.delete(
             org_id, id, idempotency_key=idempotency_key, request_options=request_options
         )
         return _response.data
@@ -788,7 +788,7 @@ class AsyncUsersClient:
         )
         return _response.data
 
-    async def remove_current_org_user(
+    async def delete_current_org_user(
         self,
         id: str,
         *,
@@ -830,14 +830,14 @@ class AsyncUsersClient:
 
 
         async def main() -> None:
-            await client.users.remove_current_org_user(
+            await client.users.delete_current_org_user(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.remove_current_org_user(
+        _response = await self._raw_client.delete_current_org_user(
             id, idempotency_key=idempotency_key, request_options=request_options
         )
         return _response.data
@@ -1094,7 +1094,7 @@ class AsyncUsersClient:
         )
         return _response.data
 
-    async def remove(
+    async def delete(
         self,
         org_id: str,
         id: str,
@@ -1144,7 +1144,7 @@ class AsyncUsersClient:
 
 
         async def main() -> None:
-            await client.users.remove(
+            await client.users.delete(
                 id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             )
@@ -1152,7 +1152,7 @@ class AsyncUsersClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.remove(
+        _response = await self._raw_client.delete(
             org_id, id, idempotency_key=idempotency_key, request_options=request_options
         )
         return _response.data
