@@ -18,6 +18,10 @@ class ConnectionUsageResponse(UniversalBaseModel):
             description="Per-sync breakdown of API calls spent against this connection in the last 24 hours, sorted by total calls descending.",
         ),
     ] = None
+    """
+    Per-sync breakdown of API calls spent against this connection in the last 24 hours, sorted by total calls descending.
+    """
+
     calls_last24h: typing_extensions.Annotated[
         typing.Optional[int],
         FieldMetadata(alias="callsLast24h"),
@@ -26,11 +30,19 @@ class ConnectionUsageResponse(UniversalBaseModel):
             description="Total backend API calls made through this connection over the last 24 hours, or null if the backend does not report usage.",
         ),
     ] = None
+    """
+    Total backend API calls made through this connection over the last 24 hours, or null if the backend does not report usage.
+    """
+
     connection_id: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="connectionId"),
         pydantic.Field(alias="connectionId", description="Unique identifier of the connection the usage applies to."),
     ] = None
+    """
+    Unique identifier of the connection the usage applies to.
+    """
+
     reports_sync_stats: typing_extensions.Annotated[
         typing.Optional[bool],
         FieldMetadata(alias="reportsSyncStats"),
@@ -39,6 +51,9 @@ class ConnectionUsageResponse(UniversalBaseModel):
             description="True when the backend can break its API consumption down per sync; otherwise only the 24h total is reported.",
         ),
     ] = None
+    """
+    True when the backend can break its API consumption down per sync; otherwise only the 24h total is reported.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

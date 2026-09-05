@@ -18,6 +18,10 @@ class HarborKeyResponse(UniversalBaseModel):
             description="Recorded API calls made with this credential in the last 24 hours.",
         ),
     ] = None
+    """
+    Recorded API calls made with this credential in the last 24 hours.
+    """
+
     client_name: typing.Optional[str] = pydantic.Field(default=None)
     """
     OAuth client that issued this credential, when applicable.

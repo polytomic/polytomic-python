@@ -36,6 +36,10 @@ class BulkSyncSchemaExecutionStatus(UniversalBaseModel):
         FieldMetadata(alias="schema"),
         pydantic.Field(alias="schema", description="Schema (table or object) identifier."),
     ] = None
+    """
+    Schema (table or object) identifier.
+    """
+
     started_at: typing.Optional[dt.datetime] = pydantic.Field(default=None)
     """
     Timestamp when the most recent execution started.

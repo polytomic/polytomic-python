@@ -18,6 +18,10 @@ class ConnectionProxyInheritedBase(UniversalBaseModel):
             description="Base URL all proxied requests are sent to. Caller-supplied paths are appended to this URL.",
         ),
     ] = None
+    """
+    Base URL all proxied requests are sent to. Caller-supplied paths are appended to this URL.
+    """
+
     locked_headers: typing_extensions.Annotated[
         typing.Optional[typing.List[ConnectionProxyLockedHeader]],
         FieldMetadata(alias="lockedHeaders"),
@@ -26,6 +30,10 @@ class ConnectionProxyInheritedBase(UniversalBaseModel):
             description="Headers that are always attached to proxied requests. Sensitive values are redacted.",
         ),
     ] = None
+    """
+    Headers that are always attached to proxied requests. Sensitive values are redacted.
+    """
+
     locked_query: typing_extensions.Annotated[
         typing.Optional[typing.Dict[str, typing.Any]],
         FieldMetadata(alias="lockedQuery"),
@@ -34,6 +42,9 @@ class ConnectionProxyInheritedBase(UniversalBaseModel):
             description="Query parameters that are always attached to proxied requests. Values are redacted.",
         ),
     ] = None
+    """
+    Query parameters that are always attached to proxied requests. Values are redacted.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

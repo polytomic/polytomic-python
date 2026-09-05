@@ -20,6 +20,10 @@ class BulkSyncExecutionStatus(UniversalBaseModel):
             description="Next scheduled execution time, if the sync has a schedule configured.",
         ),
     ] = None
+    """
+    Next scheduled execution time, if the sync has a schedule configured.
+    """
+
     schemas: typing.Optional[typing.List[BulkSyncSchemaExecutionStatus]] = pydantic.Field(default=None)
     """
     Most recent execution status for each enabled schema in the sync.

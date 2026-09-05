@@ -18,6 +18,10 @@ class ConnectionProxyInfoResponse(UniversalBaseModel):
         FieldMetadata(alias="backendType"),
         pydantic.Field(alias="backendType", description="Connection backend identifier (e.g. hubspot, salesforce)."),
     ] = None
+    """
+    Connection backend identifier (e.g. hubspot, salesforce).
+    """
+
     connection_id: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="connectionId"),
@@ -25,6 +29,10 @@ class ConnectionProxyInfoResponse(UniversalBaseModel):
             alias="connectionId", description="Unique identifier of the connection the proxy contract applies to."
         ),
     ] = None
+    """
+    Unique identifier of the connection the proxy contract applies to.
+    """
+
     inherited_base: typing_extensions.Annotated[
         typing.Optional[ConnectionProxyInheritedBase],
         FieldMetadata(alias="inheritedBase"),

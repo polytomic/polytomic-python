@@ -14,6 +14,10 @@ class ConnectionProxyContract(UniversalBaseModel):
         FieldMetadata(alias="allowedMethods"),
         pydantic.Field(alias="allowedMethods", description="HTTP methods the proxy accepts."),
     ] = None
+    """
+    HTTP methods the proxy accepts.
+    """
+
     blocked_request_headers: typing_extensions.Annotated[
         typing.Optional[typing.List[str]],
         FieldMetadata(alias="blockedRequestHeaders"),
@@ -22,6 +26,10 @@ class ConnectionProxyContract(UniversalBaseModel):
             description="Headers the proxy strips from caller-supplied requests before forwarding.",
         ),
     ] = None
+    """
+    Headers the proxy strips from caller-supplied requests before forwarding.
+    """
+
     blocked_response_headers: typing_extensions.Annotated[
         typing.Optional[typing.List[str]],
         FieldMetadata(alias="blockedResponseHeaders"),
@@ -30,6 +38,10 @@ class ConnectionProxyContract(UniversalBaseModel):
             description="Headers the proxy strips from upstream responses before returning them.",
         ),
     ] = None
+    """
+    Headers the proxy strips from upstream responses before returning them.
+    """
+
     body_types: typing_extensions.Annotated[
         typing.Optional[typing.List[str]],
         FieldMetadata(alias="bodyTypes"),
@@ -37,11 +49,19 @@ class ConnectionProxyContract(UniversalBaseModel):
             alias="bodyTypes", description="Supported JSON types for request.body (e.g. object, string, null)."
         ),
     ] = None
+    """
+    Supported JSON types for request.body (e.g. object, string, null).
+    """
+
     max_request_body_bytes: typing_extensions.Annotated[
         typing.Optional[int],
         FieldMetadata(alias="maxRequestBodyBytes"),
         pydantic.Field(alias="maxRequestBodyBytes", description="Maximum accepted request body size in bytes."),
     ] = None
+    """
+    Maximum accepted request body size in bytes.
+    """
+
     max_response_body_bytes: typing_extensions.Annotated[
         typing.Optional[int],
         FieldMetadata(alias="maxResponseBodyBytes"),
@@ -50,11 +70,19 @@ class ConnectionProxyContract(UniversalBaseModel):
             description="Maximum response body size in bytes. Larger responses are truncated.",
         ),
     ] = None
+    """
+    Maximum response body size in bytes. Larger responses are truncated.
+    """
+
     path_rule: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="pathRule"),
         pydantic.Field(alias="pathRule", description="Rule the caller-supplied path must satisfy."),
     ] = None
+    """
+    Rule the caller-supplied path must satisfy.
+    """
+
     query_modes: typing_extensions.Annotated[
         typing.Optional[typing.List[str]],
         FieldMetadata(alias="queryModes"),
@@ -63,11 +91,19 @@ class ConnectionProxyContract(UniversalBaseModel):
             description="Supported request query inputs. Use query for structured URL-encoded parameters or rawQuery for exact passthrough.",
         ),
     ] = None
+    """
+    Supported request query inputs. Use query for structured URL-encoded parameters or rawQuery for exact passthrough.
+    """
+
     query_value_types: typing_extensions.Annotated[
         typing.Optional[typing.List[str]],
         FieldMetadata(alias="queryValueTypes"),
         pydantic.Field(alias="queryValueTypes", description="Supported value types for request.query."),
     ] = None
+    """
+    Supported value types for request.query.
+    """
+
     rate_limit_per_minute: typing_extensions.Annotated[
         typing.Optional[int],
         FieldMetadata(alias="rateLimitPerMinute"),
@@ -76,6 +112,10 @@ class ConnectionProxyContract(UniversalBaseModel):
             description="Maximum proxied requests per minute per connection before the proxy returns 429.",
         ),
     ] = None
+    """
+    Maximum proxied requests per minute per connection before the proxy returns 429.
+    """
+
     raw_query_rule: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="rawQueryRule"),
@@ -83,11 +123,18 @@ class ConnectionProxyContract(UniversalBaseModel):
             alias="rawQueryRule", description="How request.rawQuery is appended and who is responsible for encoding."
         ),
     ] = None
+    """
+    How request.rawQuery is appended and who is responsible for encoding.
+    """
+
     timeout_ms: typing_extensions.Annotated[
         typing.Optional[int],
         FieldMetadata(alias="timeoutMs"),
         pydantic.Field(alias="timeoutMs", description="Per-request timeout in milliseconds."),
     ] = None
+    """
+    Per-request timeout in milliseconds.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

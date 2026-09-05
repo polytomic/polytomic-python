@@ -15,6 +15,10 @@ class BulkSyncExecutionLogs(UniversalBaseModel):
         FieldMetadata(alias="Expires"),
         pydantic.Field(alias="Expires", description="Timestamp at which the signed URLs in URLs stop working."),
     ] = None
+    """
+    Timestamp at which the signed URLs in URLs stop working.
+    """
+
     ur_ls: typing_extensions.Annotated[
         typing.Optional[typing.List[str]],
         FieldMetadata(alias="URLs"),
@@ -23,6 +27,9 @@ class BulkSyncExecutionLogs(UniversalBaseModel):
             description="Signed URLs that download the execution's log files. These URLs expire at the Expires timestamp.",
         ),
     ] = None
+    """
+    Signed URLs that download the execution's log files. These URLs expire at the Expires timestamp.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

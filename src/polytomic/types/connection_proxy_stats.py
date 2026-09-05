@@ -18,6 +18,10 @@ class ConnectionProxyStats(UniversalBaseModel):
             description="Total backend API calls made through this connection (including non-proxy calls) over the last 24 hours.",
         ),
     ] = None
+    """
+    Total backend API calls made through this connection (including non-proxy calls) over the last 24 hours.
+    """
+
     last_proxy_call_at: typing_extensions.Annotated[
         typing.Optional[dt.datetime],
         FieldMetadata(alias="lastProxyCallAt"),
@@ -26,6 +30,10 @@ class ConnectionProxyStats(UniversalBaseModel):
             description="Timestamp of the most recent proxy call, or null if none have occurred.",
         ),
     ] = None
+    """
+    Timestamp of the most recent proxy call, or null if none have occurred.
+    """
+
     proxy2xx_last24h: typing_extensions.Annotated[
         typing.Optional[int],
         FieldMetadata(alias="proxy2xxLast24h"),
@@ -33,6 +41,10 @@ class ConnectionProxyStats(UniversalBaseModel):
             alias="proxy2xxLast24h", description="Proxy calls that returned a 2xx status in the last 24 hours."
         ),
     ] = None
+    """
+    Proxy calls that returned a 2xx status in the last 24 hours.
+    """
+
     proxy4xx_last24h: typing_extensions.Annotated[
         typing.Optional[int],
         FieldMetadata(alias="proxy4xxLast24h"),
@@ -40,6 +52,10 @@ class ConnectionProxyStats(UniversalBaseModel):
             alias="proxy4xxLast24h", description="Proxy calls that returned a 4xx status in the last 24 hours."
         ),
     ] = None
+    """
+    Proxy calls that returned a 4xx status in the last 24 hours.
+    """
+
     proxy5xx_last24h: typing_extensions.Annotated[
         typing.Optional[int],
         FieldMetadata(alias="proxy5xxLast24h"),
@@ -47,11 +63,18 @@ class ConnectionProxyStats(UniversalBaseModel):
             alias="proxy5xxLast24h", description="Proxy calls that returned a 5xx status in the last 24 hours."
         ),
     ] = None
+    """
+    Proxy calls that returned a 5xx status in the last 24 hours.
+    """
+
     proxy_calls_last24h: typing_extensions.Annotated[
         typing.Optional[int],
         FieldMetadata(alias="proxyCallsLast24h"),
         pydantic.Field(alias="proxyCallsLast24h", description="Proxy calls made in the last 24 hours."),
     ] = None
+    """
+    Proxy calls made in the last 24 hours.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

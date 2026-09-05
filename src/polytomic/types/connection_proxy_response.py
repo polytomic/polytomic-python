@@ -20,6 +20,10 @@ class ConnectionProxyResponse(UniversalBaseModel):
         FieldMetadata(alias="contentType"),
         pydantic.Field(alias="contentType", description="Content-Type of the upstream response."),
     ] = None
+    """
+    Content-Type of the upstream response.
+    """
+
     headers: typing.Optional[typing.Dict[str, typing.Optional[str]]] = pydantic.Field(default=None)
     """
     Response headers returned by the upstream service. Headers listed in blockedResponseHeaders are removed.
@@ -30,6 +34,10 @@ class ConnectionProxyResponse(UniversalBaseModel):
         FieldMetadata(alias="jobId"),
         pydantic.Field(alias="jobId", description="Identifier for the async proxy job when async is true."),
     ] = None
+    """
+    Identifier for the async proxy job when async is true.
+    """
+
     job_status: typing_extensions.Annotated[
         typing.Optional[WorkTaskStatus], FieldMetadata(alias="jobStatus"), pydantic.Field(alias="jobStatus")
     ] = None
@@ -38,11 +46,19 @@ class ConnectionProxyResponse(UniversalBaseModel):
         FieldMetadata(alias="jobUrl"),
         pydantic.Field(alias="jobUrl", description="Polling URL for the async proxy job when async is true."),
     ] = None
+    """
+    Polling URL for the async proxy job when async is true.
+    """
+
     latency_ms: typing_extensions.Annotated[
         typing.Optional[int],
         FieldMetadata(alias="latencyMs"),
         pydantic.Field(alias="latencyMs", description="End-to-end latency of the proxied request in milliseconds."),
     ] = None
+    """
+    End-to-end latency of the proxied request in milliseconds.
+    """
+
     proxy_call_id: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="proxyCallId"),
@@ -50,6 +66,10 @@ class ConnectionProxyResponse(UniversalBaseModel):
             alias="proxyCallId", description="Identifier for this proxy call, suitable for correlating with audit logs."
         ),
     ] = None
+    """
+    Identifier for this proxy call, suitable for correlating with audit logs.
+    """
+
     status: typing.Optional[int] = pydantic.Field(default=None)
     """
     HTTP status code returned by the upstream service for synchronous calls, or 202 when an async proxy job is accepted.

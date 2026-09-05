@@ -42,6 +42,9 @@ class ConnectionProxyCall(UniversalBaseModel):
             description="Exact query string fragment appended as-is after inherited query parameters. Do not include a leading '?'. Caller is responsible for encoding and syntax. Mutually exclusive with query.",
         ),
     ] = None
+    """
+    Exact query string fragment appended as-is after inherited query parameters. Do not include a leading '?'. Caller is responsible for encoding and syntax. Mutually exclusive with query.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

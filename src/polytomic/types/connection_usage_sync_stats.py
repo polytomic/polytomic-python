@@ -24,11 +24,19 @@ class ConnectionUsageSyncStats(UniversalBaseModel):
             description="Start time of the sync's most recent execution, or null if it has never run.",
         ),
     ] = None
+    """
+    Start time of the sync's most recent execution, or null if it has never run.
+    """
+
     sync_id: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="syncId"),
         pydantic.Field(alias="syncId", description="Unique identifier of the sync that spent the calls."),
     ] = None
+    """
+    Unique identifier of the sync that spent the calls.
+    """
+
     sync_name: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="syncName"),
@@ -36,11 +44,19 @@ class ConnectionUsageSyncStats(UniversalBaseModel):
             alias="syncName", description="Human-readable name of the sync, or empty if it could not be resolved."
         ),
     ] = None
+    """
+    Human-readable name of the sync, or empty if it could not be resolved.
+    """
+
     sync_type: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="syncType"),
         pydantic.Field(alias="syncType", description="Kind of sync that spent the calls (model or bulk)."),
     ] = None
+    """
+    Kind of sync that spent the calls (model or bulk).
+    """
+
     total_calls: typing_extensions.Annotated[
         typing.Optional[int],
         FieldMetadata(alias="totalCalls"),
@@ -49,6 +65,9 @@ class ConnectionUsageSyncStats(UniversalBaseModel):
             description="Total API calls the sync spent against this connection in the last 24 hours.",
         ),
     ] = None
+    """
+    Total API calls the sync spent against this connection in the last 24 hours.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

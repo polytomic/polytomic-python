@@ -9720,8 +9720,8 @@ client = Polytomic(
 )
 
 client.jobs.get(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
     type="createmodel",
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
 
 ```
@@ -11301,8 +11301,8 @@ client = Polytomic(
 )
 
 client.users.get(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
     org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
 
 ```
@@ -11390,8 +11390,8 @@ client = Polytomic(
 )
 
 client.users.update(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
     org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
     email="mail@example.com",
 )
 
@@ -11505,8 +11505,8 @@ client = Polytomic(
 )
 
 client.users.delete(
-    id="248df4b7-aa70-47b8-a036-33ac447e668d",
     org_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    id="248df4b7-aa70-47b8-a036-33ac447e668d",
 )
 
 ```

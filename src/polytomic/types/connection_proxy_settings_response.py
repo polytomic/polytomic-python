@@ -14,11 +14,19 @@ class ConnectionProxySettingsResponse(UniversalBaseModel):
         FieldMetadata(alias="backendType"),
         pydantic.Field(alias="backendType", description="Connection backend identifier (e.g. hubspot, salesforce)."),
     ] = None
+    """
+    Connection backend identifier (e.g. hubspot, salesforce).
+    """
+
     connection_id: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="connectionId"),
         pydantic.Field(alias="connectionId", description="Unique identifier of the requested connection."),
     ] = None
+    """
+    Unique identifier of the requested connection.
+    """
+
     enabled: typing.Optional[bool] = pydantic.Field(default=None)
     """
     True when the connection can currently be used through the Connection Proxy API.
@@ -32,6 +40,10 @@ class ConnectionProxySettingsResponse(UniversalBaseModel):
             description="Unique identifier of the parent connection where proxy settings are stored. Omitted for non-shared connections.",
         ),
     ] = None
+    """
+    Unique identifier of the parent connection where proxy settings are stored. Omitted for non-shared connections.
+    """
+
     supported: typing.Optional[bool] = pydantic.Field(default=None)
     """
     True when the connection backend supports the Connection Proxy API.

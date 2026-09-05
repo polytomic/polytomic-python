@@ -20,6 +20,10 @@ class ConnectionResponseSchema(UniversalBaseModel):
             description="API calls made to service in the last 24h (supported integrations only).",
         ),
     ] = None
+    """
+    API calls made to service in the last 24h (supported integrations only).
+    """
+
     configuration: typing.Optional[typing.Dict[str, typing.Any]] = None
     created_at: typing.Optional[dt.datetime] = None
     created_by: typing.Optional[OutputActor] = None

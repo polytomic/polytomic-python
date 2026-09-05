@@ -17,6 +17,10 @@ class RecordLoggingSettingsResponse(UniversalBaseModel):
             description="Blobstorage connection receiving record log deliveries, if one is configured.",
         ),
     ] = None
+    """
+    Blobstorage connection receiving record log deliveries, if one is configured.
+    """
+
     delivery_connection_name: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="deliveryConnectionName"),
@@ -25,6 +29,10 @@ class RecordLoggingSettingsResponse(UniversalBaseModel):
             description="Name of the destination connection, for display. Omitted when no destination is configured or the connection has been deleted.",
         ),
     ] = None
+    """
+    Name of the destination connection, for display. Omitted when no destination is configured or the connection has been deleted.
+    """
+
     enabled: typing.Optional[bool] = pydantic.Field(default=None)
     """
     True when record logging is enabled for the organization.

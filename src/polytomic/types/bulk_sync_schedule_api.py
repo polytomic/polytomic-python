@@ -16,11 +16,19 @@ class BulkSyncScheduleApi(UniversalBaseModel):
         FieldMetadata(alias="dayOfMonth"),
         pydantic.Field(alias="dayOfMonth", description="Day of the month (1-31) for monthly schedules."),
     ] = None
+    """
+    Day of the month (1-31) for monthly schedules.
+    """
+
     day_of_week: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="dayOfWeek"),
         pydantic.Field(alias="dayOfWeek", description="Day of the week for weekly schedules."),
     ] = None
+    """
+    Day of the week for weekly schedules.
+    """
+
     frequency: ScheduleFrequency
     hour: typing.Optional[str] = pydantic.Field(default=None)
     """
