@@ -7,10 +7,11 @@ from importlib import import_module
 
 if typing.TYPE_CHECKING:
     from .types import CreateBulkSyncRequestSchemasItem, UpdateBulkSyncRequestSchemasItem
-    from . import executions, schedules, schemas
+    from . import error_handling, executions, schedules, schemas
 _dynamic_imports: typing.Dict[str, str] = {
     "CreateBulkSyncRequestSchemasItem": ".types",
     "UpdateBulkSyncRequestSchemasItem": ".types",
+    "error_handling": ".error_handling",
     "executions": ".executions",
     "schedules": ".schedules",
     "schemas": ".schemas",
@@ -38,4 +39,11 @@ def __dir__():
     return sorted(lazy_attrs)
 
 
-__all__ = ["CreateBulkSyncRequestSchemasItem", "UpdateBulkSyncRequestSchemasItem", "executions", "schedules", "schemas"]
+__all__ = [
+    "CreateBulkSyncRequestSchemasItem",
+    "UpdateBulkSyncRequestSchemasItem",
+    "error_handling",
+    "executions",
+    "schedules",
+    "schemas",
+]

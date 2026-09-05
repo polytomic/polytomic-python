@@ -8,6 +8,7 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 
 class ConnectionTypeSchema(UniversalBaseModel):
     id: typing.Optional[str] = None
+    logo_dark_url: typing.Optional[str] = None
     logo_url: typing.Optional[str] = None
     name: typing.Optional[str] = None
     operations: typing.Optional[typing.List[str]] = None

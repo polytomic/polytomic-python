@@ -7,6 +7,11 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 
 
 class BulkSyncSourceCapabilities(UniversalBaseModel):
+    supports_namespaces: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    When true, the portion of a schema ID before its last dot is that schema's namespace.
+    """
+
     supports_tracking_fields: typing.Optional[bool] = None
 
     if IS_PYDANTIC_V2:

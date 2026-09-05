@@ -29,12 +29,13 @@ class RawTargetsClient:
         self,
         id: str,
         *,
-        target: str,
+        target: typing.Optional[str] = None,
         refresh: typing.Optional[bool] = None,
+        properties: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[TargetResponseEnvelope]:
         """
-        Returns the fields of a specific target object on a connection.
+        Returns the fields, modes, and properties of a target object on a connection.
 
         Pass the target object identifier to retrieve the fields available for
         mapping on that object. These are the destination fields you can reference
@@ -48,16 +49,48 @@ class RawTargetsClient:
         [`POST /api/connections/{id}/schemas/refresh`](../../../../../../api-reference/schemas/refresh)
         before calling this endpoint.
 
+        ## Fields for a target that hasn't been created yet
+
+        Some connections support creating a new destination object as part of a
+        model sync — for example, a Facebook Ads custom audience or a LinkedIn Ads
+        contact list. In that case there is no existing target identifier to pass;
+        instead, describe the new target with the same properties returned in the
+        `target_creation` block of
+        [`GET /api/connections/{id}/modelsync/targetobjects`](../../../../../../api-reference/model-sync/targets/list),
+        and this endpoint will return the fields the new target will expose.
+
+        Exactly one of `target` or `properties` must be supplied. Each input is
+        sent as a separate `properties[key]=value` query parameter. For a Facebook
+        Ads connection that requires an `account` and a `name`:
+
+        ```
+        GET /api/connections/{id}/modelsync/target/fields
+          ?properties[account]=act_1234567
+          &properties[name]=My%20new%20audience
+        ```
+
+        The response shape is identical to the existing-target form. For backends
+        where the new target's field set is fixed (most ads platforms), `fields`
+        contains those fields; for backends where the columns are user-defined
+        (e.g. a SQL database), `fields` will be empty and the caller defines the
+        columns at mapping time.
+
+        When `properties` is supplied, the `refresh` parameter is ignored — a
+        not-yet-created target has no cached schema to refresh.
+
         Parameters
         ----------
         id : str
             Unique identifier of the connection.
 
-        target : str
-            Identifier of the target object (e.g. schema.table for a database destination, object name for a SaaS destination).
+        target : typing.Optional[str]
+            Identifier of the target object (e.g. schema.table for a database destination, object name for a SaaS destination). Required unless properties is supplied.
 
         refresh : typing.Optional[bool]
-            When true, force a cache refresh of the target's schema before returning its fields.
+            When true, force a cache refresh of the target's schema before returning its fields. Ignored when properties is supplied.
+
+        properties : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+            Target-creation property values, supplied as properties[key]=value, matching the target_creation.properties returned by GET /api/connections/{id}/modelsync/targetobjects. When supplied, the response describes the not-yet-created target that would result from these inputs, in the same shape as for an existing target. Exactly one of target or properties must be supplied.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -73,6 +106,7 @@ class RawTargetsClient:
             params={
                 "target": target,
                 "refresh": refresh,
+                "properties": properties,
             },
             request_options=request_options,
         )
@@ -86,6 +120,17 @@ class RawTargetsClient:
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 403:
                 raise ForbiddenError(
                     headers=dict(_response.headers),
@@ -133,7 +178,11 @@ class RawTargetsClient:
         )
 
     def list(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self,
+        id: str,
+        *,
+        include_target_creation_values: typing.Optional[bool] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[TargetObjectsResponseEnvelope]:
         """
         Lists the target objects available on a connection for use as a model sync destination.
@@ -146,7 +195,9 @@ class RawTargetsClient:
         the property has a fixed set of valid values. When `enum` is `true`, the [Target
         Creation Property
         Values](../../../../../api-reference/model-sync/targets/get-create-property)
-        endpoint can be used to retrieve the valid values.
+        endpoint can be used to retrieve the valid values. Alternatively, pass
+        `include_target_creation_values=true` to inline the `values` array for each
+        enum property directly in this response.
 
         ## Sync modes
 
@@ -157,6 +208,9 @@ class RawTargetsClient:
         Parameters
         ----------
         id : str
+
+        include_target_creation_values : typing.Optional[bool]
+            When true, inline the valid values for each enum target-creation property in the response. Skips the separate call to retrieve property values.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -169,6 +223,9 @@ class RawTargetsClient:
         _response = self._client_wrapper.httpx_client.request(
             f"api/connections/{encode_path_param(id)}/modelsync/targetobjects",
             method="GET",
+            params={
+                "include_target_creation_values": include_target_creation_values,
+            },
             request_options=request_options,
         )
         try:
@@ -370,12 +427,13 @@ class AsyncRawTargetsClient:
         self,
         id: str,
         *,
-        target: str,
+        target: typing.Optional[str] = None,
         refresh: typing.Optional[bool] = None,
+        properties: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[TargetResponseEnvelope]:
         """
-        Returns the fields of a specific target object on a connection.
+        Returns the fields, modes, and properties of a target object on a connection.
 
         Pass the target object identifier to retrieve the fields available for
         mapping on that object. These are the destination fields you can reference
@@ -389,16 +447,48 @@ class AsyncRawTargetsClient:
         [`POST /api/connections/{id}/schemas/refresh`](../../../../../../api-reference/schemas/refresh)
         before calling this endpoint.
 
+        ## Fields for a target that hasn't been created yet
+
+        Some connections support creating a new destination object as part of a
+        model sync — for example, a Facebook Ads custom audience or a LinkedIn Ads
+        contact list. In that case there is no existing target identifier to pass;
+        instead, describe the new target with the same properties returned in the
+        `target_creation` block of
+        [`GET /api/connections/{id}/modelsync/targetobjects`](../../../../../../api-reference/model-sync/targets/list),
+        and this endpoint will return the fields the new target will expose.
+
+        Exactly one of `target` or `properties` must be supplied. Each input is
+        sent as a separate `properties[key]=value` query parameter. For a Facebook
+        Ads connection that requires an `account` and a `name`:
+
+        ```
+        GET /api/connections/{id}/modelsync/target/fields
+          ?properties[account]=act_1234567
+          &properties[name]=My%20new%20audience
+        ```
+
+        The response shape is identical to the existing-target form. For backends
+        where the new target's field set is fixed (most ads platforms), `fields`
+        contains those fields; for backends where the columns are user-defined
+        (e.g. a SQL database), `fields` will be empty and the caller defines the
+        columns at mapping time.
+
+        When `properties` is supplied, the `refresh` parameter is ignored — a
+        not-yet-created target has no cached schema to refresh.
+
         Parameters
         ----------
         id : str
             Unique identifier of the connection.
 
-        target : str
-            Identifier of the target object (e.g. schema.table for a database destination, object name for a SaaS destination).
+        target : typing.Optional[str]
+            Identifier of the target object (e.g. schema.table for a database destination, object name for a SaaS destination). Required unless properties is supplied.
 
         refresh : typing.Optional[bool]
-            When true, force a cache refresh of the target's schema before returning its fields.
+            When true, force a cache refresh of the target's schema before returning its fields. Ignored when properties is supplied.
+
+        properties : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+            Target-creation property values, supplied as properties[key]=value, matching the target_creation.properties returned by GET /api/connections/{id}/modelsync/targetobjects. When supplied, the response describes the not-yet-created target that would result from these inputs, in the same shape as for an existing target. Exactly one of target or properties must be supplied.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -414,6 +504,7 @@ class AsyncRawTargetsClient:
             params={
                 "target": target,
                 "refresh": refresh,
+                "properties": properties,
             },
             request_options=request_options,
         )
@@ -427,6 +518,17 @@ class AsyncRawTargetsClient:
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 403:
                 raise ForbiddenError(
                     headers=dict(_response.headers),
@@ -474,7 +576,11 @@ class AsyncRawTargetsClient:
         )
 
     async def list(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self,
+        id: str,
+        *,
+        include_target_creation_values: typing.Optional[bool] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[TargetObjectsResponseEnvelope]:
         """
         Lists the target objects available on a connection for use as a model sync destination.
@@ -487,7 +593,9 @@ class AsyncRawTargetsClient:
         the property has a fixed set of valid values. When `enum` is `true`, the [Target
         Creation Property
         Values](../../../../../api-reference/model-sync/targets/get-create-property)
-        endpoint can be used to retrieve the valid values.
+        endpoint can be used to retrieve the valid values. Alternatively, pass
+        `include_target_creation_values=true` to inline the `values` array for each
+        enum property directly in this response.
 
         ## Sync modes
 
@@ -498,6 +606,9 @@ class AsyncRawTargetsClient:
         Parameters
         ----------
         id : str
+
+        include_target_creation_values : typing.Optional[bool]
+            When true, inline the valid values for each enum target-creation property in the response. Skips the separate call to retrieve property values.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -510,6 +621,9 @@ class AsyncRawTargetsClient:
         _response = await self._client_wrapper.httpx_client.request(
             f"api/connections/{encode_path_param(id)}/modelsync/targetobjects",
             method="GET",
+            params={
+                "include_target_creation_values": include_target_creation_values,
+            },
             request_options=request_options,
         )
         try:

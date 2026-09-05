@@ -14,6 +14,7 @@ if typing.TYPE_CHECKING:
     from .connections.client import AsyncConnectionsClient, ConnectionsClient
     from .entities.client import AsyncEntitiesClient, EntitiesClient
     from .events.client import AsyncEventsClient, EventsClient
+    from .harbors.client import AsyncHarborsClient, HarborsClient
     from .identity.client import AsyncIdentityClient, IdentityClient
     from .jobs.client import AsyncJobsClient, JobsClient
     from .model_sync.client import AsyncModelSyncClient, ModelSyncClient
@@ -22,7 +23,9 @@ if typing.TYPE_CHECKING:
     from .organization.client import AsyncOrganizationClient, OrganizationClient
     from .permissions.client import AsyncPermissionsClient, PermissionsClient
     from .query_runner.client import AsyncQueryRunnerClient, QueryRunnerClient
+    from .record_view_links.client import AsyncRecordViewLinksClient, RecordViewLinksClient
     from .schemas.client import AsyncSchemasClient, SchemasClient
+    from .temporary_credentials.client import AsyncTemporaryCredentialsClient, TemporaryCredentialsClient
     from .users.client import AsyncUsersClient, UsersClient
     from .webhooks.client import AsyncWebhooksClient, WebhooksClient
 
@@ -109,11 +112,14 @@ class Polytomic:
         self._model_sync: typing.Optional[ModelSyncClient] = None
         self._entities: typing.Optional[EntitiesClient] = None
         self._events: typing.Optional[EventsClient] = None
+        self._harbors: typing.Optional[HarborsClient] = None
         self._jobs: typing.Optional[JobsClient] = None
         self._identity: typing.Optional[IdentityClient] = None
         self._notifications: typing.Optional[NotificationsClient] = None
         self._organization: typing.Optional[OrganizationClient] = None
         self._users: typing.Optional[UsersClient] = None
+        self._record_view_links: typing.Optional[RecordViewLinksClient] = None
+        self._temporary_credentials: typing.Optional[TemporaryCredentialsClient] = None
         self._webhooks: typing.Optional[WebhooksClient] = None
         self._permissions: typing.Optional[PermissionsClient] = None
 
@@ -182,6 +188,14 @@ class Polytomic:
         return self._events
 
     @property
+    def harbors(self):
+        if self._harbors is None:
+            from .harbors.client import HarborsClient  # noqa: E402
+
+            self._harbors = HarborsClient(client_wrapper=self._client_wrapper)
+        return self._harbors
+
+    @property
     def jobs(self):
         if self._jobs is None:
             from .jobs.client import JobsClient  # noqa: E402
@@ -220,6 +234,22 @@ class Polytomic:
 
             self._users = UsersClient(client_wrapper=self._client_wrapper)
         return self._users
+
+    @property
+    def record_view_links(self):
+        if self._record_view_links is None:
+            from .record_view_links.client import RecordViewLinksClient  # noqa: E402
+
+            self._record_view_links = RecordViewLinksClient(client_wrapper=self._client_wrapper)
+        return self._record_view_links
+
+    @property
+    def temporary_credentials(self):
+        if self._temporary_credentials is None:
+            from .temporary_credentials.client import TemporaryCredentialsClient  # noqa: E402
+
+            self._temporary_credentials = TemporaryCredentialsClient(client_wrapper=self._client_wrapper)
+        return self._temporary_credentials
 
     @property
     def webhooks(self):
@@ -341,11 +371,14 @@ class AsyncPolytomic:
         self._model_sync: typing.Optional[AsyncModelSyncClient] = None
         self._entities: typing.Optional[AsyncEntitiesClient] = None
         self._events: typing.Optional[AsyncEventsClient] = None
+        self._harbors: typing.Optional[AsyncHarborsClient] = None
         self._jobs: typing.Optional[AsyncJobsClient] = None
         self._identity: typing.Optional[AsyncIdentityClient] = None
         self._notifications: typing.Optional[AsyncNotificationsClient] = None
         self._organization: typing.Optional[AsyncOrganizationClient] = None
         self._users: typing.Optional[AsyncUsersClient] = None
+        self._record_view_links: typing.Optional[AsyncRecordViewLinksClient] = None
+        self._temporary_credentials: typing.Optional[AsyncTemporaryCredentialsClient] = None
         self._webhooks: typing.Optional[AsyncWebhooksClient] = None
         self._permissions: typing.Optional[AsyncPermissionsClient] = None
 
@@ -414,6 +447,14 @@ class AsyncPolytomic:
         return self._events
 
     @property
+    def harbors(self):
+        if self._harbors is None:
+            from .harbors.client import AsyncHarborsClient  # noqa: E402
+
+            self._harbors = AsyncHarborsClient(client_wrapper=self._client_wrapper)
+        return self._harbors
+
+    @property
     def jobs(self):
         if self._jobs is None:
             from .jobs.client import AsyncJobsClient  # noqa: E402
@@ -452,6 +493,22 @@ class AsyncPolytomic:
 
             self._users = AsyncUsersClient(client_wrapper=self._client_wrapper)
         return self._users
+
+    @property
+    def record_view_links(self):
+        if self._record_view_links is None:
+            from .record_view_links.client import AsyncRecordViewLinksClient  # noqa: E402
+
+            self._record_view_links = AsyncRecordViewLinksClient(client_wrapper=self._client_wrapper)
+        return self._record_view_links
+
+    @property
+    def temporary_credentials(self):
+        if self._temporary_credentials is None:
+            from .temporary_credentials.client import AsyncTemporaryCredentialsClient  # noqa: E402
+
+            self._temporary_credentials = AsyncTemporaryCredentialsClient(client_wrapper=self._client_wrapper)
+        return self._temporary_credentials
 
     @property
     def webhooks(self):

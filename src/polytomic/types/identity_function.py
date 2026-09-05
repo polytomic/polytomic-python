@@ -7,8 +7,15 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 
 
 class IdentityFunction(UniversalBaseModel):
-    id: typing.Optional[str] = None
-    label: typing.Optional[str] = None
+    id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Identifier of the identity function; use this value when configuring the sync identity.
+    """
+
+    label: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Human-readable label for the identity function.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

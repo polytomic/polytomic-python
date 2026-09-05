@@ -1000,7 +1000,7 @@ class RawBulkSyncClient:
             Optional list of schema IDs to include in this execution. If empty, all enabled schemas are included.
 
         test : typing.Optional[bool]
-            When true, runs a test execution that validates the configuration without writing to the destination. Mutually exclusive with resync_mode.
+            When true, runs a test execution that validates the configuration and syncs up to 5 records per schema. Mutually exclusive with resync_mode.
 
         idempotency_key : typing.Optional[str]
 
@@ -2303,7 +2303,7 @@ class AsyncRawBulkSyncClient:
             Optional list of schema IDs to include in this execution. If empty, all enabled schemas are included.
 
         test : typing.Optional[bool]
-            When true, runs a test execution that validates the configuration without writing to the destination. Mutually exclusive with resync_mode.
+            When true, runs a test execution that validates the configuration and syncs up to 5 records per schema. Mutually exclusive with resync_mode.
 
         idempotency_key : typing.Optional[str]
 

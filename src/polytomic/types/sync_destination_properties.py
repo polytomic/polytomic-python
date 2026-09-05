@@ -7,19 +7,75 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 
 
 class SyncDestinationProperties(UniversalBaseModel):
-    does_not_report_operation_counts: typing.Optional[bool] = None
-    mappings_not_required: typing.Optional[bool] = None
-    new_target_label: typing.Optional[str] = None
-    optional_target_mappings: typing.Optional[bool] = None
-    primary_metadata_object: typing.Optional[str] = None
-    requires_configuration: typing.Optional[bool] = None
-    supports_field_creation: typing.Optional[bool] = None
-    supports_field_encryption: typing.Optional[bool] = None
-    supports_field_type_selection: typing.Optional[bool] = None
-    supports_identity_field_creation: typing.Optional[bool] = None
-    supports_target_filters: typing.Optional[bool] = None
-    target_creator: typing.Optional[bool] = None
-    use_field_names_as_labels: typing.Optional[bool] = None
+    does_not_report_operation_counts: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if execution reports for this destination will not break record counts out by operation (insert vs. update); typical for upsert-only destinations.
+    """
+
+    mappings_not_required: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if a sync may be configured with only a target identity and no field mappings.
+    """
+
+    new_target_label: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Label to display when prompting for the name of a newly-created target (e.g. "Audience name", "Table name").
+    """
+
+    optional_target_mappings: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if a sync may pick source fields without mapping each one to a specific target field (used by webhooks and target creators).
+    """
+
+    primary_metadata_object: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    For destinations with multiple metadata dictionaries, identifies which dictionary new custom properties should be added to.
+    """
+
+    requires_configuration: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if the destination requires target-level configuration before a sync can run.
+    """
+
+    supports_field_creation: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if a sync may create new fields on this target as part of mapping.
+    """
+
+    supports_field_encryption: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if the destination supports field-level encryption.
+    """
+
+    supports_field_type_selection: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if the type of a newly-created field can be chosen at sync configuration time.
+    """
+
+    supports_filter_value_fields: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if a target filter on this destination may compare against a model field's value, resolved separately for each record, rather than against a literal value.
+    """
+
+    supports_identity_field_creation: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if a sync may create a new field on this target to use as the sync identity.
+    """
+
+    supports_target_filters: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if target filters are supported on this destination; the chosen sync mode may further constrain availability.
+    """
+
+    target_creator: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if writing to this target will create a new object in the destination system rather than write to an existing one.
+    """
+
+    use_field_names_as_labels: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if field IDs (rather than display names) should be used when labeling records in previews and logs.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

@@ -8,19 +8,75 @@ from .identity_function import IdentityFunction
 
 
 class TargetField(UniversalBaseModel):
-    association: typing.Optional[bool] = None
-    createable: typing.Optional[bool] = None
-    description: typing.Optional[str] = None
-    encryptable: typing.Optional[bool] = None
-    filterable: typing.Optional[bool] = None
-    id: typing.Optional[str] = None
-    identity_functions: typing.Optional[typing.List[IdentityFunction]] = None
-    name: typing.Optional[str] = None
-    required: typing.Optional[bool] = None
-    source_type: typing.Optional[str] = None
-    supports_identity: typing.Optional[bool] = None
-    type: typing.Optional[str] = None
-    updateable: typing.Optional[bool] = None
+    association: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if this field is an association (foreign key) to another object rather than a value column.
+    """
+
+    createable: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if this field can be written when creating a new record.
+    """
+
+    description: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Description of the field, when the backend provides one.
+    """
+
+    encryptable: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if this field supports field-level encryption.
+    """
+
+    filterable: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if this field can be used in a target filter.
+    """
+
+    id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Backend-specific identifier of the field; use this value when configuring field mappings.
+    """
+
+    identity_functions: typing.Optional[typing.List[IdentityFunction]] = pydantic.Field(default=None)
+    """
+    Identity match functions supported when this field is used as the sync identity (e.g. exact match, hashed match).
+    """
+
+    multiple_associations: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if this association field holds a set of references rather than one; every value mapped to it is a member of the set. False for a field that is not an association, and for one whose destination has not declared how many references the relationship holds.
+    """
+
+    name: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Human-readable name of the field.
+    """
+
+    required: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if a model sync must map a value to this field for records to be accepted.
+    """
+
+    source_type: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Native type reported by the destination system.
+    """
+
+    supports_identity: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if this field may be used as the identity (match key) for syncs that require one.
+    """
+
+    type: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Polytomic-normalized type used when mapping values to this field.
+    """
+
+    updateable: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if this field can be written when updating an existing record.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

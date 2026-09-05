@@ -274,7 +274,7 @@ class ExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ExecutionConsoleLogsResponseEnvelope:
         """
-        Fetch the latest console log entries for a bulk sync execution. Returns at most the most recent 50 entries retained in Redis.
+        Fetch the latest console log entries for a bulk sync execution. Returns the most recent 50 entries.
 
         Parameters
         ----------
@@ -438,7 +438,7 @@ class ExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ExecutionConsoleLogsResponseEnvelope:
         """
-        Fetch the latest console log entries for a schema within a bulk sync execution. Returns at most the most recent 50 entries retained in Redis.
+        Fetch the latest console log entries for a schema within a bulk sync execution. Returnst the most recent 50 entries.
 
         Parameters
         ----------
@@ -481,6 +481,59 @@ class ExecutionsClient:
         """
         _response = self._raw_client.get_schema_console_logs(
             sync_id, execution_id, schema_id, limit=limit, after=after, request_options=request_options
+        )
+        return _response.data
+
+    def get_ingest_console_logs(
+        self,
+        connection_id: str,
+        *,
+        sync_id: typing.Optional[str] = None,
+        limit: typing.Optional[int] = None,
+        after: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ExecutionConsoleLogsResponseEnvelope:
+        """
+        Fetch the latest console log entries for ingestion scoped by connection and optional bulk sync. Returns the most recent 50 entries.
+
+        Parameters
+        ----------
+        connection_id : str
+
+        sync_id : typing.Optional[str]
+            Optional bulk sync ID for sync-scoped ingestion logs.
+
+        limit : typing.Optional[int]
+            Maximum number of entries to return. Values above the logger retention limit are capped to 50.
+
+        after : typing.Optional[str]
+            Return only entries newer than this cursor.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ExecutionConsoleLogsResponseEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.bulk_sync.executions.get_ingest_console_logs(
+            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            limit=50,
+            after="1744311099250-0",
+        )
+        """
+        _response = self._raw_client.get_ingest_console_logs(
+            connection_id, sync_id=sync_id, limit=limit, after=after, request_options=request_options
         )
         return _response.data
 
@@ -777,7 +830,7 @@ class AsyncExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ExecutionConsoleLogsResponseEnvelope:
         """
-        Fetch the latest console log entries for a bulk sync execution. Returns at most the most recent 50 entries retained in Redis.
+        Fetch the latest console log entries for a bulk sync execution. Returns the most recent 50 entries.
 
         Parameters
         ----------
@@ -965,7 +1018,7 @@ class AsyncExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ExecutionConsoleLogsResponseEnvelope:
         """
-        Fetch the latest console log entries for a schema within a bulk sync execution. Returns at most the most recent 50 entries retained in Redis.
+        Fetch the latest console log entries for a schema within a bulk sync execution. Returnst the most recent 50 entries.
 
         Parameters
         ----------
@@ -1016,5 +1069,66 @@ class AsyncExecutionsClient:
         """
         _response = await self._raw_client.get_schema_console_logs(
             sync_id, execution_id, schema_id, limit=limit, after=after, request_options=request_options
+        )
+        return _response.data
+
+    async def get_ingest_console_logs(
+        self,
+        connection_id: str,
+        *,
+        sync_id: typing.Optional[str] = None,
+        limit: typing.Optional[int] = None,
+        after: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ExecutionConsoleLogsResponseEnvelope:
+        """
+        Fetch the latest console log entries for ingestion scoped by connection and optional bulk sync. Returns the most recent 50 entries.
+
+        Parameters
+        ----------
+        connection_id : str
+
+        sync_id : typing.Optional[str]
+            Optional bulk sync ID for sync-scoped ingestion logs.
+
+        limit : typing.Optional[int]
+            Maximum number of entries to return. Values above the logger retention limit are capped to 50.
+
+        after : typing.Optional[str]
+            Return only entries newer than this cursor.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ExecutionConsoleLogsResponseEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.bulk_sync.executions.get_ingest_console_logs(
+                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                limit=50,
+                after="1744311099250-0",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_ingest_console_logs(
+            connection_id, sync_id=sync_id, limit=limit, after=after, request_options=request_options
         )
         return _response.data

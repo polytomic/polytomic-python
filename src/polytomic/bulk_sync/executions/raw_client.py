@@ -388,7 +388,7 @@ class RawExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[ExecutionConsoleLogsResponseEnvelope]:
         """
-        Fetch the latest console log entries for a bulk sync execution. Returns at most the most recent 50 entries retained in Redis.
+        Fetch the latest console log entries for a bulk sync execution. Returns the most recent 50 entries.
 
         Parameters
         ----------
@@ -679,7 +679,7 @@ class RawExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[ExecutionConsoleLogsResponseEnvelope]:
         """
-        Fetch the latest console log entries for a schema within a bulk sync execution. Returns at most the most recent 50 entries retained in Redis.
+        Fetch the latest console log entries for a schema within a bulk sync execution. Returnst the most recent 50 entries.
 
         Parameters
         ----------
@@ -708,6 +708,116 @@ class RawExecutionsClient:
             f"api/bulk/syncs/{encode_path_param(sync_id)}/executions/{encode_path_param(execution_id)}/schemas/{encode_path_param(schema_id)}/consolelog",
             method="GET",
             params={
+                "limit": limit,
+                "after": after,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    ExecutionConsoleLogsResponseEnvelope,
+                    parse_obj_as(
+                        type_=ExecutionConsoleLogsResponseEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 408:
+                raise RequestTimeoutError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.text
+            )
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise core_api_error_ApiError(
+            status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
+        )
+
+    def get_ingest_console_logs(
+        self,
+        connection_id: str,
+        *,
+        sync_id: typing.Optional[str] = None,
+        limit: typing.Optional[int] = None,
+        after: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[ExecutionConsoleLogsResponseEnvelope]:
+        """
+        Fetch the latest console log entries for ingestion scoped by connection and optional bulk sync. Returns the most recent 50 entries.
+
+        Parameters
+        ----------
+        connection_id : str
+
+        sync_id : typing.Optional[str]
+            Optional bulk sync ID for sync-scoped ingestion logs.
+
+        limit : typing.Optional[int]
+            Maximum number of entries to return. Values above the logger retention limit are capped to 50.
+
+        after : typing.Optional[str]
+            Return only entries newer than this cursor.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[ExecutionConsoleLogsResponseEnvelope]
+            OK
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"api/connections/{encode_path_param(connection_id)}/ingest/consolelog",
+            method="GET",
+            params={
+                "sync_id": sync_id,
                 "limit": limit,
                 "after": after,
             },
@@ -1143,7 +1253,7 @@ class AsyncRawExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[ExecutionConsoleLogsResponseEnvelope]:
         """
-        Fetch the latest console log entries for a bulk sync execution. Returns at most the most recent 50 entries retained in Redis.
+        Fetch the latest console log entries for a bulk sync execution. Returns the most recent 50 entries.
 
         Parameters
         ----------
@@ -1434,7 +1544,7 @@ class AsyncRawExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[ExecutionConsoleLogsResponseEnvelope]:
         """
-        Fetch the latest console log entries for a schema within a bulk sync execution. Returns at most the most recent 50 entries retained in Redis.
+        Fetch the latest console log entries for a schema within a bulk sync execution. Returnst the most recent 50 entries.
 
         Parameters
         ----------
@@ -1463,6 +1573,116 @@ class AsyncRawExecutionsClient:
             f"api/bulk/syncs/{encode_path_param(sync_id)}/executions/{encode_path_param(execution_id)}/schemas/{encode_path_param(schema_id)}/consolelog",
             method="GET",
             params={
+                "limit": limit,
+                "after": after,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    ExecutionConsoleLogsResponseEnvelope,
+                    parse_obj_as(
+                        type_=ExecutionConsoleLogsResponseEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 408:
+                raise RequestTimeoutError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.text
+            )
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise core_api_error_ApiError(
+            status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
+        )
+
+    async def get_ingest_console_logs(
+        self,
+        connection_id: str,
+        *,
+        sync_id: typing.Optional[str] = None,
+        limit: typing.Optional[int] = None,
+        after: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[ExecutionConsoleLogsResponseEnvelope]:
+        """
+        Fetch the latest console log entries for ingestion scoped by connection and optional bulk sync. Returns the most recent 50 entries.
+
+        Parameters
+        ----------
+        connection_id : str
+
+        sync_id : typing.Optional[str]
+            Optional bulk sync ID for sync-scoped ingestion logs.
+
+        limit : typing.Optional[int]
+            Maximum number of entries to return. Values above the logger retention limit are capped to 50.
+
+        after : typing.Optional[str]
+            Return only entries newer than this cursor.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[ExecutionConsoleLogsResponseEnvelope]
+            OK
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"api/connections/{encode_path_param(connection_id)}/ingest/consolelog",
+            method="GET",
+            params={
+                "sync_id": sync_id,
                 "limit": limit,
                 "after": after,
             },

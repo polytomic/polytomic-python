@@ -16,6 +16,8 @@ from ..errors.not_found_error import NotFoundError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.api_error import ApiError as types_api_error_ApiError
 from ..types.api_key_response_envelope import ApiKeyResponseEnvelope
+from ..types.current_org_list_users_envelope import CurrentOrgListUsersEnvelope
+from ..types.current_org_user_envelope import CurrentOrgUserEnvelope
 from ..types.list_users_envelope import ListUsersEnvelope
 from ..types.user_envelope import UserEnvelope
 from pydantic import ValidationError
@@ -30,7 +32,7 @@ class RawUsersClient:
 
     def list_current_org_users(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[ListUsersEnvelope]:
+    ) -> HttpResponse[CurrentOrgListUsersEnvelope]:
         """
         Lists every user in the caller's current organization.
 
@@ -43,7 +45,7 @@ class RawUsersClient:
 
         Returns
         -------
-        HttpResponse[ListUsersEnvelope]
+        HttpResponse[CurrentOrgListUsersEnvelope]
             OK
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -54,9 +56,9 @@ class RawUsersClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    ListUsersEnvelope,
+                    CurrentOrgListUsersEnvelope,
                     parse_obj_as(
-                        type_=ListUsersEnvelope,  # type: ignore
+                        type_=CurrentOrgListUsersEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -205,7 +207,7 @@ class RawUsersClient:
 
     def get_current_org_user(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[UserEnvelope]:
+    ) -> HttpResponse[CurrentOrgUserEnvelope]:
         """
         Returns a single user from the caller's current organization.
 
@@ -219,7 +221,7 @@ class RawUsersClient:
 
         Returns
         -------
-        HttpResponse[UserEnvelope]
+        HttpResponse[CurrentOrgUserEnvelope]
             OK
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -230,9 +232,9 @@ class RawUsersClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    UserEnvelope,
+                    CurrentOrgUserEnvelope,
                     parse_obj_as(
-                        type_=UserEnvelope,  # type: ignore
+                        type_=CurrentOrgUserEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1089,7 +1091,7 @@ class AsyncRawUsersClient:
 
     async def list_current_org_users(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[ListUsersEnvelope]:
+    ) -> AsyncHttpResponse[CurrentOrgListUsersEnvelope]:
         """
         Lists every user in the caller's current organization.
 
@@ -1102,7 +1104,7 @@ class AsyncRawUsersClient:
 
         Returns
         -------
-        AsyncHttpResponse[ListUsersEnvelope]
+        AsyncHttpResponse[CurrentOrgListUsersEnvelope]
             OK
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1113,9 +1115,9 @@ class AsyncRawUsersClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    ListUsersEnvelope,
+                    CurrentOrgListUsersEnvelope,
                     parse_obj_as(
-                        type_=ListUsersEnvelope,  # type: ignore
+                        type_=CurrentOrgListUsersEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1264,7 +1266,7 @@ class AsyncRawUsersClient:
 
     async def get_current_org_user(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[UserEnvelope]:
+    ) -> AsyncHttpResponse[CurrentOrgUserEnvelope]:
         """
         Returns a single user from the caller's current organization.
 
@@ -1278,7 +1280,7 @@ class AsyncRawUsersClient:
 
         Returns
         -------
-        AsyncHttpResponse[UserEnvelope]
+        AsyncHttpResponse[CurrentOrgUserEnvelope]
             OK
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1289,9 +1291,9 @@ class AsyncRawUsersClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    UserEnvelope,
+                    CurrentOrgUserEnvelope,
                     parse_obj_as(
-                        type_=UserEnvelope,  # type: ignore
+                        type_=CurrentOrgUserEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

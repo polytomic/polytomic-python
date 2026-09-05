@@ -4,11 +4,11 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
-from .target_create_input import TargetCreateInput
+from .target_property_values import TargetPropertyValues
 
 
 class TargetCreator(UniversalBaseModel):
-    properties: typing.Optional[typing.List[TargetCreateInput]] = pydantic.Field(default=None)
+    properties: typing.Optional[typing.List[TargetPropertyValues]] = pydantic.Field(default=None)
     """
     The properties that are required for target creation.
     """

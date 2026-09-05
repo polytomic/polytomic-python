@@ -13,18 +13,22 @@ from ..types.get_sync_source_meta_envelope import GetSyncSourceMetaEnvelope
 from ..types.identity import Identity
 from ..types.list_sync_response_envelope import ListSyncResponseEnvelope
 from ..types.model_field_response import ModelFieldResponse
+from ..types.model_filters import ModelFilters
+from ..types.model_sync_v5response_envelope import ModelSyncV5ResponseEnvelope
+from ..types.model_sync_v5target import ModelSyncV5Target
 from ..types.modelsync_sync_target_mode import ModelsyncSyncTargetMode
 from ..types.override import Override
+from ..types.override_field_input import OverrideFieldInput
 from ..types.schedule import Schedule
 from ..types.schedule_option_response_envelope import ScheduleOptionResponseEnvelope
 from ..types.start_sync_response_envelope import StartSyncResponseEnvelope
 from ..types.sync_field import SyncField
-from ..types.sync_response_envelope import SyncResponseEnvelope
 from ..types.sync_status_envelope import SyncStatusEnvelope
-from ..types.target import Target
+from ..types.target_filters import TargetFilters
 from .raw_client import AsyncRawModelSyncClient, RawModelSyncClient
 
 if typing.TYPE_CHECKING:
+    from .error_handling.client import AsyncErrorHandlingClient, ErrorHandlingClient
     from .executions.client import AsyncExecutionsClient, ExecutionsClient
     from .targets.client import AsyncTargetsClient, TargetsClient
 # this is used as the default value for optional parameters
@@ -36,6 +40,7 @@ class ModelSyncClient:
         self._raw_client = RawModelSyncClient(client_wrapper=client_wrapper)
         self._client_wrapper = client_wrapper
         self._targets: typing.Optional[TargetsClient] = None
+        self._error_handling: typing.Optional[ErrorHandlingClient] = None
         self._executions: typing.Optional[ExecutionsClient] = None
 
     @property
@@ -231,22 +236,24 @@ class ModelSyncClient:
         mode: ModelsyncSyncTargetMode,
         name: str,
         schedule: Schedule,
-        target: Target,
+        target: ModelSyncV5Target,
         active: typing.Optional[bool] = OMIT,
         encryption_passphrase: typing.Optional[str] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
         identity: typing.Optional[Identity] = OMIT,
+        model_filters: typing.Optional[ModelFilters] = OMIT,
         only_enrich_updates: typing.Optional[bool] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
-        override_fields: typing.Optional[typing.Sequence[SyncField]] = OMIT,
+        override_fields: typing.Optional[typing.Sequence[OverrideFieldInput]] = OMIT,
         overrides: typing.Optional[typing.Sequence[Override]] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         skip_initial_backfill: typing.Optional[bool] = OMIT,
         sync_all_records: typing.Optional[bool] = OMIT,
+        target_filters: typing.Optional[TargetFilters] = OMIT,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> SyncResponseEnvelope:
+    ) -> ModelSyncV5ResponseEnvelope:
         """
         Creates a new model sync.
 
@@ -318,7 +325,7 @@ class ModelSyncClient:
 
         schedule : Schedule
 
-        target : Target
+        target : ModelSyncV5Target
 
         active : typing.Optional[bool]
             Whether the sync is enabled and scheduled.
@@ -327,12 +334,14 @@ class ModelSyncClient:
             Passphrase for encrypting the sync data.
 
         filter_logic : typing.Optional[str]
-            Logical expression to combine filters.
+            Deprecated. Use 'model_filters.logic'. Combines the model filters in 'filters' only.
 
         filters : typing.Optional[typing.Sequence[Filter]]
-            Filters to apply to the source data.
+            Deprecated. Use 'model_filters.conditions' and 'target_filters.conditions', which say which kind each condition is rather than inferring it. Ignored when either of those is present, except that a request carrying both shapes is rejected if they describe different filters.
 
         identity : typing.Optional[Identity]
+
+        model_filters : typing.Optional[ModelFilters]
 
         only_enrich_updates : typing.Optional[bool]
             Whether to use enrichment models as a source of possible changes to sync. If true, only changes to the base models will cause a record to sync.
@@ -340,8 +349,8 @@ class ModelSyncClient:
         organization_id : typing.Optional[str]
             Organization ID for the sync; read-only with a partner key.
 
-        override_fields : typing.Optional[typing.Sequence[SyncField]]
-            Values to set in the target unconditionally.
+        override_fields : typing.Optional[typing.Sequence[OverrideFieldInput]]
+            Target fields which are set to a fixed value for every record, rather than mapped from a model field.
 
         overrides : typing.Optional[typing.Sequence[Override]]
             Conditional value replacement for fields.
@@ -354,6 +363,8 @@ class ModelSyncClient:
         sync_all_records : typing.Optional[bool]
             Whether to sync all records from the source, regardless of whether they've changed since the previous execution.
 
+        target_filters : typing.Optional[TargetFilters]
+
         idempotency_key : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
@@ -361,12 +372,12 @@ class ModelSyncClient:
 
         Returns
         -------
-        SyncResponseEnvelope
+        ModelSyncV5ResponseEnvelope
             OK
 
         Examples
         --------
-        from polytomic import Polytomic, Schedule, SyncField, Target
+        from polytomic import ModelSyncV5Target, Polytomic, Schedule, SyncField
 
         client = Polytomic(
             "2025-09-18",
@@ -381,7 +392,7 @@ class ModelSyncClient:
             mode="create",
             name="Users Sync",
             schedule=Schedule(),
-            target=Target(
+            target=ModelSyncV5Target(
                 connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             ),
         )
@@ -397,6 +408,7 @@ class ModelSyncClient:
             filter_logic=filter_logic,
             filters=filters,
             identity=identity,
+            model_filters=model_filters,
             only_enrich_updates=only_enrich_updates,
             organization_id=organization_id,
             override_fields=override_fields,
@@ -404,6 +416,7 @@ class ModelSyncClient:
             policies=policies,
             skip_initial_backfill=skip_initial_backfill,
             sync_all_records=sync_all_records,
+            target_filters=target_filters,
             idempotency_key=idempotency_key,
             request_options=request_options,
         )
@@ -442,7 +455,7 @@ class ModelSyncClient:
         _response = self._raw_client.get_schedule_options(request_options=request_options)
         return _response.data
 
-    def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> SyncResponseEnvelope:
+    def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> ModelSyncV5ResponseEnvelope:
         """
         Returns a single model sync by ID.
 
@@ -459,7 +472,7 @@ class ModelSyncClient:
 
         Returns
         -------
-        SyncResponseEnvelope
+        ModelSyncV5ResponseEnvelope
             OK
 
         Examples
@@ -485,22 +498,24 @@ class ModelSyncClient:
         mode: ModelsyncSyncTargetMode,
         name: str,
         schedule: Schedule,
-        target: Target,
+        target: ModelSyncV5Target,
         active: typing.Optional[bool] = OMIT,
         encryption_passphrase: typing.Optional[str] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
         identity: typing.Optional[Identity] = OMIT,
+        model_filters: typing.Optional[ModelFilters] = OMIT,
         only_enrich_updates: typing.Optional[bool] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
-        override_fields: typing.Optional[typing.Sequence[SyncField]] = OMIT,
+        override_fields: typing.Optional[typing.Sequence[OverrideFieldInput]] = OMIT,
         overrides: typing.Optional[typing.Sequence[Override]] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         skip_initial_backfill: typing.Optional[bool] = OMIT,
         sync_all_records: typing.Optional[bool] = OMIT,
+        target_filters: typing.Optional[TargetFilters] = OMIT,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> SyncResponseEnvelope:
+    ) -> ModelSyncV5ResponseEnvelope:
         """
         Updates a model sync's configuration.
 
@@ -531,7 +546,7 @@ class ModelSyncClient:
 
         schedule : Schedule
 
-        target : Target
+        target : ModelSyncV5Target
 
         active : typing.Optional[bool]
             Whether the sync is enabled and scheduled.
@@ -540,12 +555,14 @@ class ModelSyncClient:
             Passphrase for encrypting the sync data.
 
         filter_logic : typing.Optional[str]
-            Logical expression to combine filters.
+            Deprecated. Use 'model_filters.logic'. Combines the model filters in 'filters' only.
 
         filters : typing.Optional[typing.Sequence[Filter]]
-            Filters to apply to the source data.
+            Deprecated. Use 'model_filters.conditions' and 'target_filters.conditions', which say which kind each condition is rather than inferring it. Ignored when either of those is present, except that a request carrying both shapes is rejected if they describe different filters.
 
         identity : typing.Optional[Identity]
+
+        model_filters : typing.Optional[ModelFilters]
 
         only_enrich_updates : typing.Optional[bool]
             Whether to use enrichment models as a source of possible changes to sync. If true, only changes to the base models will cause a record to sync.
@@ -553,8 +570,8 @@ class ModelSyncClient:
         organization_id : typing.Optional[str]
             Organization ID for the sync; read-only with a partner key.
 
-        override_fields : typing.Optional[typing.Sequence[SyncField]]
-            Values to set in the target unconditionally.
+        override_fields : typing.Optional[typing.Sequence[OverrideFieldInput]]
+            Target fields which are set to a fixed value for every record, rather than mapped from a model field.
 
         overrides : typing.Optional[typing.Sequence[Override]]
             Conditional value replacement for fields.
@@ -567,6 +584,8 @@ class ModelSyncClient:
         sync_all_records : typing.Optional[bool]
             Whether to sync all records from the source, regardless of whether they've changed since the previous execution.
 
+        target_filters : typing.Optional[TargetFilters]
+
         idempotency_key : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
@@ -574,12 +593,12 @@ class ModelSyncClient:
 
         Returns
         -------
-        SyncResponseEnvelope
+        ModelSyncV5ResponseEnvelope
             OK
 
         Examples
         --------
-        from polytomic import Polytomic, Schedule, SyncField, Target
+        from polytomic import ModelSyncV5Target, Polytomic, Schedule, SyncField
 
         client = Polytomic(
             "2025-09-18",
@@ -595,7 +614,7 @@ class ModelSyncClient:
             mode="create",
             name="Users Sync",
             schedule=Schedule(),
-            target=Target(
+            target=ModelSyncV5Target(
                 connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
             ),
         )
@@ -612,6 +631,7 @@ class ModelSyncClient:
             filter_logic=filter_logic,
             filters=filters,
             identity=identity,
+            model_filters=model_filters,
             only_enrich_updates=only_enrich_updates,
             organization_id=organization_id,
             override_fields=override_fields,
@@ -619,6 +639,7 @@ class ModelSyncClient:
             policies=policies,
             skip_initial_backfill=skip_initial_backfill,
             sync_all_records=sync_all_records,
+            target_filters=target_filters,
             idempotency_key=idempotency_key,
             request_options=request_options,
         )
@@ -867,6 +888,14 @@ class ModelSyncClient:
         return self._targets
 
     @property
+    def error_handling(self):
+        if self._error_handling is None:
+            from .error_handling.client import ErrorHandlingClient  # noqa: E402
+
+            self._error_handling = ErrorHandlingClient(client_wrapper=self._client_wrapper)
+        return self._error_handling
+
+    @property
     def executions(self):
         if self._executions is None:
             from .executions.client import ExecutionsClient  # noqa: E402
@@ -880,6 +909,7 @@ class AsyncModelSyncClient:
         self._raw_client = AsyncRawModelSyncClient(client_wrapper=client_wrapper)
         self._client_wrapper = client_wrapper
         self._targets: typing.Optional[AsyncTargetsClient] = None
+        self._error_handling: typing.Optional[AsyncErrorHandlingClient] = None
         self._executions: typing.Optional[AsyncExecutionsClient] = None
 
     @property
@@ -1099,22 +1129,24 @@ class AsyncModelSyncClient:
         mode: ModelsyncSyncTargetMode,
         name: str,
         schedule: Schedule,
-        target: Target,
+        target: ModelSyncV5Target,
         active: typing.Optional[bool] = OMIT,
         encryption_passphrase: typing.Optional[str] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
         identity: typing.Optional[Identity] = OMIT,
+        model_filters: typing.Optional[ModelFilters] = OMIT,
         only_enrich_updates: typing.Optional[bool] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
-        override_fields: typing.Optional[typing.Sequence[SyncField]] = OMIT,
+        override_fields: typing.Optional[typing.Sequence[OverrideFieldInput]] = OMIT,
         overrides: typing.Optional[typing.Sequence[Override]] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         skip_initial_backfill: typing.Optional[bool] = OMIT,
         sync_all_records: typing.Optional[bool] = OMIT,
+        target_filters: typing.Optional[TargetFilters] = OMIT,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> SyncResponseEnvelope:
+    ) -> ModelSyncV5ResponseEnvelope:
         """
         Creates a new model sync.
 
@@ -1186,7 +1218,7 @@ class AsyncModelSyncClient:
 
         schedule : Schedule
 
-        target : Target
+        target : ModelSyncV5Target
 
         active : typing.Optional[bool]
             Whether the sync is enabled and scheduled.
@@ -1195,12 +1227,14 @@ class AsyncModelSyncClient:
             Passphrase for encrypting the sync data.
 
         filter_logic : typing.Optional[str]
-            Logical expression to combine filters.
+            Deprecated. Use 'model_filters.logic'. Combines the model filters in 'filters' only.
 
         filters : typing.Optional[typing.Sequence[Filter]]
-            Filters to apply to the source data.
+            Deprecated. Use 'model_filters.conditions' and 'target_filters.conditions', which say which kind each condition is rather than inferring it. Ignored when either of those is present, except that a request carrying both shapes is rejected if they describe different filters.
 
         identity : typing.Optional[Identity]
+
+        model_filters : typing.Optional[ModelFilters]
 
         only_enrich_updates : typing.Optional[bool]
             Whether to use enrichment models as a source of possible changes to sync. If true, only changes to the base models will cause a record to sync.
@@ -1208,8 +1242,8 @@ class AsyncModelSyncClient:
         organization_id : typing.Optional[str]
             Organization ID for the sync; read-only with a partner key.
 
-        override_fields : typing.Optional[typing.Sequence[SyncField]]
-            Values to set in the target unconditionally.
+        override_fields : typing.Optional[typing.Sequence[OverrideFieldInput]]
+            Target fields which are set to a fixed value for every record, rather than mapped from a model field.
 
         overrides : typing.Optional[typing.Sequence[Override]]
             Conditional value replacement for fields.
@@ -1222,6 +1256,8 @@ class AsyncModelSyncClient:
         sync_all_records : typing.Optional[bool]
             Whether to sync all records from the source, regardless of whether they've changed since the previous execution.
 
+        target_filters : typing.Optional[TargetFilters]
+
         idempotency_key : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
@@ -1229,14 +1265,14 @@ class AsyncModelSyncClient:
 
         Returns
         -------
-        SyncResponseEnvelope
+        ModelSyncV5ResponseEnvelope
             OK
 
         Examples
         --------
         import asyncio
 
-        from polytomic import AsyncPolytomic, Schedule, SyncField, Target
+        from polytomic import AsyncPolytomic, ModelSyncV5Target, Schedule, SyncField
 
         client = AsyncPolytomic(
             "2025-09-18",
@@ -1254,7 +1290,7 @@ class AsyncModelSyncClient:
                 mode="create",
                 name="Users Sync",
                 schedule=Schedule(),
-                target=Target(
+                target=ModelSyncV5Target(
                     connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 ),
             )
@@ -1273,6 +1309,7 @@ class AsyncModelSyncClient:
             filter_logic=filter_logic,
             filters=filters,
             identity=identity,
+            model_filters=model_filters,
             only_enrich_updates=only_enrich_updates,
             organization_id=organization_id,
             override_fields=override_fields,
@@ -1280,6 +1317,7 @@ class AsyncModelSyncClient:
             policies=policies,
             skip_initial_backfill=skip_initial_backfill,
             sync_all_records=sync_all_records,
+            target_filters=target_filters,
             idempotency_key=idempotency_key,
             request_options=request_options,
         )
@@ -1326,7 +1364,9 @@ class AsyncModelSyncClient:
         _response = await self._raw_client.get_schedule_options(request_options=request_options)
         return _response.data
 
-    async def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> SyncResponseEnvelope:
+    async def get(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> ModelSyncV5ResponseEnvelope:
         """
         Returns a single model sync by ID.
 
@@ -1343,7 +1383,7 @@ class AsyncModelSyncClient:
 
         Returns
         -------
-        SyncResponseEnvelope
+        ModelSyncV5ResponseEnvelope
             OK
 
         Examples
@@ -1377,22 +1417,24 @@ class AsyncModelSyncClient:
         mode: ModelsyncSyncTargetMode,
         name: str,
         schedule: Schedule,
-        target: Target,
+        target: ModelSyncV5Target,
         active: typing.Optional[bool] = OMIT,
         encryption_passphrase: typing.Optional[str] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
         identity: typing.Optional[Identity] = OMIT,
+        model_filters: typing.Optional[ModelFilters] = OMIT,
         only_enrich_updates: typing.Optional[bool] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
-        override_fields: typing.Optional[typing.Sequence[SyncField]] = OMIT,
+        override_fields: typing.Optional[typing.Sequence[OverrideFieldInput]] = OMIT,
         overrides: typing.Optional[typing.Sequence[Override]] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         skip_initial_backfill: typing.Optional[bool] = OMIT,
         sync_all_records: typing.Optional[bool] = OMIT,
+        target_filters: typing.Optional[TargetFilters] = OMIT,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> SyncResponseEnvelope:
+    ) -> ModelSyncV5ResponseEnvelope:
         """
         Updates a model sync's configuration.
 
@@ -1423,7 +1465,7 @@ class AsyncModelSyncClient:
 
         schedule : Schedule
 
-        target : Target
+        target : ModelSyncV5Target
 
         active : typing.Optional[bool]
             Whether the sync is enabled and scheduled.
@@ -1432,12 +1474,14 @@ class AsyncModelSyncClient:
             Passphrase for encrypting the sync data.
 
         filter_logic : typing.Optional[str]
-            Logical expression to combine filters.
+            Deprecated. Use 'model_filters.logic'. Combines the model filters in 'filters' only.
 
         filters : typing.Optional[typing.Sequence[Filter]]
-            Filters to apply to the source data.
+            Deprecated. Use 'model_filters.conditions' and 'target_filters.conditions', which say which kind each condition is rather than inferring it. Ignored when either of those is present, except that a request carrying both shapes is rejected if they describe different filters.
 
         identity : typing.Optional[Identity]
+
+        model_filters : typing.Optional[ModelFilters]
 
         only_enrich_updates : typing.Optional[bool]
             Whether to use enrichment models as a source of possible changes to sync. If true, only changes to the base models will cause a record to sync.
@@ -1445,8 +1489,8 @@ class AsyncModelSyncClient:
         organization_id : typing.Optional[str]
             Organization ID for the sync; read-only with a partner key.
 
-        override_fields : typing.Optional[typing.Sequence[SyncField]]
-            Values to set in the target unconditionally.
+        override_fields : typing.Optional[typing.Sequence[OverrideFieldInput]]
+            Target fields which are set to a fixed value for every record, rather than mapped from a model field.
 
         overrides : typing.Optional[typing.Sequence[Override]]
             Conditional value replacement for fields.
@@ -1459,6 +1503,8 @@ class AsyncModelSyncClient:
         sync_all_records : typing.Optional[bool]
             Whether to sync all records from the source, regardless of whether they've changed since the previous execution.
 
+        target_filters : typing.Optional[TargetFilters]
+
         idempotency_key : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
@@ -1466,14 +1512,14 @@ class AsyncModelSyncClient:
 
         Returns
         -------
-        SyncResponseEnvelope
+        ModelSyncV5ResponseEnvelope
             OK
 
         Examples
         --------
         import asyncio
 
-        from polytomic import AsyncPolytomic, Schedule, SyncField, Target
+        from polytomic import AsyncPolytomic, ModelSyncV5Target, Schedule, SyncField
 
         client = AsyncPolytomic(
             "2025-09-18",
@@ -1492,7 +1538,7 @@ class AsyncModelSyncClient:
                 mode="create",
                 name="Users Sync",
                 schedule=Schedule(),
-                target=Target(
+                target=ModelSyncV5Target(
                     connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
                 ),
             )
@@ -1512,6 +1558,7 @@ class AsyncModelSyncClient:
             filter_logic=filter_logic,
             filters=filters,
             identity=identity,
+            model_filters=model_filters,
             only_enrich_updates=only_enrich_updates,
             organization_id=organization_id,
             override_fields=override_fields,
@@ -1519,6 +1566,7 @@ class AsyncModelSyncClient:
             policies=policies,
             skip_initial_backfill=skip_initial_backfill,
             sync_all_records=sync_all_records,
+            target_filters=target_filters,
             idempotency_key=idempotency_key,
             request_options=request_options,
         )
@@ -1807,6 +1855,14 @@ class AsyncModelSyncClient:
 
             self._targets = AsyncTargetsClient(client_wrapper=self._client_wrapper)
         return self._targets
+
+    @property
+    def error_handling(self):
+        if self._error_handling is None:
+            from .error_handling.client import AsyncErrorHandlingClient  # noqa: E402
+
+            self._error_handling = AsyncErrorHandlingClient(client_wrapper=self._client_wrapper)
+        return self._error_handling
 
     @property
     def executions(self):

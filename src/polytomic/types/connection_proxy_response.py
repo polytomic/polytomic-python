@@ -6,6 +6,7 @@ import pydantic
 import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 from ..core.serialization import FieldMetadata
+from .work_task_status import WorkTaskStatus
 
 
 class ConnectionProxyResponse(UniversalBaseModel):
@@ -24,6 +25,19 @@ class ConnectionProxyResponse(UniversalBaseModel):
     Response headers returned by the upstream service. Headers listed in blockedResponseHeaders are removed.
     """
 
+    job_id: typing_extensions.Annotated[
+        typing.Optional[str],
+        FieldMetadata(alias="jobId"),
+        pydantic.Field(alias="jobId", description="Identifier for the async proxy job when async is true."),
+    ] = None
+    job_status: typing_extensions.Annotated[
+        typing.Optional[WorkTaskStatus], FieldMetadata(alias="jobStatus"), pydantic.Field(alias="jobStatus")
+    ] = None
+    job_url: typing_extensions.Annotated[
+        typing.Optional[str],
+        FieldMetadata(alias="jobUrl"),
+        pydantic.Field(alias="jobUrl", description="Polling URL for the async proxy job when async is true."),
+    ] = None
     latency_ms: typing_extensions.Annotated[
         typing.Optional[int],
         FieldMetadata(alias="latencyMs"),
@@ -38,7 +52,7 @@ class ConnectionProxyResponse(UniversalBaseModel):
     ] = None
     status: typing.Optional[int] = pydantic.Field(default=None)
     """
-    HTTP status code returned by the upstream service.
+    HTTP status code returned by the upstream service for synchronous calls, or 202 when an async proxy job is accepted.
     """
 
     truncated: typing.Optional[bool] = pydantic.Field(default=None)

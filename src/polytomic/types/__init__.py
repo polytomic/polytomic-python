@@ -7,6 +7,7 @@ from importlib import import_module
 
 if typing.TYPE_CHECKING:
     from .types_type import TypesType
+    from .types_definition import TypesDefinition
     from .activate_sync_envelope import ActivateSyncEnvelope
     from .activate_sync_input import ActivateSyncInput
     from .activate_sync_output import ActivateSyncOutput
@@ -36,6 +37,8 @@ if typing.TYPE_CHECKING:
     from .bulk_sync_default_schedule_response import BulkSyncDefaultScheduleResponse
     from .bulk_sync_dest import BulkSyncDest
     from .bulk_sync_dest_envelope import BulkSyncDestEnvelope
+    from .bulk_sync_error_handling import BulkSyncErrorHandling
+    from .bulk_sync_error_handling_envelope import BulkSyncErrorHandlingEnvelope
     from .bulk_sync_execution import BulkSyncExecution
     from .bulk_sync_execution_envelope import BulkSyncExecutionEnvelope
     from .bulk_sync_execution_logs import BulkSyncExecutionLogs
@@ -63,9 +66,13 @@ if typing.TYPE_CHECKING:
     from .cancel_sync_execution_response_envelope import CancelSyncExecutionResponseEnvelope
     from .cancel_sync_response import CancelSyncResponse
     from .cancel_sync_response_envelope import CancelSyncResponseEnvelope
+    from .close_harbor_session_envelope import CloseHarborSessionEnvelope
+    from .close_harbor_session_envelope_data import CloseHarborSessionEnvelopeData
     from .configuration_value import ConfigurationValue
     from .connect_card_response import ConnectCardResponse
     from .connect_card_response_envelope import ConnectCardResponseEnvelope
+    from .connect_session_response import ConnectSessionResponse
+    from .connect_session_response_envelope import ConnectSessionResponseEnvelope
     from .connection_form import ConnectionForm
     from .connection_list_response_envelope import ConnectionListResponseEnvelope
     from .connection_parameter_value import ConnectionParameterValue
@@ -78,17 +85,35 @@ if typing.TYPE_CHECKING:
     from .connection_proxy_locked_header import ConnectionProxyLockedHeader
     from .connection_proxy_merge_rules import ConnectionProxyMergeRules
     from .connection_proxy_response import ConnectionProxyResponse
+    from .connection_proxy_settings_envelope import ConnectionProxySettingsEnvelope
+    from .connection_proxy_settings_response import ConnectionProxySettingsResponse
     from .connection_proxy_stats import ConnectionProxyStats
     from .connection_response_envelope import ConnectionResponseEnvelope
     from .connection_response_schema import ConnectionResponseSchema
     from .connection_type import ConnectionType
     from .connection_type_response_envelope import ConnectionTypeResponseEnvelope
     from .connection_type_schema import ConnectionTypeSchema
+    from .connection_usage_category_stats import ConnectionUsageCategoryStats
+    from .connection_usage_response import ConnectionUsageResponse
+    from .connection_usage_sync_stats import ConnectionUsageSyncStats
     from .create_connection_response_envelope import CreateConnectionResponseEnvelope
     from .create_connection_response_schema import CreateConnectionResponseSchema
+    from .create_harbor_envelope import CreateHarborEnvelope
+    from .create_harbor_response import CreateHarborResponse
     from .create_model_request import CreateModelRequest
+    from .create_record_view_link_envelope import CreateRecordViewLinkEnvelope
+    from .create_record_view_link_response import CreateRecordViewLinkResponse
     from .create_shared_connection_response_envelope import CreateSharedConnectionResponseEnvelope
     from .create_shared_connection_response_schema import CreateSharedConnectionResponseSchema
+    from .current_org_list_users_envelope import CurrentOrgListUsersEnvelope
+    from .current_org_user_envelope import CurrentOrgUserEnvelope
+    from .current_org_user_response import CurrentOrgUserResponse
+    from .deleted_harbor_context_draft_envelope import DeletedHarborContextDraftEnvelope
+    from .deleted_harbor_context_draft_envelope_data import DeletedHarborContextDraftEnvelopeData
+    from .deleted_harbor_context_envelope import DeletedHarborContextEnvelope
+    from .deleted_harbor_context_envelope_data import DeletedHarborContextEnvelopeData
+    from .deleted_harbor_envelope import DeletedHarborEnvelope
+    from .deleted_harbor_response import DeletedHarborResponse
     from .enricher_configuration import EnricherConfiguration
     from .enricher_mapping import EnricherMapping
     from .enrichment import Enrichment
@@ -103,11 +128,13 @@ if typing.TYPE_CHECKING:
     from .eventing_bulk_sync_completed_with_error_event import EventingBulkSyncCompletedWithErrorEvent
     from .eventing_bulk_sync_failed_event import EventingBulkSyncFailedEvent
     from .eventing_bulk_sync_running_event import EventingBulkSyncRunningEvent
+    from .eventing_bulk_sync_schedule import EventingBulkSyncSchedule
     from .eventing_sync_canceled_event import EventingSyncCanceledEvent
     from .eventing_sync_completed_event import EventingSyncCompletedEvent
     from .eventing_sync_completed_with_errors_event import EventingSyncCompletedWithErrorsEvent
     from .eventing_sync_failed_event import EventingSyncFailedEvent
     from .eventing_sync_running_event import EventingSyncRunningEvent
+    from .eventing_sync_schedule import EventingSyncSchedule
     from .events_envelope import EventsEnvelope
     from .execute_connection_proxy_envelope import ExecuteConnectionProxyEnvelope
     from .execution_console_log_entry import ExecutionConsoleLogEntry
@@ -124,14 +151,56 @@ if typing.TYPE_CHECKING:
     from .filter_field_reference_type import FilterFieldReferenceType
     from .filter_function import FilterFunction
     from .get_connection_proxy_info_envelope import GetConnectionProxyInfoEnvelope
+    from .get_connection_usage_envelope import GetConnectionUsageEnvelope
     from .get_enrichment_input_fields_response_envelope import GetEnrichmentInputFieldsResponseEnvelope
     from .get_execution_response_envelope import GetExecutionResponseEnvelope
     from .get_execution_response_schema import GetExecutionResponseSchema
     from .get_identity_response_envelope import GetIdentityResponseEnvelope
     from .get_identity_response_schema import GetIdentityResponseSchema
+    from .get_record_view_capabilities_envelope import GetRecordViewCapabilitiesEnvelope
     from .get_sync_source_meta_envelope import GetSyncSourceMetaEnvelope
     from .global_error_subscribers_response import GlobalErrorSubscribersResponse
+    from .harbor_api_key_created_response import HarborApiKeyCreatedResponse
+    from .harbor_connection_list_envelope import HarborConnectionListEnvelope
+    from .harbor_connection_response import HarborConnectionResponse
+    from .harbor_connection_schema_envelope import HarborConnectionSchemaEnvelope
+    from .harbor_context_draft_envelope import HarborContextDraftEnvelope
+    from .harbor_context_draft_list_envelope import HarborContextDraftListEnvelope
+    from .harbor_context_draft_metadata_response import HarborContextDraftMetadataResponse
+    from .harbor_context_draft_response import HarborContextDraftResponse
+    from .harbor_context_envelope import HarborContextEnvelope
+    from .harbor_context_list_envelope import HarborContextListEnvelope
+    from .harbor_context_metadata_response import HarborContextMetadataResponse
+    from .harbor_context_response import HarborContextResponse
+    from .harbor_context_version_envelope import HarborContextVersionEnvelope
+    from .harbor_context_version_list_envelope import HarborContextVersionListEnvelope
+    from .harbor_context_version_metadata_response import HarborContextVersionMetadataResponse
+    from .harbor_context_version_response import HarborContextVersionResponse
+    from .harbor_dataset_status_response import HarborDatasetStatusResponse
+    from .harbor_envelope import HarborEnvelope
+    from .harbor_key_envelope import HarborKeyEnvelope
+    from .harbor_key_list_envelope import HarborKeyListEnvelope
+    from .harbor_key_response import HarborKeyResponse
+    from .harbor_list_envelope import HarborListEnvelope
+    from .harbor_pipeline_status_response import HarborPipelineStatusResponse
+    from .harbor_pipeline_status_response_type import HarborPipelineStatusResponseType
+    from .harbor_response import HarborResponse
+    from .harbor_schema_list_envelope import HarborSchemaListEnvelope
+    from .harbor_schema_response import HarborSchemaResponse
+    from .harbor_source_mapping_response import HarborSourceMappingResponse
+    from .harbor_source_reference import HarborSourceReference
+    from .harbor_status_envelope import HarborStatusEnvelope
+    from .harbor_status_response import HarborStatusResponse
+    from .harbor_status_schedule_response import HarborStatusScheduleResponse
+    from .harbor_user_envelope import HarborUserEnvelope
+    from .harbor_user_list_envelope import HarborUserListEnvelope
+    from .harbor_user_response import HarborUserResponse
     from .identity import Identity
+    from .identity_credential_api_key_profile_schema import IdentityCredentialApiKeyProfileSchema
+    from .identity_credential_capabilities_schema import IdentityCredentialCapabilitiesSchema
+    from .identity_credential_connection_capability_schema import IdentityCredentialConnectionCapabilitySchema
+    from .identity_credential_harbor_schema import IdentityCredentialHarborSchema
+    from .identity_credential_schema import IdentityCredentialSchema
     from .identity_function import IdentityFunction
     from .ingestion_status_level import IngestionStatusLevel
     from .job_response import JobResponse
@@ -148,9 +217,14 @@ if typing.TYPE_CHECKING:
     from .list_sync_item import ListSyncItem
     from .list_sync_response_envelope import ListSyncResponseEnvelope
     from .list_users_envelope import ListUsersEnvelope
+    from .logs_index_entry import LogsIndexEntry
+    from .logs_index_response import LogsIndexResponse
+    from .logs_index_response_envelope import LogsIndexResponseEnvelope
     from .mode import Mode
     from .model_field import ModelField
     from .model_field_response import ModelFieldResponse
+    from .model_filter_condition import ModelFilterCondition
+    from .model_filters import ModelFilters
     from .model_list_response_envelope import ModelListResponseEnvelope
     from .model_model_field_request import ModelModelFieldRequest
     from .model_relation import ModelRelation
@@ -159,6 +233,9 @@ if typing.TYPE_CHECKING:
     from .model_response_envelope import ModelResponseEnvelope
     from .model_sample import ModelSample
     from .model_sample_response_envelope import ModelSampleResponseEnvelope
+    from .model_sync_v5response import ModelSyncV5Response
+    from .model_sync_v5response_envelope import ModelSyncV5ResponseEnvelope
+    from .model_sync_v5target import ModelSyncV5Target
     from .modelsync_sync_target_mode import ModelsyncSyncTargetMode
     from .ordered_map_string_github_com_invopop_jsonschema_schema import (
         OrderedMapStringGithubComInvopopJsonschemaSchema,
@@ -168,14 +245,25 @@ if typing.TYPE_CHECKING:
     from .organizations_envelope import OrganizationsEnvelope
     from .output_actor import OutputActor
     from .override import Override
+    from .override_field import OverrideField
+    from .override_field_input import OverrideFieldInput
     from .pagination_details import PaginationDetails
     from .pick_value import PickValue
     from .policy_action import PolicyAction
     from .policy_response import PolicyResponse
     from .policy_response_envelope import PolicyResponseEnvelope
     from .query_results_envelope import QueryResultsEnvelope
+    from .record_logging_settings_envelope import RecordLoggingSettingsEnvelope
+    from .record_logging_settings_response import RecordLoggingSettingsResponse
+    from .recordview_capabilities import RecordviewCapabilities
+    from .register_harbor_session_envelope import RegisterHarborSessionEnvelope
+    from .register_harbor_session_response import RegisterHarborSessionResponse
     from .relation import Relation
     from .relation_to import RelationTo
+    from .resolve_harbor_source_mappings_envelope import ResolveHarborSourceMappingsEnvelope
+    from .resolve_harbor_source_mappings_envelope_data import ResolveHarborSourceMappingsEnvelopeData
+    from .revoked_harbor_key_envelope import RevokedHarborKeyEnvelope
+    from .revoked_harbor_key_envelope_data import RevokedHarborKeyEnvelopeData
     from .role_list_response_envelope import RoleListResponseEnvelope
     from .role_response import RoleResponse
     from .role_response_envelope import RoleResponseEnvelope
@@ -196,6 +284,7 @@ if typing.TYPE_CHECKING:
     from .schema_configuration import SchemaConfiguration
     from .schema_configuration_fields_item import SchemaConfigurationFieldsItem
     from .schema_field import SchemaField
+    from .schema_field_response_envelope import SchemaFieldResponseEnvelope
     from .schema_identity_function import SchemaIdentityFunction
     from .schema_primary_key_override_input import SchemaPrimaryKeyOverrideInput
     from .schema_records_response_envelope import SchemaRecordsResponseEnvelope
@@ -206,22 +295,29 @@ if typing.TYPE_CHECKING:
     from .supported_bulk_mode import SupportedBulkMode
     from .supported_mode import SupportedMode
     from .sync_destination_properties import SyncDestinationProperties
+    from .sync_error_handling import SyncErrorHandling
+    from .sync_error_handling_envelope import SyncErrorHandlingEnvelope
     from .sync_field import SyncField
-    from .sync_response import SyncResponse
-    from .sync_response_envelope import SyncResponseEnvelope
     from .sync_source_meta_response import SyncSourceMetaResponse
     from .sync_status_envelope import SyncStatusEnvelope
     from .sync_status_response import SyncStatusResponse
-    from .target import Target
-    from .target_create_input import TargetCreateInput
     from .target_creator import TargetCreator
     from .target_field import TargetField
+    from .target_filter_condition import TargetFilterCondition
+    from .target_filters import TargetFilters
     from .target_object import TargetObject
     from .target_objects_response_envelope import TargetObjectsResponseEnvelope
     from .target_property_values import TargetPropertyValues
     from .target_property_values_envelope import TargetPropertyValuesEnvelope
     from .target_response import TargetResponse
     from .target_response_envelope import TargetResponseEnvelope
+    from .temporary_credential_response import TemporaryCredentialResponse
+    from .temporary_credential_response_envelope import TemporaryCredentialResponseEnvelope
+    from .temporary_credential_subject import TemporaryCredentialSubject
+    from .temporary_credential_subject_mode import TemporaryCredentialSubjectMode
+    from .temporary_credential_subject_type import TemporaryCredentialSubjectType
+    from .unassigned_harbor_user_envelope import UnassignedHarborUserEnvelope
+    from .unassigned_harbor_user_envelope_data import UnassignedHarborUserEnvelopeData
     from .update_bulk_field import UpdateBulkField
     from .update_bulk_sync_schemas_envelope import UpdateBulkSyncSchemasEnvelope
     from .user import User
@@ -264,6 +360,8 @@ _dynamic_imports: typing.Dict[str, str] = {
     "BulkSyncDefaultScheduleResponse": ".bulk_sync_default_schedule_response",
     "BulkSyncDest": ".bulk_sync_dest",
     "BulkSyncDestEnvelope": ".bulk_sync_dest_envelope",
+    "BulkSyncErrorHandling": ".bulk_sync_error_handling",
+    "BulkSyncErrorHandlingEnvelope": ".bulk_sync_error_handling_envelope",
     "BulkSyncExecution": ".bulk_sync_execution",
     "BulkSyncExecutionEnvelope": ".bulk_sync_execution_envelope",
     "BulkSyncExecutionLogs": ".bulk_sync_execution_logs",
@@ -291,9 +389,13 @@ _dynamic_imports: typing.Dict[str, str] = {
     "CancelSyncExecutionResponseEnvelope": ".cancel_sync_execution_response_envelope",
     "CancelSyncResponse": ".cancel_sync_response",
     "CancelSyncResponseEnvelope": ".cancel_sync_response_envelope",
+    "CloseHarborSessionEnvelope": ".close_harbor_session_envelope",
+    "CloseHarborSessionEnvelopeData": ".close_harbor_session_envelope_data",
     "ConfigurationValue": ".configuration_value",
     "ConnectCardResponse": ".connect_card_response",
     "ConnectCardResponseEnvelope": ".connect_card_response_envelope",
+    "ConnectSessionResponse": ".connect_session_response",
+    "ConnectSessionResponseEnvelope": ".connect_session_response_envelope",
     "ConnectionForm": ".connection_form",
     "ConnectionListResponseEnvelope": ".connection_list_response_envelope",
     "ConnectionParameterValue": ".connection_parameter_value",
@@ -306,17 +408,35 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ConnectionProxyLockedHeader": ".connection_proxy_locked_header",
     "ConnectionProxyMergeRules": ".connection_proxy_merge_rules",
     "ConnectionProxyResponse": ".connection_proxy_response",
+    "ConnectionProxySettingsEnvelope": ".connection_proxy_settings_envelope",
+    "ConnectionProxySettingsResponse": ".connection_proxy_settings_response",
     "ConnectionProxyStats": ".connection_proxy_stats",
     "ConnectionResponseEnvelope": ".connection_response_envelope",
     "ConnectionResponseSchema": ".connection_response_schema",
     "ConnectionType": ".connection_type",
     "ConnectionTypeResponseEnvelope": ".connection_type_response_envelope",
     "ConnectionTypeSchema": ".connection_type_schema",
+    "ConnectionUsageCategoryStats": ".connection_usage_category_stats",
+    "ConnectionUsageResponse": ".connection_usage_response",
+    "ConnectionUsageSyncStats": ".connection_usage_sync_stats",
     "CreateConnectionResponseEnvelope": ".create_connection_response_envelope",
     "CreateConnectionResponseSchema": ".create_connection_response_schema",
+    "CreateHarborEnvelope": ".create_harbor_envelope",
+    "CreateHarborResponse": ".create_harbor_response",
     "CreateModelRequest": ".create_model_request",
+    "CreateRecordViewLinkEnvelope": ".create_record_view_link_envelope",
+    "CreateRecordViewLinkResponse": ".create_record_view_link_response",
     "CreateSharedConnectionResponseEnvelope": ".create_shared_connection_response_envelope",
     "CreateSharedConnectionResponseSchema": ".create_shared_connection_response_schema",
+    "CurrentOrgListUsersEnvelope": ".current_org_list_users_envelope",
+    "CurrentOrgUserEnvelope": ".current_org_user_envelope",
+    "CurrentOrgUserResponse": ".current_org_user_response",
+    "DeletedHarborContextDraftEnvelope": ".deleted_harbor_context_draft_envelope",
+    "DeletedHarborContextDraftEnvelopeData": ".deleted_harbor_context_draft_envelope_data",
+    "DeletedHarborContextEnvelope": ".deleted_harbor_context_envelope",
+    "DeletedHarborContextEnvelopeData": ".deleted_harbor_context_envelope_data",
+    "DeletedHarborEnvelope": ".deleted_harbor_envelope",
+    "DeletedHarborResponse": ".deleted_harbor_response",
     "EnricherConfiguration": ".enricher_configuration",
     "EnricherMapping": ".enricher_mapping",
     "Enrichment": ".enrichment",
@@ -331,11 +451,13 @@ _dynamic_imports: typing.Dict[str, str] = {
     "EventingBulkSyncCompletedWithErrorEvent": ".eventing_bulk_sync_completed_with_error_event",
     "EventingBulkSyncFailedEvent": ".eventing_bulk_sync_failed_event",
     "EventingBulkSyncRunningEvent": ".eventing_bulk_sync_running_event",
+    "EventingBulkSyncSchedule": ".eventing_bulk_sync_schedule",
     "EventingSyncCanceledEvent": ".eventing_sync_canceled_event",
     "EventingSyncCompletedEvent": ".eventing_sync_completed_event",
     "EventingSyncCompletedWithErrorsEvent": ".eventing_sync_completed_with_errors_event",
     "EventingSyncFailedEvent": ".eventing_sync_failed_event",
     "EventingSyncRunningEvent": ".eventing_sync_running_event",
+    "EventingSyncSchedule": ".eventing_sync_schedule",
     "EventsEnvelope": ".events_envelope",
     "ExecuteConnectionProxyEnvelope": ".execute_connection_proxy_envelope",
     "ExecutionConsoleLogEntry": ".execution_console_log_entry",
@@ -352,14 +474,56 @@ _dynamic_imports: typing.Dict[str, str] = {
     "FilterFieldReferenceType": ".filter_field_reference_type",
     "FilterFunction": ".filter_function",
     "GetConnectionProxyInfoEnvelope": ".get_connection_proxy_info_envelope",
+    "GetConnectionUsageEnvelope": ".get_connection_usage_envelope",
     "GetEnrichmentInputFieldsResponseEnvelope": ".get_enrichment_input_fields_response_envelope",
     "GetExecutionResponseEnvelope": ".get_execution_response_envelope",
     "GetExecutionResponseSchema": ".get_execution_response_schema",
     "GetIdentityResponseEnvelope": ".get_identity_response_envelope",
     "GetIdentityResponseSchema": ".get_identity_response_schema",
+    "GetRecordViewCapabilitiesEnvelope": ".get_record_view_capabilities_envelope",
     "GetSyncSourceMetaEnvelope": ".get_sync_source_meta_envelope",
     "GlobalErrorSubscribersResponse": ".global_error_subscribers_response",
+    "HarborApiKeyCreatedResponse": ".harbor_api_key_created_response",
+    "HarborConnectionListEnvelope": ".harbor_connection_list_envelope",
+    "HarborConnectionResponse": ".harbor_connection_response",
+    "HarborConnectionSchemaEnvelope": ".harbor_connection_schema_envelope",
+    "HarborContextDraftEnvelope": ".harbor_context_draft_envelope",
+    "HarborContextDraftListEnvelope": ".harbor_context_draft_list_envelope",
+    "HarborContextDraftMetadataResponse": ".harbor_context_draft_metadata_response",
+    "HarborContextDraftResponse": ".harbor_context_draft_response",
+    "HarborContextEnvelope": ".harbor_context_envelope",
+    "HarborContextListEnvelope": ".harbor_context_list_envelope",
+    "HarborContextMetadataResponse": ".harbor_context_metadata_response",
+    "HarborContextResponse": ".harbor_context_response",
+    "HarborContextVersionEnvelope": ".harbor_context_version_envelope",
+    "HarborContextVersionListEnvelope": ".harbor_context_version_list_envelope",
+    "HarborContextVersionMetadataResponse": ".harbor_context_version_metadata_response",
+    "HarborContextVersionResponse": ".harbor_context_version_response",
+    "HarborDatasetStatusResponse": ".harbor_dataset_status_response",
+    "HarborEnvelope": ".harbor_envelope",
+    "HarborKeyEnvelope": ".harbor_key_envelope",
+    "HarborKeyListEnvelope": ".harbor_key_list_envelope",
+    "HarborKeyResponse": ".harbor_key_response",
+    "HarborListEnvelope": ".harbor_list_envelope",
+    "HarborPipelineStatusResponse": ".harbor_pipeline_status_response",
+    "HarborPipelineStatusResponseType": ".harbor_pipeline_status_response_type",
+    "HarborResponse": ".harbor_response",
+    "HarborSchemaListEnvelope": ".harbor_schema_list_envelope",
+    "HarborSchemaResponse": ".harbor_schema_response",
+    "HarborSourceMappingResponse": ".harbor_source_mapping_response",
+    "HarborSourceReference": ".harbor_source_reference",
+    "HarborStatusEnvelope": ".harbor_status_envelope",
+    "HarborStatusResponse": ".harbor_status_response",
+    "HarborStatusScheduleResponse": ".harbor_status_schedule_response",
+    "HarborUserEnvelope": ".harbor_user_envelope",
+    "HarborUserListEnvelope": ".harbor_user_list_envelope",
+    "HarborUserResponse": ".harbor_user_response",
     "Identity": ".identity",
+    "IdentityCredentialApiKeyProfileSchema": ".identity_credential_api_key_profile_schema",
+    "IdentityCredentialCapabilitiesSchema": ".identity_credential_capabilities_schema",
+    "IdentityCredentialConnectionCapabilitySchema": ".identity_credential_connection_capability_schema",
+    "IdentityCredentialHarborSchema": ".identity_credential_harbor_schema",
+    "IdentityCredentialSchema": ".identity_credential_schema",
     "IdentityFunction": ".identity_function",
     "IngestionStatusLevel": ".ingestion_status_level",
     "JobResponse": ".job_response",
@@ -376,9 +540,14 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ListSyncItem": ".list_sync_item",
     "ListSyncResponseEnvelope": ".list_sync_response_envelope",
     "ListUsersEnvelope": ".list_users_envelope",
+    "LogsIndexEntry": ".logs_index_entry",
+    "LogsIndexResponse": ".logs_index_response",
+    "LogsIndexResponseEnvelope": ".logs_index_response_envelope",
     "Mode": ".mode",
     "ModelField": ".model_field",
     "ModelFieldResponse": ".model_field_response",
+    "ModelFilterCondition": ".model_filter_condition",
+    "ModelFilters": ".model_filters",
     "ModelListResponseEnvelope": ".model_list_response_envelope",
     "ModelModelFieldRequest": ".model_model_field_request",
     "ModelRelation": ".model_relation",
@@ -387,6 +556,9 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ModelResponseEnvelope": ".model_response_envelope",
     "ModelSample": ".model_sample",
     "ModelSampleResponseEnvelope": ".model_sample_response_envelope",
+    "ModelSyncV5Response": ".model_sync_v5response",
+    "ModelSyncV5ResponseEnvelope": ".model_sync_v5response_envelope",
+    "ModelSyncV5Target": ".model_sync_v5target",
     "ModelsyncSyncTargetMode": ".modelsync_sync_target_mode",
     "OrderedMapStringGithubComInvopopJsonschemaSchema": ".ordered_map_string_github_com_invopop_jsonschema_schema",
     "Organization": ".organization",
@@ -394,14 +566,25 @@ _dynamic_imports: typing.Dict[str, str] = {
     "OrganizationsEnvelope": ".organizations_envelope",
     "OutputActor": ".output_actor",
     "Override": ".override",
+    "OverrideField": ".override_field",
+    "OverrideFieldInput": ".override_field_input",
     "PaginationDetails": ".pagination_details",
     "PickValue": ".pick_value",
     "PolicyAction": ".policy_action",
     "PolicyResponse": ".policy_response",
     "PolicyResponseEnvelope": ".policy_response_envelope",
     "QueryResultsEnvelope": ".query_results_envelope",
+    "RecordLoggingSettingsEnvelope": ".record_logging_settings_envelope",
+    "RecordLoggingSettingsResponse": ".record_logging_settings_response",
+    "RecordviewCapabilities": ".recordview_capabilities",
+    "RegisterHarborSessionEnvelope": ".register_harbor_session_envelope",
+    "RegisterHarborSessionResponse": ".register_harbor_session_response",
     "Relation": ".relation",
     "RelationTo": ".relation_to",
+    "ResolveHarborSourceMappingsEnvelope": ".resolve_harbor_source_mappings_envelope",
+    "ResolveHarborSourceMappingsEnvelopeData": ".resolve_harbor_source_mappings_envelope_data",
+    "RevokedHarborKeyEnvelope": ".revoked_harbor_key_envelope",
+    "RevokedHarborKeyEnvelopeData": ".revoked_harbor_key_envelope_data",
     "RoleListResponseEnvelope": ".role_list_response_envelope",
     "RoleResponse": ".role_response",
     "RoleResponseEnvelope": ".role_response_envelope",
@@ -422,6 +605,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SchemaConfiguration": ".schema_configuration",
     "SchemaConfigurationFieldsItem": ".schema_configuration_fields_item",
     "SchemaField": ".schema_field",
+    "SchemaFieldResponseEnvelope": ".schema_field_response_envelope",
     "SchemaIdentityFunction": ".schema_identity_function",
     "SchemaPrimaryKeyOverrideInput": ".schema_primary_key_override_input",
     "SchemaRecordsResponseEnvelope": ".schema_records_response_envelope",
@@ -432,23 +616,31 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SupportedBulkMode": ".supported_bulk_mode",
     "SupportedMode": ".supported_mode",
     "SyncDestinationProperties": ".sync_destination_properties",
+    "SyncErrorHandling": ".sync_error_handling",
+    "SyncErrorHandlingEnvelope": ".sync_error_handling_envelope",
     "SyncField": ".sync_field",
-    "SyncResponse": ".sync_response",
-    "SyncResponseEnvelope": ".sync_response_envelope",
     "SyncSourceMetaResponse": ".sync_source_meta_response",
     "SyncStatusEnvelope": ".sync_status_envelope",
     "SyncStatusResponse": ".sync_status_response",
-    "Target": ".target",
-    "TargetCreateInput": ".target_create_input",
     "TargetCreator": ".target_creator",
     "TargetField": ".target_field",
+    "TargetFilterCondition": ".target_filter_condition",
+    "TargetFilters": ".target_filters",
     "TargetObject": ".target_object",
     "TargetObjectsResponseEnvelope": ".target_objects_response_envelope",
     "TargetPropertyValues": ".target_property_values",
     "TargetPropertyValuesEnvelope": ".target_property_values_envelope",
     "TargetResponse": ".target_response",
     "TargetResponseEnvelope": ".target_response_envelope",
+    "TemporaryCredentialResponse": ".temporary_credential_response",
+    "TemporaryCredentialResponseEnvelope": ".temporary_credential_response_envelope",
+    "TemporaryCredentialSubject": ".temporary_credential_subject",
+    "TemporaryCredentialSubjectMode": ".temporary_credential_subject_mode",
+    "TemporaryCredentialSubjectType": ".temporary_credential_subject_type",
+    "TypesDefinition": ".types_definition",
     "TypesType": ".types_type",
+    "UnassignedHarborUserEnvelope": ".unassigned_harbor_user_envelope",
+    "UnassignedHarborUserEnvelopeData": ".unassigned_harbor_user_envelope_data",
     "UpdateBulkField": ".update_bulk_field",
     "UpdateBulkSyncSchemasEnvelope": ".update_bulk_sync_schemas_envelope",
     "User": ".user",
@@ -515,6 +707,8 @@ __all__ = [
     "BulkSyncDefaultScheduleResponse",
     "BulkSyncDest",
     "BulkSyncDestEnvelope",
+    "BulkSyncErrorHandling",
+    "BulkSyncErrorHandlingEnvelope",
     "BulkSyncExecution",
     "BulkSyncExecutionEnvelope",
     "BulkSyncExecutionLogs",
@@ -542,9 +736,13 @@ __all__ = [
     "CancelSyncExecutionResponseEnvelope",
     "CancelSyncResponse",
     "CancelSyncResponseEnvelope",
+    "CloseHarborSessionEnvelope",
+    "CloseHarborSessionEnvelopeData",
     "ConfigurationValue",
     "ConnectCardResponse",
     "ConnectCardResponseEnvelope",
+    "ConnectSessionResponse",
+    "ConnectSessionResponseEnvelope",
     "ConnectionForm",
     "ConnectionListResponseEnvelope",
     "ConnectionParameterValue",
@@ -557,17 +755,35 @@ __all__ = [
     "ConnectionProxyLockedHeader",
     "ConnectionProxyMergeRules",
     "ConnectionProxyResponse",
+    "ConnectionProxySettingsEnvelope",
+    "ConnectionProxySettingsResponse",
     "ConnectionProxyStats",
     "ConnectionResponseEnvelope",
     "ConnectionResponseSchema",
     "ConnectionType",
     "ConnectionTypeResponseEnvelope",
     "ConnectionTypeSchema",
+    "ConnectionUsageCategoryStats",
+    "ConnectionUsageResponse",
+    "ConnectionUsageSyncStats",
     "CreateConnectionResponseEnvelope",
     "CreateConnectionResponseSchema",
+    "CreateHarborEnvelope",
+    "CreateHarborResponse",
     "CreateModelRequest",
+    "CreateRecordViewLinkEnvelope",
+    "CreateRecordViewLinkResponse",
     "CreateSharedConnectionResponseEnvelope",
     "CreateSharedConnectionResponseSchema",
+    "CurrentOrgListUsersEnvelope",
+    "CurrentOrgUserEnvelope",
+    "CurrentOrgUserResponse",
+    "DeletedHarborContextDraftEnvelope",
+    "DeletedHarborContextDraftEnvelopeData",
+    "DeletedHarborContextEnvelope",
+    "DeletedHarborContextEnvelopeData",
+    "DeletedHarborEnvelope",
+    "DeletedHarborResponse",
     "EnricherConfiguration",
     "EnricherMapping",
     "Enrichment",
@@ -582,11 +798,13 @@ __all__ = [
     "EventingBulkSyncCompletedWithErrorEvent",
     "EventingBulkSyncFailedEvent",
     "EventingBulkSyncRunningEvent",
+    "EventingBulkSyncSchedule",
     "EventingSyncCanceledEvent",
     "EventingSyncCompletedEvent",
     "EventingSyncCompletedWithErrorsEvent",
     "EventingSyncFailedEvent",
     "EventingSyncRunningEvent",
+    "EventingSyncSchedule",
     "EventsEnvelope",
     "ExecuteConnectionProxyEnvelope",
     "ExecutionConsoleLogEntry",
@@ -603,14 +821,56 @@ __all__ = [
     "FilterFieldReferenceType",
     "FilterFunction",
     "GetConnectionProxyInfoEnvelope",
+    "GetConnectionUsageEnvelope",
     "GetEnrichmentInputFieldsResponseEnvelope",
     "GetExecutionResponseEnvelope",
     "GetExecutionResponseSchema",
     "GetIdentityResponseEnvelope",
     "GetIdentityResponseSchema",
+    "GetRecordViewCapabilitiesEnvelope",
     "GetSyncSourceMetaEnvelope",
     "GlobalErrorSubscribersResponse",
+    "HarborApiKeyCreatedResponse",
+    "HarborConnectionListEnvelope",
+    "HarborConnectionResponse",
+    "HarborConnectionSchemaEnvelope",
+    "HarborContextDraftEnvelope",
+    "HarborContextDraftListEnvelope",
+    "HarborContextDraftMetadataResponse",
+    "HarborContextDraftResponse",
+    "HarborContextEnvelope",
+    "HarborContextListEnvelope",
+    "HarborContextMetadataResponse",
+    "HarborContextResponse",
+    "HarborContextVersionEnvelope",
+    "HarborContextVersionListEnvelope",
+    "HarborContextVersionMetadataResponse",
+    "HarborContextVersionResponse",
+    "HarborDatasetStatusResponse",
+    "HarborEnvelope",
+    "HarborKeyEnvelope",
+    "HarborKeyListEnvelope",
+    "HarborKeyResponse",
+    "HarborListEnvelope",
+    "HarborPipelineStatusResponse",
+    "HarborPipelineStatusResponseType",
+    "HarborResponse",
+    "HarborSchemaListEnvelope",
+    "HarborSchemaResponse",
+    "HarborSourceMappingResponse",
+    "HarborSourceReference",
+    "HarborStatusEnvelope",
+    "HarborStatusResponse",
+    "HarborStatusScheduleResponse",
+    "HarborUserEnvelope",
+    "HarborUserListEnvelope",
+    "HarborUserResponse",
     "Identity",
+    "IdentityCredentialApiKeyProfileSchema",
+    "IdentityCredentialCapabilitiesSchema",
+    "IdentityCredentialConnectionCapabilitySchema",
+    "IdentityCredentialHarborSchema",
+    "IdentityCredentialSchema",
     "IdentityFunction",
     "IngestionStatusLevel",
     "JobResponse",
@@ -627,9 +887,14 @@ __all__ = [
     "ListSyncItem",
     "ListSyncResponseEnvelope",
     "ListUsersEnvelope",
+    "LogsIndexEntry",
+    "LogsIndexResponse",
+    "LogsIndexResponseEnvelope",
     "Mode",
     "ModelField",
     "ModelFieldResponse",
+    "ModelFilterCondition",
+    "ModelFilters",
     "ModelListResponseEnvelope",
     "ModelModelFieldRequest",
     "ModelRelation",
@@ -638,6 +903,9 @@ __all__ = [
     "ModelResponseEnvelope",
     "ModelSample",
     "ModelSampleResponseEnvelope",
+    "ModelSyncV5Response",
+    "ModelSyncV5ResponseEnvelope",
+    "ModelSyncV5Target",
     "ModelsyncSyncTargetMode",
     "OrderedMapStringGithubComInvopopJsonschemaSchema",
     "Organization",
@@ -645,14 +913,25 @@ __all__ = [
     "OrganizationsEnvelope",
     "OutputActor",
     "Override",
+    "OverrideField",
+    "OverrideFieldInput",
     "PaginationDetails",
     "PickValue",
     "PolicyAction",
     "PolicyResponse",
     "PolicyResponseEnvelope",
     "QueryResultsEnvelope",
+    "RecordLoggingSettingsEnvelope",
+    "RecordLoggingSettingsResponse",
+    "RecordviewCapabilities",
+    "RegisterHarborSessionEnvelope",
+    "RegisterHarborSessionResponse",
     "Relation",
     "RelationTo",
+    "ResolveHarborSourceMappingsEnvelope",
+    "ResolveHarborSourceMappingsEnvelopeData",
+    "RevokedHarborKeyEnvelope",
+    "RevokedHarborKeyEnvelopeData",
     "RoleListResponseEnvelope",
     "RoleResponse",
     "RoleResponseEnvelope",
@@ -673,6 +952,7 @@ __all__ = [
     "SchemaConfiguration",
     "SchemaConfigurationFieldsItem",
     "SchemaField",
+    "SchemaFieldResponseEnvelope",
     "SchemaIdentityFunction",
     "SchemaPrimaryKeyOverrideInput",
     "SchemaRecordsResponseEnvelope",
@@ -683,23 +963,31 @@ __all__ = [
     "SupportedBulkMode",
     "SupportedMode",
     "SyncDestinationProperties",
+    "SyncErrorHandling",
+    "SyncErrorHandlingEnvelope",
     "SyncField",
-    "SyncResponse",
-    "SyncResponseEnvelope",
     "SyncSourceMetaResponse",
     "SyncStatusEnvelope",
     "SyncStatusResponse",
-    "Target",
-    "TargetCreateInput",
     "TargetCreator",
     "TargetField",
+    "TargetFilterCondition",
+    "TargetFilters",
     "TargetObject",
     "TargetObjectsResponseEnvelope",
     "TargetPropertyValues",
     "TargetPropertyValuesEnvelope",
     "TargetResponse",
     "TargetResponseEnvelope",
+    "TemporaryCredentialResponse",
+    "TemporaryCredentialResponseEnvelope",
+    "TemporaryCredentialSubject",
+    "TemporaryCredentialSubjectMode",
+    "TemporaryCredentialSubjectType",
+    "TypesDefinition",
     "TypesType",
+    "UnassignedHarborUserEnvelope",
+    "UnassignedHarborUserEnvelopeData",
     "UpdateBulkField",
     "UpdateBulkSyncSchemasEnvelope",
     "User",

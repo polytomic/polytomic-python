@@ -22,6 +22,7 @@ from ...types.execution_log_type import ExecutionLogType
 from ...types.execution_logs_response_envelope import ExecutionLogsResponseEnvelope
 from ...types.get_execution_response_envelope import GetExecutionResponseEnvelope
 from ...types.list_execution_response_envelope import ListExecutionResponseEnvelope
+from ...types.logs_index_response_envelope import LogsIndexResponseEnvelope
 from pydantic import ValidationError
 
 
@@ -300,7 +301,7 @@ class RawExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[ExecutionConsoleLogsResponseEnvelope]:
         """
-        Fetch the latest console log entries for a sync execution. Returns at most the most recent 50 entries retained in Redis.
+        Fetch the latest console log entries for a sync execution. Returns the most recent 50 entries.
 
         Parameters
         ----------
@@ -365,6 +366,78 @@ class RawExecutionsClient:
                 )
             if _response.status_code == 408:
                 raise RequestTimeoutError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.text
+            )
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise core_api_error_ApiError(
+            status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
+        )
+
+    def get_logs_index(
+        self, sync_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[LogsIndexResponseEnvelope]:
+        """
+        Returns an index of the record-log types produced by this model sync execution, with the per-type endpoint to retrieve signed URLs for each type's segment files.
+
+        Parameters
+        ----------
+        sync_id : str
+            Unique identifier of the model sync.
+
+        id : str
+            Unique identifier of the execution whose logs are being indexed.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[LogsIndexResponseEnvelope]
+            OK
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"api/syncs/{encode_path_param(sync_id)}/executions/{encode_path_param(id)}/logs",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    LogsIndexResponseEnvelope,
+                    parse_obj_as(
+                        type_=LogsIndexResponseEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 404:
+                raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,
@@ -498,10 +571,12 @@ class RawExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[None]:
         """
-        Returns a signed URL for a specific log file produced by a model sync execution.
+        Redirects to a signed URL for a specific log file produced by a model sync execution.
 
-        The URL is signed and expires after a short period. If it has expired before
-        you download the file, call this endpoint again to obtain a fresh URL.
+        This endpoint responds with a `302 Found` redirect; the signed URL is returned
+        in the `Location` header, and the response body is empty. The URL expires
+        after a short period, so call this endpoint again to obtain a fresh URL if it
+        expires before you download the file.
 
         Parameters
         ----------
@@ -850,7 +925,7 @@ class AsyncRawExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[ExecutionConsoleLogsResponseEnvelope]:
         """
-        Fetch the latest console log entries for a sync execution. Returns at most the most recent 50 entries retained in Redis.
+        Fetch the latest console log entries for a sync execution. Returns the most recent 50 entries.
 
         Parameters
         ----------
@@ -915,6 +990,78 @@ class AsyncRawExecutionsClient:
                 )
             if _response.status_code == 408:
                 raise RequestTimeoutError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.text
+            )
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise core_api_error_ApiError(
+            status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
+        )
+
+    async def get_logs_index(
+        self, sync_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[LogsIndexResponseEnvelope]:
+        """
+        Returns an index of the record-log types produced by this model sync execution, with the per-type endpoint to retrieve signed URLs for each type's segment files.
+
+        Parameters
+        ----------
+        sync_id : str
+            Unique identifier of the model sync.
+
+        id : str
+            Unique identifier of the execution whose logs are being indexed.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[LogsIndexResponseEnvelope]
+            OK
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"api/syncs/{encode_path_param(sync_id)}/executions/{encode_path_param(id)}/logs",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    LogsIndexResponseEnvelope,
+                    parse_obj_as(
+                        type_=LogsIndexResponseEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 404:
+                raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,
@@ -1048,10 +1195,12 @@ class AsyncRawExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[None]:
         """
-        Returns a signed URL for a specific log file produced by a model sync execution.
+        Redirects to a signed URL for a specific log file produced by a model sync execution.
 
-        The URL is signed and expires after a short period. If it has expired before
-        you download the file, call this endpoint again to obtain a fresh URL.
+        This endpoint responds with a `302 Found` redirect; the signed URL is returned
+        in the `Location` header, and the response body is empty. The URL expires
+        after a short period, so call this endpoint again to obtain a fresh URL if it
+        expires before you download the file.
 
         Parameters
         ----------

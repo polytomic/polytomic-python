@@ -7,25 +7,37 @@ import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 from .filter import Filter
 from .identity import Identity
+from .model_filters import ModelFilters
+from .model_sync_v5target import ModelSyncV5Target
 from .modelsync_sync_target_mode import ModelsyncSyncTargetMode
 from .output_actor import OutputActor
 from .override import Override
+from .override_field import OverrideField
 from .schedule import Schedule
 from .sync_field import SyncField
-from .target import Target
+from .target_filters import TargetFilters
 
 
-class SyncResponse(UniversalBaseModel):
+class ModelSyncV5Response(UniversalBaseModel):
     active: typing.Optional[bool] = None
     created_at: typing.Optional[dt.datetime] = None
     created_by: typing.Optional[OutputActor] = None
     encryption_passphrase: typing.Optional[str] = None
     fields: typing.Optional[typing.List[SyncField]] = None
-    filter_logic: typing.Optional[str] = None
-    filters: typing.Optional[typing.List[Filter]] = None
+    filter_logic: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Deprecated. Use 'model_filters.logic'.
+    """
+
+    filters: typing.Optional[typing.List[Filter]] = pydantic.Field(default=None)
+    """
+    Deprecated. Use 'model_filters.conditions' and 'target_filters.conditions'. Reports the same filters, with the two kinds interleaved and told apart by 'field_type'.
+    """
+
     id: typing.Optional[str] = None
     identity: typing.Optional[Identity] = None
     mode: typing.Optional[ModelsyncSyncTargetMode] = None
+    model_filters: typing.Optional[ModelFilters] = None
     model_ids: typing.Optional[typing.List[str]] = pydantic.Field(default=None)
     """
     Model IDs used in the sync.
@@ -34,13 +46,14 @@ class SyncResponse(UniversalBaseModel):
     name: typing.Optional[str] = None
     only_enrich_updates: typing.Optional[bool] = None
     organization_id: typing.Optional[str] = None
-    override_fields: typing.Optional[typing.List[SyncField]] = None
+    override_fields: typing.Optional[typing.List[OverrideField]] = None
     overrides: typing.Optional[typing.List[Override]] = None
     policies: typing.Optional[typing.List[str]] = None
     schedule: typing.Optional[Schedule] = None
     skip_initial_backfill: typing.Optional[bool] = None
     sync_all_records: typing.Optional[bool] = None
-    target: typing.Optional[Target] = None
+    target: typing.Optional[ModelSyncV5Target] = None
+    target_filters: typing.Optional[TargetFilters] = None
     updated_at: typing.Optional[dt.datetime] = None
     updated_by: typing.Optional[OutputActor] = None
 

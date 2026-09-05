@@ -10,6 +10,7 @@ from ...types.execution_log_type import ExecutionLogType
 from ...types.execution_logs_response_envelope import ExecutionLogsResponseEnvelope
 from ...types.get_execution_response_envelope import GetExecutionResponseEnvelope
 from ...types.list_execution_response_envelope import ListExecutionResponseEnvelope
+from ...types.logs_index_response_envelope import LogsIndexResponseEnvelope
 from .raw_client import AsyncRawExecutionsClient, RawExecutionsClient
 
 
@@ -188,7 +189,7 @@ class ExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ExecutionConsoleLogsResponseEnvelope:
         """
-        Fetch the latest console log entries for a sync execution. Returns at most the most recent 50 entries retained in Redis.
+        Fetch the latest console log entries for a sync execution. Returns the most recent 50 entries.
 
         Parameters
         ----------
@@ -228,6 +229,44 @@ class ExecutionsClient:
         _response = self._raw_client.get_console_logs(
             sync_id, id, limit=limit, after=after, request_options=request_options
         )
+        return _response.data
+
+    def get_logs_index(
+        self, sync_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> LogsIndexResponseEnvelope:
+        """
+        Returns an index of the record-log types produced by this model sync execution, with the per-type endpoint to retrieve signed URLs for each type's segment files.
+
+        Parameters
+        ----------
+        sync_id : str
+            Unique identifier of the model sync.
+
+        id : str
+            Unique identifier of the execution whose logs are being indexed.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LogsIndexResponseEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.model_sync.executions.get_logs_index(
+            sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = self._raw_client.get_logs_index(sync_id, id, request_options=request_options)
         return _response.data
 
     def get_log_urls(
@@ -286,10 +325,12 @@ class ExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
-        Returns a signed URL for a specific log file produced by a model sync execution.
+        Redirects to a signed URL for a specific log file produced by a model sync execution.
 
-        The URL is signed and expires after a short period. If it has expired before
-        you download the file, call this endpoint again to obtain a fresh URL.
+        This endpoint responds with a `302 Found` redirect; the signed URL is returned
+        in the `Location` header, and the response body is empty. The URL expires
+        after a short period, so call this endpoint again to obtain a fresh URL if it
+        expires before you download the file.
 
         Parameters
         ----------
@@ -526,7 +567,7 @@ class AsyncExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ExecutionConsoleLogsResponseEnvelope:
         """
-        Fetch the latest console log entries for a sync execution. Returns at most the most recent 50 entries retained in Redis.
+        Fetch the latest console log entries for a sync execution. Returns the most recent 50 entries.
 
         Parameters
         ----------
@@ -574,6 +615,52 @@ class AsyncExecutionsClient:
         _response = await self._raw_client.get_console_logs(
             sync_id, id, limit=limit, after=after, request_options=request_options
         )
+        return _response.data
+
+    async def get_logs_index(
+        self, sync_id: str, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> LogsIndexResponseEnvelope:
+        """
+        Returns an index of the record-log types produced by this model sync execution, with the per-type endpoint to retrieve signed URLs for each type's segment files.
+
+        Parameters
+        ----------
+        sync_id : str
+            Unique identifier of the model sync.
+
+        id : str
+            Unique identifier of the execution whose logs are being indexed.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        LogsIndexResponseEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.model_sync.executions.get_logs_index(
+                sync_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_logs_index(sync_id, id, request_options=request_options)
         return _response.data
 
     async def get_log_urls(
@@ -640,10 +727,12 @@ class AsyncExecutionsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> None:
         """
-        Returns a signed URL for a specific log file produced by a model sync execution.
+        Redirects to a signed URL for a specific log file produced by a model sync execution.
 
-        The URL is signed and expires after a short period. If it has expired before
-        you download the file, call this endpoint again to obtain a fresh URL.
+        This endpoint responds with a `302 Found` redirect; the signed URL is returned
+        in the `Location` header, and the response body is empty. The URL expires
+        after a short period, so call this endpoint again to obtain a fresh URL if it
+        expires before you download the file.
 
         Parameters
         ----------

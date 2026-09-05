@@ -11,19 +11,20 @@ from .source import Source
 
 class Filter(UniversalBaseModel):
     """
-    Either `field` or `field_id` must be provided. If `field` is provided, `field_id` is ignored.
+    A filter on this sync. Either `field` or `field_id` must be provided; if `field_id` is provided, `field` is ignored. `field` names a model field by model and source name. `field_id` is a model field's UUID when `field_type` is `Model`, and the destination's own field identifier when it is `Target`.
     """
 
     field: typing.Optional[Source] = None
     field_id: typing.Optional[str] = pydantic.Field(default=None)
     """
-    Model or Target field name to filter on.
+    Identifier of the field to filter on: a model field's UUID when 'field_type' is 'Model', or the destination's own field identifier when it is 'Target'.
     """
 
     field_type: typing.Optional[FilterFieldReferenceType] = None
     function: FilterFunction
     label: typing.Optional[str] = None
     value: typing.Optional[typing.Any] = None
+    value_field: typing.Optional[Source] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

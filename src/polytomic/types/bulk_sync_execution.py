@@ -28,6 +28,11 @@ class BulkSyncExecution(UniversalBaseModel):
     status_message: typing.Optional[str] = None
     type: typing.Optional[str] = None
     updated_at: typing.Optional[dt.datetime] = None
+    version: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Polytomic version which last ran this execution.
+    """
+
     warning_count: typing.Optional[int] = None
 
     if IS_PYDANTIC_V2:

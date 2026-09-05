@@ -5,6 +5,8 @@ import typing
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
 from ..types.api_key_response_envelope import ApiKeyResponseEnvelope
+from ..types.current_org_list_users_envelope import CurrentOrgListUsersEnvelope
+from ..types.current_org_user_envelope import CurrentOrgUserEnvelope
 from ..types.list_users_envelope import ListUsersEnvelope
 from ..types.user_envelope import UserEnvelope
 from .raw_client import AsyncRawUsersClient, RawUsersClient
@@ -28,7 +30,9 @@ class UsersClient:
         """
         return self._raw_client
 
-    def list_current_org_users(self, *, request_options: typing.Optional[RequestOptions] = None) -> ListUsersEnvelope:
+    def list_current_org_users(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> CurrentOrgListUsersEnvelope:
         """
         Lists every user in the caller's current organization.
 
@@ -41,7 +45,7 @@ class UsersClient:
 
         Returns
         -------
-        ListUsersEnvelope
+        CurrentOrgListUsersEnvelope
             OK
 
         Examples
@@ -110,7 +114,9 @@ class UsersClient:
         )
         return _response.data
 
-    def get_current_org_user(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> UserEnvelope:
+    def get_current_org_user(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> CurrentOrgUserEnvelope:
         """
         Returns a single user from the caller's current organization.
 
@@ -124,7 +130,7 @@ class UsersClient:
 
         Returns
         -------
-        UserEnvelope
+        CurrentOrgUserEnvelope
             OK
 
         Examples
@@ -587,7 +593,7 @@ class AsyncUsersClient:
 
     async def list_current_org_users(
         self, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> ListUsersEnvelope:
+    ) -> CurrentOrgListUsersEnvelope:
         """
         Lists every user in the caller's current organization.
 
@@ -600,7 +606,7 @@ class AsyncUsersClient:
 
         Returns
         -------
-        ListUsersEnvelope
+        CurrentOrgListUsersEnvelope
             OK
 
         Examples
@@ -687,7 +693,7 @@ class AsyncUsersClient:
 
     async def get_current_org_user(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> UserEnvelope:
+    ) -> CurrentOrgUserEnvelope:
         """
         Returns a single user from the caller's current organization.
 
@@ -701,7 +707,7 @@ class AsyncUsersClient:
 
         Returns
         -------
-        UserEnvelope
+        CurrentOrgUserEnvelope
             OK
 
         Examples

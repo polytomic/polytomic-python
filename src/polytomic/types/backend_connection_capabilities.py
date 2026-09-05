@@ -9,6 +9,7 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 class BackendConnectionCapabilities(UniversalBaseModel):
     destination: bool
     enrichment: bool
+    logging: bool
     orchestration: bool
     source: bool
 

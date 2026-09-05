@@ -1,14 +1,14 @@
 {
-  "cliVersion": "4.107.0",
+  "cliVersion": "5.0.0",
   "generatorName": "fernapi/fern-python-sdk",
   "generatorVersion": "5.8.3",
   "generatorConfig": {
     "client_class_name": "Polytomic"
   },
-  "originGitCommit": "5e82b9b4e186695bf32b16740d732ea2f6a70444",
+  "originGitCommit": "5b334e415014bfd0aaa7f1ecfb1b5d9b38c8a9be",
   "originGitCommitIsDirty": false,
   "invokedBy": "ci",
-  "requestedVersion": "25.9.2",
+  "requestedVersion": "25.9.3",
   "ciProvider": "github",
-  "sdkVersion": "25.9.2"
+  "sdkVersion": "25.9.3"
 }

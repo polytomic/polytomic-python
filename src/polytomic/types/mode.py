@@ -7,12 +7,35 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 
 
 class Mode(UniversalBaseModel):
-    description: typing.Optional[str] = None
-    label: typing.Optional[str] = None
-    mode: typing.Optional[str] = None
-    requires_identity: typing.Optional[bool] = None
-    supports_field_sync_mode: typing.Optional[bool] = None
-    supports_target_filters: typing.Optional[bool] = None
+    description: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Description of the operations performed in this mode.
+    """
+
+    label: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Human-readable label for the sync mode.
+    """
+
+    mode: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Identifier of the sync mode; use this value when configuring a sync.
+    """
+
+    requires_identity: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if this mode requires a sync identity to match records on.
+    """
+
+    supports_field_sync_mode: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if per-field sync modes (e.g. write-once vs. always-update) may be configured under this mode.
+    """
+
+    supports_target_filters: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if this mode allows target filters to constrain which destination records are touched.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

@@ -27,6 +27,7 @@ from .types.create_bulk_sync_request_schemas_item import CreateBulkSyncRequestSc
 from .types.update_bulk_sync_request_schemas_item import UpdateBulkSyncRequestSchemasItem
 
 if typing.TYPE_CHECKING:
+    from .error_handling.client import AsyncErrorHandlingClient, ErrorHandlingClient
     from .executions.client import AsyncExecutionsClient, ExecutionsClient
     from .schedules.client import AsyncSchedulesClient, SchedulesClient
     from .schemas.client import AsyncSchemasClient, SchemasClient
@@ -39,6 +40,7 @@ class BulkSyncClient:
         self._raw_client = RawBulkSyncClient(client_wrapper=client_wrapper)
         self._client_wrapper = client_wrapper
         self._executions: typing.Optional[ExecutionsClient] = None
+        self._error_handling: typing.Optional[ErrorHandlingClient] = None
         self._schemas: typing.Optional[SchemasClient] = None
         self._schedules: typing.Optional[SchedulesClient] = None
 
@@ -688,7 +690,7 @@ class BulkSyncClient:
             Optional list of schema IDs to include in this execution. If empty, all enabled schemas are included.
 
         test : typing.Optional[bool]
-            When true, runs a test execution that validates the configuration without writing to the destination. Mutually exclusive with resync_mode.
+            When true, runs a test execution that validates the configuration and syncs up to 5 records per schema. Mutually exclusive with resync_mode.
 
         idempotency_key : typing.Optional[str]
 
@@ -872,6 +874,14 @@ class BulkSyncClient:
         return self._executions
 
     @property
+    def error_handling(self):
+        if self._error_handling is None:
+            from .error_handling.client import ErrorHandlingClient  # noqa: E402
+
+            self._error_handling = ErrorHandlingClient(client_wrapper=self._client_wrapper)
+        return self._error_handling
+
+    @property
     def schemas(self):
         if self._schemas is None:
             from .schemas.client import SchemasClient  # noqa: E402
@@ -893,6 +903,7 @@ class AsyncBulkSyncClient:
         self._raw_client = AsyncRawBulkSyncClient(client_wrapper=client_wrapper)
         self._client_wrapper = client_wrapper
         self._executions: typing.Optional[AsyncExecutionsClient] = None
+        self._error_handling: typing.Optional[AsyncErrorHandlingClient] = None
         self._schemas: typing.Optional[AsyncSchemasClient] = None
         self._schedules: typing.Optional[AsyncSchedulesClient] = None
 
@@ -1598,7 +1609,7 @@ class AsyncBulkSyncClient:
             Optional list of schema IDs to include in this execution. If empty, all enabled schemas are included.
 
         test : typing.Optional[bool]
-            When true, runs a test execution that validates the configuration without writing to the destination. Mutually exclusive with resync_mode.
+            When true, runs a test execution that validates the configuration and syncs up to 5 records per schema. Mutually exclusive with resync_mode.
 
         idempotency_key : typing.Optional[str]
 
@@ -1816,6 +1827,14 @@ class AsyncBulkSyncClient:
 
             self._executions = AsyncExecutionsClient(client_wrapper=self._client_wrapper)
         return self._executions
+
+    @property
+    def error_handling(self):
+        if self._error_handling is None:
+            from .error_handling.client import AsyncErrorHandlingClient  # noqa: E402
+
+            self._error_handling = AsyncErrorHandlingClient(client_wrapper=self._client_wrapper)
+        return self._error_handling
 
     @property
     def schemas(self):

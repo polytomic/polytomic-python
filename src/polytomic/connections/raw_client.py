@@ -10,27 +10,22 @@ from ..core.jsonable_encoder import encode_path_param
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
-from ..core.serialization import convert_and_respect_annotation_metadata
-from ..errors.bad_gateway_error import BadGatewayError
 from ..errors.bad_request_error import BadRequestError
+from ..errors.conflict_error import ConflictError
 from ..errors.forbidden_error import ForbiddenError
-from ..errors.gateway_timeout_error import GatewayTimeoutError
 from ..errors.internal_server_error import InternalServerError
 from ..errors.not_found_error import NotFoundError
-from ..errors.too_many_requests_error import TooManyRequestsError
 from ..errors.unauthorized_error import UnauthorizedError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.api_error import ApiError as types_api_error_ApiError
 from ..types.connect_card_response_envelope import ConnectCardResponseEnvelope
+from ..types.connect_session_response_envelope import ConnectSessionResponseEnvelope
 from ..types.connection_list_response_envelope import ConnectionListResponseEnvelope
 from ..types.connection_parameter_values_response_envelope import ConnectionParameterValuesResponseEnvelope
-from ..types.connection_proxy_call import ConnectionProxyCall
 from ..types.connection_response_envelope import ConnectionResponseEnvelope
 from ..types.connection_type_response_envelope import ConnectionTypeResponseEnvelope
 from ..types.create_connection_response_envelope import CreateConnectionResponseEnvelope
-from ..types.create_shared_connection_response_envelope import CreateSharedConnectionResponseEnvelope
-from ..types.execute_connection_proxy_envelope import ExecuteConnectionProxyEnvelope
-from ..types.get_connection_proxy_info_envelope import GetConnectionProxyInfoEnvelope
+from ..types.get_connection_usage_envelope import GetConnectionUsageEnvelope
 from ..types.jsonschema_schema import JsonschemaSchema
 from pydantic import ValidationError
 
@@ -524,13 +519,21 @@ class RawConnectionsClient:
         connection: typing.Optional[str] = OMIT,
         dark: typing.Optional[bool] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
+        ttl: typing.Optional[int] = OMIT,
         type: typing.Optional[str] = OMIT,
+        use_organization_name: typing.Optional[bool] = OMIT,
         whitelist: typing.Optional[typing.Sequence[str]] = OMIT,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[ConnectCardResponseEnvelope]:
         """
-        Creates a Polytomic Connect session and returns a redirect URL that embeds the Connect modal.
+        Creates a Polytomic Connect session and returns a URL for creating or reconnecting a Connection.
+
+        Open the returned URL, or send it to the person who will set up the Connection.
+        Polytomic Connect guides them through authentication and configuration, then
+        redirects them to `redirect_url`.
+
+        Each session can create or reconnect one Connection.
 
         See also:
 
@@ -552,8 +555,14 @@ class RawConnectionsClient:
 
         organization_id : typing.Optional[str]
 
+        ttl : typing.Optional[int]
+            Connect session lifetime in seconds. Defaults to 300 and cannot exceed 604800.
+
         type : typing.Optional[str]
             Connection type to create.
+
+        use_organization_name : typing.Optional[bool]
+            Whether to display the target organization name instead of the partner name in the Connect modal. Defaults to false; organizations without a partner always display their organization name.
 
         whitelist : typing.Optional[typing.Sequence[str]]
             List of connection types which are allowed to be created. Ignored if type is set.
@@ -577,7 +586,9 @@ class RawConnectionsClient:
                 "name": name,
                 "organization_id": organization_id,
                 "redirect_url": redirect_url,
+                "ttl": ttl,
                 "type": type,
+                "use_organization_name": use_organization_name,
                 "whitelist": whitelist,
             },
             headers={
@@ -619,6 +630,28 @@ class RawConnectionsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -632,6 +665,65 @@ class RawConnectionsClient:
                 )
             if _response.status_code == 500:
                 raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.text
+            )
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise core_api_error_ApiError(
+            status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
+        )
+
+    def get_connect_session(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[ConnectSessionResponseEnvelope]:
+        """
+        Returns trusted metadata for the authenticated Polytomic Connect session.
+
+        Returns the trusted metadata stored for a Polytomic Connect session. Authenticate with the opaque Connect token in the `token` query parameter.
+
+        The response includes the server-enforced connection name, fixed type or whitelist, bound connection ID, completion redirect, branding, and absolute expiration time.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[ConnectSessionResponseEnvelope]
+            OK
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "api/connections/connect/session",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    ConnectSessionResponseEnvelope,
+                    parse_obj_as(
+                        type_=ConnectSessionResponseEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,
@@ -1196,563 +1288,56 @@ class RawConnectionsClient:
             status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
         )
 
-    def execute_proxy(
-        self,
-        id: str,
-        *,
-        request: ConnectionProxyCall,
-        idempotency_key: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[ExecuteConnectionProxyEnvelope]:
+    def get_usage(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[GetConnectionUsageEnvelope]:
         """
-        Proxies an HTTP request to a connection's underlying API using the connection's stored credentials, subject to per-connection rate limits and size caps.
+        Returns the connection's API consumption over the last 24 hours, broken down by sync when the backend supports it.
 
-        This endpoint is intended for controlled passthrough use, not as a general
-        replacement for Polytomic's modeled endpoints. The request is executed with the
-        connection's stored credentials and inherited base URL, headers, and query
-        parameters.
+        Not all integrations support usage reporting.
 
-        Before building requests dynamically, call
-        [`GET /api/connections/{id}/proxy/info`](../../../../api-reference/connections/get-proxy-info)
-        to inspect the inherited base URL, blocked headers, accepted body types, and
-        size and rate limits.
+        - `callsLast24h` is null when the backend does not expose a usage count.
+        - `reportsSyncStats` is `false`, and `bySync` is empty, when the backend
+          reports a total but cannot attribute calls to individual syncs.
 
-        ## Important behavior
-
-        - `request.path` must be relative and start with `/`.
-        - Use either `request.query` or `request.rawQuery`, not both.
-        - Caller-supplied headers are merged with inherited headers, but inherited auth
-          headers cannot be overridden.
-        - The proxy strips a fixed set of request and response headers for safety.
-        - Response bodies larger than the configured maximum are truncated, and
-          `truncated` is set to `true`.
-
-        The response includes `proxyCallId`, which you can use to correlate the call
-        with audit logs.
+        When per-sync stats are available, each entry in `bySync` carries a
+        `categories` breakdown. **Category keys and labels are integration-specific.**
+        For example, Salesforce reports `rest` and `bulk` categories
+        (collapsing Bulk API v1 and v2 into a single `bulk` bucket), while another
+        integration may report an entirely different set or none at all. Treat `key`
+        as an opaque, backend-defined identifier and use `label` for display; do not
+        assume a fixed vocabulary across connection types.
 
         Parameters
         ----------
         id : str
-            Unique identifier of the connection to proxy the request through.
-
-        request : ConnectionProxyCall
-
-        idempotency_key : typing.Optional[str]
+            Unique identifier of the connection whose API consumption should be returned.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[ExecuteConnectionProxyEnvelope]
+        HttpResponse[GetConnectionUsageEnvelope]
             OK
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"api/connections/{encode_path_param(id)}/proxy",
-            method="POST",
-            json={
-                "request": convert_and_respect_annotation_metadata(
-                    object_=request, annotation=ConnectionProxyCall, direction="write"
-                ),
-            },
-            headers={
-                "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
-            },
+            f"api/connections/{encode_path_param(id)}/usage",
+            method="GET",
             request_options=request_options,
-            omit=OMIT,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    ExecuteConnectionProxyEnvelope,
+                    GetConnectionUsageEnvelope,
                     parse_obj_as(
-                        type_=ExecuteConnectionProxyEnvelope,  # type: ignore
+                        type_=GetConnectionUsageEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 401:
                 raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 502:
-                raise BadGatewayError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 504:
-                raise GatewayTimeoutError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise core_api_error_ApiError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.text
-            )
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise core_api_error_ApiError(
-            status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
-        )
-
-    def get_proxy_info(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[GetConnectionProxyInfoEnvelope]:
-        """
-        Returns the proxy contract for a connection.
-
-        Use this endpoint before calling
-        [`POST /api/connections/{id}/proxy`](../../../../../api-reference/connections/execute-proxy)
-        when you need to build requests programmatically. The response shows:
-
-        - the inherited base URL that all proxied requests are sent to
-        - locked headers and query parameters that are attached automatically
-        - blocked request and response headers
-        - allowed HTTP methods and body shapes
-        - timeout, rate-limit, and payload-size limits
-
-        Sensitive inherited header and query values are redacted in the response. The
-        contract is still useful for discovering which keys are fixed by the
-        connection, even though their raw values are not exposed.
-
-        Parameters
-        ----------
-        id : str
-            Unique identifier of the connection whose proxy contract should be returned.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[GetConnectionProxyInfoEnvelope]
-            OK
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"api/connections/{encode_path_param(id)}/proxy/info",
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    GetConnectionProxyInfoEnvelope,
-                    parse_obj_as(
-                        type_=GetConnectionProxyInfoEnvelope,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise core_api_error_ApiError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.text
-            )
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise core_api_error_ApiError(
-            status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
-        )
-
-    def list_shared_connections(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[ConnectionListResponseEnvelope]:
-        """
-        Lists shared copies of a connection that the caller's organization owns.
-
-        The returned connections are the child copies, not the parent connection
-        itself. This is useful when a partner workflow needs to confirm which
-        downstream organizations have already received a shared copy.
-
-        Creating a new shared copy is a separate operation. Use
-        [`POST /api/organizations/{org_id}/connections/{connection_id}/share`](../../../../api-reference/connections/create-shared-connection)
-        for the v5 partner-scoped flow.
-
-        Parameters
-        ----------
-        id : str
-            Unique identifier of the parent connection whose shared copies should be listed.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[ConnectionListResponseEnvelope]
-            OK
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"api/connections/{encode_path_param(id)}/shared",
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    ConnectionListResponseEnvelope,
-                    parse_obj_as(
-                        type_=ConnectionListResponseEnvelope,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise core_api_error_ApiError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.text
-            )
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise core_api_error_ApiError(
-            status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
-        )
-
-    def list_shared_connections_for_partner(
-        self, org_id: str, connection_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[ConnectionListResponseEnvelope]:
-        """
-        Lists shared copies of a connection owned by a specific organization in the partner account.
-
-        The `org_id` must match the organization that owns the parent connection. If it
-        does not, the endpoint returns `404` rather than exposing information about the
-        parent connection.
-
-        This endpoint is useful in partner workflows where the parent connection is in
-        the partner owner organization and the caller needs to audit which child
-        organizations already have a shared copy.
-
-        Parameters
-        ----------
-        org_id : str
-            Unique identifier of the organization that owns the parent connection.
-
-        connection_id : str
-            Unique identifier of the parent connection whose shared copies should be listed.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[ConnectionListResponseEnvelope]
-            OK
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"api/organizations/{encode_path_param(org_id)}/connections/{encode_path_param(connection_id)}/shared",
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    ConnectionListResponseEnvelope,
-                    parse_obj_as(
-                        type_=ConnectionListResponseEnvelope,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise core_api_error_ApiError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.text
-            )
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise core_api_error_ApiError(
-            status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
-        )
-
-    def create_shared_connection(
-        self,
-        org_id: str,
-        connection_id: str,
-        *,
-        child_organization_id: str,
-        name: typing.Optional[str] = OMIT,
-        idempotency_key: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[CreateSharedConnectionResponseEnvelope]:
-        """
-        Shares a connection with another organization in the caller's partner account.
-
-        Parameters
-        ----------
-        org_id : str
-            Unique identifier of the organization that owns the parent connection.
-
-        connection_id : str
-            Unique identifier of the parent connection to share.
-
-        child_organization_id : str
-            Unique identifier of the child organization that should receive the shared connection.
-
-        name : typing.Optional[str]
-            Optional name for the shared copy. Defaults to the parent connection name.
-
-        idempotency_key : typing.Optional[str]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[CreateSharedConnectionResponseEnvelope]
-            OK
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"api/organizations/{encode_path_param(org_id)}/connections/{encode_path_param(connection_id)}/shared",
-            method="POST",
-            json={
-                "child_organization_id": child_organization_id,
-                "name": name,
-            },
-            headers={
-                "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    CreateSharedConnectionResponseEnvelope,
-                    parse_obj_as(
-                        type_=CreateSharedConnectionResponseEnvelope,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 403:
-                raise ForbiddenError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,
@@ -2284,13 +1869,21 @@ class AsyncRawConnectionsClient:
         connection: typing.Optional[str] = OMIT,
         dark: typing.Optional[bool] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
+        ttl: typing.Optional[int] = OMIT,
         type: typing.Optional[str] = OMIT,
+        use_organization_name: typing.Optional[bool] = OMIT,
         whitelist: typing.Optional[typing.Sequence[str]] = OMIT,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[ConnectCardResponseEnvelope]:
         """
-        Creates a Polytomic Connect session and returns a redirect URL that embeds the Connect modal.
+        Creates a Polytomic Connect session and returns a URL for creating or reconnecting a Connection.
+
+        Open the returned URL, or send it to the person who will set up the Connection.
+        Polytomic Connect guides them through authentication and configuration, then
+        redirects them to `redirect_url`.
+
+        Each session can create or reconnect one Connection.
 
         See also:
 
@@ -2312,8 +1905,14 @@ class AsyncRawConnectionsClient:
 
         organization_id : typing.Optional[str]
 
+        ttl : typing.Optional[int]
+            Connect session lifetime in seconds. Defaults to 300 and cannot exceed 604800.
+
         type : typing.Optional[str]
             Connection type to create.
+
+        use_organization_name : typing.Optional[bool]
+            Whether to display the target organization name instead of the partner name in the Connect modal. Defaults to false; organizations without a partner always display their organization name.
 
         whitelist : typing.Optional[typing.Sequence[str]]
             List of connection types which are allowed to be created. Ignored if type is set.
@@ -2337,7 +1936,9 @@ class AsyncRawConnectionsClient:
                 "name": name,
                 "organization_id": organization_id,
                 "redirect_url": redirect_url,
+                "ttl": ttl,
                 "type": type,
+                "use_organization_name": use_organization_name,
                 "whitelist": whitelist,
             },
             headers={
@@ -2379,6 +1980,28 @@ class AsyncRawConnectionsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -2392,6 +2015,65 @@ class AsyncRawConnectionsClient:
                 )
             if _response.status_code == 500:
                 raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.text
+            )
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise core_api_error_ApiError(
+            status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
+        )
+
+    async def get_connect_session(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[ConnectSessionResponseEnvelope]:
+        """
+        Returns trusted metadata for the authenticated Polytomic Connect session.
+
+        Returns the trusted metadata stored for a Polytomic Connect session. Authenticate with the opaque Connect token in the `token` query parameter.
+
+        The response includes the server-enforced connection name, fixed type or whitelist, bound connection ID, completion redirect, branding, and absolute expiration time.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[ConnectSessionResponseEnvelope]
+            OK
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "api/connections/connect/session",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    ConnectSessionResponseEnvelope,
+                    parse_obj_as(
+                        type_=ConnectSessionResponseEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 401:
+                raise UnauthorizedError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,
@@ -2956,563 +2638,56 @@ class AsyncRawConnectionsClient:
             status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
         )
 
-    async def execute_proxy(
-        self,
-        id: str,
-        *,
-        request: ConnectionProxyCall,
-        idempotency_key: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[ExecuteConnectionProxyEnvelope]:
+    async def get_usage(
+        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[GetConnectionUsageEnvelope]:
         """
-        Proxies an HTTP request to a connection's underlying API using the connection's stored credentials, subject to per-connection rate limits and size caps.
+        Returns the connection's API consumption over the last 24 hours, broken down by sync when the backend supports it.
 
-        This endpoint is intended for controlled passthrough use, not as a general
-        replacement for Polytomic's modeled endpoints. The request is executed with the
-        connection's stored credentials and inherited base URL, headers, and query
-        parameters.
+        Not all integrations support usage reporting.
 
-        Before building requests dynamically, call
-        [`GET /api/connections/{id}/proxy/info`](../../../../api-reference/connections/get-proxy-info)
-        to inspect the inherited base URL, blocked headers, accepted body types, and
-        size and rate limits.
+        - `callsLast24h` is null when the backend does not expose a usage count.
+        - `reportsSyncStats` is `false`, and `bySync` is empty, when the backend
+          reports a total but cannot attribute calls to individual syncs.
 
-        ## Important behavior
-
-        - `request.path` must be relative and start with `/`.
-        - Use either `request.query` or `request.rawQuery`, not both.
-        - Caller-supplied headers are merged with inherited headers, but inherited auth
-          headers cannot be overridden.
-        - The proxy strips a fixed set of request and response headers for safety.
-        - Response bodies larger than the configured maximum are truncated, and
-          `truncated` is set to `true`.
-
-        The response includes `proxyCallId`, which you can use to correlate the call
-        with audit logs.
+        When per-sync stats are available, each entry in `bySync` carries a
+        `categories` breakdown. **Category keys and labels are integration-specific.**
+        For example, Salesforce reports `rest` and `bulk` categories
+        (collapsing Bulk API v1 and v2 into a single `bulk` bucket), while another
+        integration may report an entirely different set or none at all. Treat `key`
+        as an opaque, backend-defined identifier and use `label` for display; do not
+        assume a fixed vocabulary across connection types.
 
         Parameters
         ----------
         id : str
-            Unique identifier of the connection to proxy the request through.
-
-        request : ConnectionProxyCall
-
-        idempotency_key : typing.Optional[str]
+            Unique identifier of the connection whose API consumption should be returned.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[ExecuteConnectionProxyEnvelope]
+        AsyncHttpResponse[GetConnectionUsageEnvelope]
             OK
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"api/connections/{encode_path_param(id)}/proxy",
-            method="POST",
-            json={
-                "request": convert_and_respect_annotation_metadata(
-                    object_=request, annotation=ConnectionProxyCall, direction="write"
-                ),
-            },
-            headers={
-                "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
-            },
+            f"api/connections/{encode_path_param(id)}/usage",
+            method="GET",
             request_options=request_options,
-            omit=OMIT,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    ExecuteConnectionProxyEnvelope,
+                    GetConnectionUsageEnvelope,
                     parse_obj_as(
-                        type_=ExecuteConnectionProxyEnvelope,  # type: ignore
+                        type_=GetConnectionUsageEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
             if _response.status_code == 401:
                 raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 429:
-                raise TooManyRequestsError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 502:
-                raise BadGatewayError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 504:
-                raise GatewayTimeoutError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise core_api_error_ApiError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.text
-            )
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise core_api_error_ApiError(
-            status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
-        )
-
-    async def get_proxy_info(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[GetConnectionProxyInfoEnvelope]:
-        """
-        Returns the proxy contract for a connection.
-
-        Use this endpoint before calling
-        [`POST /api/connections/{id}/proxy`](../../../../../api-reference/connections/execute-proxy)
-        when you need to build requests programmatically. The response shows:
-
-        - the inherited base URL that all proxied requests are sent to
-        - locked headers and query parameters that are attached automatically
-        - blocked request and response headers
-        - allowed HTTP methods and body shapes
-        - timeout, rate-limit, and payload-size limits
-
-        Sensitive inherited header and query values are redacted in the response. The
-        contract is still useful for discovering which keys are fixed by the
-        connection, even though their raw values are not exposed.
-
-        Parameters
-        ----------
-        id : str
-            Unique identifier of the connection whose proxy contract should be returned.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[GetConnectionProxyInfoEnvelope]
-            OK
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"api/connections/{encode_path_param(id)}/proxy/info",
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    GetConnectionProxyInfoEnvelope,
-                    parse_obj_as(
-                        type_=GetConnectionProxyInfoEnvelope,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 400:
-                raise BadRequestError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 401:
-                raise UnauthorizedError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise core_api_error_ApiError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.text
-            )
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise core_api_error_ApiError(
-            status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
-        )
-
-    async def list_shared_connections(
-        self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[ConnectionListResponseEnvelope]:
-        """
-        Lists shared copies of a connection that the caller's organization owns.
-
-        The returned connections are the child copies, not the parent connection
-        itself. This is useful when a partner workflow needs to confirm which
-        downstream organizations have already received a shared copy.
-
-        Creating a new shared copy is a separate operation. Use
-        [`POST /api/organizations/{org_id}/connections/{connection_id}/share`](../../../../api-reference/connections/create-shared-connection)
-        for the v5 partner-scoped flow.
-
-        Parameters
-        ----------
-        id : str
-            Unique identifier of the parent connection whose shared copies should be listed.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[ConnectionListResponseEnvelope]
-            OK
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"api/connections/{encode_path_param(id)}/shared",
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    ConnectionListResponseEnvelope,
-                    parse_obj_as(
-                        type_=ConnectionListResponseEnvelope,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise core_api_error_ApiError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.text
-            )
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise core_api_error_ApiError(
-            status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
-        )
-
-    async def list_shared_connections_for_partner(
-        self, org_id: str, connection_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[ConnectionListResponseEnvelope]:
-        """
-        Lists shared copies of a connection owned by a specific organization in the partner account.
-
-        The `org_id` must match the organization that owns the parent connection. If it
-        does not, the endpoint returns `404` rather than exposing information about the
-        parent connection.
-
-        This endpoint is useful in partner workflows where the parent connection is in
-        the partner owner organization and the caller needs to audit which child
-        organizations already have a shared copy.
-
-        Parameters
-        ----------
-        org_id : str
-            Unique identifier of the organization that owns the parent connection.
-
-        connection_id : str
-            Unique identifier of the parent connection whose shared copies should be listed.
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[ConnectionListResponseEnvelope]
-            OK
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"api/organizations/{encode_path_param(org_id)}/connections/{encode_path_param(connection_id)}/shared",
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    ConnectionListResponseEnvelope,
-                    parse_obj_as(
-                        type_=ConnectionListResponseEnvelope,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 403:
-                raise ForbiddenError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 500:
-                raise InternalServerError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        types_api_error_ApiError,
-                        parse_obj_as(
-                            type_=types_api_error_ApiError,  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise core_api_error_ApiError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.text
-            )
-        except ValidationError as e:
-            raise ParsingError(
-                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
-            )
-        raise core_api_error_ApiError(
-            status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
-        )
-
-    async def create_shared_connection(
-        self,
-        org_id: str,
-        connection_id: str,
-        *,
-        child_organization_id: str,
-        name: typing.Optional[str] = OMIT,
-        idempotency_key: typing.Optional[str] = None,
-        request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[CreateSharedConnectionResponseEnvelope]:
-        """
-        Shares a connection with another organization in the caller's partner account.
-
-        Parameters
-        ----------
-        org_id : str
-            Unique identifier of the organization that owns the parent connection.
-
-        connection_id : str
-            Unique identifier of the parent connection to share.
-
-        child_organization_id : str
-            Unique identifier of the child organization that should receive the shared connection.
-
-        name : typing.Optional[str]
-            Optional name for the shared copy. Defaults to the parent connection name.
-
-        idempotency_key : typing.Optional[str]
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[CreateSharedConnectionResponseEnvelope]
-            OK
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"api/organizations/{encode_path_param(org_id)}/connections/{encode_path_param(connection_id)}/shared",
-            method="POST",
-            json={
-                "child_organization_id": child_organization_id,
-                "name": name,
-            },
-            headers={
-                "content-type": "application/json",
-                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
-            },
-            request_options=request_options,
-            omit=OMIT,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    CreateSharedConnectionResponseEnvelope,
-                    parse_obj_as(
-                        type_=CreateSharedConnectionResponseEnvelope,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 403:
-                raise ForbiddenError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,

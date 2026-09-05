@@ -29,6 +29,7 @@ class ConnectionType(UniversalBaseModel):
         FieldMetadata(alias="initialConfiguration"),
         pydantic.Field(alias="initialConfiguration"),
     ] = None
+    logo_dark_url: typing.Optional[str] = None
     logo_url: typing.Optional[str] = None
     name: typing.Optional[str] = None
     oauth_prompt: typing.Optional[BackendOAuthPrompt] = None

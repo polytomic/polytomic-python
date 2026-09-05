@@ -20,7 +20,7 @@ class SyncField(UniversalBaseModel):
 
     override_value: typing.Optional[str] = pydantic.Field(default=None)
     """
-    Value to set in the target field; if provided, 'source' is ignored.
+    Value to set in the target field; a mapping with an override value and no source is stored as an override field.
     """
 
     source: typing.Optional[Source] = None

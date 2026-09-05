@@ -4,23 +4,11 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
+from .record_logging_settings_response import RecordLoggingSettingsResponse
 
 
-class TargetCreateInput(UniversalBaseModel):
-    enum: typing.Optional[bool] = pydantic.Field(default=None)
-    """
-    True if the property is an enum.
-    """
-
-    id: typing.Optional[str] = pydantic.Field(default=None)
-    """
-    The identifier of the target property.
-    """
-
-    title: typing.Optional[str] = pydantic.Field(default=None)
-    """
-    A human readable title for the target property.
-    """
+class RecordLoggingSettingsEnvelope(UniversalBaseModel):
+    data: typing.Optional[RecordLoggingSettingsResponse] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

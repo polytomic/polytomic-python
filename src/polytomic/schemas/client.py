@@ -6,8 +6,10 @@ from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
 from ..types.bulk_sync_source_schema_envelope import BulkSyncSourceSchemaEnvelope
 from ..types.bulk_sync_source_status_envelope import BulkSyncSourceStatusEnvelope
+from ..types.schema_field_response_envelope import SchemaFieldResponseEnvelope
 from ..types.schema_primary_key_override_input import SchemaPrimaryKeyOverrideInput
 from ..types.schema_records_response_envelope import SchemaRecordsResponseEnvelope
+from ..types.types_definition import TypesDefinition
 from ..types.user_field_request import UserFieldRequest
 from .raw_client import AsyncRawSchemasClient, RawSchemasClient
 
@@ -147,6 +149,86 @@ class SchemasClient:
         """
         _response = self._raw_client.delete_field(
             connection_id, schema_id, field_id, idempotency_key=idempotency_key, request_options=request_options
+        )
+        return _response.data
+
+    def patch_field(
+        self,
+        connection_id: str,
+        schema_id: str,
+        field_id: str,
+        *,
+        definition: typing.Optional[TypesDefinition] = OMIT,
+        example: typing.Optional[typing.Any] = OMIT,
+        label: typing.Optional[str] = OMIT,
+        path: typing.Optional[str] = OMIT,
+        type: typing.Optional[str] = OMIT,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SchemaFieldResponseEnvelope:
+        """
+        Edits a single field on a schema, creating an override for a detected field if needed.
+
+        Parameters
+        ----------
+        connection_id : str
+            Connection holding the schema.
+
+        schema_id : str
+            Schema identifier.
+
+        field_id : str
+            Field identifier within the schema.
+
+        definition : typing.Optional[TypesDefinition]
+
+        example : typing.Optional[typing.Any]
+            Sample value surfaced in the UI.
+
+        label : typing.Optional[str]
+            Human-readable label for the field.
+
+        path : typing.Optional[str]
+            JSONPath used to extract the field from each source record; only meaningful for document-style backends. Pass an empty string to clear an existing path.
+
+        type : typing.Optional[str]
+            One of: string, number, boolean, datetime, array, object, binary. Changing the type without supplying a matching definition clears any prior detailed type metadata.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SchemaFieldResponseEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.schemas.patch_field(
+            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            schema_id="schema_id",
+            field_id="field_id",
+        )
+        """
+        _response = self._raw_client.patch_field(
+            connection_id,
+            schema_id,
+            field_id,
+            definition=definition,
+            example=example,
+            label=label,
+            path=path,
+            type=type,
+            idempotency_key=idempotency_key,
+            request_options=request_options,
         )
         return _response.data
 
@@ -613,6 +695,94 @@ class AsyncSchemasClient:
         """
         _response = await self._raw_client.delete_field(
             connection_id, schema_id, field_id, idempotency_key=idempotency_key, request_options=request_options
+        )
+        return _response.data
+
+    async def patch_field(
+        self,
+        connection_id: str,
+        schema_id: str,
+        field_id: str,
+        *,
+        definition: typing.Optional[TypesDefinition] = OMIT,
+        example: typing.Optional[typing.Any] = OMIT,
+        label: typing.Optional[str] = OMIT,
+        path: typing.Optional[str] = OMIT,
+        type: typing.Optional[str] = OMIT,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SchemaFieldResponseEnvelope:
+        """
+        Edits a single field on a schema, creating an override for a detected field if needed.
+
+        Parameters
+        ----------
+        connection_id : str
+            Connection holding the schema.
+
+        schema_id : str
+            Schema identifier.
+
+        field_id : str
+            Field identifier within the schema.
+
+        definition : typing.Optional[TypesDefinition]
+
+        example : typing.Optional[typing.Any]
+            Sample value surfaced in the UI.
+
+        label : typing.Optional[str]
+            Human-readable label for the field.
+
+        path : typing.Optional[str]
+            JSONPath used to extract the field from each source record; only meaningful for document-style backends. Pass an empty string to clear an existing path.
+
+        type : typing.Optional[str]
+            One of: string, number, boolean, datetime, array, object, binary. Changing the type without supplying a matching definition clears any prior detailed type metadata.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SchemaFieldResponseEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.schemas.patch_field(
+                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                schema_id="schema_id",
+                field_id="field_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.patch_field(
+            connection_id,
+            schema_id,
+            field_id,
+            definition=definition,
+            example=example,
+            label=label,
+            path=path,
+            type=type,
+            idempotency_key=idempotency_key,
+            request_options=request_options,
         )
         return _response.data
 

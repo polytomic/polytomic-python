@@ -18,8 +18,10 @@ from ..errors.not_found_error import NotFoundError
 from ..types.api_error import ApiError as types_api_error_ApiError
 from ..types.bulk_sync_source_schema_envelope import BulkSyncSourceSchemaEnvelope
 from ..types.bulk_sync_source_status_envelope import BulkSyncSourceStatusEnvelope
+from ..types.schema_field_response_envelope import SchemaFieldResponseEnvelope
 from ..types.schema_primary_key_override_input import SchemaPrimaryKeyOverrideInput
 from ..types.schema_records_response_envelope import SchemaRecordsResponseEnvelope
+from ..types.types_definition import TypesDefinition
 from ..types.user_field_request import UserFieldRequest
 from pydantic import ValidationError
 
@@ -189,6 +191,131 @@ class RawSchemasClient:
         try:
             if 200 <= _response.status_code < 300:
                 return HttpResponse(response=_response, data=None)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.text
+            )
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise core_api_error_ApiError(
+            status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
+        )
+
+    def patch_field(
+        self,
+        connection_id: str,
+        schema_id: str,
+        field_id: str,
+        *,
+        definition: typing.Optional[TypesDefinition] = OMIT,
+        example: typing.Optional[typing.Any] = OMIT,
+        label: typing.Optional[str] = OMIT,
+        path: typing.Optional[str] = OMIT,
+        type: typing.Optional[str] = OMIT,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[SchemaFieldResponseEnvelope]:
+        """
+        Edits a single field on a schema, creating an override for a detected field if needed.
+
+        Parameters
+        ----------
+        connection_id : str
+            Connection holding the schema.
+
+        schema_id : str
+            Schema identifier.
+
+        field_id : str
+            Field identifier within the schema.
+
+        definition : typing.Optional[TypesDefinition]
+
+        example : typing.Optional[typing.Any]
+            Sample value surfaced in the UI.
+
+        label : typing.Optional[str]
+            Human-readable label for the field.
+
+        path : typing.Optional[str]
+            JSONPath used to extract the field from each source record; only meaningful for document-style backends. Pass an empty string to clear an existing path.
+
+        type : typing.Optional[str]
+            One of: string, number, boolean, datetime, array, object, binary. Changing the type without supplying a matching definition clears any prior detailed type metadata.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[SchemaFieldResponseEnvelope]
+            OK
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"api/connections/{encode_path_param(connection_id)}/schemas/{encode_path_param(schema_id)}/fields/{encode_path_param(field_id)}",
+            method="PATCH",
+            json={
+                "definition": definition,
+                "example": example,
+                "label": label,
+                "path": path,
+                "type": type,
+            },
+            headers={
+                "content-type": "application/json",
+                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    SchemaFieldResponseEnvelope,
+                    parse_obj_as(
+                        type_=SchemaFieldResponseEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
             if _response.status_code == 400:
                 raise BadRequestError(
                     headers=dict(_response.headers),
@@ -986,6 +1113,131 @@ class AsyncRawSchemasClient:
         try:
             if 200 <= _response.status_code < 300:
                 return AsyncHttpResponse(response=_response, data=None)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.text
+            )
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise core_api_error_ApiError(
+            status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
+        )
+
+    async def patch_field(
+        self,
+        connection_id: str,
+        schema_id: str,
+        field_id: str,
+        *,
+        definition: typing.Optional[TypesDefinition] = OMIT,
+        example: typing.Optional[typing.Any] = OMIT,
+        label: typing.Optional[str] = OMIT,
+        path: typing.Optional[str] = OMIT,
+        type: typing.Optional[str] = OMIT,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[SchemaFieldResponseEnvelope]:
+        """
+        Edits a single field on a schema, creating an override for a detected field if needed.
+
+        Parameters
+        ----------
+        connection_id : str
+            Connection holding the schema.
+
+        schema_id : str
+            Schema identifier.
+
+        field_id : str
+            Field identifier within the schema.
+
+        definition : typing.Optional[TypesDefinition]
+
+        example : typing.Optional[typing.Any]
+            Sample value surfaced in the UI.
+
+        label : typing.Optional[str]
+            Human-readable label for the field.
+
+        path : typing.Optional[str]
+            JSONPath used to extract the field from each source record; only meaningful for document-style backends. Pass an empty string to clear an existing path.
+
+        type : typing.Optional[str]
+            One of: string, number, boolean, datetime, array, object, binary. Changing the type without supplying a matching definition clears any prior detailed type metadata.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[SchemaFieldResponseEnvelope]
+            OK
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"api/connections/{encode_path_param(connection_id)}/schemas/{encode_path_param(schema_id)}/fields/{encode_path_param(field_id)}",
+            method="PATCH",
+            json={
+                "definition": definition,
+                "example": example,
+                "label": label,
+                "path": path,
+                "type": type,
+            },
+            headers={
+                "content-type": "application/json",
+                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    SchemaFieldResponseEnvelope,
+                    parse_obj_as(
+                        type_=SchemaFieldResponseEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
             if _response.status_code == 400:
                 raise BadRequestError(
                     headers=dict(_response.headers),

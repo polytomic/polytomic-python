@@ -26,15 +26,18 @@ from ..types.get_sync_source_meta_envelope import GetSyncSourceMetaEnvelope
 from ..types.identity import Identity
 from ..types.list_sync_response_envelope import ListSyncResponseEnvelope
 from ..types.model_field_response import ModelFieldResponse
+from ..types.model_filters import ModelFilters
+from ..types.model_sync_v5response_envelope import ModelSyncV5ResponseEnvelope
+from ..types.model_sync_v5target import ModelSyncV5Target
 from ..types.modelsync_sync_target_mode import ModelsyncSyncTargetMode
 from ..types.override import Override
+from ..types.override_field_input import OverrideFieldInput
 from ..types.schedule import Schedule
 from ..types.schedule_option_response_envelope import ScheduleOptionResponseEnvelope
 from ..types.start_sync_response_envelope import StartSyncResponseEnvelope
 from ..types.sync_field import SyncField
-from ..types.sync_response_envelope import SyncResponseEnvelope
 from ..types.sync_status_envelope import SyncStatusEnvelope
-from ..types.target import Target
+from ..types.target_filters import TargetFilters
 from pydantic import ValidationError
 
 # this is used as the default value for optional parameters
@@ -389,22 +392,24 @@ class RawModelSyncClient:
         mode: ModelsyncSyncTargetMode,
         name: str,
         schedule: Schedule,
-        target: Target,
+        target: ModelSyncV5Target,
         active: typing.Optional[bool] = OMIT,
         encryption_passphrase: typing.Optional[str] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
         identity: typing.Optional[Identity] = OMIT,
+        model_filters: typing.Optional[ModelFilters] = OMIT,
         only_enrich_updates: typing.Optional[bool] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
-        override_fields: typing.Optional[typing.Sequence[SyncField]] = OMIT,
+        override_fields: typing.Optional[typing.Sequence[OverrideFieldInput]] = OMIT,
         overrides: typing.Optional[typing.Sequence[Override]] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         skip_initial_backfill: typing.Optional[bool] = OMIT,
         sync_all_records: typing.Optional[bool] = OMIT,
+        target_filters: typing.Optional[TargetFilters] = OMIT,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[SyncResponseEnvelope]:
+    ) -> HttpResponse[ModelSyncV5ResponseEnvelope]:
         """
         Creates a new model sync.
 
@@ -476,7 +481,7 @@ class RawModelSyncClient:
 
         schedule : Schedule
 
-        target : Target
+        target : ModelSyncV5Target
 
         active : typing.Optional[bool]
             Whether the sync is enabled and scheduled.
@@ -485,12 +490,14 @@ class RawModelSyncClient:
             Passphrase for encrypting the sync data.
 
         filter_logic : typing.Optional[str]
-            Logical expression to combine filters.
+            Deprecated. Use 'model_filters.logic'. Combines the model filters in 'filters' only.
 
         filters : typing.Optional[typing.Sequence[Filter]]
-            Filters to apply to the source data.
+            Deprecated. Use 'model_filters.conditions' and 'target_filters.conditions', which say which kind each condition is rather than inferring it. Ignored when either of those is present, except that a request carrying both shapes is rejected if they describe different filters.
 
         identity : typing.Optional[Identity]
+
+        model_filters : typing.Optional[ModelFilters]
 
         only_enrich_updates : typing.Optional[bool]
             Whether to use enrichment models as a source of possible changes to sync. If true, only changes to the base models will cause a record to sync.
@@ -498,8 +505,8 @@ class RawModelSyncClient:
         organization_id : typing.Optional[str]
             Organization ID for the sync; read-only with a partner key.
 
-        override_fields : typing.Optional[typing.Sequence[SyncField]]
-            Values to set in the target unconditionally.
+        override_fields : typing.Optional[typing.Sequence[OverrideFieldInput]]
+            Target fields which are set to a fixed value for every record, rather than mapped from a model field.
 
         overrides : typing.Optional[typing.Sequence[Override]]
             Conditional value replacement for fields.
@@ -512,6 +519,8 @@ class RawModelSyncClient:
         sync_all_records : typing.Optional[bool]
             Whether to sync all records from the source, regardless of whether they've changed since the previous execution.
 
+        target_filters : typing.Optional[TargetFilters]
+
         idempotency_key : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
@@ -519,7 +528,7 @@ class RawModelSyncClient:
 
         Returns
         -------
-        HttpResponse[SyncResponseEnvelope]
+        HttpResponse[ModelSyncV5ResponseEnvelope]
             OK
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -539,11 +548,14 @@ class RawModelSyncClient:
                     object_=identity, annotation=Identity, direction="write"
                 ),
                 "mode": mode,
+                "model_filters": convert_and_respect_annotation_metadata(
+                    object_=model_filters, annotation=ModelFilters, direction="write"
+                ),
                 "name": name,
                 "only_enrich_updates": only_enrich_updates,
                 "organization_id": organization_id,
                 "override_fields": convert_and_respect_annotation_metadata(
-                    object_=override_fields, annotation=typing.Sequence[SyncField], direction="write"
+                    object_=override_fields, annotation=typing.Sequence[OverrideFieldInput], direction="write"
                 ),
                 "overrides": convert_and_respect_annotation_metadata(
                     object_=overrides, annotation=typing.Sequence[Override], direction="write"
@@ -554,7 +566,12 @@ class RawModelSyncClient:
                 ),
                 "skip_initial_backfill": skip_initial_backfill,
                 "sync_all_records": sync_all_records,
-                "target": convert_and_respect_annotation_metadata(object_=target, annotation=Target, direction="write"),
+                "target": convert_and_respect_annotation_metadata(
+                    object_=target, annotation=ModelSyncV5Target, direction="write"
+                ),
+                "target_filters": convert_and_respect_annotation_metadata(
+                    object_=target_filters, annotation=TargetFilters, direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -566,9 +583,9 @@ class RawModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    SyncResponseEnvelope,
+                    ModelSyncV5ResponseEnvelope,
                     parse_obj_as(
-                        type_=SyncResponseEnvelope,  # type: ignore
+                        type_=ModelSyncV5ResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -586,6 +603,17 @@ class RawModelSyncClient:
                 )
             if _response.status_code == 403:
                 raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,
@@ -691,7 +719,7 @@ class RawModelSyncClient:
 
     def get(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[SyncResponseEnvelope]:
+    ) -> HttpResponse[ModelSyncV5ResponseEnvelope]:
         """
         Returns a single model sync by ID.
 
@@ -708,7 +736,7 @@ class RawModelSyncClient:
 
         Returns
         -------
-        HttpResponse[SyncResponseEnvelope]
+        HttpResponse[ModelSyncV5ResponseEnvelope]
             OK
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -719,9 +747,9 @@ class RawModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    SyncResponseEnvelope,
+                    ModelSyncV5ResponseEnvelope,
                     parse_obj_as(
-                        type_=SyncResponseEnvelope,  # type: ignore
+                        type_=ModelSyncV5ResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -769,22 +797,24 @@ class RawModelSyncClient:
         mode: ModelsyncSyncTargetMode,
         name: str,
         schedule: Schedule,
-        target: Target,
+        target: ModelSyncV5Target,
         active: typing.Optional[bool] = OMIT,
         encryption_passphrase: typing.Optional[str] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
         identity: typing.Optional[Identity] = OMIT,
+        model_filters: typing.Optional[ModelFilters] = OMIT,
         only_enrich_updates: typing.Optional[bool] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
-        override_fields: typing.Optional[typing.Sequence[SyncField]] = OMIT,
+        override_fields: typing.Optional[typing.Sequence[OverrideFieldInput]] = OMIT,
         overrides: typing.Optional[typing.Sequence[Override]] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         skip_initial_backfill: typing.Optional[bool] = OMIT,
         sync_all_records: typing.Optional[bool] = OMIT,
+        target_filters: typing.Optional[TargetFilters] = OMIT,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[SyncResponseEnvelope]:
+    ) -> HttpResponse[ModelSyncV5ResponseEnvelope]:
         """
         Updates a model sync's configuration.
 
@@ -815,7 +845,7 @@ class RawModelSyncClient:
 
         schedule : Schedule
 
-        target : Target
+        target : ModelSyncV5Target
 
         active : typing.Optional[bool]
             Whether the sync is enabled and scheduled.
@@ -824,12 +854,14 @@ class RawModelSyncClient:
             Passphrase for encrypting the sync data.
 
         filter_logic : typing.Optional[str]
-            Logical expression to combine filters.
+            Deprecated. Use 'model_filters.logic'. Combines the model filters in 'filters' only.
 
         filters : typing.Optional[typing.Sequence[Filter]]
-            Filters to apply to the source data.
+            Deprecated. Use 'model_filters.conditions' and 'target_filters.conditions', which say which kind each condition is rather than inferring it. Ignored when either of those is present, except that a request carrying both shapes is rejected if they describe different filters.
 
         identity : typing.Optional[Identity]
+
+        model_filters : typing.Optional[ModelFilters]
 
         only_enrich_updates : typing.Optional[bool]
             Whether to use enrichment models as a source of possible changes to sync. If true, only changes to the base models will cause a record to sync.
@@ -837,8 +869,8 @@ class RawModelSyncClient:
         organization_id : typing.Optional[str]
             Organization ID for the sync; read-only with a partner key.
 
-        override_fields : typing.Optional[typing.Sequence[SyncField]]
-            Values to set in the target unconditionally.
+        override_fields : typing.Optional[typing.Sequence[OverrideFieldInput]]
+            Target fields which are set to a fixed value for every record, rather than mapped from a model field.
 
         overrides : typing.Optional[typing.Sequence[Override]]
             Conditional value replacement for fields.
@@ -851,6 +883,8 @@ class RawModelSyncClient:
         sync_all_records : typing.Optional[bool]
             Whether to sync all records from the source, regardless of whether they've changed since the previous execution.
 
+        target_filters : typing.Optional[TargetFilters]
+
         idempotency_key : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
@@ -858,7 +892,7 @@ class RawModelSyncClient:
 
         Returns
         -------
-        HttpResponse[SyncResponseEnvelope]
+        HttpResponse[ModelSyncV5ResponseEnvelope]
             OK
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -878,11 +912,14 @@ class RawModelSyncClient:
                     object_=identity, annotation=Identity, direction="write"
                 ),
                 "mode": mode,
+                "model_filters": convert_and_respect_annotation_metadata(
+                    object_=model_filters, annotation=ModelFilters, direction="write"
+                ),
                 "name": name,
                 "only_enrich_updates": only_enrich_updates,
                 "organization_id": organization_id,
                 "override_fields": convert_and_respect_annotation_metadata(
-                    object_=override_fields, annotation=typing.Sequence[SyncField], direction="write"
+                    object_=override_fields, annotation=typing.Sequence[OverrideFieldInput], direction="write"
                 ),
                 "overrides": convert_and_respect_annotation_metadata(
                     object_=overrides, annotation=typing.Sequence[Override], direction="write"
@@ -893,7 +930,12 @@ class RawModelSyncClient:
                 ),
                 "skip_initial_backfill": skip_initial_backfill,
                 "sync_all_records": sync_all_records,
-                "target": convert_and_respect_annotation_metadata(object_=target, annotation=Target, direction="write"),
+                "target": convert_and_respect_annotation_metadata(
+                    object_=target, annotation=ModelSyncV5Target, direction="write"
+                ),
+                "target_filters": convert_and_respect_annotation_metadata(
+                    object_=target_filters, annotation=TargetFilters, direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -905,9 +947,9 @@ class RawModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    SyncResponseEnvelope,
+                    ModelSyncV5ResponseEnvelope,
                     parse_obj_as(
-                        type_=SyncResponseEnvelope,  # type: ignore
+                        type_=ModelSyncV5ResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1167,6 +1209,17 @@ class RawModelSyncClient:
                 )
             if _response.status_code == 404:
                 raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,
@@ -1846,22 +1899,24 @@ class AsyncRawModelSyncClient:
         mode: ModelsyncSyncTargetMode,
         name: str,
         schedule: Schedule,
-        target: Target,
+        target: ModelSyncV5Target,
         active: typing.Optional[bool] = OMIT,
         encryption_passphrase: typing.Optional[str] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
         identity: typing.Optional[Identity] = OMIT,
+        model_filters: typing.Optional[ModelFilters] = OMIT,
         only_enrich_updates: typing.Optional[bool] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
-        override_fields: typing.Optional[typing.Sequence[SyncField]] = OMIT,
+        override_fields: typing.Optional[typing.Sequence[OverrideFieldInput]] = OMIT,
         overrides: typing.Optional[typing.Sequence[Override]] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         skip_initial_backfill: typing.Optional[bool] = OMIT,
         sync_all_records: typing.Optional[bool] = OMIT,
+        target_filters: typing.Optional[TargetFilters] = OMIT,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[SyncResponseEnvelope]:
+    ) -> AsyncHttpResponse[ModelSyncV5ResponseEnvelope]:
         """
         Creates a new model sync.
 
@@ -1933,7 +1988,7 @@ class AsyncRawModelSyncClient:
 
         schedule : Schedule
 
-        target : Target
+        target : ModelSyncV5Target
 
         active : typing.Optional[bool]
             Whether the sync is enabled and scheduled.
@@ -1942,12 +1997,14 @@ class AsyncRawModelSyncClient:
             Passphrase for encrypting the sync data.
 
         filter_logic : typing.Optional[str]
-            Logical expression to combine filters.
+            Deprecated. Use 'model_filters.logic'. Combines the model filters in 'filters' only.
 
         filters : typing.Optional[typing.Sequence[Filter]]
-            Filters to apply to the source data.
+            Deprecated. Use 'model_filters.conditions' and 'target_filters.conditions', which say which kind each condition is rather than inferring it. Ignored when either of those is present, except that a request carrying both shapes is rejected if they describe different filters.
 
         identity : typing.Optional[Identity]
+
+        model_filters : typing.Optional[ModelFilters]
 
         only_enrich_updates : typing.Optional[bool]
             Whether to use enrichment models as a source of possible changes to sync. If true, only changes to the base models will cause a record to sync.
@@ -1955,8 +2012,8 @@ class AsyncRawModelSyncClient:
         organization_id : typing.Optional[str]
             Organization ID for the sync; read-only with a partner key.
 
-        override_fields : typing.Optional[typing.Sequence[SyncField]]
-            Values to set in the target unconditionally.
+        override_fields : typing.Optional[typing.Sequence[OverrideFieldInput]]
+            Target fields which are set to a fixed value for every record, rather than mapped from a model field.
 
         overrides : typing.Optional[typing.Sequence[Override]]
             Conditional value replacement for fields.
@@ -1969,6 +2026,8 @@ class AsyncRawModelSyncClient:
         sync_all_records : typing.Optional[bool]
             Whether to sync all records from the source, regardless of whether they've changed since the previous execution.
 
+        target_filters : typing.Optional[TargetFilters]
+
         idempotency_key : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
@@ -1976,7 +2035,7 @@ class AsyncRawModelSyncClient:
 
         Returns
         -------
-        AsyncHttpResponse[SyncResponseEnvelope]
+        AsyncHttpResponse[ModelSyncV5ResponseEnvelope]
             OK
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -1996,11 +2055,14 @@ class AsyncRawModelSyncClient:
                     object_=identity, annotation=Identity, direction="write"
                 ),
                 "mode": mode,
+                "model_filters": convert_and_respect_annotation_metadata(
+                    object_=model_filters, annotation=ModelFilters, direction="write"
+                ),
                 "name": name,
                 "only_enrich_updates": only_enrich_updates,
                 "organization_id": organization_id,
                 "override_fields": convert_and_respect_annotation_metadata(
-                    object_=override_fields, annotation=typing.Sequence[SyncField], direction="write"
+                    object_=override_fields, annotation=typing.Sequence[OverrideFieldInput], direction="write"
                 ),
                 "overrides": convert_and_respect_annotation_metadata(
                     object_=overrides, annotation=typing.Sequence[Override], direction="write"
@@ -2011,7 +2073,12 @@ class AsyncRawModelSyncClient:
                 ),
                 "skip_initial_backfill": skip_initial_backfill,
                 "sync_all_records": sync_all_records,
-                "target": convert_and_respect_annotation_metadata(object_=target, annotation=Target, direction="write"),
+                "target": convert_and_respect_annotation_metadata(
+                    object_=target, annotation=ModelSyncV5Target, direction="write"
+                ),
+                "target_filters": convert_and_respect_annotation_metadata(
+                    object_=target_filters, annotation=TargetFilters, direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -2023,9 +2090,9 @@ class AsyncRawModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    SyncResponseEnvelope,
+                    ModelSyncV5ResponseEnvelope,
                     parse_obj_as(
-                        type_=SyncResponseEnvelope,  # type: ignore
+                        type_=ModelSyncV5ResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -2043,6 +2110,17 @@ class AsyncRawModelSyncClient:
                 )
             if _response.status_code == 403:
                 raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,
@@ -2148,7 +2226,7 @@ class AsyncRawModelSyncClient:
 
     async def get(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[SyncResponseEnvelope]:
+    ) -> AsyncHttpResponse[ModelSyncV5ResponseEnvelope]:
         """
         Returns a single model sync by ID.
 
@@ -2165,7 +2243,7 @@ class AsyncRawModelSyncClient:
 
         Returns
         -------
-        AsyncHttpResponse[SyncResponseEnvelope]
+        AsyncHttpResponse[ModelSyncV5ResponseEnvelope]
             OK
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -2176,9 +2254,9 @@ class AsyncRawModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    SyncResponseEnvelope,
+                    ModelSyncV5ResponseEnvelope,
                     parse_obj_as(
-                        type_=SyncResponseEnvelope,  # type: ignore
+                        type_=ModelSyncV5ResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -2226,22 +2304,24 @@ class AsyncRawModelSyncClient:
         mode: ModelsyncSyncTargetMode,
         name: str,
         schedule: Schedule,
-        target: Target,
+        target: ModelSyncV5Target,
         active: typing.Optional[bool] = OMIT,
         encryption_passphrase: typing.Optional[str] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
         identity: typing.Optional[Identity] = OMIT,
+        model_filters: typing.Optional[ModelFilters] = OMIT,
         only_enrich_updates: typing.Optional[bool] = OMIT,
         organization_id: typing.Optional[str] = OMIT,
-        override_fields: typing.Optional[typing.Sequence[SyncField]] = OMIT,
+        override_fields: typing.Optional[typing.Sequence[OverrideFieldInput]] = OMIT,
         overrides: typing.Optional[typing.Sequence[Override]] = OMIT,
         policies: typing.Optional[typing.Sequence[str]] = OMIT,
         skip_initial_backfill: typing.Optional[bool] = OMIT,
         sync_all_records: typing.Optional[bool] = OMIT,
+        target_filters: typing.Optional[TargetFilters] = OMIT,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[SyncResponseEnvelope]:
+    ) -> AsyncHttpResponse[ModelSyncV5ResponseEnvelope]:
         """
         Updates a model sync's configuration.
 
@@ -2272,7 +2352,7 @@ class AsyncRawModelSyncClient:
 
         schedule : Schedule
 
-        target : Target
+        target : ModelSyncV5Target
 
         active : typing.Optional[bool]
             Whether the sync is enabled and scheduled.
@@ -2281,12 +2361,14 @@ class AsyncRawModelSyncClient:
             Passphrase for encrypting the sync data.
 
         filter_logic : typing.Optional[str]
-            Logical expression to combine filters.
+            Deprecated. Use 'model_filters.logic'. Combines the model filters in 'filters' only.
 
         filters : typing.Optional[typing.Sequence[Filter]]
-            Filters to apply to the source data.
+            Deprecated. Use 'model_filters.conditions' and 'target_filters.conditions', which say which kind each condition is rather than inferring it. Ignored when either of those is present, except that a request carrying both shapes is rejected if they describe different filters.
 
         identity : typing.Optional[Identity]
+
+        model_filters : typing.Optional[ModelFilters]
 
         only_enrich_updates : typing.Optional[bool]
             Whether to use enrichment models as a source of possible changes to sync. If true, only changes to the base models will cause a record to sync.
@@ -2294,8 +2376,8 @@ class AsyncRawModelSyncClient:
         organization_id : typing.Optional[str]
             Organization ID for the sync; read-only with a partner key.
 
-        override_fields : typing.Optional[typing.Sequence[SyncField]]
-            Values to set in the target unconditionally.
+        override_fields : typing.Optional[typing.Sequence[OverrideFieldInput]]
+            Target fields which are set to a fixed value for every record, rather than mapped from a model field.
 
         overrides : typing.Optional[typing.Sequence[Override]]
             Conditional value replacement for fields.
@@ -2308,6 +2390,8 @@ class AsyncRawModelSyncClient:
         sync_all_records : typing.Optional[bool]
             Whether to sync all records from the source, regardless of whether they've changed since the previous execution.
 
+        target_filters : typing.Optional[TargetFilters]
+
         idempotency_key : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
@@ -2315,7 +2399,7 @@ class AsyncRawModelSyncClient:
 
         Returns
         -------
-        AsyncHttpResponse[SyncResponseEnvelope]
+        AsyncHttpResponse[ModelSyncV5ResponseEnvelope]
             OK
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -2335,11 +2419,14 @@ class AsyncRawModelSyncClient:
                     object_=identity, annotation=Identity, direction="write"
                 ),
                 "mode": mode,
+                "model_filters": convert_and_respect_annotation_metadata(
+                    object_=model_filters, annotation=ModelFilters, direction="write"
+                ),
                 "name": name,
                 "only_enrich_updates": only_enrich_updates,
                 "organization_id": organization_id,
                 "override_fields": convert_and_respect_annotation_metadata(
-                    object_=override_fields, annotation=typing.Sequence[SyncField], direction="write"
+                    object_=override_fields, annotation=typing.Sequence[OverrideFieldInput], direction="write"
                 ),
                 "overrides": convert_and_respect_annotation_metadata(
                     object_=overrides, annotation=typing.Sequence[Override], direction="write"
@@ -2350,7 +2437,12 @@ class AsyncRawModelSyncClient:
                 ),
                 "skip_initial_backfill": skip_initial_backfill,
                 "sync_all_records": sync_all_records,
-                "target": convert_and_respect_annotation_metadata(object_=target, annotation=Target, direction="write"),
+                "target": convert_and_respect_annotation_metadata(
+                    object_=target, annotation=ModelSyncV5Target, direction="write"
+                ),
+                "target_filters": convert_and_respect_annotation_metadata(
+                    object_=target_filters, annotation=TargetFilters, direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -2362,9 +2454,9 @@ class AsyncRawModelSyncClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    SyncResponseEnvelope,
+                    ModelSyncV5ResponseEnvelope,
                     parse_obj_as(
-                        type_=SyncResponseEnvelope,  # type: ignore
+                        type_=ModelSyncV5ResponseEnvelope,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -2624,6 +2716,17 @@ class AsyncRawModelSyncClient:
                 )
             if _response.status_code == 404:
                 raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,

@@ -8,6 +8,7 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 
 class ConnectionParameterValue(UniversalBaseModel):
     label: typing.Optional[str] = None
+    path: typing.Optional[str] = None
     value: typing.Optional[typing.Any] = None
 
     if IS_PYDANTIC_V2:

@@ -42,7 +42,7 @@ class JobsClient:
         Parameters
         ----------
         type : str
-            Job type. One of: createmodel, updatemodel, previewmodel, samplemodel, exportlogs.
+            Job type. One of: createmodel, updatemodel, previewmodel, samplemodel, exportlogs, connectionproxy.
 
         id : str
             Unique identifier of the job (usually returned by whichever endpoint started the job).
@@ -106,7 +106,7 @@ class AsyncJobsClient:
         Parameters
         ----------
         type : str
-            Job type. One of: createmodel, updatemodel, previewmodel, samplemodel, exportlogs.
+            Job type. One of: createmodel, updatemodel, previewmodel, samplemodel, exportlogs, connectionproxy.
 
         id : str
             Unique identifier of the job (usually returned by whichever endpoint started the job).

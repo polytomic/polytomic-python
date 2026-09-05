@@ -9,12 +9,12 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 class ConnectCardResponse(UniversalBaseModel):
     redirect_url: typing.Optional[str] = pydantic.Field(default=None)
     """
-    URL to redirect the user to in order to create the new connection.
+    URL that opens the Polytomic Connect flow for creating or reconnecting a Connection.
     """
 
     token: typing.Optional[str] = pydantic.Field(default=None)
     """
-    Opaque single-use token identifying the Connect session.
+    Token for the Polytomic Connect session.
     """
 
     if IS_PYDANTIC_V2:

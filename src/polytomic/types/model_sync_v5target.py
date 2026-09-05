@@ -6,7 +6,7 @@ import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 
 
-class Target(UniversalBaseModel):
+class ModelSyncV5Target(UniversalBaseModel):
     configuration: typing.Optional[typing.Dict[str, typing.Any]] = None
     connection_id: str
     create: typing.Optional[typing.Dict[str, str]] = pydantic.Field(default=None)
@@ -14,7 +14,11 @@ class Target(UniversalBaseModel):
     Create a new target object with these properties.
     """
 
-    filter_logic: typing.Optional[str] = None
+    filter_logic: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Deprecated. Use 'target_filters.logic', which combines the conditions it is grouped with.
+    """
+
     new_name: typing.Optional[str] = pydantic.Field(default=None)
     """
     Name for a new target object.

@@ -4,6 +4,7 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
+from .eventing_sync_schedule import EventingSyncSchedule
 from .util_execution_status import UtilExecutionStatus
 
 
@@ -14,8 +15,14 @@ class EventingSyncCompletedEvent(UniversalBaseModel):
     execution_id: typing.Optional[str] = None
     inserted_count: typing.Optional[int] = None
     inserted_records: typing.Optional[typing.List[str]] = None
+    logs_url: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Endpoint returning the index of record logs produced by this execution.
+    """
+
     organization_id: typing.Optional[str] = None
     record_count: typing.Optional[int] = None
+    schedule: typing.Optional[EventingSyncSchedule] = None
     status: typing.Optional[UtilExecutionStatus] = None
     sync_id: typing.Optional[str] = None
     sync_name: typing.Optional[str] = None

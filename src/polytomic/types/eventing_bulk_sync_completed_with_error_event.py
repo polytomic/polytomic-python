@@ -4,12 +4,14 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
+from .eventing_bulk_sync_schedule import EventingBulkSyncSchedule
 
 
 class EventingBulkSyncCompletedWithErrorEvent(UniversalBaseModel):
     destination_connection_id: typing.Optional[str] = None
     execution_id: typing.Optional[str] = None
     organization_id: typing.Optional[str] = None
+    schedule: typing.Optional[EventingBulkSyncSchedule] = None
     source_connection_id: typing.Optional[str] = None
     sync_id: typing.Optional[str] = None
     sync_name: typing.Optional[str] = None

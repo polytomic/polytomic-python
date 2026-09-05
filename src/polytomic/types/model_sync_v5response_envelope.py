@@ -4,11 +4,11 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
-from .sync_response import SyncResponse
+from .model_sync_v5response import ModelSyncV5Response
 
 
-class SyncResponseEnvelope(UniversalBaseModel):
-    data: typing.Optional[SyncResponse] = None
+class ModelSyncV5ResponseEnvelope(UniversalBaseModel):
+    data: typing.Optional[ModelSyncV5Response] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

@@ -18,6 +18,10 @@ class GetExecutionResponseSchema(UniversalBaseModel):
     started_at: typing.Optional[dt.datetime] = None
     status: typing.Optional[UtilExecutionStatus] = None
     type: typing.Optional[str] = None
+    version: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Polytomic version which last ran this execution.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

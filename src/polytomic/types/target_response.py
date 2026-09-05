@@ -11,12 +11,31 @@ from .target_field import TargetField
 
 
 class TargetResponse(UniversalBaseModel):
-    fields: typing.Optional[typing.List[TargetField]] = None
-    id: typing.Optional[str] = None
-    modes: typing.Optional[typing.List[Mode]] = None
-    name: typing.Optional[str] = None
+    fields: typing.Optional[typing.List[TargetField]] = pydantic.Field(default=None)
+    """
+    Fields available for mapping on this target. Empty for backends where the new target's columns are user-defined (e.g. SQL databases).
+    """
+
+    id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Backend-specific identifier of the target object. For not-yet-created targets, this is an internal placeholder identifier that callers should not rely on.
+    """
+
+    modes: typing.Optional[typing.List[Mode]] = pydantic.Field(default=None)
+    """
+    Sync modes the target supports (e.g. create, update, upsert). The chosen mode determines which operations the sync may perform.
+    """
+
+    name: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Human-readable name of the target object.
+    """
+
     properties: typing.Optional[SyncDestinationProperties] = None
-    refreshed_at: typing.Optional[dt.datetime] = None
+    refreshed_at: typing.Optional[dt.datetime] = pydantic.Field(default=None)
+    """
+    Timestamp the target's cached schema was last refreshed. Zero for targets that do not have a cached schema (including not-yet-created targets).
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

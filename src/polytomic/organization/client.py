@@ -6,6 +6,7 @@ from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
 from ..types.organization_envelope import OrganizationEnvelope
 from ..types.organizations_envelope import OrganizationsEnvelope
+from ..types.record_logging_settings_envelope import RecordLoggingSettingsEnvelope
 from .raw_client import AsyncRawOrganizationClient, RawOrganizationClient
 
 # this is used as the default value for optional parameters
@@ -61,6 +62,84 @@ class OrganizationClient:
         client.organization.get_current()
         """
         _response = self._raw_client.get_current(request_options=request_options)
+        return _response.data
+
+    def get_record_logging(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> RecordLoggingSettingsEnvelope:
+        """
+        Returns the organization's record logging settings, including the connection record logs are delivered to.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        RecordLoggingSettingsEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.organization.get_record_logging()
+        """
+        _response = self._raw_client.get_record_logging(request_options=request_options)
+        return _response.data
+
+    def update_record_logging(
+        self,
+        *,
+        enabled: bool,
+        delivery_connection_id: typing.Optional[str] = OMIT,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> RecordLoggingSettingsEnvelope:
+        """
+        Replaces the organization's record logging settings. `deliveryConnectionId` is replaced, not merged: omitting it, or sending null, removes any destination previously configured.
+
+        Parameters
+        ----------
+        enabled : bool
+            Whether record logging is enabled for the organization.
+
+        delivery_connection_id : typing.Optional[str]
+            Blobstorage connection that receives record logs after each model sync execution. Omit or send null to deliver nowhere; this field is replaced, not merged.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        RecordLoggingSettingsEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.organization.update_record_logging(
+            enabled=True,
+        )
+        """
+        _response = self._raw_client.update_record_logging(
+            enabled=enabled,
+            delivery_connection_id=delivery_connection_id,
+            idempotency_key=idempotency_key,
+            request_options=request_options,
+        )
         return _response.data
 
     def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> OrganizationsEnvelope:
@@ -395,6 +474,100 @@ class AsyncOrganizationClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.get_current(request_options=request_options)
+        return _response.data
+
+    async def get_record_logging(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> RecordLoggingSettingsEnvelope:
+        """
+        Returns the organization's record logging settings, including the connection record logs are delivered to.
+
+        Parameters
+        ----------
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        RecordLoggingSettingsEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.organization.get_record_logging()
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_record_logging(request_options=request_options)
+        return _response.data
+
+    async def update_record_logging(
+        self,
+        *,
+        enabled: bool,
+        delivery_connection_id: typing.Optional[str] = OMIT,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> RecordLoggingSettingsEnvelope:
+        """
+        Replaces the organization's record logging settings. `deliveryConnectionId` is replaced, not merged: omitting it, or sending null, removes any destination previously configured.
+
+        Parameters
+        ----------
+        enabled : bool
+            Whether record logging is enabled for the organization.
+
+        delivery_connection_id : typing.Optional[str]
+            Blobstorage connection that receives record logs after each model sync execution. Omit or send null to deliver nowhere; this field is replaced, not merged.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        RecordLoggingSettingsEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.organization.update_record_logging(
+                enabled=True,
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.update_record_logging(
+            enabled=enabled,
+            delivery_connection_id=delivery_connection_id,
+            idempotency_key=idempotency_key,
+            request_options=request_options,
+        )
         return _response.data
 
     async def list(self, *, request_options: typing.Optional[RequestOptions] = None) -> OrganizationsEnvelope:

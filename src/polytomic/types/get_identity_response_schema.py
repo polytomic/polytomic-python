@@ -4,9 +4,11 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
+from .identity_credential_schema import IdentityCredentialSchema
 
 
 class GetIdentityResponseSchema(UniversalBaseModel):
+    credential: typing.Optional[IdentityCredentialSchema] = None
     email: typing.Optional[str] = pydantic.Field(default=None)
     """
     The email of the caller.

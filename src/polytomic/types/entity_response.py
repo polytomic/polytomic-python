@@ -30,12 +30,12 @@ class EntityResponse(UniversalBaseModel):
 
     relationships: typing.Optional[typing.Dict[str, EntityRelationship]] = pydantic.Field(default=None)
     """
-    Parent resources needed to address nested resources, keyed by relationship name (e.g. "sync", "bulk_sync").
+    Parent resources needed to address nested resources, keyed by relationship name (e.g. "sync", "bulk_sync", "harbor").
     """
 
     type: typing.Optional[str] = pydantic.Field(default=None)
     """
-    Resolved entity type. One of: organization, user, connection, model, sync, sync_execution, bulk_sync, bulk_sync_execution.
+    Resolved entity type. One of: organization, user, connection, model, sync, sync_execution, bulk_sync, bulk_sync_execution, harbor, harbor_context.
     """
 
     if IS_PYDANTIC_V2:

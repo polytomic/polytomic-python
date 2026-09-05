@@ -15,10 +15,15 @@ class SchemaField(UniversalBaseModel):
     id: typing.Optional[str] = None
     is_primary_key: typing.Optional[bool] = pydantic.Field(default=None)
     """
-    Whether this field is part of the schema's primary key.
+    Whether this field is part of the schema's primary key, including any user override.
     """
 
     name: typing.Optional[str] = None
+    path: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    JSONPath used to extract the field from each source record; only meaningful for document-style backends.
+    """
+
     remote_type: typing.Optional[str] = pydantic.Field(default=None)
     """
     The type of the field from the remote system.
@@ -26,6 +31,11 @@ class SchemaField(UniversalBaseModel):
 
     type: typing.Optional[UtilFieldType] = None
     type_spec: typing.Optional[TypesType] = None
+    user_managed: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True when the field's effective definition came from a user override.
+    """
+
     values: typing.Optional[typing.List[PickValue]] = None
 
     if IS_PYDANTIC_V2:
