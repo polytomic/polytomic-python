@@ -293,7 +293,9 @@ class RawSchemasClient:
             f"api/connections/{encode_path_param(connection_id)}/schemas/{encode_path_param(schema_id)}/fields/{encode_path_param(field_id)}",
             method="PATCH",
             json={
-                "definition": definition,
+                "definition": convert_and_respect_annotation_metadata(
+                    object_=definition, annotation=TypesDefinition, direction="write"
+                ),
                 "example": example,
                 "label": label,
                 "path": path,
@@ -1215,7 +1217,9 @@ class AsyncRawSchemasClient:
             f"api/connections/{encode_path_param(connection_id)}/schemas/{encode_path_param(schema_id)}/fields/{encode_path_param(field_id)}",
             method="PATCH",
             json={
-                "definition": definition,
+                "definition": convert_and_respect_annotation_metadata(
+                    object_=definition, annotation=TypesDefinition, direction="write"
+                ),
                 "example": example,
                 "label": label,
                 "path": path,

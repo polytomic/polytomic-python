@@ -2,4 +2,19 @@
 
 import typing
 
-TypesDefinition = typing.Dict[str, typing.Any]
+TypesDefinition = typing.Union[
+    typing.Literal["binary"],
+    typing.Literal["boolean"],
+    typing.Literal["date"],
+    typing.Literal["datetime"],
+    typing.Literal["datetime_tz"],
+    typing.Literal["time"],
+    typing.Literal["number"],
+    typing.Literal["string"],
+    typing.Literal["smallint"],
+    typing.Literal["int"],
+    typing.Literal["bigint"],
+    typing.Literal["single"],
+    typing.Literal["double"],
+    typing.List[typing.Any],
+]

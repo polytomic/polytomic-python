@@ -4,9 +4,11 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
+from .types_definition import TypesDefinition
 
 
 class UserFieldRequest(UniversalBaseModel):
+    definition: typing.Optional[TypesDefinition] = None
     example: typing.Optional[typing.Any] = pydantic.Field(default=None)
     """
     Example value shown in the UI and used as a hint for downstream consumers.
@@ -29,7 +31,7 @@ class UserFieldRequest(UniversalBaseModel):
 
     type: str = pydantic.Field()
     """
-    Polytomic type of the field (e.g. string, integer, boolean).
+    One of: string, number, boolean, datetime, array, object, binary.
     """
 
     if IS_PYDANTIC_V2:
