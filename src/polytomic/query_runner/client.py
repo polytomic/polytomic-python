@@ -32,6 +32,8 @@ class QueryRunnerClient:
         connection_id: str,
         *,
         query: typing.Optional[str] = None,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> RunQueryEnvelope:
@@ -40,7 +42,7 @@ class QueryRunnerClient:
 
         This endpoint returns immediately with a query task ID. It does not wait for
         the query to finish. Poll [`GET /api/queries/{id}`](../../../../api-reference/query-runner/get-query) until `status`
-        reaches `done` or `failed`.
+        reaches `done`, `failed`, or `unknown`. These statuses are terminal.
 
         Only the user who created the query can fetch its results later. Query results
         are stored temporarily and may expire; use the `expires` field from the result
@@ -53,6 +55,10 @@ class QueryRunnerClient:
 
         query : typing.Optional[str]
             The query to execute against the connection.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
 
         idempotency_key : typing.Optional[str]
 
@@ -78,12 +84,23 @@ class QueryRunnerClient:
         )
         """
         _response = self._raw_client.run_query(
-            connection_id, query=query, idempotency_key=idempotency_key, request_options=request_options
+            connection_id,
+            query=query,
+            polytomic_harbor_session=polytomic_harbor_session,
+            polytomic_activity_request_id=polytomic_activity_request_id,
+            idempotency_key=idempotency_key,
+            request_options=request_options,
         )
         return _response.data
 
     def get_query(
-        self, id: str, *, page: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
+        self,
+        id: str,
+        *,
+        page: typing.Optional[str] = None,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> QueryResultsEnvelope:
         """
         Fetches the latest status for a submitted query and, once complete, returns fields and paginated results.
@@ -97,6 +114,10 @@ class QueryRunnerClient:
         construct the `page` token yourself.
 
         If the query is still running, the response may include only status metadata.
+        The terminal statuses are `done`, `failed`, and `unknown`. An `unknown` status
+        means execution started, but its durable terminal result was lost or expired.
+        Stop polling when you receive any terminal status.
+
         If the task is complete but the caller is not the same user that created it,
         the endpoint returns `404`.
 
@@ -107,6 +128,10 @@ class QueryRunnerClient:
 
         page : typing.Optional[str]
             Opaque pagination token returned in the links.next or links.previous URL of the previous response.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -129,7 +154,13 @@ class QueryRunnerClient:
             page="page",
         )
         """
-        _response = self._raw_client.get_query(id, page=page, request_options=request_options)
+        _response = self._raw_client.get_query(
+            id,
+            page=page,
+            polytomic_harbor_session=polytomic_harbor_session,
+            polytomic_activity_request_id=polytomic_activity_request_id,
+            request_options=request_options,
+        )
         return _response.data
 
 
@@ -153,6 +184,8 @@ class AsyncQueryRunnerClient:
         connection_id: str,
         *,
         query: typing.Optional[str] = None,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> RunQueryEnvelope:
@@ -161,7 +194,7 @@ class AsyncQueryRunnerClient:
 
         This endpoint returns immediately with a query task ID. It does not wait for
         the query to finish. Poll [`GET /api/queries/{id}`](../../../../api-reference/query-runner/get-query) until `status`
-        reaches `done` or `failed`.
+        reaches `done`, `failed`, or `unknown`. These statuses are terminal.
 
         Only the user who created the query can fetch its results later. Query results
         are stored temporarily and may expire; use the `expires` field from the result
@@ -174,6 +207,10 @@ class AsyncQueryRunnerClient:
 
         query : typing.Optional[str]
             The query to execute against the connection.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
 
         idempotency_key : typing.Optional[str]
 
@@ -207,12 +244,23 @@ class AsyncQueryRunnerClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.run_query(
-            connection_id, query=query, idempotency_key=idempotency_key, request_options=request_options
+            connection_id,
+            query=query,
+            polytomic_harbor_session=polytomic_harbor_session,
+            polytomic_activity_request_id=polytomic_activity_request_id,
+            idempotency_key=idempotency_key,
+            request_options=request_options,
         )
         return _response.data
 
     async def get_query(
-        self, id: str, *, page: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
+        self,
+        id: str,
+        *,
+        page: typing.Optional[str] = None,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> QueryResultsEnvelope:
         """
         Fetches the latest status for a submitted query and, once complete, returns fields and paginated results.
@@ -226,6 +274,10 @@ class AsyncQueryRunnerClient:
         construct the `page` token yourself.
 
         If the query is still running, the response may include only status metadata.
+        The terminal statuses are `done`, `failed`, and `unknown`. An `unknown` status
+        means execution started, but its durable terminal result was lost or expired.
+        Stop polling when you receive any terminal status.
+
         If the task is complete but the caller is not the same user that created it,
         the endpoint returns `404`.
 
@@ -236,6 +288,10 @@ class AsyncQueryRunnerClient:
 
         page : typing.Optional[str]
             Opaque pagination token returned in the links.next or links.previous URL of the previous response.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -266,5 +322,11 @@ class AsyncQueryRunnerClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get_query(id, page=page, request_options=request_options)
+        _response = await self._raw_client.get_query(
+            id,
+            page=page,
+            polytomic_harbor_session=polytomic_harbor_session,
+            polytomic_activity_request_id=polytomic_activity_request_id,
+            request_options=request_options,
+        )
         return _response.data

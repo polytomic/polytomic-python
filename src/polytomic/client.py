@@ -10,6 +10,7 @@ from .core.logging import LogConfig, Logger
 from .environment import PolytomicEnvironment
 
 if typing.TYPE_CHECKING:
+    from .activity.client import ActivityClient, AsyncActivityClient
     from .bulk_sync.client import AsyncBulkSyncClient, BulkSyncClient
     from .connections.client import AsyncConnectionsClient, ConnectionsClient
     from .entities.client import AsyncEntitiesClient, EntitiesClient
@@ -131,6 +132,7 @@ class Polytomic:
         self._identity: typing.Optional[IdentityClient] = None
         self._notifications: typing.Optional[NotificationsClient] = None
         self._organization: typing.Optional[OrganizationClient] = None
+        self._activity: typing.Optional[ActivityClient] = None
         self._users: typing.Optional[UsersClient] = None
         self._record_view_links: typing.Optional[RecordViewLinksClient] = None
         self._temporary_credentials: typing.Optional[TemporaryCredentialsClient] = None
@@ -240,6 +242,14 @@ class Polytomic:
 
             self._organization = OrganizationClient(client_wrapper=self._client_wrapper)
         return self._organization
+
+    @property
+    def activity(self):
+        if self._activity is None:
+            from .activity.client import ActivityClient  # noqa: E402
+
+            self._activity = ActivityClient(client_wrapper=self._client_wrapper)
+        return self._activity
 
     @property
     def users(self):
@@ -404,6 +414,7 @@ class AsyncPolytomic:
         self._identity: typing.Optional[AsyncIdentityClient] = None
         self._notifications: typing.Optional[AsyncNotificationsClient] = None
         self._organization: typing.Optional[AsyncOrganizationClient] = None
+        self._activity: typing.Optional[AsyncActivityClient] = None
         self._users: typing.Optional[AsyncUsersClient] = None
         self._record_view_links: typing.Optional[AsyncRecordViewLinksClient] = None
         self._temporary_credentials: typing.Optional[AsyncTemporaryCredentialsClient] = None
@@ -513,6 +524,14 @@ class AsyncPolytomic:
 
             self._organization = AsyncOrganizationClient(client_wrapper=self._client_wrapper)
         return self._organization
+
+    @property
+    def activity(self):
+        if self._activity is None:
+            from .activity.client import AsyncActivityClient  # noqa: E402
+
+            self._activity = AsyncActivityClient(client_wrapper=self._client_wrapper)
+        return self._activity
 
     @property
     def users(self):

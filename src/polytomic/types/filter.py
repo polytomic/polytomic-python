@@ -24,7 +24,10 @@ class Filter(UniversalBaseModel):
     function: FilterFunction
     label: typing.Optional[str] = None
     value: typing.Optional[typing.Any] = None
-    value_field: typing.Optional[Source] = None
+    value_field: typing.Optional[Source] = pydantic.Field(default=None)
+    """
+    Model field whose value this filter compares against, resolved separately for each record. Only valid on a target filter, mutually exclusive with 'value', and accepted only by destinations reporting 'supports_filter_value_fields'.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

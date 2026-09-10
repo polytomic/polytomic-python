@@ -16,7 +16,7 @@ class ModelFilterCondition(UniversalBaseModel):
 
     label: typing.Optional[str] = pydantic.Field(default=None)
     """
-    Handle naming this condition in 'logic'. Labels are scoped to this object, so a model condition and a target condition may share one. Optional: label every condition in the object or none of them, and an unlabelled object is labelled by position -- A, B, C -- which is how labels are always reported back.
+    Handle naming this condition in 'logic'. A label starts with a letter or underscore and continues with letters, digits and underscores. Labels are scoped to this object, so a model condition and a target condition may share one. Optional: label every condition in the object or none of them, and an unlabelled object is labelled by position -- A, B, C -- which is how labels are always reported back.
     """
 
     source: Source = pydantic.Field()

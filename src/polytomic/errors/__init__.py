@@ -11,6 +11,7 @@ if typing.TYPE_CHECKING:
     from .conflict_error import ConflictError
     from .forbidden_error import ForbiddenError
     from .gateway_timeout_error import GatewayTimeoutError
+    from .gone_error import GoneError
     from .internal_server_error import InternalServerError
     from .not_found_error import NotFoundError
     from .request_timeout_error import RequestTimeoutError
@@ -24,6 +25,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ConflictError": ".conflict_error",
     "ForbiddenError": ".forbidden_error",
     "GatewayTimeoutError": ".gateway_timeout_error",
+    "GoneError": ".gone_error",
     "InternalServerError": ".internal_server_error",
     "NotFoundError": ".not_found_error",
     "RequestTimeoutError": ".request_timeout_error",
@@ -61,6 +63,7 @@ __all__ = [
     "ConflictError",
     "ForbiddenError",
     "GatewayTimeoutError",
+    "GoneError",
     "InternalServerError",
     "NotFoundError",
     "RequestTimeoutError",

@@ -11,8 +11,11 @@ from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
 from ..errors.bad_request_error import BadRequestError
+from ..errors.conflict_error import ConflictError
+from ..errors.forbidden_error import ForbiddenError
 from ..errors.internal_server_error import InternalServerError
 from ..errors.not_found_error import NotFoundError
+from ..errors.service_unavailable_error import ServiceUnavailableError
 from ..types.api_error import ApiError as types_api_error_ApiError
 from ..types.query_results_envelope import QueryResultsEnvelope
 from ..types.run_query_envelope import RunQueryEnvelope
@@ -31,6 +34,8 @@ class RawQueryRunnerClient:
         connection_id: str,
         *,
         query: typing.Optional[str] = None,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[RunQueryEnvelope]:
@@ -39,7 +44,7 @@ class RawQueryRunnerClient:
 
         This endpoint returns immediately with a query task ID. It does not wait for
         the query to finish. Poll [`GET /api/queries/{id}`](../../../../api-reference/query-runner/get-query) until `status`
-        reaches `done` or `failed`.
+        reaches `done`, `failed`, or `unknown`. These statuses are terminal.
 
         Only the user who created the query can fetch its results later. Query results
         are stored temporarily and may expire; use the `expires` field from the result
@@ -52,6 +57,10 @@ class RawQueryRunnerClient:
 
         query : typing.Optional[str]
             The query to execute against the connection.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
 
         idempotency_key : typing.Optional[str]
 
@@ -72,6 +81,12 @@ class RawQueryRunnerClient:
             json={},
             headers={
                 "content-type": "application/json",
+                "X-Polytomic-Harbor-Session": str(polytomic_harbor_session)
+                if polytomic_harbor_session is not None
+                else None,
+                "X-Polytomic-Activity-Request-ID": str(polytomic_activity_request_id)
+                if polytomic_activity_request_id is not None
+                else None,
                 "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
             },
             request_options=request_options,
@@ -98,6 +113,17 @@ class RawQueryRunnerClient:
                         ),
                     ),
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),
@@ -109,8 +135,30 @@ class RawQueryRunnerClient:
                         ),
                     ),
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 500:
                 raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,
@@ -134,7 +182,13 @@ class RawQueryRunnerClient:
         )
 
     def get_query(
-        self, id: str, *, page: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
+        self,
+        id: str,
+        *,
+        page: typing.Optional[str] = None,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[QueryResultsEnvelope]:
         """
         Fetches the latest status for a submitted query and, once complete, returns fields and paginated results.
@@ -148,6 +202,10 @@ class RawQueryRunnerClient:
         construct the `page` token yourself.
 
         If the query is still running, the response may include only status metadata.
+        The terminal statuses are `done`, `failed`, and `unknown`. An `unknown` status
+        means execution started, but its durable terminal result was lost or expired.
+        Stop polling when you receive any terminal status.
+
         If the task is complete but the caller is not the same user that created it,
         the endpoint returns `404`.
 
@@ -158,6 +216,10 @@ class RawQueryRunnerClient:
 
         page : typing.Optional[str]
             Opaque pagination token returned in the links.next or links.previous URL of the previous response.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -172,6 +234,14 @@ class RawQueryRunnerClient:
             method="GET",
             params={
                 "page": page,
+            },
+            headers={
+                "X-Polytomic-Harbor-Session": str(polytomic_harbor_session)
+                if polytomic_harbor_session is not None
+                else None,
+                "X-Polytomic-Activity-Request-ID": str(polytomic_activity_request_id)
+                if polytomic_activity_request_id is not None
+                else None,
             },
             request_options=request_options,
         )
@@ -196,6 +266,17 @@ class RawQueryRunnerClient:
                         ),
                     ),
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),
@@ -207,8 +288,30 @@ class RawQueryRunnerClient:
                         ),
                     ),
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 500:
                 raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,
@@ -241,6 +344,8 @@ class AsyncRawQueryRunnerClient:
         connection_id: str,
         *,
         query: typing.Optional[str] = None,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[RunQueryEnvelope]:
@@ -249,7 +354,7 @@ class AsyncRawQueryRunnerClient:
 
         This endpoint returns immediately with a query task ID. It does not wait for
         the query to finish. Poll [`GET /api/queries/{id}`](../../../../api-reference/query-runner/get-query) until `status`
-        reaches `done` or `failed`.
+        reaches `done`, `failed`, or `unknown`. These statuses are terminal.
 
         Only the user who created the query can fetch its results later. Query results
         are stored temporarily and may expire; use the `expires` field from the result
@@ -262,6 +367,10 @@ class AsyncRawQueryRunnerClient:
 
         query : typing.Optional[str]
             The query to execute against the connection.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
 
         idempotency_key : typing.Optional[str]
 
@@ -282,6 +391,12 @@ class AsyncRawQueryRunnerClient:
             json={},
             headers={
                 "content-type": "application/json",
+                "X-Polytomic-Harbor-Session": str(polytomic_harbor_session)
+                if polytomic_harbor_session is not None
+                else None,
+                "X-Polytomic-Activity-Request-ID": str(polytomic_activity_request_id)
+                if polytomic_activity_request_id is not None
+                else None,
                 "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
             },
             request_options=request_options,
@@ -308,6 +423,17 @@ class AsyncRawQueryRunnerClient:
                         ),
                     ),
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),
@@ -319,8 +445,30 @@ class AsyncRawQueryRunnerClient:
                         ),
                     ),
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 500:
                 raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,
@@ -344,7 +492,13 @@ class AsyncRawQueryRunnerClient:
         )
 
     async def get_query(
-        self, id: str, *, page: typing.Optional[str] = None, request_options: typing.Optional[RequestOptions] = None
+        self,
+        id: str,
+        *,
+        page: typing.Optional[str] = None,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[QueryResultsEnvelope]:
         """
         Fetches the latest status for a submitted query and, once complete, returns fields and paginated results.
@@ -358,6 +512,10 @@ class AsyncRawQueryRunnerClient:
         construct the `page` token yourself.
 
         If the query is still running, the response may include only status metadata.
+        The terminal statuses are `done`, `failed`, and `unknown`. An `unknown` status
+        means execution started, but its durable terminal result was lost or expired.
+        Stop polling when you receive any terminal status.
+
         If the task is complete but the caller is not the same user that created it,
         the endpoint returns `404`.
 
@@ -368,6 +526,10 @@ class AsyncRawQueryRunnerClient:
 
         page : typing.Optional[str]
             Opaque pagination token returned in the links.next or links.previous URL of the previous response.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -382,6 +544,14 @@ class AsyncRawQueryRunnerClient:
             method="GET",
             params={
                 "page": page,
+            },
+            headers={
+                "X-Polytomic-Harbor-Session": str(polytomic_harbor_session)
+                if polytomic_harbor_session is not None
+                else None,
+                "X-Polytomic-Activity-Request-ID": str(polytomic_activity_request_id)
+                if polytomic_activity_request_id is not None
+                else None,
             },
             request_options=request_options,
         )
@@ -406,6 +576,17 @@ class AsyncRawQueryRunnerClient:
                         ),
                     ),
                 )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),
@@ -417,8 +598,30 @@ class AsyncRawQueryRunnerClient:
                         ),
                     ),
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 500:
                 raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,

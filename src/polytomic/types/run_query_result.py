@@ -4,7 +4,7 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
-from .work_task_status import WorkTaskStatus
+from .query_status import QueryStatus
 
 
 class RunQueryResult(UniversalBaseModel):
@@ -30,7 +30,7 @@ class RunQueryResult(UniversalBaseModel):
 
     id: typing.Optional[str] = pydantic.Field(default=None)
     """
-    The ID of the query task. Poll GET /api/queries/{id} until the task reaches done or failed to retrieve results.
+    The ID of the query task. Poll GET /api/queries/{id} until the task reaches the terminal status done, failed, or unknown.
     """
 
     results: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = pydantic.Field(default=None)
@@ -38,7 +38,7 @@ class RunQueryResult(UniversalBaseModel):
     The query results, returned as an array of objects.
     """
 
-    status: typing.Optional[WorkTaskStatus] = None
+    status: typing.Optional[QueryStatus] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

@@ -7,6 +7,11 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 
 
 class BulkSyncErrorHandling(UniversalBaseModel):
+    ingestion_failure_threshold: typing.Optional[int] = pydantic.Field(default=None)
+    """
+    How far behind ingestion may fall before a terminal execution is failed, in the unit this sync's source reports: seconds for a source carrying event timestamps, outstanding items for a queue-backed source such as S3. Null means this sync has no threshold of its own: a source reporting seconds then follows the deployment-wide default, while a queue-backed source is left unchecked.
+    """
+
     subscribers: typing.Optional[typing.List[str]] = pydantic.Field(default=None)
     """
     Email addresses notified when this sync fails.

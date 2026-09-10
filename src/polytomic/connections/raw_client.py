@@ -944,6 +944,10 @@ class RawConnectionsClient:
         """
         Updates a connection's configuration.
 
+        Connections owned by a managed Harbor return `409 Conflict`. To rename the
+        Connection, [update its Harbor](../../../api-reference/harbors/update). Customer-managed
+        Harbor backing Connections remain independently editable.
+
         Updating a connection is a **full replacement** of its configuration. Any
         `configuration` field you omit is cleared. To make a partial change, fetch
         the current connection with
@@ -1063,6 +1067,17 @@ class RawConnectionsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -1108,6 +1123,12 @@ class RawConnectionsClient:
     ) -> HttpResponse[None]:
         """
         Deletes a connection.
+
+        A Connection that backs any active Harbor returns `409 Conflict`, including
+        when you pass `force=true`. No dependent resources are deleted in this case.
+        [Delete the Harbor](../../../api-reference/harbors/delete) first. Deleting a managed
+        Harbor also deletes its managed Connection; deleting a customer-managed Harbor
+        preserves its backing Connection.
 
         > 🚧 Deleting a connection that is referenced by fieldsets, syncs, bulk
         > syncs, or schedules returns `422 connection in use` unless you pass
@@ -1167,6 +1188,17 @@ class RawConnectionsClient:
                 )
             if _response.status_code == 404:
                 raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,
@@ -2294,6 +2326,10 @@ class AsyncRawConnectionsClient:
         """
         Updates a connection's configuration.
 
+        Connections owned by a managed Harbor return `409 Conflict`. To rename the
+        Connection, [update its Harbor](../../../api-reference/harbors/update). Customer-managed
+        Harbor backing Connections remain independently editable.
+
         Updating a connection is a **full replacement** of its configuration. Any
         `configuration` field you omit is cleared. To make a partial change, fetch
         the current connection with
@@ -2413,6 +2449,17 @@ class AsyncRawConnectionsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -2458,6 +2505,12 @@ class AsyncRawConnectionsClient:
     ) -> AsyncHttpResponse[None]:
         """
         Deletes a connection.
+
+        A Connection that backs any active Harbor returns `409 Conflict`, including
+        when you pass `force=true`. No dependent resources are deleted in this case.
+        [Delete the Harbor](../../../api-reference/harbors/delete) first. Deleting a managed
+        Harbor also deletes its managed Connection; deleting a customer-managed Harbor
+        preserves its backing Connection.
 
         > 🚧 Deleting a connection that is referenced by fieldsets, syncs, bulk
         > syncs, or schedules returns `422 connection in use` unless you pass
@@ -2517,6 +2570,17 @@ class AsyncRawConnectionsClient:
                 )
             if _response.status_code == 404:
                 raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,

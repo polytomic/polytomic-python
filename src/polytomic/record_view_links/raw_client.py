@@ -11,9 +11,11 @@ from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
 from ..errors.bad_request_error import BadRequestError
+from ..errors.conflict_error import ConflictError
 from ..errors.forbidden_error import ForbiddenError
 from ..errors.internal_server_error import InternalServerError
 from ..errors.not_found_error import NotFoundError
+from ..errors.service_unavailable_error import ServiceUnavailableError
 from ..types.api_error import ApiError as types_api_error_ApiError
 from ..types.create_record_view_link_envelope import CreateRecordViewLinkEnvelope
 from ..types.get_record_view_capabilities_envelope import GetRecordViewCapabilitiesEnvelope
@@ -34,6 +36,8 @@ class RawRecordViewLinksClient:
         lookup_key_field: str,
         lookup_key_value: str,
         schema_id: str,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
         expires_at: typing.Optional[dt.datetime] = OMIT,
         fields: typing.Optional[typing.Sequence[str]] = OMIT,
         source: typing.Optional[str] = OMIT,
@@ -56,6 +60,10 @@ class RawRecordViewLinksClient:
 
         schema_id : str
             Schema containing the record.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
 
         expires_at : typing.Optional[dt.datetime]
             Optional expiry timestamp. Defaults to 72 hours and cannot exceed 7 days.
@@ -90,6 +98,12 @@ class RawRecordViewLinksClient:
             },
             headers={
                 "content-type": "application/json",
+                "X-Polytomic-Harbor-Session": str(polytomic_harbor_session)
+                if polytomic_harbor_session is not None
+                else None,
+                "X-Polytomic-Activity-Request-ID": str(polytomic_activity_request_id)
+                if polytomic_activity_request_id is not None
+                else None,
                 "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
             },
             request_options=request_options,
@@ -138,8 +152,30 @@ class RawRecordViewLinksClient:
                         ),
                     ),
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 500:
                 raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,
@@ -290,6 +326,8 @@ class AsyncRawRecordViewLinksClient:
         lookup_key_field: str,
         lookup_key_value: str,
         schema_id: str,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
         expires_at: typing.Optional[dt.datetime] = OMIT,
         fields: typing.Optional[typing.Sequence[str]] = OMIT,
         source: typing.Optional[str] = OMIT,
@@ -312,6 +350,10 @@ class AsyncRawRecordViewLinksClient:
 
         schema_id : str
             Schema containing the record.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
 
         expires_at : typing.Optional[dt.datetime]
             Optional expiry timestamp. Defaults to 72 hours and cannot exceed 7 days.
@@ -346,6 +388,12 @@ class AsyncRawRecordViewLinksClient:
             },
             headers={
                 "content-type": "application/json",
+                "X-Polytomic-Harbor-Session": str(polytomic_harbor_session)
+                if polytomic_harbor_session is not None
+                else None,
+                "X-Polytomic-Activity-Request-ID": str(polytomic_activity_request_id)
+                if polytomic_activity_request_id is not None
+                else None,
                 "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
             },
             request_options=request_options,
@@ -394,8 +442,30 @@ class AsyncRawRecordViewLinksClient:
                         ),
                     ),
                 )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 500:
                 raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,

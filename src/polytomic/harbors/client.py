@@ -510,6 +510,10 @@ class HarborsClient:
         """
         Updates a Harbor's name and description.
 
+        Renaming a managed Harbor also renames its backing Connection. Both names
+        change together; a name conflict returns `409 Conflict` and leaves both
+        unchanged. Renaming a customer-managed Harbor preserves its Connection's name.
+
         This operation does not change `backing_mode` or `backing_connection_id`.
 
         Parameters
@@ -2479,6 +2483,10 @@ class AsyncHarborsClient:
     ) -> HarborEnvelope:
         """
         Updates a Harbor's name and description.
+
+        Renaming a managed Harbor also renames its backing Connection. Both names
+        change together; a name conflict returns `409 Conflict` and leaves both
+        unchanged. Renaming a customer-managed Harbor preserves its Connection's name.
 
         This operation does not change `backing_mode` or `backing_connection_id`.
 

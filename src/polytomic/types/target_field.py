@@ -5,6 +5,7 @@ import typing
 import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 from .identity_function import IdentityFunction
+from .supported_filter_function import SupportedFilterFunction
 
 
 class TargetField(UniversalBaseModel):
@@ -26,6 +27,11 @@ class TargetField(UniversalBaseModel):
     encryptable: typing.Optional[bool] = pydantic.Field(default=None)
     """
     True if this field supports field-level encryption.
+    """
+
+    filter_functions: typing.Optional[typing.List[SupportedFilterFunction]] = pydantic.Field(default=None)
+    """
+    Comparisons this field accepts in a target filter. A condition whose function is absent from this list is rejected when the sync is saved. Empty when the destination publishes no per-field list, in which case any comparison is accepted.
     """
 
     filterable: typing.Optional[bool] = pydantic.Field(default=None)

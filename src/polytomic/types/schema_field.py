@@ -24,9 +24,19 @@ class SchemaField(UniversalBaseModel):
     JSONPath used to extract the field from each source record; only meaningful for document-style backends.
     """
 
+    primary_key_override: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    The user-set primary key status for this field, which takes precedence over source_primary_key; omitted when no override is set.
+    """
+
     remote_type: typing.Optional[str] = pydantic.Field(default=None)
     """
     The type of the field from the remote system.
+    """
+
+    source_primary_key: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    Whether the source system reports this field as part of the schema's primary key.
     """
 
     type: typing.Optional[UtilFieldType] = None

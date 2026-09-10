@@ -160,6 +160,9 @@ if typing.TYPE_CHECKING:
     from .get_record_view_capabilities_envelope import GetRecordViewCapabilitiesEnvelope
     from .get_sync_source_meta_envelope import GetSyncSourceMetaEnvelope
     from .global_error_subscribers_response import GlobalErrorSubscribersResponse
+    from .harbor_activity_event_envelope import HarborActivityEventEnvelope
+    from .harbor_activity_list_envelope import HarborActivityListEnvelope
+    from .harbor_activity_session_envelope import HarborActivitySessionEnvelope
     from .harbor_api_key_created_response import HarborApiKeyCreatedResponse
     from .harbor_connection_list_envelope import HarborConnectionListEnvelope
     from .harbor_connection_response import HarborConnectionResponse
@@ -195,6 +198,13 @@ if typing.TYPE_CHECKING:
     from .harbor_user_envelope import HarborUserEnvelope
     from .harbor_user_list_envelope import HarborUserListEnvelope
     from .harbor_user_response import HarborUserResponse
+    from .harboractivityapi_harbor_activity_actor_snapshot import HarboractivityapiHarborActivityActorSnapshot
+    from .harboractivityapi_harbor_activity_event import HarboractivityapiHarborActivityEvent
+    from .harboractivityapi_harbor_activity_identity_snapshot import HarboractivityapiHarborActivityIdentitySnapshot
+    from .harboractivityapi_harbor_activity_metadata import HarboractivityapiHarborActivityMetadata
+    from .harboractivityapi_harbor_activity_session import HarboractivityapiHarborActivitySession
+    from .harboractivityapi_harbor_activity_session_status import HarboractivityapiHarborActivitySessionStatus
+    from .harboractivityapi_harbor_activity_target import HarboractivityapiHarborActivityTarget
     from .identity import Identity
     from .identity_credential_api_key_profile_schema import IdentityCredentialApiKeyProfileSchema
     from .identity_credential_capabilities_schema import IdentityCredentialCapabilitiesSchema
@@ -253,6 +263,7 @@ if typing.TYPE_CHECKING:
     from .policy_response import PolicyResponse
     from .policy_response_envelope import PolicyResponseEnvelope
     from .query_results_envelope import QueryResultsEnvelope
+    from .query_status import QueryStatus
     from .record_logging_settings_envelope import RecordLoggingSettingsEnvelope
     from .record_logging_settings_response import RecordLoggingSettingsResponse
     from .recordview_capabilities import RecordviewCapabilities
@@ -293,6 +304,7 @@ if typing.TYPE_CHECKING:
     from .start_sync_response_envelope import StartSyncResponseEnvelope
     from .start_sync_response_schema import StartSyncResponseSchema
     from .supported_bulk_mode import SupportedBulkMode
+    from .supported_filter_function import SupportedFilterFunction
     from .supported_mode import SupportedMode
     from .sync_destination_properties import SyncDestinationProperties
     from .sync_error_handling import SyncErrorHandling
@@ -483,6 +495,9 @@ _dynamic_imports: typing.Dict[str, str] = {
     "GetRecordViewCapabilitiesEnvelope": ".get_record_view_capabilities_envelope",
     "GetSyncSourceMetaEnvelope": ".get_sync_source_meta_envelope",
     "GlobalErrorSubscribersResponse": ".global_error_subscribers_response",
+    "HarborActivityEventEnvelope": ".harbor_activity_event_envelope",
+    "HarborActivityListEnvelope": ".harbor_activity_list_envelope",
+    "HarborActivitySessionEnvelope": ".harbor_activity_session_envelope",
     "HarborApiKeyCreatedResponse": ".harbor_api_key_created_response",
     "HarborConnectionListEnvelope": ".harbor_connection_list_envelope",
     "HarborConnectionResponse": ".harbor_connection_response",
@@ -518,6 +533,13 @@ _dynamic_imports: typing.Dict[str, str] = {
     "HarborUserEnvelope": ".harbor_user_envelope",
     "HarborUserListEnvelope": ".harbor_user_list_envelope",
     "HarborUserResponse": ".harbor_user_response",
+    "HarboractivityapiHarborActivityActorSnapshot": ".harboractivityapi_harbor_activity_actor_snapshot",
+    "HarboractivityapiHarborActivityEvent": ".harboractivityapi_harbor_activity_event",
+    "HarboractivityapiHarborActivityIdentitySnapshot": ".harboractivityapi_harbor_activity_identity_snapshot",
+    "HarboractivityapiHarborActivityMetadata": ".harboractivityapi_harbor_activity_metadata",
+    "HarboractivityapiHarborActivitySession": ".harboractivityapi_harbor_activity_session",
+    "HarboractivityapiHarborActivitySessionStatus": ".harboractivityapi_harbor_activity_session_status",
+    "HarboractivityapiHarborActivityTarget": ".harboractivityapi_harbor_activity_target",
     "Identity": ".identity",
     "IdentityCredentialApiKeyProfileSchema": ".identity_credential_api_key_profile_schema",
     "IdentityCredentialCapabilitiesSchema": ".identity_credential_capabilities_schema",
@@ -574,6 +596,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "PolicyResponse": ".policy_response",
     "PolicyResponseEnvelope": ".policy_response_envelope",
     "QueryResultsEnvelope": ".query_results_envelope",
+    "QueryStatus": ".query_status",
     "RecordLoggingSettingsEnvelope": ".record_logging_settings_envelope",
     "RecordLoggingSettingsResponse": ".record_logging_settings_response",
     "RecordviewCapabilities": ".recordview_capabilities",
@@ -614,6 +637,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "StartSyncResponseEnvelope": ".start_sync_response_envelope",
     "StartSyncResponseSchema": ".start_sync_response_schema",
     "SupportedBulkMode": ".supported_bulk_mode",
+    "SupportedFilterFunction": ".supported_filter_function",
     "SupportedMode": ".supported_mode",
     "SyncDestinationProperties": ".sync_destination_properties",
     "SyncErrorHandling": ".sync_error_handling",
@@ -830,6 +854,9 @@ __all__ = [
     "GetRecordViewCapabilitiesEnvelope",
     "GetSyncSourceMetaEnvelope",
     "GlobalErrorSubscribersResponse",
+    "HarborActivityEventEnvelope",
+    "HarborActivityListEnvelope",
+    "HarborActivitySessionEnvelope",
     "HarborApiKeyCreatedResponse",
     "HarborConnectionListEnvelope",
     "HarborConnectionResponse",
@@ -865,6 +892,13 @@ __all__ = [
     "HarborUserEnvelope",
     "HarborUserListEnvelope",
     "HarborUserResponse",
+    "HarboractivityapiHarborActivityActorSnapshot",
+    "HarboractivityapiHarborActivityEvent",
+    "HarboractivityapiHarborActivityIdentitySnapshot",
+    "HarboractivityapiHarborActivityMetadata",
+    "HarboractivityapiHarborActivitySession",
+    "HarboractivityapiHarborActivitySessionStatus",
+    "HarboractivityapiHarborActivityTarget",
     "Identity",
     "IdentityCredentialApiKeyProfileSchema",
     "IdentityCredentialCapabilitiesSchema",
@@ -921,6 +955,7 @@ __all__ = [
     "PolicyResponse",
     "PolicyResponseEnvelope",
     "QueryResultsEnvelope",
+    "QueryStatus",
     "RecordLoggingSettingsEnvelope",
     "RecordLoggingSettingsResponse",
     "RecordviewCapabilities",
@@ -961,6 +996,7 @@ __all__ = [
     "StartSyncResponseEnvelope",
     "StartSyncResponseSchema",
     "SupportedBulkMode",
+    "SupportedFilterFunction",
     "SupportedMode",
     "SyncDestinationProperties",
     "SyncErrorHandling",

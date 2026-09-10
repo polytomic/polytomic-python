@@ -110,6 +110,7 @@ class RawErrorHandlingClient:
         self,
         id: str,
         *,
+        ingestion_failure_threshold: typing.Optional[int] = OMIT,
         subscribers: typing.Optional[typing.Sequence[str]] = OMIT,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -121,6 +122,9 @@ class RawErrorHandlingClient:
         ----------
         id : str
             Unique identifier of the bulk sync.
+
+        ingestion_failure_threshold : typing.Optional[int]
+            How far behind ingestion may fall before a terminal execution is failed, in the unit this sync's source reports: seconds for a source carrying event timestamps, outstanding items for a queue-backed source such as S3. Send 0 to clear this sync's own threshold, after which a source reporting seconds follows the deployment-wide default and a queue-backed source is left unchecked. Omit to leave unchanged.
 
         subscribers : typing.Optional[typing.Sequence[str]]
             Email addresses notified when this sync fails. Replaces the current list; pass an empty list to unsubscribe everyone. Omit to leave the list unchanged.
@@ -139,6 +143,7 @@ class RawErrorHandlingClient:
             f"api/bulk/syncs/{encode_path_param(id)}/error-handling",
             method="PUT",
             json={
+                "ingestion_failure_threshold": ingestion_failure_threshold,
                 "subscribers": subscribers,
             },
             headers={
@@ -304,6 +309,7 @@ class AsyncRawErrorHandlingClient:
         self,
         id: str,
         *,
+        ingestion_failure_threshold: typing.Optional[int] = OMIT,
         subscribers: typing.Optional[typing.Sequence[str]] = OMIT,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -315,6 +321,9 @@ class AsyncRawErrorHandlingClient:
         ----------
         id : str
             Unique identifier of the bulk sync.
+
+        ingestion_failure_threshold : typing.Optional[int]
+            How far behind ingestion may fall before a terminal execution is failed, in the unit this sync's source reports: seconds for a source carrying event timestamps, outstanding items for a queue-backed source such as S3. Send 0 to clear this sync's own threshold, after which a source reporting seconds follows the deployment-wide default and a queue-backed source is left unchecked. Omit to leave unchanged.
 
         subscribers : typing.Optional[typing.Sequence[str]]
             Email addresses notified when this sync fails. Replaces the current list; pass an empty list to unsubscribe everyone. Omit to leave the list unchanged.
@@ -333,6 +342,7 @@ class AsyncRawErrorHandlingClient:
             f"api/bulk/syncs/{encode_path_param(id)}/error-handling",
             method="PUT",
             json={
+                "ingestion_failure_threshold": ingestion_failure_threshold,
                 "subscribers": subscribers,
             },
             headers={

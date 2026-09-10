@@ -35,6 +35,8 @@ class RecordViewLinksClient:
         lookup_key_field: str,
         lookup_key_value: str,
         schema_id: str,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
         expires_at: typing.Optional[dt.datetime] = OMIT,
         fields: typing.Optional[typing.Sequence[str]] = OMIT,
         source: typing.Optional[str] = OMIT,
@@ -57,6 +59,10 @@ class RecordViewLinksClient:
 
         schema_id : str
             Schema containing the record.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
 
         expires_at : typing.Optional[dt.datetime]
             Optional expiry timestamp. Defaults to 72 hours and cannot exceed 7 days.
@@ -97,6 +103,8 @@ class RecordViewLinksClient:
             lookup_key_field=lookup_key_field,
             lookup_key_value=lookup_key_value,
             schema_id=schema_id,
+            polytomic_harbor_session=polytomic_harbor_session,
+            polytomic_activity_request_id=polytomic_activity_request_id,
             expires_at=expires_at,
             fields=fields,
             source=source,
@@ -182,6 +190,8 @@ class AsyncRecordViewLinksClient:
         lookup_key_field: str,
         lookup_key_value: str,
         schema_id: str,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
         expires_at: typing.Optional[dt.datetime] = OMIT,
         fields: typing.Optional[typing.Sequence[str]] = OMIT,
         source: typing.Optional[str] = OMIT,
@@ -204,6 +214,10 @@ class AsyncRecordViewLinksClient:
 
         schema_id : str
             Schema containing the record.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
 
         expires_at : typing.Optional[dt.datetime]
             Optional expiry timestamp. Defaults to 72 hours and cannot exceed 7 days.
@@ -252,6 +266,8 @@ class AsyncRecordViewLinksClient:
             lookup_key_field=lookup_key_field,
             lookup_key_value=lookup_key_value,
             schema_id=schema_id,
+            polytomic_harbor_session=polytomic_harbor_session,
+            polytomic_activity_request_id=polytomic_activity_request_id,
             expires_at=expires_at,
             fields=fields,
             source=source,
