@@ -48,6 +48,11 @@ class HarborResponse(UniversalBaseModel):
     Organization that owns the Harbor.
     """
 
+    status: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Storage lifecycle status. Wait for ready before using the Harbor; failed provisioning is retried automatically.
+    """
+
     updated_at: typing.Optional[dt.datetime] = pydantic.Field(default=None)
     """
     When the Harbor was last updated.

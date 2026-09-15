@@ -6,12 +6,11 @@ import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 
 
-class HarboractivityapiHarborActivityTarget(UniversalBaseModel):
+class HarboractivityapiHarborActivitySavedQuerySource(UniversalBaseModel):
     id: typing.Optional[str] = None
-    label: typing.Optional[str] = None
-    label_truncated: typing.Optional[bool] = None
+    name: typing.Optional[str] = None
+    name_truncated: typing.Optional[bool] = None
     revision_id: typing.Optional[str] = None
-    type: typing.Optional[str] = None
     version: typing.Optional[int] = None
 
     if IS_PYDANTIC_V2:

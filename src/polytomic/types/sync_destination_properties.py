@@ -62,6 +62,11 @@ class SyncDestinationProperties(UniversalBaseModel):
     True if a sync may create a new field on this target to use as the sync identity.
     """
 
+    supports_multiple_identities: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if the destination can match records on more than one identity mapping.
+    """
+
     supports_target_filters: typing.Optional[bool] = pydantic.Field(default=None)
     """
     True if target filters are supported on this destination; the chosen sync mode may further constrain availability.

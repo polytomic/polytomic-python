@@ -44,6 +44,9 @@ class HarboractivityapiHarborActivityMetadata(UniversalBaseModel):
     reason: typing.Optional[str] = None
     record_id: typing.Optional[str] = None
     row_count: typing.Optional[int] = None
+    saved_query_id: typing.Optional[str] = None
+    saved_query_revision_id: typing.Optional[str] = None
+    saved_query_version: typing.Optional[int] = None
     schema_id: typing.Optional[str] = None
     statement_category: typing.Optional[str] = None
     supported: typing.Optional[bool] = None

@@ -10,6 +10,7 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel, update
 from .harboractivityapi_harbor_activity_actor_snapshot import HarboractivityapiHarborActivityActorSnapshot
 from .harboractivityapi_harbor_activity_identity_snapshot import HarboractivityapiHarborActivityIdentitySnapshot
 from .harboractivityapi_harbor_activity_metadata import HarboractivityapiHarborActivityMetadata
+from .harboractivityapi_harbor_activity_query_source import HarboractivityapiHarborActivityQuerySource
 from .harboractivityapi_harbor_activity_target import HarboractivityapiHarborActivityTarget
 
 
@@ -32,6 +33,7 @@ class HarboractivityapiHarborActivityEvent(UniversalBaseModel):
     outcome: typing.Optional[str] = None
     profile: typing.Optional[HarboractivityapiHarborActivityIdentitySnapshot] = None
     provenance: typing.Optional[str] = None
+    query_source: typing.Optional[HarboractivityapiHarborActivityQuerySource] = None
     recorded_at: typing.Optional[dt.datetime] = None
     session_id: typing.Optional[str] = None
     targets: typing.Optional[typing.List[HarboractivityapiHarborActivityTarget]] = None

@@ -8,6 +8,8 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 from .filter import Filter
 from .identity import Identity
 from .model_filters import ModelFilters
+from .model_sync_identities import ModelSyncIdentities
+from .model_sync_problem import ModelSyncProblem
 from .model_sync_v5target import ModelSyncV5Target
 from .modelsync_sync_target_mode import ModelsyncSyncTargetMode
 from .output_actor import OutputActor
@@ -35,7 +37,16 @@ class ModelSyncV5Response(UniversalBaseModel):
     """
 
     id: typing.Optional[str] = None
-    identity: typing.Optional[Identity] = None
+    identities: typing.Optional[ModelSyncIdentities] = pydantic.Field(default=None)
+    """
+    Identity mappings for the sync and the strategy combining them.
+    """
+
+    identity: typing.Optional[Identity] = pydantic.Field(default=None)
+    """
+    Deprecated. Use 'identities'. Reports the first identity mapping only.
+    """
+
     mode: typing.Optional[ModelsyncSyncTargetMode] = None
     model_filters: typing.Optional[ModelFilters] = None
     model_ids: typing.Optional[typing.List[str]] = pydantic.Field(default=None)
@@ -49,6 +60,11 @@ class ModelSyncV5Response(UniversalBaseModel):
     override_fields: typing.Optional[typing.List[OverrideField]] = None
     overrides: typing.Optional[typing.List[Override]] = None
     policies: typing.Optional[typing.List[str]] = None
+    problems: typing.Optional[typing.List[ModelSyncProblem]] = pydantic.Field(default=None)
+    """
+    Parts of this configuration which could not be resolved when it was read. The configuration is reported unchanged, references included, so it can be corrected and written back; this property is ignored on input.
+    """
+
     schedule: typing.Optional[Schedule] = None
     skip_initial_backfill: typing.Optional[bool] = None
     sync_all_records: typing.Optional[bool] = None

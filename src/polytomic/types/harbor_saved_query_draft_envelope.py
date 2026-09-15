@@ -4,15 +4,11 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
+from .harbor_saved_query_draft_response import HarborSavedQueryDraftResponse
 
 
-class HarboractivityapiHarborActivityTarget(UniversalBaseModel):
-    id: typing.Optional[str] = None
-    label: typing.Optional[str] = None
-    label_truncated: typing.Optional[bool] = None
-    revision_id: typing.Optional[str] = None
-    type: typing.Optional[str] = None
-    version: typing.Optional[int] = None
+class HarborSavedQueryDraftEnvelope(UniversalBaseModel):
+    data: typing.Optional[HarborSavedQueryDraftResponse] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

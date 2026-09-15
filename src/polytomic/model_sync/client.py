@@ -14,6 +14,7 @@ from ..types.identity import Identity
 from ..types.list_sync_response_envelope import ListSyncResponseEnvelope
 from ..types.model_field_response import ModelFieldResponse
 from ..types.model_filters import ModelFilters
+from ..types.model_sync_identities import ModelSyncIdentities
 from ..types.model_sync_v5response_envelope import ModelSyncV5ResponseEnvelope
 from ..types.model_sync_v5target import ModelSyncV5Target
 from ..types.modelsync_sync_target_mode import ModelsyncSyncTargetMode
@@ -241,6 +242,7 @@ class ModelSyncClient:
         encryption_passphrase: typing.Optional[str] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
+        identities: typing.Optional[ModelSyncIdentities] = OMIT,
         identity: typing.Optional[Identity] = OMIT,
         model_filters: typing.Optional[ModelFilters] = OMIT,
         only_enrich_updates: typing.Optional[bool] = OMIT,
@@ -339,7 +341,11 @@ class ModelSyncClient:
         filters : typing.Optional[typing.Sequence[Filter]]
             Deprecated. Use 'model_filters.conditions' and 'target_filters.conditions', which say which kind each condition is rather than inferring it. Ignored when either of those is present, except that a request carrying both shapes is rejected if they describe different filters.
 
+        identities : typing.Optional[ModelSyncIdentities]
+            Identity mappings for the sync and the strategy combining them, replacing any the sync has. When this is omitted, 'identity' is used instead; updating a sync with more than one mapping requires this property.
+
         identity : typing.Optional[Identity]
+            Deprecated. Use 'identities'. Reports and accepts the first identity mapping only.
 
         model_filters : typing.Optional[ModelFilters]
 
@@ -407,6 +413,7 @@ class ModelSyncClient:
             encryption_passphrase=encryption_passphrase,
             filter_logic=filter_logic,
             filters=filters,
+            identities=identities,
             identity=identity,
             model_filters=model_filters,
             only_enrich_updates=only_enrich_updates,
@@ -503,6 +510,7 @@ class ModelSyncClient:
         encryption_passphrase: typing.Optional[str] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
+        identities: typing.Optional[ModelSyncIdentities] = OMIT,
         identity: typing.Optional[Identity] = OMIT,
         model_filters: typing.Optional[ModelFilters] = OMIT,
         only_enrich_updates: typing.Optional[bool] = OMIT,
@@ -560,7 +568,11 @@ class ModelSyncClient:
         filters : typing.Optional[typing.Sequence[Filter]]
             Deprecated. Use 'model_filters.conditions' and 'target_filters.conditions', which say which kind each condition is rather than inferring it. Ignored when either of those is present, except that a request carrying both shapes is rejected if they describe different filters.
 
+        identities : typing.Optional[ModelSyncIdentities]
+            Identity mappings for the sync and the strategy combining them, replacing any the sync has. When this is omitted, 'identity' is used instead; updating a sync with more than one mapping requires this property.
+
         identity : typing.Optional[Identity]
+            Deprecated. Use 'identities'. Reports and accepts the first identity mapping only.
 
         model_filters : typing.Optional[ModelFilters]
 
@@ -630,6 +642,7 @@ class ModelSyncClient:
             encryption_passphrase=encryption_passphrase,
             filter_logic=filter_logic,
             filters=filters,
+            identities=identities,
             identity=identity,
             model_filters=model_filters,
             only_enrich_updates=only_enrich_updates,
@@ -1134,6 +1147,7 @@ class AsyncModelSyncClient:
         encryption_passphrase: typing.Optional[str] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
+        identities: typing.Optional[ModelSyncIdentities] = OMIT,
         identity: typing.Optional[Identity] = OMIT,
         model_filters: typing.Optional[ModelFilters] = OMIT,
         only_enrich_updates: typing.Optional[bool] = OMIT,
@@ -1232,7 +1246,11 @@ class AsyncModelSyncClient:
         filters : typing.Optional[typing.Sequence[Filter]]
             Deprecated. Use 'model_filters.conditions' and 'target_filters.conditions', which say which kind each condition is rather than inferring it. Ignored when either of those is present, except that a request carrying both shapes is rejected if they describe different filters.
 
+        identities : typing.Optional[ModelSyncIdentities]
+            Identity mappings for the sync and the strategy combining them, replacing any the sync has. When this is omitted, 'identity' is used instead; updating a sync with more than one mapping requires this property.
+
         identity : typing.Optional[Identity]
+            Deprecated. Use 'identities'. Reports and accepts the first identity mapping only.
 
         model_filters : typing.Optional[ModelFilters]
 
@@ -1308,6 +1326,7 @@ class AsyncModelSyncClient:
             encryption_passphrase=encryption_passphrase,
             filter_logic=filter_logic,
             filters=filters,
+            identities=identities,
             identity=identity,
             model_filters=model_filters,
             only_enrich_updates=only_enrich_updates,
@@ -1422,6 +1441,7 @@ class AsyncModelSyncClient:
         encryption_passphrase: typing.Optional[str] = OMIT,
         filter_logic: typing.Optional[str] = OMIT,
         filters: typing.Optional[typing.Sequence[Filter]] = OMIT,
+        identities: typing.Optional[ModelSyncIdentities] = OMIT,
         identity: typing.Optional[Identity] = OMIT,
         model_filters: typing.Optional[ModelFilters] = OMIT,
         only_enrich_updates: typing.Optional[bool] = OMIT,
@@ -1479,7 +1499,11 @@ class AsyncModelSyncClient:
         filters : typing.Optional[typing.Sequence[Filter]]
             Deprecated. Use 'model_filters.conditions' and 'target_filters.conditions', which say which kind each condition is rather than inferring it. Ignored when either of those is present, except that a request carrying both shapes is rejected if they describe different filters.
 
+        identities : typing.Optional[ModelSyncIdentities]
+            Identity mappings for the sync and the strategy combining them, replacing any the sync has. When this is omitted, 'identity' is used instead; updating a sync with more than one mapping requires this property.
+
         identity : typing.Optional[Identity]
+            Deprecated. Use 'identities'. Reports and accepts the first identity mapping only.
 
         model_filters : typing.Optional[ModelFilters]
 
@@ -1557,6 +1581,7 @@ class AsyncModelSyncClient:
             encryption_passphrase=encryption_passphrase,
             filter_logic=filter_logic,
             filters=filters,
+            identities=identities,
             identity=identity,
             model_filters=model_filters,
             only_enrich_updates=only_enrich_updates,

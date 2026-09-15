@@ -9,6 +9,9 @@ from ..types.create_harbor_envelope import CreateHarborEnvelope
 from ..types.deleted_harbor_context_draft_envelope import DeletedHarborContextDraftEnvelope
 from ..types.deleted_harbor_context_envelope import DeletedHarborContextEnvelope
 from ..types.deleted_harbor_envelope import DeletedHarborEnvelope
+from ..types.deleted_harbor_saved_query_draft_envelope import DeletedHarborSavedQueryDraftEnvelope
+from ..types.deleted_harbor_saved_query_envelope import DeletedHarborSavedQueryEnvelope
+from ..types.execute_harbor_saved_query_envelope import ExecuteHarborSavedQueryEnvelope
 from ..types.harbor_connection_list_envelope import HarborConnectionListEnvelope
 from ..types.harbor_connection_schema_envelope import HarborConnectionSchemaEnvelope
 from ..types.harbor_context_draft_envelope import HarborContextDraftEnvelope
@@ -21,6 +24,12 @@ from ..types.harbor_envelope import HarborEnvelope
 from ..types.harbor_key_envelope import HarborKeyEnvelope
 from ..types.harbor_key_list_envelope import HarborKeyListEnvelope
 from ..types.harbor_list_envelope import HarborListEnvelope
+from ..types.harbor_saved_query_draft_envelope import HarborSavedQueryDraftEnvelope
+from ..types.harbor_saved_query_draft_list_envelope import HarborSavedQueryDraftListEnvelope
+from ..types.harbor_saved_query_envelope import HarborSavedQueryEnvelope
+from ..types.harbor_saved_query_list_envelope import HarborSavedQueryListEnvelope
+from ..types.harbor_saved_query_parameter import HarborSavedQueryParameter
+from ..types.harbor_saved_query_validation_envelope import HarborSavedQueryValidationEnvelope
 from ..types.harbor_schema_list_envelope import HarborSchemaListEnvelope
 from ..types.harbor_source_reference import HarborSourceReference
 from ..types.harbor_status_envelope import HarborStatusEnvelope
@@ -413,6 +422,11 @@ class HarborsClient:
 
         For `customer_managed`, `backing_connection_id` must identify a queryable Connection that your credential can access.
 
+        Managed Harbors return with `status: provisioning` while Polytomic sets up their
+        storage in the background. Poll `GET /api/harbors/{harbor_id}` until the status is
+        `ready` before adding sources or querying data. If provisioning fails, the status
+        is `provisioning_failed` and Polytomic retries automatically.
+
         Parameters
         ----------
         backing_mode : str
@@ -572,6 +586,10 @@ class HarborsClient:
         > 🚧 Harbor deletion
         >
         > Deleting a Harbor revokes its credentials, context documents, and user assignments. A customer-managed backing Connection remains available. Polytomic deletes a managed backing Connection only when no other resource uses it.
+
+        The response confirms that access has been revoked. Polytomic removes managed
+        storage in the background and retries failed cleanup automatically. You can also
+        delete a Harbor while it is provisioning.
 
         Parameters
         ----------
@@ -1635,6 +1653,785 @@ class HarborsClient:
         )
         return _response.data
 
+    def list_saved_queries(
+        self,
+        harbor_id: str,
+        *,
+        limit: typing.Optional[int] = None,
+        page_token: typing.Optional[str] = None,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborSavedQueryListEnvelope:
+        """
+        Lists current published saved queries for a Harbor.
+
+        Saved queries are supported only for Polytomic-managed Harbors whose backing
+        Connection type is `polytomic_harbor`.
+
+        Collection items contain current published metadata and omit SQL, parameter
+        values, and unpublished drafts. A Harbor profile credential can list saved
+        queries only when `harbor_id` identifies its own Harbor.
+
+        ## Harbor Activity
+
+        When you use a Harbor profile credential, send a new nonzero UUID in
+        `X-Polytomic-Activity-Request-ID` for each request, including each page. A
+        missing or invalid ID returns `400 Bad Request`. Reusing a consumed ID returns
+        `409 Conflict`.
+
+        If you supply `X-Polytomic-Harbor-Session`, the session must be active and bound
+        to your credential and Harbor. An invalid session returns `403 Forbidden`.
+        Direct scoped REST requests may omit the session header.
+
+        Polytomic records `saved_query.listed` before returning data. The event describes
+        only the returned page, including saved-query IDs, immutable revision IDs,
+        version numbers, and bounded name snapshots. Activity excludes SQL, parameter
+        values, and expected column names. If Polytomic cannot record the event, the
+        request returns `503 Service Unavailable` without saved-query data.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        limit : typing.Optional[int]
+            Maximum number of saved queries to return.
+
+        page_token : typing.Optional[str]
+            Opaque pagination cursor returned by the previous request.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborSavedQueryListEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.harbors.list_saved_queries(
+            harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            limit=1,
+            page_token="page_token",
+        )
+        """
+        _response = self._raw_client.list_saved_queries(
+            harbor_id,
+            limit=limit,
+            page_token=page_token,
+            polytomic_harbor_session=polytomic_harbor_session,
+            polytomic_activity_request_id=polytomic_activity_request_id,
+            request_options=request_options,
+        )
+        return _response.data
+
+    def create_saved_query_draft(
+        self,
+        harbor_id: str,
+        *,
+        name: str,
+        sql_template: str,
+        change_note: typing.Optional[str] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        owner: typing.Optional[str] = OMIT,
+        parameters: typing.Optional[typing.Sequence[HarborSavedQueryParameter]] = OMIT,
+        validation_values: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborSavedQueryDraftEnvelope:
+        """
+        Creates a stable Harbor saved query with its initial mutable draft.
+
+        Saved queries are supported only for Polytomic-managed Harbors whose backing
+        Connection type is `polytomic_harbor`. Customer-managed Harbor backings return
+        an unsupported-backing error.
+
+        The saved query receives a stable ID, but it remains absent from published
+        saved-query reads until an administrator publishes its initial draft.
+
+        Use `{{parameter_name}}` references in `sql_template`. Each reference must have
+        one scalar declaration. Validation values and defaults must match the declared
+        `string`, `number`, `boolean`, `date`, `timestamp`, or `uuid` type.
+
+        Unknown JSON fields, including fields inside parameter declarations, return
+        `400 Bad Request` before the draft is saved. Use `default_value`, not `default`,
+        for parameter defaults.
+
+        When you omit a parameter during execution, Polytomic uses its published
+        `default_value`, never its draft validation value. An omitted optional parameter
+        without a default binds SQL `NULL`. A required parameter allows omission when a
+        default exists, but rejects explicit `null` even with a default.
+
+        For a report window, use a required parameter with a default so omission selects
+        a useful window and explicit `null` is rejected:
+
+        ```json
+        {"name": "days", "type": "number", "required": true, "default_value": 7}
+        ```
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        name : str
+            Human-readable saved-query name. Maximum 200 characters.
+
+        sql_template : str
+            DuckDB SQL template using {{name}} references for bound parameters.
+
+        change_note : typing.Optional[str]
+            Optional note copied to the immutable published version.
+
+        description : typing.Optional[str]
+            Business definition and usage notes. Maximum 2,000 characters.
+
+        owner : typing.Optional[str]
+            Human-readable owner label. Maximum 200 characters.
+
+        parameters : typing.Optional[typing.Sequence[HarborSavedQueryParameter]]
+            Typed scalar parameter declarations.
+
+        validation_values : typing.Optional[typing.Dict[str, typing.Any]]
+            Author-supplied JSON scalar values used only to validate this draft.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborSavedQueryDraftEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.harbors.create_saved_query_draft(
+            harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            name="Monthly revenue",
+            sql_template="SELECT account_id, sum(amount) AS revenue FROM orders WHERE created_at >= {{start_date}} GROUP BY account_id",
+        )
+        """
+        _response = self._raw_client.create_saved_query_draft(
+            harbor_id,
+            name=name,
+            sql_template=sql_template,
+            change_note=change_note,
+            description=description,
+            owner=owner,
+            parameters=parameters,
+            validation_values=validation_values,
+            idempotency_key=idempotency_key,
+            request_options=request_options,
+        )
+        return _response.data
+
+    def list_saved_query_drafts(
+        self,
+        harbor_id: str,
+        *,
+        limit: typing.Optional[int] = None,
+        page_token: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborSavedQueryDraftListEnvelope:
+        """
+        Lists mutable Harbor saved-query drafts.
+
+        Drafts are ordered from newest to oldest and include complete SQL, typed
+        parameter declarations, and author-supplied validation values. Harbor profile
+        credentials cannot access this endpoint.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        limit : typing.Optional[int]
+            Maximum number of saved-query drafts to return.
+
+        page_token : typing.Optional[str]
+            Opaque pagination cursor returned by the previous request.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborSavedQueryDraftListEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.harbors.list_saved_query_drafts(
+            harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            limit=1,
+            page_token="page_token",
+        )
+        """
+        _response = self._raw_client.list_saved_query_drafts(
+            harbor_id, limit=limit, page_token=page_token, request_options=request_options
+        )
+        return _response.data
+
+    def get_saved_query(
+        self,
+        harbor_id: str,
+        saved_query_id: str,
+        *,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborSavedQueryEnvelope:
+        """
+        Returns the current published version of one Harbor saved query.
+
+        The response contains the current immutable `revision_id`, SQL template,
+        parameter contract, expected columns, and publication provenance. Validation
+        inputs are draft-only and are never part of a published response.
+
+        A Harbor profile credential can retrieve a saved query only from its own Harbor.
+
+        ## Harbor Activity
+
+        When you use a Harbor profile credential, send a new nonzero UUID in
+        `X-Polytomic-Activity-Request-ID` for each request. A missing or invalid ID
+        returns `400 Bad Request`. Reusing a consumed ID returns `409 Conflict`.
+
+        If you supply `X-Polytomic-Harbor-Session`, the session must be active and bound
+        to your credential and Harbor. An invalid session returns `403 Forbidden`.
+        Direct scoped REST requests may omit the session header.
+
+        Polytomic records `saved_query.fetched` before returning the definition. The
+        event identifies the saved query, exact immutable revision, published version,
+        and bounded name snapshot. It does not indicate query execution. Activity
+        excludes SQL, parameter defaults and validation values, expected column names,
+        and result rows. If Polytomic cannot record the event, the request returns
+        `503 Service Unavailable` without saved-query data.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        saved_query_id : str
+            Unique stable identifier of the saved query.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborSavedQueryEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.harbors.get_saved_query(
+            harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            saved_query_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = self._raw_client.get_saved_query(
+            harbor_id,
+            saved_query_id,
+            polytomic_harbor_session=polytomic_harbor_session,
+            polytomic_activity_request_id=polytomic_activity_request_id,
+            request_options=request_options,
+        )
+        return _response.data
+
+    def delete_saved_query(
+        self,
+        harbor_id: str,
+        saved_query_id: str,
+        *,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> DeletedHarborSavedQueryEnvelope:
+        """
+        Archives one Harbor saved query and removes it from active reads.
+
+        Archiving removes the saved query and any draft from active reads while
+        retaining its immutable revisions for provenance. The operation does not run
+        the saved SQL or modify the Harbor backing Connection. Archiving does not cancel
+        in-flight execution requests or queued executions.
+
+        This REST operation archives the saved query; it does not merely unpublish it.
+        Unpublish is available only through the GraphQL `unpublishHarborSavedQuery`
+        mutation. There is no REST unpublish endpoint.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        saved_query_id : str
+            Unique stable identifier of the saved query.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        DeletedHarborSavedQueryEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.harbors.delete_saved_query(
+            harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            saved_query_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = self._raw_client.delete_saved_query(
+            harbor_id, saved_query_id, idempotency_key=idempotency_key, request_options=request_options
+        )
+        return _response.data
+
+    def save_saved_query_draft(
+        self,
+        harbor_id: str,
+        saved_query_id: str,
+        *,
+        name: str,
+        sql_template: str,
+        change_note: typing.Optional[str] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        owner: typing.Optional[str] = OMIT,
+        parameters: typing.Optional[typing.Sequence[HarborSavedQueryParameter]] = OMIT,
+        validation_values: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborSavedQueryDraftEnvelope:
+        """
+        Creates or completely replaces the mutable draft for a Harbor saved query.
+
+        Replacement is complete rather than partial. The next validation or publication
+        uses the replacement SQL, parameter declarations, and validation values.
+
+        Unknown JSON fields, including fields inside parameter declarations, return
+        `400 Bad Request` before the draft is saved. Use `default_value`, not `default`,
+        for parameter defaults.
+
+        When you omit a parameter during execution, Polytomic uses its published
+        `default_value`, never its draft validation value. An omitted optional parameter
+        without a default binds SQL `NULL`. A required parameter allows omission when a
+        default exists, but rejects explicit `null` even with a default.
+
+        For a report window, use a required parameter with a default so omission selects
+        a useful window and explicit `null` is rejected:
+
+        ```json
+        {"name": "days", "type": "number", "required": true, "default_value": 7}
+        ```
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        saved_query_id : str
+            Unique stable identifier of the saved query.
+
+        name : str
+            Human-readable saved-query name. Maximum 200 characters.
+
+        sql_template : str
+            DuckDB SQL template using {{name}} references for bound parameters.
+
+        change_note : typing.Optional[str]
+            Optional note copied to the immutable published version.
+
+        description : typing.Optional[str]
+            Business definition and usage notes. Maximum 2,000 characters.
+
+        owner : typing.Optional[str]
+            Human-readable owner label. Maximum 200 characters.
+
+        parameters : typing.Optional[typing.Sequence[HarborSavedQueryParameter]]
+            Typed scalar parameter declarations.
+
+        validation_values : typing.Optional[typing.Dict[str, typing.Any]]
+            Author-supplied JSON scalar values used only to validate this draft.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborSavedQueryDraftEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.harbors.save_saved_query_draft(
+            harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            saved_query_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            name="Monthly revenue",
+            sql_template="SELECT account_id, sum(amount) AS revenue FROM orders WHERE created_at >= {{start_date}} GROUP BY account_id",
+        )
+        """
+        _response = self._raw_client.save_saved_query_draft(
+            harbor_id,
+            saved_query_id,
+            name=name,
+            sql_template=sql_template,
+            change_note=change_note,
+            description=description,
+            owner=owner,
+            parameters=parameters,
+            validation_values=validation_values,
+            idempotency_key=idempotency_key,
+            request_options=request_options,
+        )
+        return _response.data
+
+    def delete_saved_query_draft(
+        self,
+        harbor_id: str,
+        saved_query_id: str,
+        *,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> DeletedHarborSavedQueryDraftEnvelope:
+        """
+        Discards the mutable draft for one Harbor saved query.
+
+        Discarding an initial unpublished draft also removes its otherwise empty stable
+        saved-query identity. Discarding a later draft preserves every immutable
+        published version.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        saved_query_id : str
+            Unique stable identifier of the saved query.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        DeletedHarborSavedQueryDraftEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.harbors.delete_saved_query_draft(
+            harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            saved_query_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = self._raw_client.delete_saved_query_draft(
+            harbor_id, saved_query_id, idempotency_key=idempotency_key, request_options=request_options
+        )
+        return _response.data
+
+    def publish_saved_query_draft(
+        self,
+        harbor_id: str,
+        saved_query_id: str,
+        *,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborSavedQueryEnvelope:
+        """
+        Validates and publishes the current draft as the next immutable saved-query version.
+
+        Only organization administrators can publish. Publication executes and validates
+        the current draft with the Polytomic-managed Harbor's MotherDuck `read_scaling`
+        credential. It fails instead of using the Harbor writer credential when the
+        reader credential is missing or incomplete.
+
+        After execution, publication verifies that the draft did not change. A
+        concurrent edit returns a conflict and remains a draft. Successful publication
+        creates the next immutable revision, records the observed ordered columns as its
+        output contract, removes validation inputs from the published definition, and
+        deletes the mutable draft. The response includes the immutable `revision_id`
+        that future executions use for exact provenance.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        saved_query_id : str
+            Unique stable identifier of the saved query.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborSavedQueryEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.harbors.publish_saved_query_draft(
+            harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            saved_query_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = self._raw_client.publish_saved_query_draft(
+            harbor_id, saved_query_id, idempotency_key=idempotency_key, request_options=request_options
+        )
+        return _response.data
+
+    def validate_saved_query_draft(
+        self,
+        harbor_id: str,
+        saved_query_id: str,
+        *,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborSavedQueryValidationEnvelope:
+        """
+        Validates the exact current saved-query draft and returns a bounded ephemeral preview.
+
+        Only organization administrators can validate drafts. Named template references
+        compile to DuckDB placeholders, and typed values are passed separately rather
+        than interpolated into SQL.
+
+        The query runs with the Polytomic-managed Harbor's MotherDuck `read_scaling`
+        credential. Validation fails when that credential is missing or incomplete and
+        never falls back to the Harbor writer credential. Preview rows and serialized
+        response size are bounded. The preview and validation attempt are not persisted.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        saved_query_id : str
+            Unique stable identifier of the saved query.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborSavedQueryValidationEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.harbors.validate_saved_query_draft(
+            harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            saved_query_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = self._raw_client.validate_saved_query_draft(
+            harbor_id, saved_query_id, idempotency_key=idempotency_key, request_options=request_options
+        )
+        return _response.data
+
+    def execute_saved_query(
+        self,
+        harbor_id: str,
+        saved_query_id: str,
+        *,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
+        parameters: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ExecuteHarborSavedQueryEnvelope:
+        """
+        Submits the current published Harbor saved query for asynchronous reader-only execution.
+
+        Use a Harbor-bound scoped credential with query access to the Harbor's backing
+        Connection. Administrator credentials cannot submit executions here. Saved
+        queries require a Polytomic-managed Harbor.
+
+        Polytomic selects the current published revision while processing your request.
+        The response identifies that exact immutable revision. Selection happens before
+        Polytomic accepts the execution. Drafts, unpublished queries, and archived
+        queries are unavailable for selection. You cannot select a historical revision
+        or supply SQL through this endpoint.
+
+        > ⚠️ Concurrent publication changes
+        >
+        > Publishing, unpublishing, or archiving a saved query after selection does not
+        > change the selected revision. An in-flight request may still be accepted and
+        > execute that revision. Unpublishing or archiving does not cancel in-flight
+        > requests or queued executions. Query access is checked again before execution
+        > and result retrieval.
+
+        Parameter values are bound separately from SQL. Omitted parameters use the
+        published `default_value`, never draft validation values. An omitted optional
+        parameter without a default binds SQL `NULL`. Required parameters allow omission
+        when a default exists, but reject explicit `null` even with a default. Missing
+        required values without defaults, explicit `null` for required parameters,
+        unknown parameter names, and invalid scalar types return
+        `422 Unprocessable Entity` without accepting an execution. Execution requires
+        reader credentials and never falls back to writer credentials.
+
+        For report windows, define parameters with `required: true` and a
+        `default_value`, such as `7` for a `days` parameter. This allows omission while
+        preventing explicit `null` from turning a time filter into a SQL `NULL`
+        comparison.
+
+        To archive a saved query through REST, use
+        [`DELETE /api/harbors/{harbor_id}/saved-queries/{saved_query_id}`](../../../../../../api-reference/harbors/delete-saved-query).
+        Unpublish is available only through the GraphQL `unpublishHarborSavedQuery`
+        mutation, not a REST endpoint.
+
+        ## Results
+
+        The response returns a task ID with status `created`, not result rows. Poll
+        [`GET /api/queries/{id}`](../../../../../../api-reference/query-runner/get-query) using a credential
+        from the same Harbor profile. Query access is checked again before execution and
+        result retrieval. Stop polling at `done`, `failed`, or `unknown`; `unknown` means
+        execution started but no durable terminal result is available.
+
+        Results and detailed failure information expire after 24 hours. Use the
+        `expires` field and follow `links.next` to retrieve additional result pages.
+
+        ## Harbor Activity
+
+        Send a new nonzero UUID in `X-Polytomic-Activity-Request-ID`. Missing or invalid
+        IDs return `400 Bad Request`. Reusing a consumed ID returns `409 Conflict` and
+        does not create another execution.
+
+        You may omit `X-Polytomic-Harbor-Session` for direct REST requests. If supplied,
+        the session must be active and bound to your credential and Harbor.
+
+        Polytomic records `query.submitted` atomically with acceptance. The event
+        identifies the saved query, immutable revision, published version, and bounded
+        name snapshot. SQL, parameter values and defaults, column names, and result rows
+        remain outside Activity metadata. If Activity persistence is unavailable, the
+        request returns `503 Service Unavailable` without accepting an execution.
+
+        `query.started` records provider invocation. `query.succeeded` means results are
+        available for authorized retrieval, not that you have consumed them.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        saved_query_id : str
+            Unique stable identifier of the saved query.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
+
+        parameters : typing.Optional[typing.Dict[str, typing.Any]]
+            Named JSON scalar overrides for declared parameters. Omission uses published default_value, or SQL NULL for optional parameters without a default. Required parameters reject explicit null even with a default; without a default they also reject omission. Unknown names and invalid types are rejected.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ExecuteHarborSavedQueryEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.harbors.execute_saved_query(
+            harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            saved_query_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = self._raw_client.execute_saved_query(
+            harbor_id,
+            saved_query_id,
+            polytomic_harbor_session=polytomic_harbor_session,
+            polytomic_activity_request_id=polytomic_activity_request_id,
+            parameters=parameters,
+            idempotency_key=idempotency_key,
+            request_options=request_options,
+        )
+        return _response.data
+
     def resolve_source_mappings(
         self,
         harbor_id: str,
@@ -2371,6 +3168,11 @@ class AsyncHarborsClient:
 
         For `customer_managed`, `backing_connection_id` must identify a queryable Connection that your credential can access.
 
+        Managed Harbors return with `status: provisioning` while Polytomic sets up their
+        storage in the background. Poll `GET /api/harbors/{harbor_id}` until the status is
+        `ready` before adding sources or querying data. If provisioning fails, the status
+        is `provisioning_failed` and Polytomic retries automatically.
+
         Parameters
         ----------
         backing_mode : str
@@ -2554,6 +3356,10 @@ class AsyncHarborsClient:
         > 🚧 Harbor deletion
         >
         > Deleting a Harbor revokes its credentials, context documents, and user assignments. A customer-managed backing Connection remains available. Polytomic deletes a managed backing Connection only when no other resource uses it.
+
+        The response confirms that access has been revoked. Polytomic removes managed
+        storage in the background and retries failed cleanup automatically. You can also
+        delete a Harbor while it is provisioning.
 
         Parameters
         ----------
@@ -3752,6 +4558,865 @@ class AsyncHarborsClient:
         """
         _response = await self._raw_client.delete_key(
             harbor_id, key_id, idempotency_key=idempotency_key, request_options=request_options
+        )
+        return _response.data
+
+    async def list_saved_queries(
+        self,
+        harbor_id: str,
+        *,
+        limit: typing.Optional[int] = None,
+        page_token: typing.Optional[str] = None,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborSavedQueryListEnvelope:
+        """
+        Lists current published saved queries for a Harbor.
+
+        Saved queries are supported only for Polytomic-managed Harbors whose backing
+        Connection type is `polytomic_harbor`.
+
+        Collection items contain current published metadata and omit SQL, parameter
+        values, and unpublished drafts. A Harbor profile credential can list saved
+        queries only when `harbor_id` identifies its own Harbor.
+
+        ## Harbor Activity
+
+        When you use a Harbor profile credential, send a new nonzero UUID in
+        `X-Polytomic-Activity-Request-ID` for each request, including each page. A
+        missing or invalid ID returns `400 Bad Request`. Reusing a consumed ID returns
+        `409 Conflict`.
+
+        If you supply `X-Polytomic-Harbor-Session`, the session must be active and bound
+        to your credential and Harbor. An invalid session returns `403 Forbidden`.
+        Direct scoped REST requests may omit the session header.
+
+        Polytomic records `saved_query.listed` before returning data. The event describes
+        only the returned page, including saved-query IDs, immutable revision IDs,
+        version numbers, and bounded name snapshots. Activity excludes SQL, parameter
+        values, and expected column names. If Polytomic cannot record the event, the
+        request returns `503 Service Unavailable` without saved-query data.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        limit : typing.Optional[int]
+            Maximum number of saved queries to return.
+
+        page_token : typing.Optional[str]
+            Opaque pagination cursor returned by the previous request.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborSavedQueryListEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.harbors.list_saved_queries(
+                harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                limit=1,
+                page_token="page_token",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.list_saved_queries(
+            harbor_id,
+            limit=limit,
+            page_token=page_token,
+            polytomic_harbor_session=polytomic_harbor_session,
+            polytomic_activity_request_id=polytomic_activity_request_id,
+            request_options=request_options,
+        )
+        return _response.data
+
+    async def create_saved_query_draft(
+        self,
+        harbor_id: str,
+        *,
+        name: str,
+        sql_template: str,
+        change_note: typing.Optional[str] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        owner: typing.Optional[str] = OMIT,
+        parameters: typing.Optional[typing.Sequence[HarborSavedQueryParameter]] = OMIT,
+        validation_values: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborSavedQueryDraftEnvelope:
+        """
+        Creates a stable Harbor saved query with its initial mutable draft.
+
+        Saved queries are supported only for Polytomic-managed Harbors whose backing
+        Connection type is `polytomic_harbor`. Customer-managed Harbor backings return
+        an unsupported-backing error.
+
+        The saved query receives a stable ID, but it remains absent from published
+        saved-query reads until an administrator publishes its initial draft.
+
+        Use `{{parameter_name}}` references in `sql_template`. Each reference must have
+        one scalar declaration. Validation values and defaults must match the declared
+        `string`, `number`, `boolean`, `date`, `timestamp`, or `uuid` type.
+
+        Unknown JSON fields, including fields inside parameter declarations, return
+        `400 Bad Request` before the draft is saved. Use `default_value`, not `default`,
+        for parameter defaults.
+
+        When you omit a parameter during execution, Polytomic uses its published
+        `default_value`, never its draft validation value. An omitted optional parameter
+        without a default binds SQL `NULL`. A required parameter allows omission when a
+        default exists, but rejects explicit `null` even with a default.
+
+        For a report window, use a required parameter with a default so omission selects
+        a useful window and explicit `null` is rejected:
+
+        ```json
+        {"name": "days", "type": "number", "required": true, "default_value": 7}
+        ```
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        name : str
+            Human-readable saved-query name. Maximum 200 characters.
+
+        sql_template : str
+            DuckDB SQL template using {{name}} references for bound parameters.
+
+        change_note : typing.Optional[str]
+            Optional note copied to the immutable published version.
+
+        description : typing.Optional[str]
+            Business definition and usage notes. Maximum 2,000 characters.
+
+        owner : typing.Optional[str]
+            Human-readable owner label. Maximum 200 characters.
+
+        parameters : typing.Optional[typing.Sequence[HarborSavedQueryParameter]]
+            Typed scalar parameter declarations.
+
+        validation_values : typing.Optional[typing.Dict[str, typing.Any]]
+            Author-supplied JSON scalar values used only to validate this draft.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborSavedQueryDraftEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.harbors.create_saved_query_draft(
+                harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                name="Monthly revenue",
+                sql_template="SELECT account_id, sum(amount) AS revenue FROM orders WHERE created_at >= {{start_date}} GROUP BY account_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.create_saved_query_draft(
+            harbor_id,
+            name=name,
+            sql_template=sql_template,
+            change_note=change_note,
+            description=description,
+            owner=owner,
+            parameters=parameters,
+            validation_values=validation_values,
+            idempotency_key=idempotency_key,
+            request_options=request_options,
+        )
+        return _response.data
+
+    async def list_saved_query_drafts(
+        self,
+        harbor_id: str,
+        *,
+        limit: typing.Optional[int] = None,
+        page_token: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborSavedQueryDraftListEnvelope:
+        """
+        Lists mutable Harbor saved-query drafts.
+
+        Drafts are ordered from newest to oldest and include complete SQL, typed
+        parameter declarations, and author-supplied validation values. Harbor profile
+        credentials cannot access this endpoint.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        limit : typing.Optional[int]
+            Maximum number of saved-query drafts to return.
+
+        page_token : typing.Optional[str]
+            Opaque pagination cursor returned by the previous request.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborSavedQueryDraftListEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.harbors.list_saved_query_drafts(
+                harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                limit=1,
+                page_token="page_token",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.list_saved_query_drafts(
+            harbor_id, limit=limit, page_token=page_token, request_options=request_options
+        )
+        return _response.data
+
+    async def get_saved_query(
+        self,
+        harbor_id: str,
+        saved_query_id: str,
+        *,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborSavedQueryEnvelope:
+        """
+        Returns the current published version of one Harbor saved query.
+
+        The response contains the current immutable `revision_id`, SQL template,
+        parameter contract, expected columns, and publication provenance. Validation
+        inputs are draft-only and are never part of a published response.
+
+        A Harbor profile credential can retrieve a saved query only from its own Harbor.
+
+        ## Harbor Activity
+
+        When you use a Harbor profile credential, send a new nonzero UUID in
+        `X-Polytomic-Activity-Request-ID` for each request. A missing or invalid ID
+        returns `400 Bad Request`. Reusing a consumed ID returns `409 Conflict`.
+
+        If you supply `X-Polytomic-Harbor-Session`, the session must be active and bound
+        to your credential and Harbor. An invalid session returns `403 Forbidden`.
+        Direct scoped REST requests may omit the session header.
+
+        Polytomic records `saved_query.fetched` before returning the definition. The
+        event identifies the saved query, exact immutable revision, published version,
+        and bounded name snapshot. It does not indicate query execution. Activity
+        excludes SQL, parameter defaults and validation values, expected column names,
+        and result rows. If Polytomic cannot record the event, the request returns
+        `503 Service Unavailable` without saved-query data.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        saved_query_id : str
+            Unique stable identifier of the saved query.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborSavedQueryEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.harbors.get_saved_query(
+                harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                saved_query_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_saved_query(
+            harbor_id,
+            saved_query_id,
+            polytomic_harbor_session=polytomic_harbor_session,
+            polytomic_activity_request_id=polytomic_activity_request_id,
+            request_options=request_options,
+        )
+        return _response.data
+
+    async def delete_saved_query(
+        self,
+        harbor_id: str,
+        saved_query_id: str,
+        *,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> DeletedHarborSavedQueryEnvelope:
+        """
+        Archives one Harbor saved query and removes it from active reads.
+
+        Archiving removes the saved query and any draft from active reads while
+        retaining its immutable revisions for provenance. The operation does not run
+        the saved SQL or modify the Harbor backing Connection. Archiving does not cancel
+        in-flight execution requests or queued executions.
+
+        This REST operation archives the saved query; it does not merely unpublish it.
+        Unpublish is available only through the GraphQL `unpublishHarborSavedQuery`
+        mutation. There is no REST unpublish endpoint.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        saved_query_id : str
+            Unique stable identifier of the saved query.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        DeletedHarborSavedQueryEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.harbors.delete_saved_query(
+                harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                saved_query_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.delete_saved_query(
+            harbor_id, saved_query_id, idempotency_key=idempotency_key, request_options=request_options
+        )
+        return _response.data
+
+    async def save_saved_query_draft(
+        self,
+        harbor_id: str,
+        saved_query_id: str,
+        *,
+        name: str,
+        sql_template: str,
+        change_note: typing.Optional[str] = OMIT,
+        description: typing.Optional[str] = OMIT,
+        owner: typing.Optional[str] = OMIT,
+        parameters: typing.Optional[typing.Sequence[HarborSavedQueryParameter]] = OMIT,
+        validation_values: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborSavedQueryDraftEnvelope:
+        """
+        Creates or completely replaces the mutable draft for a Harbor saved query.
+
+        Replacement is complete rather than partial. The next validation or publication
+        uses the replacement SQL, parameter declarations, and validation values.
+
+        Unknown JSON fields, including fields inside parameter declarations, return
+        `400 Bad Request` before the draft is saved. Use `default_value`, not `default`,
+        for parameter defaults.
+
+        When you omit a parameter during execution, Polytomic uses its published
+        `default_value`, never its draft validation value. An omitted optional parameter
+        without a default binds SQL `NULL`. A required parameter allows omission when a
+        default exists, but rejects explicit `null` even with a default.
+
+        For a report window, use a required parameter with a default so omission selects
+        a useful window and explicit `null` is rejected:
+
+        ```json
+        {"name": "days", "type": "number", "required": true, "default_value": 7}
+        ```
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        saved_query_id : str
+            Unique stable identifier of the saved query.
+
+        name : str
+            Human-readable saved-query name. Maximum 200 characters.
+
+        sql_template : str
+            DuckDB SQL template using {{name}} references for bound parameters.
+
+        change_note : typing.Optional[str]
+            Optional note copied to the immutable published version.
+
+        description : typing.Optional[str]
+            Business definition and usage notes. Maximum 2,000 characters.
+
+        owner : typing.Optional[str]
+            Human-readable owner label. Maximum 200 characters.
+
+        parameters : typing.Optional[typing.Sequence[HarborSavedQueryParameter]]
+            Typed scalar parameter declarations.
+
+        validation_values : typing.Optional[typing.Dict[str, typing.Any]]
+            Author-supplied JSON scalar values used only to validate this draft.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborSavedQueryDraftEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.harbors.save_saved_query_draft(
+                harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                saved_query_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                name="Monthly revenue",
+                sql_template="SELECT account_id, sum(amount) AS revenue FROM orders WHERE created_at >= {{start_date}} GROUP BY account_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.save_saved_query_draft(
+            harbor_id,
+            saved_query_id,
+            name=name,
+            sql_template=sql_template,
+            change_note=change_note,
+            description=description,
+            owner=owner,
+            parameters=parameters,
+            validation_values=validation_values,
+            idempotency_key=idempotency_key,
+            request_options=request_options,
+        )
+        return _response.data
+
+    async def delete_saved_query_draft(
+        self,
+        harbor_id: str,
+        saved_query_id: str,
+        *,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> DeletedHarborSavedQueryDraftEnvelope:
+        """
+        Discards the mutable draft for one Harbor saved query.
+
+        Discarding an initial unpublished draft also removes its otherwise empty stable
+        saved-query identity. Discarding a later draft preserves every immutable
+        published version.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        saved_query_id : str
+            Unique stable identifier of the saved query.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        DeletedHarborSavedQueryDraftEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.harbors.delete_saved_query_draft(
+                harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                saved_query_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.delete_saved_query_draft(
+            harbor_id, saved_query_id, idempotency_key=idempotency_key, request_options=request_options
+        )
+        return _response.data
+
+    async def publish_saved_query_draft(
+        self,
+        harbor_id: str,
+        saved_query_id: str,
+        *,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborSavedQueryEnvelope:
+        """
+        Validates and publishes the current draft as the next immutable saved-query version.
+
+        Only organization administrators can publish. Publication executes and validates
+        the current draft with the Polytomic-managed Harbor's MotherDuck `read_scaling`
+        credential. It fails instead of using the Harbor writer credential when the
+        reader credential is missing or incomplete.
+
+        After execution, publication verifies that the draft did not change. A
+        concurrent edit returns a conflict and remains a draft. Successful publication
+        creates the next immutable revision, records the observed ordered columns as its
+        output contract, removes validation inputs from the published definition, and
+        deletes the mutable draft. The response includes the immutable `revision_id`
+        that future executions use for exact provenance.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        saved_query_id : str
+            Unique stable identifier of the saved query.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborSavedQueryEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.harbors.publish_saved_query_draft(
+                harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                saved_query_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.publish_saved_query_draft(
+            harbor_id, saved_query_id, idempotency_key=idempotency_key, request_options=request_options
+        )
+        return _response.data
+
+    async def validate_saved_query_draft(
+        self,
+        harbor_id: str,
+        saved_query_id: str,
+        *,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborSavedQueryValidationEnvelope:
+        """
+        Validates the exact current saved-query draft and returns a bounded ephemeral preview.
+
+        Only organization administrators can validate drafts. Named template references
+        compile to DuckDB placeholders, and typed values are passed separately rather
+        than interpolated into SQL.
+
+        The query runs with the Polytomic-managed Harbor's MotherDuck `read_scaling`
+        credential. Validation fails when that credential is missing or incomplete and
+        never falls back to the Harbor writer credential. Preview rows and serialized
+        response size are bounded. The preview and validation attempt are not persisted.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        saved_query_id : str
+            Unique stable identifier of the saved query.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborSavedQueryValidationEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.harbors.validate_saved_query_draft(
+                harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                saved_query_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.validate_saved_query_draft(
+            harbor_id, saved_query_id, idempotency_key=idempotency_key, request_options=request_options
+        )
+        return _response.data
+
+    async def execute_saved_query(
+        self,
+        harbor_id: str,
+        saved_query_id: str,
+        *,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
+        parameters: typing.Optional[typing.Dict[str, typing.Any]] = OMIT,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ExecuteHarborSavedQueryEnvelope:
+        """
+        Submits the current published Harbor saved query for asynchronous reader-only execution.
+
+        Use a Harbor-bound scoped credential with query access to the Harbor's backing
+        Connection. Administrator credentials cannot submit executions here. Saved
+        queries require a Polytomic-managed Harbor.
+
+        Polytomic selects the current published revision while processing your request.
+        The response identifies that exact immutable revision. Selection happens before
+        Polytomic accepts the execution. Drafts, unpublished queries, and archived
+        queries are unavailable for selection. You cannot select a historical revision
+        or supply SQL through this endpoint.
+
+        > ⚠️ Concurrent publication changes
+        >
+        > Publishing, unpublishing, or archiving a saved query after selection does not
+        > change the selected revision. An in-flight request may still be accepted and
+        > execute that revision. Unpublishing or archiving does not cancel in-flight
+        > requests or queued executions. Query access is checked again before execution
+        > and result retrieval.
+
+        Parameter values are bound separately from SQL. Omitted parameters use the
+        published `default_value`, never draft validation values. An omitted optional
+        parameter without a default binds SQL `NULL`. Required parameters allow omission
+        when a default exists, but reject explicit `null` even with a default. Missing
+        required values without defaults, explicit `null` for required parameters,
+        unknown parameter names, and invalid scalar types return
+        `422 Unprocessable Entity` without accepting an execution. Execution requires
+        reader credentials and never falls back to writer credentials.
+
+        For report windows, define parameters with `required: true` and a
+        `default_value`, such as `7` for a `days` parameter. This allows omission while
+        preventing explicit `null` from turning a time filter into a SQL `NULL`
+        comparison.
+
+        To archive a saved query through REST, use
+        [`DELETE /api/harbors/{harbor_id}/saved-queries/{saved_query_id}`](../../../../../../api-reference/harbors/delete-saved-query).
+        Unpublish is available only through the GraphQL `unpublishHarborSavedQuery`
+        mutation, not a REST endpoint.
+
+        ## Results
+
+        The response returns a task ID with status `created`, not result rows. Poll
+        [`GET /api/queries/{id}`](../../../../../../api-reference/query-runner/get-query) using a credential
+        from the same Harbor profile. Query access is checked again before execution and
+        result retrieval. Stop polling at `done`, `failed`, or `unknown`; `unknown` means
+        execution started but no durable terminal result is available.
+
+        Results and detailed failure information expire after 24 hours. Use the
+        `expires` field and follow `links.next` to retrieve additional result pages.
+
+        ## Harbor Activity
+
+        Send a new nonzero UUID in `X-Polytomic-Activity-Request-ID`. Missing or invalid
+        IDs return `400 Bad Request`. Reusing a consumed ID returns `409 Conflict` and
+        does not create another execution.
+
+        You may omit `X-Polytomic-Harbor-Session` for direct REST requests. If supplied,
+        the session must be active and bound to your credential and Harbor.
+
+        Polytomic records `query.submitted` atomically with acceptance. The event
+        identifies the saved query, immutable revision, published version, and bounded
+        name snapshot. SQL, parameter values and defaults, column names, and result rows
+        remain outside Activity metadata. If Activity persistence is unavailable, the
+        request returns `503 Service Unavailable` without accepting an execution.
+
+        `query.started` records provider invocation. `query.succeeded` means results are
+        available for authorized retrieval, not that you have consumed them.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        saved_query_id : str
+            Unique stable identifier of the saved query.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
+
+        parameters : typing.Optional[typing.Dict[str, typing.Any]]
+            Named JSON scalar overrides for declared parameters. Omission uses published default_value, or SQL NULL for optional parameters without a default. Required parameters reject explicit null even with a default; without a default they also reject omission. Unknown names and invalid types are rejected.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ExecuteHarborSavedQueryEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.harbors.execute_saved_query(
+                harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                saved_query_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.execute_saved_query(
+            harbor_id,
+            saved_query_id,
+            polytomic_harbor_session=polytomic_harbor_session,
+            polytomic_activity_request_id=polytomic_activity_request_id,
+            parameters=parameters,
+            idempotency_key=idempotency_key,
+            request_options=request_options,
         )
         return _response.data
 

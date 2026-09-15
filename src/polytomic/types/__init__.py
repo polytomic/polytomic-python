@@ -114,6 +114,10 @@ if typing.TYPE_CHECKING:
     from .deleted_harbor_context_envelope_data import DeletedHarborContextEnvelopeData
     from .deleted_harbor_envelope import DeletedHarborEnvelope
     from .deleted_harbor_response import DeletedHarborResponse
+    from .deleted_harbor_saved_query_draft_envelope import DeletedHarborSavedQueryDraftEnvelope
+    from .deleted_harbor_saved_query_draft_envelope_data import DeletedHarborSavedQueryDraftEnvelopeData
+    from .deleted_harbor_saved_query_envelope import DeletedHarborSavedQueryEnvelope
+    from .deleted_harbor_saved_query_envelope_data import DeletedHarborSavedQueryEnvelopeData
     from .enricher_configuration import EnricherConfiguration
     from .enricher_mapping import EnricherMapping
     from .enrichment import Enrichment
@@ -137,6 +141,8 @@ if typing.TYPE_CHECKING:
     from .eventing_sync_schedule import EventingSyncSchedule
     from .events_envelope import EventsEnvelope
     from .execute_connection_proxy_envelope import ExecuteConnectionProxyEnvelope
+    from .execute_harbor_saved_query_envelope import ExecuteHarborSavedQueryEnvelope
+    from .execute_harbor_saved_query_envelope_data import ExecuteHarborSavedQueryEnvelopeData
     from .execution_console_log_entry import ExecutionConsoleLogEntry
     from .execution_console_logs_response import ExecutionConsoleLogsResponse
     from .execution_console_logs_response_envelope import ExecutionConsoleLogsResponseEnvelope
@@ -188,6 +194,17 @@ if typing.TYPE_CHECKING:
     from .harbor_pipeline_status_response import HarborPipelineStatusResponse
     from .harbor_pipeline_status_response_type import HarborPipelineStatusResponseType
     from .harbor_response import HarborResponse
+    from .harbor_saved_query_draft_envelope import HarborSavedQueryDraftEnvelope
+    from .harbor_saved_query_draft_list_envelope import HarborSavedQueryDraftListEnvelope
+    from .harbor_saved_query_draft_response import HarborSavedQueryDraftResponse
+    from .harbor_saved_query_envelope import HarborSavedQueryEnvelope
+    from .harbor_saved_query_list_envelope import HarborSavedQueryListEnvelope
+    from .harbor_saved_query_metadata_response import HarborSavedQueryMetadataResponse
+    from .harbor_saved_query_parameter import HarborSavedQueryParameter
+    from .harbor_saved_query_parameter_type import HarborSavedQueryParameterType
+    from .harbor_saved_query_preview_response import HarborSavedQueryPreviewResponse
+    from .harbor_saved_query_response import HarborSavedQueryResponse
+    from .harbor_saved_query_validation_envelope import HarborSavedQueryValidationEnvelope
     from .harbor_schema_list_envelope import HarborSchemaListEnvelope
     from .harbor_schema_response import HarborSchemaResponse
     from .harbor_source_mapping_response import HarborSourceMappingResponse
@@ -202,6 +219,8 @@ if typing.TYPE_CHECKING:
     from .harboractivityapi_harbor_activity_event import HarboractivityapiHarborActivityEvent
     from .harboractivityapi_harbor_activity_identity_snapshot import HarboractivityapiHarborActivityIdentitySnapshot
     from .harboractivityapi_harbor_activity_metadata import HarboractivityapiHarborActivityMetadata
+    from .harboractivityapi_harbor_activity_query_source import HarboractivityapiHarborActivityQuerySource
+    from .harboractivityapi_harbor_activity_saved_query_source import HarboractivityapiHarborActivitySavedQuerySource
     from .harboractivityapi_harbor_activity_session import HarboractivityapiHarborActivitySession
     from .harboractivityapi_harbor_activity_session_status import HarboractivityapiHarborActivitySessionStatus
     from .harboractivityapi_harbor_activity_target import HarboractivityapiHarborActivityTarget
@@ -243,6 +262,9 @@ if typing.TYPE_CHECKING:
     from .model_response_envelope import ModelResponseEnvelope
     from .model_sample import ModelSample
     from .model_sample_response_envelope import ModelSampleResponseEnvelope
+    from .model_sync_identities import ModelSyncIdentities
+    from .model_sync_identities_strategy import ModelSyncIdentitiesStrategy
+    from .model_sync_problem import ModelSyncProblem
     from .model_sync_v5response import ModelSyncV5Response
     from .model_sync_v5response_envelope import ModelSyncV5ResponseEnvelope
     from .model_sync_v5target import ModelSyncV5Target
@@ -449,6 +471,10 @@ _dynamic_imports: typing.Dict[str, str] = {
     "DeletedHarborContextEnvelopeData": ".deleted_harbor_context_envelope_data",
     "DeletedHarborEnvelope": ".deleted_harbor_envelope",
     "DeletedHarborResponse": ".deleted_harbor_response",
+    "DeletedHarborSavedQueryDraftEnvelope": ".deleted_harbor_saved_query_draft_envelope",
+    "DeletedHarborSavedQueryDraftEnvelopeData": ".deleted_harbor_saved_query_draft_envelope_data",
+    "DeletedHarborSavedQueryEnvelope": ".deleted_harbor_saved_query_envelope",
+    "DeletedHarborSavedQueryEnvelopeData": ".deleted_harbor_saved_query_envelope_data",
     "EnricherConfiguration": ".enricher_configuration",
     "EnricherMapping": ".enricher_mapping",
     "Enrichment": ".enrichment",
@@ -472,6 +498,8 @@ _dynamic_imports: typing.Dict[str, str] = {
     "EventingSyncSchedule": ".eventing_sync_schedule",
     "EventsEnvelope": ".events_envelope",
     "ExecuteConnectionProxyEnvelope": ".execute_connection_proxy_envelope",
+    "ExecuteHarborSavedQueryEnvelope": ".execute_harbor_saved_query_envelope",
+    "ExecuteHarborSavedQueryEnvelopeData": ".execute_harbor_saved_query_envelope_data",
     "ExecutionConsoleLogEntry": ".execution_console_log_entry",
     "ExecutionConsoleLogsResponse": ".execution_console_logs_response",
     "ExecutionConsoleLogsResponseEnvelope": ".execution_console_logs_response_envelope",
@@ -523,6 +551,17 @@ _dynamic_imports: typing.Dict[str, str] = {
     "HarborPipelineStatusResponse": ".harbor_pipeline_status_response",
     "HarborPipelineStatusResponseType": ".harbor_pipeline_status_response_type",
     "HarborResponse": ".harbor_response",
+    "HarborSavedQueryDraftEnvelope": ".harbor_saved_query_draft_envelope",
+    "HarborSavedQueryDraftListEnvelope": ".harbor_saved_query_draft_list_envelope",
+    "HarborSavedQueryDraftResponse": ".harbor_saved_query_draft_response",
+    "HarborSavedQueryEnvelope": ".harbor_saved_query_envelope",
+    "HarborSavedQueryListEnvelope": ".harbor_saved_query_list_envelope",
+    "HarborSavedQueryMetadataResponse": ".harbor_saved_query_metadata_response",
+    "HarborSavedQueryParameter": ".harbor_saved_query_parameter",
+    "HarborSavedQueryParameterType": ".harbor_saved_query_parameter_type",
+    "HarborSavedQueryPreviewResponse": ".harbor_saved_query_preview_response",
+    "HarborSavedQueryResponse": ".harbor_saved_query_response",
+    "HarborSavedQueryValidationEnvelope": ".harbor_saved_query_validation_envelope",
     "HarborSchemaListEnvelope": ".harbor_schema_list_envelope",
     "HarborSchemaResponse": ".harbor_schema_response",
     "HarborSourceMappingResponse": ".harbor_source_mapping_response",
@@ -537,6 +576,8 @@ _dynamic_imports: typing.Dict[str, str] = {
     "HarboractivityapiHarborActivityEvent": ".harboractivityapi_harbor_activity_event",
     "HarboractivityapiHarborActivityIdentitySnapshot": ".harboractivityapi_harbor_activity_identity_snapshot",
     "HarboractivityapiHarborActivityMetadata": ".harboractivityapi_harbor_activity_metadata",
+    "HarboractivityapiHarborActivityQuerySource": ".harboractivityapi_harbor_activity_query_source",
+    "HarboractivityapiHarborActivitySavedQuerySource": ".harboractivityapi_harbor_activity_saved_query_source",
     "HarboractivityapiHarborActivitySession": ".harboractivityapi_harbor_activity_session",
     "HarboractivityapiHarborActivitySessionStatus": ".harboractivityapi_harbor_activity_session_status",
     "HarboractivityapiHarborActivityTarget": ".harboractivityapi_harbor_activity_target",
@@ -578,6 +619,9 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ModelResponseEnvelope": ".model_response_envelope",
     "ModelSample": ".model_sample",
     "ModelSampleResponseEnvelope": ".model_sample_response_envelope",
+    "ModelSyncIdentities": ".model_sync_identities",
+    "ModelSyncIdentitiesStrategy": ".model_sync_identities_strategy",
+    "ModelSyncProblem": ".model_sync_problem",
     "ModelSyncV5Response": ".model_sync_v5response",
     "ModelSyncV5ResponseEnvelope": ".model_sync_v5response_envelope",
     "ModelSyncV5Target": ".model_sync_v5target",
@@ -808,6 +852,10 @@ __all__ = [
     "DeletedHarborContextEnvelopeData",
     "DeletedHarborEnvelope",
     "DeletedHarborResponse",
+    "DeletedHarborSavedQueryDraftEnvelope",
+    "DeletedHarborSavedQueryDraftEnvelopeData",
+    "DeletedHarborSavedQueryEnvelope",
+    "DeletedHarborSavedQueryEnvelopeData",
     "EnricherConfiguration",
     "EnricherMapping",
     "Enrichment",
@@ -831,6 +879,8 @@ __all__ = [
     "EventingSyncSchedule",
     "EventsEnvelope",
     "ExecuteConnectionProxyEnvelope",
+    "ExecuteHarborSavedQueryEnvelope",
+    "ExecuteHarborSavedQueryEnvelopeData",
     "ExecutionConsoleLogEntry",
     "ExecutionConsoleLogsResponse",
     "ExecutionConsoleLogsResponseEnvelope",
@@ -882,6 +932,17 @@ __all__ = [
     "HarborPipelineStatusResponse",
     "HarborPipelineStatusResponseType",
     "HarborResponse",
+    "HarborSavedQueryDraftEnvelope",
+    "HarborSavedQueryDraftListEnvelope",
+    "HarborSavedQueryDraftResponse",
+    "HarborSavedQueryEnvelope",
+    "HarborSavedQueryListEnvelope",
+    "HarborSavedQueryMetadataResponse",
+    "HarborSavedQueryParameter",
+    "HarborSavedQueryParameterType",
+    "HarborSavedQueryPreviewResponse",
+    "HarborSavedQueryResponse",
+    "HarborSavedQueryValidationEnvelope",
     "HarborSchemaListEnvelope",
     "HarborSchemaResponse",
     "HarborSourceMappingResponse",
@@ -896,6 +957,8 @@ __all__ = [
     "HarboractivityapiHarborActivityEvent",
     "HarboractivityapiHarborActivityIdentitySnapshot",
     "HarboractivityapiHarborActivityMetadata",
+    "HarboractivityapiHarborActivityQuerySource",
+    "HarboractivityapiHarborActivitySavedQuerySource",
     "HarboractivityapiHarborActivitySession",
     "HarboractivityapiHarborActivitySessionStatus",
     "HarboractivityapiHarborActivityTarget",
@@ -937,6 +1000,9 @@ __all__ = [
     "ModelResponseEnvelope",
     "ModelSample",
     "ModelSampleResponseEnvelope",
+    "ModelSyncIdentities",
+    "ModelSyncIdentitiesStrategy",
+    "ModelSyncProblem",
     "ModelSyncV5Response",
     "ModelSyncV5ResponseEnvelope",
     "ModelSyncV5Target",
