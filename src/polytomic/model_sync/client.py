@@ -15,6 +15,7 @@ from ..types.list_sync_response_envelope import ListSyncResponseEnvelope
 from ..types.model_field_response import ModelFieldResponse
 from ..types.model_filters import ModelFilters
 from ..types.model_sync_identities import ModelSyncIdentities
+from ..types.model_sync_source_identity import ModelSyncSourceIdentity
 from ..types.model_sync_v5response_envelope import ModelSyncV5ResponseEnvelope
 from ..types.model_sync_v5target import ModelSyncV5Target
 from ..types.modelsync_sync_target_mode import ModelsyncSyncTargetMode
@@ -804,6 +805,7 @@ class ModelSyncClient:
         *,
         identities: typing.Optional[typing.Sequence[str]] = OMIT,
         resync: typing.Optional[bool] = OMIT,
+        source_identities: typing.Optional[typing.Sequence[typing.Sequence[ModelSyncSourceIdentity]]] = OMIT,
         test: typing.Optional[bool] = OMIT,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -820,8 +822,12 @@ class ModelSyncClient:
         id : str
 
         identities : typing.Optional[typing.Sequence[str]]
+            Values of the sync's identity source field naming the records to sync. A sync with more than one identity mapping requires 'source_identities' instead.
 
         resync : typing.Optional[bool]
+
+        source_identities : typing.Optional[typing.Sequence[typing.Sequence[ModelSyncSourceIdentity]]]
+            Records to sync, each identified by every source and value its entry lists. The sources of an entry are identity mapping sources of one model, and an entry for a sync whose identities strategy is 'and' lists all of them. Cannot be combined with 'identities'; at most 1000 entries.
 
         test : typing.Optional[bool]
 
@@ -851,6 +857,7 @@ class ModelSyncClient:
             id,
             identities=identities,
             resync=resync,
+            source_identities=source_identities,
             test=test,
             idempotency_key=idempotency_key,
             request_options=request_options,
@@ -1767,6 +1774,7 @@ class AsyncModelSyncClient:
         *,
         identities: typing.Optional[typing.Sequence[str]] = OMIT,
         resync: typing.Optional[bool] = OMIT,
+        source_identities: typing.Optional[typing.Sequence[typing.Sequence[ModelSyncSourceIdentity]]] = OMIT,
         test: typing.Optional[bool] = OMIT,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -1783,8 +1791,12 @@ class AsyncModelSyncClient:
         id : str
 
         identities : typing.Optional[typing.Sequence[str]]
+            Values of the sync's identity source field naming the records to sync. A sync with more than one identity mapping requires 'source_identities' instead.
 
         resync : typing.Optional[bool]
+
+        source_identities : typing.Optional[typing.Sequence[typing.Sequence[ModelSyncSourceIdentity]]]
+            Records to sync, each identified by every source and value its entry lists. The sources of an entry are identity mapping sources of one model, and an entry for a sync whose identities strategy is 'and' lists all of them. Cannot be combined with 'identities'; at most 1000 entries.
 
         test : typing.Optional[bool]
 
@@ -1822,6 +1834,7 @@ class AsyncModelSyncClient:
             id,
             identities=identities,
             resync=resync,
+            source_identities=source_identities,
             test=test,
             idempotency_key=idempotency_key,
             request_options=request_options,

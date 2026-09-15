@@ -265,6 +265,7 @@ if typing.TYPE_CHECKING:
     from .model_sync_identities import ModelSyncIdentities
     from .model_sync_identities_strategy import ModelSyncIdentitiesStrategy
     from .model_sync_problem import ModelSyncProblem
+    from .model_sync_source_identity import ModelSyncSourceIdentity
     from .model_sync_v5response import ModelSyncV5Response
     from .model_sync_v5response_envelope import ModelSyncV5ResponseEnvelope
     from .model_sync_v5target import ModelSyncV5Target
@@ -622,6 +623,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ModelSyncIdentities": ".model_sync_identities",
     "ModelSyncIdentitiesStrategy": ".model_sync_identities_strategy",
     "ModelSyncProblem": ".model_sync_problem",
+    "ModelSyncSourceIdentity": ".model_sync_source_identity",
     "ModelSyncV5Response": ".model_sync_v5response",
     "ModelSyncV5ResponseEnvelope": ".model_sync_v5response_envelope",
     "ModelSyncV5Target": ".model_sync_v5target",
@@ -1003,6 +1005,7 @@ __all__ = [
     "ModelSyncIdentities",
     "ModelSyncIdentitiesStrategy",
     "ModelSyncProblem",
+    "ModelSyncSourceIdentity",
     "ModelSyncV5Response",
     "ModelSyncV5ResponseEnvelope",
     "ModelSyncV5Target",

@@ -5,10 +5,10 @@
   "generatorConfig": {
     "client_class_name": "Polytomic"
   },
-  "originGitCommit": "b5bec8e5a7cd472da4c3c15030f606df1f82096e",
+  "originGitCommit": "8f65aea9d7b195fa78fd9aceaea2a36640808274",
   "originGitCommitIsDirty": false,
   "invokedBy": "ci",
-  "requestedVersion": "25.9.7",
+  "requestedVersion": "25.9.8",
   "ciProvider": "github",
-  "sdkVersion": "25.9.7"
+  "sdkVersion": "25.9.8"
 }

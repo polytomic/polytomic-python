@@ -198,11 +198,12 @@ class RawOrganizationClient:
         *,
         enabled: bool,
         delivery_connection_id: typing.Optional[str] = OMIT,
+        delivery_prefix: typing.Optional[str] = OMIT,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[RecordLoggingSettingsEnvelope]:
         """
-        Replaces the organization's record logging settings. `deliveryConnectionId` is replaced, not merged: omitting it, or sending null, removes any destination previously configured.
+        Replaces the organization's record logging settings. `deliveryConnectionId` and `deliveryPrefix` are replaced, not merged: omitting either, or sending null, removes what was previously configured.
 
         Parameters
         ----------
@@ -211,6 +212,9 @@ class RawOrganizationClient:
 
         delivery_connection_id : typing.Optional[str]
             Blobstorage connection that receives record logs after each model sync execution. Omit or send null to deliver nowhere; this field is replaced, not merged.
+
+        delivery_prefix : typing.Optional[str]
+            Path record logs are delivered under, ahead of the organization ID. Omit or send null for none; this field is replaced, not merged.
 
         idempotency_key : typing.Optional[str]
 
@@ -227,6 +231,7 @@ class RawOrganizationClient:
             method="PUT",
             json={
                 "deliveryConnectionId": delivery_connection_id,
+                "deliveryPrefix": delivery_prefix,
                 "enabled": enabled,
             },
             headers={
@@ -986,11 +991,12 @@ class AsyncRawOrganizationClient:
         *,
         enabled: bool,
         delivery_connection_id: typing.Optional[str] = OMIT,
+        delivery_prefix: typing.Optional[str] = OMIT,
         idempotency_key: typing.Optional[str] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[RecordLoggingSettingsEnvelope]:
         """
-        Replaces the organization's record logging settings. `deliveryConnectionId` is replaced, not merged: omitting it, or sending null, removes any destination previously configured.
+        Replaces the organization's record logging settings. `deliveryConnectionId` and `deliveryPrefix` are replaced, not merged: omitting either, or sending null, removes what was previously configured.
 
         Parameters
         ----------
@@ -999,6 +1005,9 @@ class AsyncRawOrganizationClient:
 
         delivery_connection_id : typing.Optional[str]
             Blobstorage connection that receives record logs after each model sync execution. Omit or send null to deliver nowhere; this field is replaced, not merged.
+
+        delivery_prefix : typing.Optional[str]
+            Path record logs are delivered under, ahead of the organization ID. Omit or send null for none; this field is replaced, not merged.
 
         idempotency_key : typing.Optional[str]
 
@@ -1015,6 +1024,7 @@ class AsyncRawOrganizationClient:
             method="PUT",
             json={
                 "deliveryConnectionId": delivery_connection_id,
+                "deliveryPrefix": delivery_prefix,
                 "enabled": enabled,
             },
             headers={

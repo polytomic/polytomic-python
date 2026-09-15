@@ -5962,7 +5962,7 @@ client.model_sync.start(
 <dl>
 <dd>
 
-**identities:** `typing.Optional[typing.List[str]]` 
+**identities:** `typing.Optional[typing.List[str]]` — Values of the sync's identity source field naming the records to sync. A sync with more than one identity mapping requires 'source_identities' instead.
     
 </dd>
 </dl>
@@ -5971,6 +5971,14 @@ client.model_sync.start(
 <dd>
 
 **resync:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**source_identities:** `typing.Optional[typing.List[typing.List[ModelSyncSourceIdentity]]]` — Records to sync, each identified by every source and value its entry lists. The sources of an entry are identity mapping sources of one model, and an entry for a sync whose identities strategy is 'and' lists all of them. Cannot be combined with 'identities'; at most 1000 entries.
     
 </dd>
 </dl>
@@ -11407,7 +11415,7 @@ client.organization.get_record_logging()
 <dl>
 <dd>
 
-Replaces the organization's record logging settings. `deliveryConnectionId` is replaced, not merged: omitting it, or sending null, removes any destination previously configured.
+Replaces the organization's record logging settings. `deliveryConnectionId` and `deliveryPrefix` are replaced, not merged: omitting either, or sending null, removes what was previously configured.
 </dd>
 </dl>
 </dd>
@@ -11457,6 +11465,14 @@ client.organization.update_record_logging(
 <dd>
 
 **delivery_connection_id:** `typing.Optional[str]` — Blobstorage connection that receives record logs after each model sync execution. Omit or send null to deliver nowhere; this field is replaced, not merged.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**delivery_prefix:** `typing.Optional[str]` — Path record logs are delivered under, ahead of the organization ID. Omit or send null for none; this field is replaced, not merged.
     
 </dd>
 </dl>

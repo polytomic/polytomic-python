@@ -33,6 +33,18 @@ class RecordLoggingSettingsResponse(UniversalBaseModel):
     Name of the destination connection, for display. Omitted when no destination is configured or the connection has been deleted.
     """
 
+    delivery_prefix: typing_extensions.Annotated[
+        typing.Optional[str],
+        FieldMetadata(alias="deliveryPrefix"),
+        pydantic.Field(
+            alias="deliveryPrefix",
+            description="Path record logs are delivered under, ahead of the organization ID, if one is set.",
+        ),
+    ] = None
+    """
+    Path record logs are delivered under, ahead of the organization ID, if one is set.
+    """
+
     enabled: typing.Optional[bool] = pydantic.Field(default=None)
     """
     True when record logging is enabled for the organization.
