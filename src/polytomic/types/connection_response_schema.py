@@ -7,6 +7,7 @@ import pydantic
 import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 from ..core.serialization import FieldMetadata
+from .connection_response_schema_rate_limit import ConnectionResponseSchemaRateLimit
 from .connection_type_schema import ConnectionTypeSchema
 from .output_actor import OutputActor
 
@@ -36,6 +37,11 @@ class ConnectionResponseSchema(UniversalBaseModel):
     """
 
     policies: typing.Optional[typing.List[str]] = None
+    rate_limit: typing.Optional[ConnectionResponseSchemaRateLimit] = pydantic.Field(default=None)
+    """
+    Observed connection-wide rate limiting, independent of connection health. Null when any required lookup is unavailable. Shared connections combine their own marker with their root connection's marker.
+    """
+
     saved: typing.Optional[bool] = None
     status: typing.Optional[str] = None
     status_error: typing.Optional[str] = None

@@ -9,9 +9,14 @@ from .temporary_credential_subject_type import TemporaryCredentialSubjectType
 
 
 class TemporaryCredentialSubject(UniversalBaseModel):
+    harbor_id: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Target Harbor for a Harbor credential.
+    """
+
     mode: typing.Optional[TemporaryCredentialSubjectMode] = pydantic.Field(default=None)
     """
-    Authority mode for a user credential. Defaults to user. Profile subjects do not accept this field.
+    Authority mode for a user credential. Defaults to user. Harbor subjects do not accept this field.
     """
 
     organization_id: typing.Optional[str] = pydantic.Field(default=None)
@@ -19,14 +24,9 @@ class TemporaryCredentialSubject(UniversalBaseModel):
     Target organization for broker-issued credentials. Omit when the caller's organization determines the target.
     """
 
-    profile_id: typing.Optional[str] = pydantic.Field(default=None)
-    """
-    Target Agent Data profile for a profile credential.
-    """
-
     type: TemporaryCredentialSubjectType = pydantic.Field()
     """
-    Authority subject type. Use user for current user authority or profile for an Agent Data profile.
+    Authority subject type. Use user for current user authority or harbor for a Harbor.
     """
 
     user_id: typing.Optional[str] = pydantic.Field(default=None)

@@ -5,17 +5,19 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
+from .operation_search_rate_limit_reason import OperationSearchRateLimitReason
 
 
-class Webhook(UniversalBaseModel):
-    created_at: typing.Optional[dt.datetime] = None
-    disabled: typing.Optional[bool] = None
-    disabled_at: typing.Optional[dt.datetime] = None
-    disabled_reason: typing.Optional[str] = None
-    endpoint: typing.Optional[str] = None
-    id: typing.Optional[str] = None
-    organization_id: typing.Optional[str] = None
-    secret: typing.Optional[str] = None
+class OperationSearchRateLimit(UniversalBaseModel):
+    reason: OperationSearchRateLimitReason = pydantic.Field()
+    """
+    The exhausted question budget.
+    """
+
+    reset_at: dt.datetime = pydantic.Field()
+    """
+    UTC time when this exhausted budget resets.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

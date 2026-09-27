@@ -7,6 +7,11 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 
 
 class IdentityCredentialHarborSchema(UniversalBaseModel):
+    actions_enabled: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    Whether the organization has the Harbor actions feature enabled. Controls action tool visibility in new MCP sessions; does not grant permission or indicate that an action is configured.
+    """
+
     description: typing.Optional[str] = pydantic.Field(default=None)
     """
     Organization-provided summary of the Harbor.

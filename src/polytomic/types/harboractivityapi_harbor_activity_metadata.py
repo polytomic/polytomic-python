@@ -7,6 +7,12 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 
 
 class HarboractivityapiHarborActivityMetadata(UniversalBaseModel):
+    action_enabled: typing.Optional[bool] = None
+    action_field_ids: typing.Optional[typing.List[str]] = None
+    action_id: typing.Optional[str] = None
+    action_lookup_field_id: typing.Optional[str] = None
+    action_lookup_field_ids: typing.Optional[typing.List[str]] = None
+    action_request_id: typing.Optional[str] = None
     attempt_number: typing.Optional[int] = None
     category: typing.Optional[str] = None
     client_name: typing.Optional[str] = None
@@ -22,6 +28,7 @@ class HarboractivityapiHarborActivityMetadata(UniversalBaseModel):
     error_category: typing.Optional[str] = None
     execution_duration_ms: typing.Optional[int] = None
     external_run_id: typing.Optional[str] = None
+    failure_code: typing.Optional[str] = None
     field_count: typing.Optional[int] = pydantic.Field(default=None)
     """
     Number of fields returned by a query. Raw field names are not returned.

@@ -18,6 +18,11 @@ class FieldConfiguration(UniversalBaseModel):
     Whether the field should be obfuscated.
     """
 
+    user_output_name: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    User-specified override for the destination field name. Omit to keep the current value; send an empty string to clear it.
+    """
+
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
     else:

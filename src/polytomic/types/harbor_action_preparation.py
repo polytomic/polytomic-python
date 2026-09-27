@@ -7,15 +7,9 @@ import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 
 
-class Webhook(UniversalBaseModel):
-    created_at: typing.Optional[dt.datetime] = None
-    disabled: typing.Optional[bool] = None
-    disabled_at: typing.Optional[dt.datetime] = None
-    disabled_reason: typing.Optional[str] = None
-    endpoint: typing.Optional[str] = None
-    id: typing.Optional[str] = None
-    organization_id: typing.Optional[str] = None
-    secret: typing.Optional[str] = None
+class HarborActionPreparation(UniversalBaseModel):
+    execution_id: typing.Optional[str] = None
+    expires_at: typing.Optional[dt.datetime] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

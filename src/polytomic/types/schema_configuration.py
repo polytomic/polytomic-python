@@ -26,6 +26,10 @@ class SchemaConfiguration(UniversalBaseModel):
     id: typing.Optional[str] = None
     partition_key: typing.Optional[str] = None
     tracking_field: typing.Optional[str] = None
+    user_output_name: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    User-specified override for the destination object name. Omit to keep the current value; send an empty string to clear it.
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

@@ -1635,6 +1635,27 @@ exposes, consult the parameter schema returned by
 To inspect the data objects available on a specific connection, use
 [`POST /api/connections/{id}/schemas/refresh`](../../api-reference/schemas/refresh)
 followed by [`GET /api/connections/{id}/schemas/status`](../../api-reference/schemas/get-status).
+
+## Observed rate limits
+
+You can use `rate_limit` to inspect observed rate limiting separately from
+Connection health. A Connection can be healthy while Polytomic has an active
+rate-limit marker. Shared Connections combine observations recorded for their
+own ID and their root Connection. Observations recorded only for another shared
+copy are not included.
+
+When these observed periods overlap or touch, `limited_since` reflects the start
+of the continuous period and `expires_at` reflects its latest expiry. An expired
+period separated from the active period by a gap does not extend that start.
+
+> ⚠️ Observation, not a capacity guarantee
+>
+> An active marker does not mean every endpoint or sync is blocked. No active
+> marker does not guarantee that the upstream service has capacity. The marker
+> expiry can be extended and is not a promised provider reset or exact retry time.
+
+If any required lookup is unavailable, `rate_limit` is `null`. This does not change
+`status` or `status_error`, and the Connection response is still returned.
 </dd>
 </dl>
 </dd>
@@ -2172,6 +2193,27 @@ To inspect the schemas available on this connection, trigger a refresh with
 [`POST /api/connections/{id}/schemas/refresh`](../../../api-reference/schemas/refresh) and
 track progress via
 [`GET /api/connections/{id}/schemas/status`](../../../api-reference/schemas/get-status).
+
+## Observed rate limits
+
+You can use `rate_limit` to inspect observed rate limiting separately from
+Connection health. A Connection can be healthy while Polytomic has an active
+rate-limit marker. Shared Connections combine observations recorded for their
+own ID and their root Connection. Observations recorded only for another shared
+copy are not included.
+
+When these observed periods overlap or touch, `limited_since` reflects the start
+of the continuous period and `expires_at` reflects its latest expiry. An expired
+period separated from the active period by a gap does not extend that start.
+
+> ⚠️ Observation, not a capacity guarantee
+>
+> An active marker does not mean every endpoint or sync is blocked. No active
+> marker does not guarantee that the upstream service has capacity. The marker
+> expiry can be extended and is not a promised provider reset or exact retry time.
+
+If any required lookup is unavailable, `rate_limit` is `null`. This does not change
+`status` or `status_error`, and the Connection response is still returned.
 </dd>
 </dl>
 </dd>
@@ -11267,6 +11309,214 @@ client.notifications.set_global_error_subscribers()
 </dl>
 </details>
 
+## Operations
+<details><summary><code>client.operations.<a href="src/polytomic/operations/client.py">search</a>(...) -> SearchOperationsEnvelope</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Finds documented REST operations for up to three plain-language tasks in one request.
+
+This endpoint returns HTTP 503 when operation search is not configured for the
+API deployment. Check [search availability](../../../api-reference/operations/get-search-availability)
+before offering operation search in a client.
+
+Each question counts against three fixed UTC-window budgets: 12 questions per
+Organization per minute, 300 per Organization per day, and 60 per minute
+across the deployment. A request with three tasks uses three questions from
+each budget. At most eight provider calls run concurrently across the
+deployment. These are initial defaults; operators can adjust them with
+`API_DISCOVERY_ORG_QUESTIONS_PER_MINUTE`,
+`API_DISCOVERY_ORG_QUESTIONS_PER_DAY`,
+`API_DISCOVERY_GLOBAL_QUESTIONS_PER_MINUTE`, and
+`API_DISCOVERY_GLOBAL_IN_FLIGHT`. All settings must be positive integers.
+Daily budgets reset at 00:00 UTC; minute budgets reset on UTC minute
+boundaries, which can allow a short burst across adjacent minutes. Calls
+rejected by a limit return HTTP 429 with a `Retry-After` header in seconds.
+A submitted call still counts if the provider fails. If admission is
+unavailable, the endpoint returns HTTP 503 instead of contacting the provider.
+
+Pass `operationIds` to rank only those documented operations. The list must
+contain at least one unique, known `METHOD /api/path` ID. If you omit it,
+Polytomic ranks all documented operations. Every ranking also includes the
+no-match option. The response's `sourceSha256` is the SHA-256 of the internal processed MCP
+spec artifact used to build the operation catalog. It is not the digest of the
+public OpenAPI document. Treat it as an opaque catalog version for detecting
+drift between the API and MCP deployments.
+
+Each task has its own ranking in the same order as `queries`. The scores within
+one task describe the relative probability of choosing each operation as the
+single best option, including the no-match option. They are not independent
+relevance scores and cannot be compared across tasks.
+
+If no documented operation is the best choice, `matches` is empty. Results
+come from the public API contract, not your Organization's data. Finding an
+operation does not authorize you to call it; the operation's own authentication
+and permissions still apply.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
+
+client = Polytomic(
+    token="<token>",
+    environment=PolytomicEnvironment.DEFAULT,
+)
+
+client.operations.search(
+    queries=[
+        "queries"
+    ],
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**queries:** `typing.List[str]` — One to three plain-language tasks to find API operations for.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` — Maximum operations per task, from 1 to 10; defaults to 5.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**operation_ids:** `typing.Optional[typing.List[str]]` — Optional nonempty list of unique stable operation IDs to rank; omitted to rank the full catalog.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.operations.<a href="src/polytomic/operations/client.py">get_search_availability</a>() -> OperationSearchAvailabilityEnvelope</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Reports whether operation search is configured on this API deployment.
+
+When a request for one question would exceed an Organization-minute,
+Organization-day, or deployment-minute question budget, the response includes
+`rate_limited` with a reason and a UTC `reset_at` timestamp. If more than one
+budget is exhausted, the timestamp reflects the latest reset. The check does
+not use any question allowance.
+
+> ⚠️ The result is a snapshot. A later request can be limited even if this
+> response has no `rate_limited` field, especially if it contains two or three
+> questions or other requests use the shared budget. Concurrent-call limits
+> are not included. The search request's `429` response and `Retry-After` header
+> are authoritative.
+
+If your request does not identify an Organization, the response reports only
+`enabled`. When `enabled` is `false`, `rate_limited` is omitted. If Polytomic
+cannot check the question budgets, the endpoint returns `503`.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
+
+client = Polytomic(
+    token="<token>",
+    environment=PolytomicEnvironment.DEFAULT,
+)
+
+client.operations.get_search_availability()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Organization
 <details><summary><code>client.organization.<a href="src/polytomic/organization/client.py">get_current</a>() -> OrganizationEnvelope</code></summary>
 <dl>
@@ -13616,7 +13866,7 @@ client.record_view_links.get_capabilities(
 <dl>
 <dd>
 
-Issues a non-renewable credential with a bounded lifetime for a user or Agent Data profile.
+Issues a non-renewable credential with a bounded lifetime for a user or Harbor.
 
 The response contains the credential secret once. Store it securely and send it
 as a Bearer token in the `Authorization` header.
@@ -13629,17 +13879,17 @@ read-only caller can issue only read-only credentials.
 
 Partner callers must provide both `organization_id` and `user_id`. The target
 must be an active user in an organization owned by the partner. User subjects
-must be application users; Agent Data portal-only users continue to use profile
+must be application users; Harbor-only users continue to use Harbor
 credentials.
 
 User credentials resolve the subject's current permissions on every request.
 Permission changes take effect immediately, and deleting the user invalidates
 the credential.
 
-Set `subject.type` to `profile` and provide the Agent Data profile ID. The
-credential uses the profile's current connection access on every request;
-changes take effect immediately, and deleting the profile invalidates the
-credential.
+Set `subject.type` to `harbor` and provide the Harbor ID in `harbor_id`. The
+credential uses the Harbor's current connection access on every request;
+changes take effect immediately. Missing and deleted Harbors cannot be
+targeted.
 
 A temporary credential stops authenticating at `expires_at`. It cannot be
 refreshed, extended, or used to create another temporary credential. Create a
@@ -16782,6 +17032,27 @@ downstream organizations have already received a shared copy.
 Creating a new shared copy is a separate operation. Use
 [`POST /api/organizations/{org_id}/connections/{connection_id}/share`](../../../../api-reference/connections/create-shared-connection)
 for the v5 partner-scoped flow.
+
+## Observed rate limits
+
+You can use `rate_limit` to inspect observed rate limiting separately from
+Connection health. A Connection can be healthy while Polytomic has an active
+rate-limit marker. Shared Connections combine observations recorded for their
+own ID and their root Connection. Observations recorded only for another shared
+copy are not included.
+
+When these observed periods overlap or touch, `limited_since` reflects the start
+of the continuous period and `expires_at` reflects its latest expiry. An expired
+period separated from the active period by a gap does not extend that start.
+
+> ⚠️ Observation, not a capacity guarantee
+>
+> An active marker does not mean every endpoint or sync is blocked. No active
+> marker does not guarantee that the upstream service has capacity. The marker
+> expiry can be extended and is not a promised provider reset or exact retry time.
+
+If any required lookup is unavailable, `rate_limit` is `null`. This does not change
+`status` or `status_error`, and the Connection response is still returned.
 </dd>
 </dl>
 </dd>
@@ -16863,6 +17134,27 @@ parent connection.
 This endpoint is useful in partner workflows where the parent connection is in
 the partner owner organization and the caller needs to audit which child
 organizations already have a shared copy.
+
+## Observed rate limits
+
+You can use `rate_limit` to inspect observed rate limiting separately from
+Connection health. A Connection can be healthy while Polytomic has an active
+rate-limit marker. Shared Connections combine observations recorded for their
+own ID and their root Connection. Observations recorded only for another shared
+copy are not included.
+
+When these observed periods overlap or touch, `limited_since` reflects the start
+of the continuous period and `expires_at` reflects its latest expiry. An expired
+period separated from the active period by a gap does not extend that start.
+
+> ⚠️ Observation, not a capacity guarantee
+>
+> An active marker does not mean every endpoint or sync is blocked. No active
+> marker does not guarantee that the upstream service has capacity. The marker
+> expiry can be extended and is not a promised provider reset or exact retry time.
+
+If any required lookup is unavailable, `rate_limit` is `null`. This does not change
+`status` or `status_error`, and the Connection response is still returned.
 </dd>
 </dl>
 </dd>
@@ -17012,6 +17304,920 @@ client.connections.shared_connections.create_shared_connection(
 <dd>
 
 **name:** `typing.Optional[str]` — Optional name for the shared copy. Defaults to the parent connection name.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Harbors Actions
+<details><summary><code>client.harbors.actions.<a href="src/polytomic/harbors/actions/client.py">get_execution</a>(...) -> HarborActionExecutionEnvelope</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Read a metadata-only action receipt without resubmitting the action.
+
+Use a currently valid scoped credential belonging to the original Harbor. The
+receipt remains readable after the action or rollout feature is disabled. A
+credential from another Harbor cannot inspect it. The response does not contain
+lookup values, input values, output payloads, credential secrets, or raw provider
+errors. It includes structured operation identity, lookup field names, submitted
+field names, and the original credential ID.
+
+An overdue executing receipt transitions atomically to `unknown`; this read
+never invokes the destination provider. Stop polling at `succeeded`, `failed`, or `unknown`.
+Unknown is terminal for this execution identifier and means the update may have
+happened. Investigate rather than preparing a replacement action to retry.
+
+Preparation alone has no execution receipt. A `404 Not Found` after an uncertain
+execution does not prove the operation never happened.
+
+Send a new nonzero UUID in `X-Polytomic-Activity-Request-ID`. Direct REST requests
+may omit `X-Polytomic-Harbor-Session`; a supplied session must be active and bound
+to the same credential and Harbor.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
+
+client = Polytomic(
+    token="<token>",
+    environment=PolytomicEnvironment.DEFAULT,
+)
+
+client.harbors.actions.get_execution(
+    harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**harbor_id:** `str` — Unique identifier of the Harbor.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**execution_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**polytomic_harbor_session:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**polytomic_activity_request_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.harbors.actions.<a href="src/polytomic/harbors/actions/client.py">list</a>(...) -> HarborActionListEnvelope</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List a page of configured action identities without loading provider capabilities or field metadata.
+
+Use a scoped credential belonging to this Harbor. An administrator must first
+select Connections and explicitly enable object operations and fields. These
+grants apply to existing and future eligible Harbor credentials without changing
+read access. Newly available objects and fields remain disabled until selected.
+
+Each entry identifies a configured operation by `connection_id`, `schema_id`, and
+`operation_id`. Search filters those identities. Follow
+`pagination.next_page_token` with the same search to read additional pages.
+Pages contain saved identities without field metadata or provider capability
+checks. `unavailable: true` means the saved Connection is unavailable for actions;
+its permissions remain saved and revocable. An available Connection does not
+confirm that its operations or granted fields are currently available.
+
+Use [Describe action](../../../../api-reference/harbors/actions/describe) for the selected
+operation before looking up a record or
+[preparing an action](../../../../api-reference/harbors/actions/prepare). Description checks
+current provider capabilities and returns the operation's `effect` (`read_only`
+or `mutating`) and effective granted fields.
+Always submit the intended Connection explicitly when looking up or preparing,
+even if only one is enabled. If several destinations match your intent, clarify
+which one to use.
+
+Read-only operations use [Lookup action](../../../../api-reference/harbors/actions/lookup)
+without preparation or approval. Salesforce and HubSpot support exact lookups by
+their canonical record ID. Listing does not grant additional permissions or
+authorize mutations by a read-only credential.
+
+Send a new nonzero UUID in `X-Polytomic-Activity-Request-ID`. For direct REST
+requests, `X-Polytomic-Harbor-Session` is optional. If supplied, the session must
+be active and bound to the credential and Harbor. Discovery is recorded as
+`action.listed`; no response is returned if that event cannot be recorded.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
+
+client = Polytomic(
+    token="<token>",
+    environment=PolytomicEnvironment.DEFAULT,
+)
+
+client.harbors.actions.list(
+    harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    search="search",
+    page_token="page_token",
+    limit=1,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**harbor_id:** `str` — Unique identifier of the Harbor.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**search:** `typing.Optional[str]` — Filter configured schema or operation identities.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page_token:** `typing.Optional[str]` — Continuation token from the previous page; keep search unchanged.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**polytomic_harbor_session:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**polytomic_activity_request_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.harbors.actions.<a href="src/polytomic/harbors/actions/client.py">describe</a>(...) -> HarborActionDescribeEnvelope</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Describe one granted operation and its currently available enabled fields.
+
+Select an identity from [List actions](../../../../../api-reference/harbors/actions/list).
+Supply its `connection_id`, `schema_id`, and `operation_id`. Use a scoped
+credential belonging to this Harbor; description does not require write access.
+
+`effect` identifies an operation as `read_only` or `mutating`. For read-only
+operations, `lookup_fields` and `output_fields` contain only fields both granted
+by the administrator and currently available through the Connection.
+`input_fields` is empty. Use
+[Lookup action](../../../../../api-reference/harbors/actions/lookup) to return one projected
+record without preparation.
+
+For mutations, `input_fields` contains only granted, currently available fields.
+`lookup_fields` and `output_fields` describe the connector's lookup and output.
+Fields retain their types, constraints, required flags, and nullability. Supply
+exactly one lookup when `lookup_fields` is nonempty; otherwise omit it. Omitted
+input fields remain unchanged. Explicit null requires `nullable: true`.
+
+For mutations, `idempotency` describes remote deduplication, not permission to
+retry. Harbor write receipts remain metadata-only.
+
+A provider discovery failure or a granted operation that is no longer available
+returns `503 Service Unavailable`, not an empty field list. An ungranted identity
+returns `403 Forbidden`. These responses do not revoke saved permissions.
+Polytomic checks current grants and provider capabilities again at execution.
+
+Description fetches only the selected object's operations. It does not fetch
+fields for the entire catalog. Lookup permissions are checked against fresh
+provider metadata. Provider permissions and automation still apply.
+
+Send a new nonzero UUID in `X-Polytomic-Activity-Request-ID`. A supplied
+`X-Polytomic-Harbor-Session` must be active and bound to this credential and
+Harbor. Successful description is recorded as `action.listed`.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
+
+client = Polytomic(
+    token="<token>",
+    environment=PolytomicEnvironment.DEFAULT,
+)
+
+client.harbors.actions.describe(
+    harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    schema_id="schema_id",
+    operation_id="operation_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**harbor_id:** `str` — Unique identifier of the Harbor.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**connection_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**schema_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**operation_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**polytomic_harbor_session:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**polytomic_activity_request_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.harbors.actions.<a href="src/polytomic/harbors/actions/client.py">execute</a>(...) -> HarborActionExecutionEnvelope</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Execute a prepared action with at most one application attempt per server-issued execution identifier.
+
+First call [Prepare action](../../../../../api-reference/harbors/actions/prepare). Submit only
+its server-issued `execution_id` using a writable scoped credential belonging to
+the same Harbor. The destination, operation, lookup, and input are fixed by
+preparation. No per-request approval is required.
+
+Polytomic checks current grants, provider capabilities, and the saved Connection
+again before execution. Preparation does not reserve permission. An expired
+preparation cannot start an execution. It returns `410 Gone` while the expired
+preparation remains available, or `404 Not Found` after cleanup.
+
+> 🚧 Updates can overwrite intervening edits
+>
+> Enabled operations can act on records accessible through the saved Connection
+> and may trigger provider automation. Preparation does not lock the destination
+> record. Action permission does not grant read access.
+
+## One intended attempt
+
+An identifier already claimed for execution returns its original receipt,
+including through another eligible credential or after action disablement.
+Receipts remain available after prepared arguments are removed or expire.
+They are retained independently of Activity history.
+
+An `action.attempt_started` event means permission to attempt the action was
+claimed, not that the provider received it. Disabling actions blocks new claims
+but does not recall an accepted attempt. This is at most one application attempt
+per execution identifier, not a remote exactly-once guarantee. Advertised remote
+idempotency does not authorize automatic replay.
+
+## Results and recovery
+
+Keep `execution_id` and the returned `status_path`. `succeeded` means the provider
+confirmed the operation and Polytomic recorded that outcome. `failed` means the
+operation was rejected. `executing` is incomplete. `recovery_required: true`
+does not confirm durable acceptance or completion. Use the status path after a
+timeout or server error. A missing receipt does not prove no operation occurred.
+
+> ⚠️ An unknown outcome is terminal
+>
+> `unknown` means the operation may have happened. Investigate the record and
+> provider automation. Do not resubmit or prepare a replacement action to retry.
+> Polytomic never automatically retries an uncertain attempt. An overdue
+> executing receipt becomes unknown after its 90-second deadline.
+
+Send a separate nonzero UUID in `X-Polytomic-Activity-Request-ID` for each HTTP
+request. MCP supplies this transport header automatically.
+`X-Polytomic-Harbor-Session` is optional for direct REST requests; a supplied
+session must be active and bound to your credential and Harbor. Receipts and
+Activity contain operation identity, lookup field names, submitted field names,
+original attribution, and safe outcome categories. They exclude lookup values,
+input values, output payloads, and raw provider errors.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
+
+client = Polytomic(
+    token="<token>",
+    environment=PolytomicEnvironment.DEFAULT,
+)
+
+client.harbors.actions.execute(
+    harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    execution_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**harbor_id:** `str` — Unique identifier of the Harbor.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**execution_id:** `str` — Server-issued identifier returned by prepare. Preserve it for status recovery; never prepare a replacement to retry uncertainty.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**polytomic_harbor_session:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**polytomic_activity_request_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.harbors.actions.<a href="src/polytomic/harbors/actions/client.py">lookup</a>(...) -> HarborActionLookupEnvelope</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Look up exactly one record using a granted read-only Harbor action.
+
+Use a scoped credential belonging to this Harbor, including a read-only
+credential. An administrator must grant the Connection, read-only operation,
+lookup field, and returned fields. Select an identity with
+[List actions](../../../../../api-reference/harbors/actions/list), then inspect its effective
+lookup and output fields with
+[Describe action](../../../../../api-reference/harbors/actions/describe).
+
+Polytomic checks current grants and provider capabilities on each lookup. The
+response contains one record under `data`, limited to the selected fields.
+Omitting `fields` returns all currently available granted outputs;
+new provider fields remain excluded until an administrator grants them.
+Salesforce uses `Id`; HubSpot uses `hs_object_id`. Preserve these IDs as strings.
+Alternate keys, fuzzy matches, search, and batching are unsupported.
+
+A definite absence returns `404 Not Found`. More than one exact match returns
+`409 Conflict`. Invalid selections return `400 Bad Request`; unavailable
+capabilities or provider failures return `503 Service Unavailable`. Errors do
+not include lookup values or provider response bodies.
+
+This request is synchronous and read-only. It requires no preparation, approval,
+execution identifier, or status polling. It creates no write receipt or private
+write evidence. Harbor Activity records `action.looked_up` with field names and
+an outcome, never the lookup value or returned values. If Activity cannot be
+recorded, Polytomic returns no record.
+
+Unknown properties, duplicate keys, invalid Unicode, trailing JSON, and bodies
+larger than 256 KiB are rejected. Lookup values must be JSON scalars. Numeric
+values must use integer notation within +/-9007199254740991.
+
+Send a new nonzero UUID in `X-Polytomic-Activity-Request-ID` for each request.
+`X-Polytomic-Harbor-Session` is optional for direct REST requests. A supplied
+session must be active and bound to your credential and Harbor.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic, ActionLookup
+from polytomic.environment import PolytomicEnvironment
+
+client = Polytomic(
+    token="<token>",
+    environment=PolytomicEnvironment.DEFAULT,
+)
+
+client.harbors.actions.lookup(
+    harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    lookup=ActionLookup(),
+    operation_id="operation_id",
+    schema_id="schema_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**harbor_id:** `str` — Unique identifier of the Harbor.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**connection_id:** `str` — Connection ID from Harbor action discovery.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**lookup:** `ActionLookup` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**operation_id:** `str` — Exact read-only operation ID from action discovery.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**schema_id:** `str` — Exact schema ID from action discovery.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**polytomic_harbor_session:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**polytomic_activity_request_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**fields:** `typing.Optional[typing.List[str]]` — Unique, nonempty subset of granted output field IDs. Omit to return all currently available granted outputs. Null and empty arrays are invalid.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.harbors.actions.<a href="src/polytomic/harbors/actions/client.py">prepare</a>(...) -> HarborActionPreparationEnvelope</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Validate and prepare an enabled action without executing it, returning a server-issued execution identifier.
+
+Use a writable scoped credential belonging to this Harbor. An administrator must
+first enable the destination Connection, operation, and input fields. Select an
+identity with [List actions](../../../../../api-reference/harbors/actions/list), then inspect
+its fields with [Describe action](../../../../../api-reference/harbors/actions/describe).
+
+Preparation validates and temporarily stores the exact destination, lookup, and
+input. It returns a server-generated `execution_id` and `expires_at`. You do not
+supply an execution UUID. Preparation neither performs nor approves a destination
+mutation. Call [Execute action](../../../../../api-reference/harbors/actions/execute) with only
+the returned identifier within 15 minutes. Polytomic checks current permissions,
+provider capabilities, and the saved Connection again at execution.
+
+Supply one advertised lookup when `lookup_fields` is nonempty. Otherwise omit
+`lookup`. Omitted input fields remain unchanged. Explicit `null` requires
+`nullable: true`. Empty and blank strings follow the advertised constraints.
+Values are JSON scalars; arrays, nested objects, and type coercion are unsupported.
+Numbers must use integer JSON notation, without a decimal point or exponent, and
+lie between -9007199254740991 and 9007199254740991. Preserve opaque IDs as strings.
+Unknown envelope properties, duplicate keys, invalid Unicode, trailing JSON, and
+bodies larger than 256 KiB are rejected.
+
+## Lifetime and recovery
+
+Prepared arguments are fixed for that identifier. Polytomic removes them when
+execution is claimed and periodically cleans up expired, unexecuted preparations.
+Execution receipts and Activity event metadata contain no submitted values.
+Polytomic retains a separate encrypted copy of the target and submitted values
+for 90 days from preparation. Only Organization administrators can reveal these
+details in the audit ledger. MCP receipts do not expose them. This evidence
+records your request, not a verified before-and-after record state.
+Preparation alone does not create an execution receipt.
+
+If the preparation response is lost, you may prepare again: no destination
+mutation occurred. Each preparation creates a distinct execution identifier.
+
+> ⚠️ Preserve the identifier after execution
+>
+> After submitting an execution, use its original `execution_id` to investigate
+> an uncertain outcome. Do not prepare a replacement action to retry it.
+
+Send a new nonzero UUID in `X-Polytomic-Activity-Request-ID` for each HTTP request.
+MCP supplies this transport header automatically. `X-Polytomic-Harbor-Session` is
+optional for direct REST requests; a supplied session must be active and bound
+to your credential and Harbor. Preparation is recorded as `action.prepared`,
+with its original actor and execution identifier. Expired, unexecuted
+preparations are recorded as `action.preparation_expired`. Execution records its
+own actor and attempt separately.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
+
+client = Polytomic(
+    token="<token>",
+    environment=PolytomicEnvironment.DEFAULT,
+)
+
+client.harbors.actions.prepare(
+    harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    input={
+        "key": "value"
+    },
+    operation_id="operation_id",
+    schema_id="schema_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**harbor_id:** `str` — Unique identifier of the Harbor.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**connection_id:** `str` — Explicit destination connection ID from action discovery. Must have this action and its submitted fields enabled in this Harbor.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**input:** `SchemaRecord` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**operation_id:** `str` — Exact operation_id from action discovery.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**schema_id:** `str` — Exact schema_id from action discovery.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**polytomic_harbor_session:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**polytomic_activity_request_id:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**lookup:** `typing.Optional[ActionLookup]` 
     
 </dd>
 </dl>

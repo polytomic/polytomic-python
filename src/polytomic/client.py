@@ -21,6 +21,7 @@ if typing.TYPE_CHECKING:
     from .model_sync.client import AsyncModelSyncClient, ModelSyncClient
     from .models.client import AsyncModelsClient, ModelsClient
     from .notifications.client import AsyncNotificationsClient, NotificationsClient
+    from .operations.client import AsyncOperationsClient, OperationsClient
     from .organization.client import AsyncOrganizationClient, OrganizationClient
     from .permissions.client import AsyncPermissionsClient, PermissionsClient
     from .query_runner.client import AsyncQueryRunnerClient, QueryRunnerClient
@@ -131,6 +132,7 @@ class Polytomic:
         self._jobs: typing.Optional[JobsClient] = None
         self._identity: typing.Optional[IdentityClient] = None
         self._notifications: typing.Optional[NotificationsClient] = None
+        self._operations: typing.Optional[OperationsClient] = None
         self._organization: typing.Optional[OrganizationClient] = None
         self._activity: typing.Optional[ActivityClient] = None
         self._users: typing.Optional[UsersClient] = None
@@ -234,6 +236,14 @@ class Polytomic:
 
             self._notifications = NotificationsClient(client_wrapper=self._client_wrapper)
         return self._notifications
+
+    @property
+    def operations(self):
+        if self._operations is None:
+            from .operations.client import OperationsClient  # noqa: E402
+
+            self._operations = OperationsClient(client_wrapper=self._client_wrapper)
+        return self._operations
 
     @property
     def organization(self):
@@ -413,6 +423,7 @@ class AsyncPolytomic:
         self._jobs: typing.Optional[AsyncJobsClient] = None
         self._identity: typing.Optional[AsyncIdentityClient] = None
         self._notifications: typing.Optional[AsyncNotificationsClient] = None
+        self._operations: typing.Optional[AsyncOperationsClient] = None
         self._organization: typing.Optional[AsyncOrganizationClient] = None
         self._activity: typing.Optional[AsyncActivityClient] = None
         self._users: typing.Optional[AsyncUsersClient] = None
@@ -516,6 +527,14 @@ class AsyncPolytomic:
 
             self._notifications = AsyncNotificationsClient(client_wrapper=self._client_wrapper)
         return self._notifications
+
+    @property
+    def operations(self):
+        if self._operations is None:
+            from .operations.client import AsyncOperationsClient  # noqa: E402
+
+            self._operations = AsyncOperationsClient(client_wrapper=self._client_wrapper)
+        return self._operations
 
     @property
     def organization(self):

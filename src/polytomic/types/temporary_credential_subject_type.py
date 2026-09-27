@@ -2,4 +2,4 @@
 
 import typing
 
-TemporaryCredentialSubjectType = typing.Union[typing.Literal["user", "profile"], typing.Any]
+TemporaryCredentialSubjectType = typing.Union[typing.Literal["user", "harbor"], typing.Any]

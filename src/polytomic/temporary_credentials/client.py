@@ -37,7 +37,7 @@ class TemporaryCredentialsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> TemporaryCredentialResponseEnvelope:
         """
-        Issues a non-renewable credential with a bounded lifetime for a user or Agent Data profile.
+        Issues a non-renewable credential with a bounded lifetime for a user or Harbor.
 
         The response contains the credential secret once. Store it securely and send it
         as a Bearer token in the `Authorization` header.
@@ -50,17 +50,17 @@ class TemporaryCredentialsClient:
 
         Partner callers must provide both `organization_id` and `user_id`. The target
         must be an active user in an organization owned by the partner. User subjects
-        must be application users; Agent Data portal-only users continue to use profile
+        must be application users; Harbor-only users continue to use Harbor
         credentials.
 
         User credentials resolve the subject's current permissions on every request.
         Permission changes take effect immediately, and deleting the user invalidates
         the credential.
 
-        Set `subject.type` to `profile` and provide the Agent Data profile ID. The
-        credential uses the profile's current connection access on every request;
-        changes take effect immediately, and deleting the profile invalidates the
-        credential.
+        Set `subject.type` to `harbor` and provide the Harbor ID in `harbor_id`. The
+        credential uses the Harbor's current connection access on every request;
+        changes take effect immediately. Missing and deleted Harbors cannot be
+        targeted.
 
         A temporary credential stops authenticating at `expires_at`. It cannot be
         refreshed, extended, or used to create another temporary credential. Create a
@@ -148,7 +148,7 @@ class AsyncTemporaryCredentialsClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> TemporaryCredentialResponseEnvelope:
         """
-        Issues a non-renewable credential with a bounded lifetime for a user or Agent Data profile.
+        Issues a non-renewable credential with a bounded lifetime for a user or Harbor.
 
         The response contains the credential secret once. Store it securely and send it
         as a Bearer token in the `Authorization` header.
@@ -161,17 +161,17 @@ class AsyncTemporaryCredentialsClient:
 
         Partner callers must provide both `organization_id` and `user_id`. The target
         must be an active user in an organization owned by the partner. User subjects
-        must be application users; Agent Data portal-only users continue to use profile
+        must be application users; Harbor-only users continue to use Harbor
         credentials.
 
         User credentials resolve the subject's current permissions on every request.
         Permission changes take effect immediately, and deleting the user invalidates
         the credential.
 
-        Set `subject.type` to `profile` and provide the Agent Data profile ID. The
-        credential uses the profile's current connection access on every request;
-        changes take effect immediately, and deleting the profile invalidates the
-        credential.
+        Set `subject.type` to `harbor` and provide the Harbor ID in `harbor_id`. The
+        credential uses the Harbor's current connection access on every request;
+        changes take effect immediately. Missing and deleted Harbors cannot be
+        targeted.
 
         A temporary credential stops authenticating at `expires_at`. It cannot be
         refreshed, extended, or used to create another temporary credential. Create a
