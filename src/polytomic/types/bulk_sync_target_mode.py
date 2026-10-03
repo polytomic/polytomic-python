@@ -2,4 +2,4 @@
 
 import typing
 
-BulkSyncTargetMode = typing.Union[typing.Literal["snapshot", "replicate"], typing.Any]
+BulkSyncTargetMode = typing.Union[typing.Literal["snapshot", "replicate", "append"], typing.Any]

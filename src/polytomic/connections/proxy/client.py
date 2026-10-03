@@ -53,6 +53,10 @@ class ProxyClient:
 
         ## Important behavior
 
+        - For connections that expose more than one API (listed in `apis` in the proxy
+          info response), set `request.api` to the name of the API to call. Requests
+          without `request.api` go to the default API. `request.api` is rejected for
+          connections that expose a single API.
         - `request.path` must be relative and start with `/`.
         - Use either `request.query` or `request.rawQuery`, not both.
         - Caller-supplied headers are merged with inherited headers, but inherited auth
@@ -60,6 +64,9 @@ class ProxyClient:
         - The proxy strips a fixed set of request and response headers for safety.
         - Response bodies larger than the configured maximum are truncated, and
           `truncated` is set to `true`.
+        - A `429` means Polytomic's proxy rate limit was reached, or the connection's
+          upstream quota, which the proxy shares with the connection's syncs, is
+          exhausted.
 
         To run a `GET` request asynchronously, set `async` to `true`. The initial
         response returns `status: 202`, `jobId`, `jobStatus`, and `jobUrl`. Poll
@@ -128,6 +135,12 @@ class ProxyClient:
         - blocked request and response headers
         - allowed HTTP methods and body shapes
         - timeout, rate-limit, and payload-size limits
+
+        Some connections reach more than one upstream API, each with its own base URL
+        and quota. For these, the response includes `apis`: one entry per API with its
+        `name`, `description`, whether it is the `default`, and its own
+        `inheritedBase`. The top-level `inheritedBase` describes the default API.
+        Connections with a single API omit `apis`.
 
         Sensitive inherited header and query values are redacted in the response. The
         contract is still useful for discovering which keys are fixed by the
@@ -297,6 +310,10 @@ class AsyncProxyClient:
 
         ## Important behavior
 
+        - For connections that expose more than one API (listed in `apis` in the proxy
+          info response), set `request.api` to the name of the API to call. Requests
+          without `request.api` go to the default API. `request.api` is rejected for
+          connections that expose a single API.
         - `request.path` must be relative and start with `/`.
         - Use either `request.query` or `request.rawQuery`, not both.
         - Caller-supplied headers are merged with inherited headers, but inherited auth
@@ -304,6 +321,9 @@ class AsyncProxyClient:
         - The proxy strips a fixed set of request and response headers for safety.
         - Response bodies larger than the configured maximum are truncated, and
           `truncated` is set to `true`.
+        - A `429` means Polytomic's proxy rate limit was reached, or the connection's
+          upstream quota, which the proxy shares with the connection's syncs, is
+          exhausted.
 
         To run a `GET` request asynchronously, set `async` to `true`. The initial
         response returns `status: 202`, `jobId`, `jobStatus`, and `jobUrl`. Poll
@@ -380,6 +400,12 @@ class AsyncProxyClient:
         - blocked request and response headers
         - allowed HTTP methods and body shapes
         - timeout, rate-limit, and payload-size limits
+
+        Some connections reach more than one upstream API, each with its own base URL
+        and quota. For these, the response includes `apis`: one entry per API with its
+        `name`, `description`, whether it is the `default`, and its own
+        `inheritedBase`. The top-level `inheritedBase` describes the default API.
+        Connections with a single API omit `apis`.
 
         Sensitive inherited header and query values are redacted in the response. The
         contract is still useful for discovering which keys are fixed by the

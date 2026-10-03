@@ -40,6 +40,7 @@ from ..types.harbor_user_list_envelope import HarborUserListEnvelope
 from ..types.register_harbor_session_envelope import RegisterHarborSessionEnvelope
 from ..types.resolve_harbor_source_mappings_envelope import ResolveHarborSourceMappingsEnvelope
 from ..types.revoked_harbor_key_envelope import RevokedHarborKeyEnvelope
+from ..types.run_query_envelope import RunQueryEnvelope
 from ..types.unassigned_harbor_user_envelope import UnassignedHarborUserEnvelope
 from .raw_client import AsyncRawHarborsClient, RawHarborsClient
 
@@ -1656,6 +1657,76 @@ class HarborsClient:
         """
         _response = self._raw_client.delete_key(
             harbor_id, key_id, idempotency_key=idempotency_key, request_options=request_options
+        )
+        return _response.data
+
+    def run_query(
+        self,
+        harbor_id: str,
+        *,
+        query: str,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> RunQueryEnvelope:
+        """
+        Submits a query against the Harbor backing connection for asynchronous execution.
+
+        Use a scoped credential bound to this Harbor. The query runs only against the
+        Harbor's backing connection; you cannot select another connection on this route.
+        Send a unique `X-Polytomic-Activity-Request-ID` UUID with each submission. The
+        `X-Polytomic-Harbor-Session` header is optional; if you send one, it must be
+        valid for this Harbor.
+
+        The response contains a query ID and an initial `created` status. Poll
+        [`GET /api/queries/{id}`](../../../../api-reference/query-runner/get-query) with that ID
+        until the status is `done`, `failed`, or `unknown`. Follow the result endpoint's
+        pagination links for additional rows. Results are temporary; check `expires`
+        on the completed query.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor whose backing connection runs the query.
+
+        query : str
+            SQL query to execute against the Harbor backing connection.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        RunQueryEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.harbors.run_query(
+            harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            query="SELECT 1 AS n",
+        )
+        """
+        _response = self._raw_client.run_query(
+            harbor_id,
+            query=query,
+            polytomic_harbor_session=polytomic_harbor_session,
+            polytomic_activity_request_id=polytomic_activity_request_id,
+            idempotency_key=idempotency_key,
+            request_options=request_options,
         )
         return _response.data
 
@@ -4574,6 +4645,84 @@ class AsyncHarborsClient:
         """
         _response = await self._raw_client.delete_key(
             harbor_id, key_id, idempotency_key=idempotency_key, request_options=request_options
+        )
+        return _response.data
+
+    async def run_query(
+        self,
+        harbor_id: str,
+        *,
+        query: str,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> RunQueryEnvelope:
+        """
+        Submits a query against the Harbor backing connection for asynchronous execution.
+
+        Use a scoped credential bound to this Harbor. The query runs only against the
+        Harbor's backing connection; you cannot select another connection on this route.
+        Send a unique `X-Polytomic-Activity-Request-ID` UUID with each submission. The
+        `X-Polytomic-Harbor-Session` header is optional; if you send one, it must be
+        valid for this Harbor.
+
+        The response contains a query ID and an initial `created` status. Poll
+        [`GET /api/queries/{id}`](../../../../api-reference/query-runner/get-query) with that ID
+        until the status is `done`, `failed`, or `unknown`. Follow the result endpoint's
+        pagination links for additional rows. Results are temporary; check `expires`
+        on the completed query.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor whose backing connection runs the query.
+
+        query : str
+            SQL query to execute against the Harbor backing connection.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        RunQueryEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.harbors.run_query(
+                harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                query="SELECT 1 AS n",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.run_query(
+            harbor_id,
+            query=query,
+            polytomic_harbor_session=polytomic_harbor_session,
+            polytomic_activity_request_id=polytomic_activity_request_id,
+            idempotency_key=idempotency_key,
+            request_options=request_options,
         )
         return _response.data
 

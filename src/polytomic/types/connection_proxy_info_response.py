@@ -6,6 +6,7 @@ import pydantic
 import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 from ..core.serialization import FieldMetadata
+from .connection_proxy_api import ConnectionProxyApi
 from .connection_proxy_contract import ConnectionProxyContract
 from .connection_proxy_inherited_base import ConnectionProxyInheritedBase
 from .connection_proxy_merge_rules import ConnectionProxyMergeRules
@@ -13,6 +14,11 @@ from .connection_proxy_stats import ConnectionProxyStats
 
 
 class ConnectionProxyInfoResponse(UniversalBaseModel):
+    apis: typing.Optional[typing.List[ConnectionProxyApi]] = pydantic.Field(default=None)
+    """
+    Upstream APIs this connection exposes through the proxy, when there is more than one. Select one by passing its name as request.api; requests without request.api use the default.
+    """
+
     backend_type: typing_extensions.Annotated[
         typing.Optional[str],
         FieldMetadata(alias="backendType"),

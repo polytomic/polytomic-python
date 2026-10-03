@@ -7,6 +7,7 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 
 
 class CompletionValue(UniversalBaseModel):
+    depends_on: typing.Optional[typing.Dict[str, str]] = None
     label: typing.Optional[str] = None
     path: typing.Optional[str] = None
     value: typing.Optional[typing.Any] = None

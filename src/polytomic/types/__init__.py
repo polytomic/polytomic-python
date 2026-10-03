@@ -80,6 +80,7 @@ if typing.TYPE_CHECKING:
     from .connection_parameter_value import ConnectionParameterValue
     from .connection_parameter_values_resp import ConnectionParameterValuesResp
     from .connection_parameter_values_response_envelope import ConnectionParameterValuesResponseEnvelope
+    from .connection_proxy_api import ConnectionProxyApi
     from .connection_proxy_call import ConnectionProxyCall
     from .connection_proxy_contract import ConnectionProxyContract
     from .connection_proxy_info_response import ConnectionProxyInfoResponse
@@ -388,6 +389,8 @@ if typing.TYPE_CHECKING:
     from .util_execution_status import UtilExecutionStatus
     from .util_field_type import UtilFieldType
     from .webhook import Webhook
+    from .webhook_deliveries_envelope import WebhookDeliveriesEnvelope
+    from .webhook_delivery import WebhookDelivery
     from .webhook_envelope import WebhookEnvelope
     from .webhook_list_envelope import WebhookListEnvelope
     from .work_task_status import WorkTaskStatus
@@ -464,6 +467,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ConnectionParameterValue": ".connection_parameter_value",
     "ConnectionParameterValuesResp": ".connection_parameter_values_resp",
     "ConnectionParameterValuesResponseEnvelope": ".connection_parameter_values_response_envelope",
+    "ConnectionProxyApi": ".connection_proxy_api",
     "ConnectionProxyCall": ".connection_proxy_call",
     "ConnectionProxyContract": ".connection_proxy_contract",
     "ConnectionProxyInfoResponse": ".connection_proxy_info_response",
@@ -772,6 +776,8 @@ _dynamic_imports: typing.Dict[str, str] = {
     "UtilExecutionStatus": ".util_execution_status",
     "UtilFieldType": ".util_field_type",
     "Webhook": ".webhook",
+    "WebhookDeliveriesEnvelope": ".webhook_deliveries_envelope",
+    "WebhookDelivery": ".webhook_delivery",
     "WebhookEnvelope": ".webhook_envelope",
     "WebhookListEnvelope": ".webhook_list_envelope",
     "WorkTaskStatus": ".work_task_status",
@@ -872,6 +878,7 @@ __all__ = [
     "ConnectionParameterValue",
     "ConnectionParameterValuesResp",
     "ConnectionParameterValuesResponseEnvelope",
+    "ConnectionProxyApi",
     "ConnectionProxyCall",
     "ConnectionProxyContract",
     "ConnectionProxyInfoResponse",
@@ -1180,6 +1187,8 @@ __all__ = [
     "UtilExecutionStatus",
     "UtilFieldType",
     "Webhook",
+    "WebhookDeliveriesEnvelope",
+    "WebhookDelivery",
     "WebhookEnvelope",
     "WebhookListEnvelope",
     "WorkTaskStatus",

@@ -23,6 +23,11 @@ class SchemaConfiguration(UniversalBaseModel):
 
     fields: typing.Optional[typing.List[SchemaConfigurationFieldsItem]] = None
     filters: typing.Optional[typing.List[BulkFilter]] = None
+    history_enabled: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    Whether a companion history table is maintained beside this schema's output, recording every version observed on successive runs. Requires a replicate-mode sync to a destination reporting supports_history_mode. Omit to keep the current value.
+    """
+
     id: typing.Optional[str] = None
     partition_key: typing.Optional[str] = None
     tracking_field: typing.Optional[str] = None

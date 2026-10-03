@@ -16,6 +16,11 @@ class BulkSyncDest(UniversalBaseModel):
     Resync modes supported by this destination (refetch, resync, rebuild).
     """
 
+    supports_history_mode: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    True if this destination can maintain a companion history table per schema (history_enabled) in replicate mode.
+    """
+
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
     else:

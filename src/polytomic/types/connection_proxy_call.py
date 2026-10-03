@@ -9,9 +9,14 @@ from ..core.serialization import FieldMetadata
 
 
 class ConnectionProxyCall(UniversalBaseModel):
+    api: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Name of the upstream API to call, for connections that expose more than one (see apis in the proxy info response). Defaults to the connection's default API.
+    """
+
     body: typing.Optional[typing.Any] = pydantic.Field(default=None)
     """
-    Request body. May be a string, a JSON object, or null.
+    Request body. May be a string, a JSON object, a JSON array, or null.
     """
 
     headers: typing.Optional[typing.Dict[str, str]] = pydantic.Field(default=None)

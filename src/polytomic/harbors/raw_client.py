@@ -53,6 +53,7 @@ from ..types.harbor_user_list_envelope import HarborUserListEnvelope
 from ..types.register_harbor_session_envelope import RegisterHarborSessionEnvelope
 from ..types.resolve_harbor_source_mappings_envelope import ResolveHarborSourceMappingsEnvelope
 from ..types.revoked_harbor_key_envelope import RevokedHarborKeyEnvelope
+from ..types.run_query_envelope import RunQueryEnvelope
 from ..types.unassigned_harbor_user_envelope import UnassignedHarborUserEnvelope
 from pydantic import ValidationError
 
@@ -2911,6 +2912,161 @@ class RawHarborsClient:
                 )
             if _response.status_code == 500:
                 raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.text
+            )
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise core_api_error_ApiError(
+            status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
+        )
+
+    def run_query(
+        self,
+        harbor_id: str,
+        *,
+        query: str,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[RunQueryEnvelope]:
+        """
+        Submits a query against the Harbor backing connection for asynchronous execution.
+
+        Use a scoped credential bound to this Harbor. The query runs only against the
+        Harbor's backing connection; you cannot select another connection on this route.
+        Send a unique `X-Polytomic-Activity-Request-ID` UUID with each submission. The
+        `X-Polytomic-Harbor-Session` header is optional; if you send one, it must be
+        valid for this Harbor.
+
+        The response contains a query ID and an initial `created` status. Poll
+        [`GET /api/queries/{id}`](../../../../api-reference/query-runner/get-query) with that ID
+        until the status is `done`, `failed`, or `unknown`. Follow the result endpoint's
+        pagination links for additional rows. Results are temporary; check `expires`
+        on the completed query.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor whose backing connection runs the query.
+
+        query : str
+            SQL query to execute against the Harbor backing connection.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[RunQueryEnvelope]
+            OK
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"api/harbors/{encode_path_param(harbor_id)}/query",
+            method="POST",
+            json={
+                "query": query,
+            },
+            headers={
+                "content-type": "application/json",
+                "X-Polytomic-Harbor-Session": str(polytomic_harbor_session)
+                if polytomic_harbor_session is not None
+                else None,
+                "X-Polytomic-Activity-Request-ID": str(polytomic_activity_request_id)
+                if polytomic_activity_request_id is not None
+                else None,
+                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    RunQueryEnvelope,
+                    parse_obj_as(
+                        type_=RunQueryEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,
@@ -7955,6 +8111,161 @@ class AsyncRawHarborsClient:
                 )
             if _response.status_code == 500:
                 raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.text
+            )
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise core_api_error_ApiError(
+            status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
+        )
+
+    async def run_query(
+        self,
+        harbor_id: str,
+        *,
+        query: str,
+        polytomic_harbor_session: typing.Optional[str] = None,
+        polytomic_activity_request_id: typing.Optional[str] = None,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[RunQueryEnvelope]:
+        """
+        Submits a query against the Harbor backing connection for asynchronous execution.
+
+        Use a scoped credential bound to this Harbor. The query runs only against the
+        Harbor's backing connection; you cannot select another connection on this route.
+        Send a unique `X-Polytomic-Activity-Request-ID` UUID with each submission. The
+        `X-Polytomic-Harbor-Session` header is optional; if you send one, it must be
+        valid for this Harbor.
+
+        The response contains a query ID and an initial `created` status. Poll
+        [`GET /api/queries/{id}`](../../../../api-reference/query-runner/get-query) with that ID
+        until the status is `done`, `failed`, or `unknown`. Follow the result endpoint's
+        pagination links for additional rows. Results are temporary; check `expires`
+        on the completed query.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor whose backing connection runs the query.
+
+        query : str
+            SQL query to execute against the Harbor backing connection.
+
+        polytomic_harbor_session : typing.Optional[str]
+
+        polytomic_activity_request_id : typing.Optional[str]
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[RunQueryEnvelope]
+            OK
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"api/harbors/{encode_path_param(harbor_id)}/query",
+            method="POST",
+            json={
+                "query": query,
+            },
+            headers={
+                "content-type": "application/json",
+                "X-Polytomic-Harbor-Session": str(polytomic_harbor_session)
+                if polytomic_harbor_session is not None
+                else None,
+                "X-Polytomic-Activity-Request-ID": str(polytomic_activity_request_id)
+                if polytomic_activity_request_id is not None
+                else None,
+                "Idempotency-Key": str(idempotency_key) if idempotency_key is not None else None,
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    RunQueryEnvelope,
+                    parse_obj_as(
+                        type_=RunQueryEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 503:
+                raise ServiceUnavailableError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,

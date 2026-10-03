@@ -46,9 +46,11 @@ class RawQueryRunnerClient:
         the query to finish. Poll [`GET /api/queries/{id}`](../../../../api-reference/query-runner/get-query) until `status`
         reaches `done`, `failed`, or `unknown`. These statuses are terminal.
 
-        Only the user who created the query can fetch its results later. Query results
-        are stored temporarily and may expire; use the `expires` field from the result
-        endpoint to understand how long they will remain available.
+        A Harbor-bound scoped credential can submit freeform SQL only against its
+        Harbor's backing connection, even if its profile allows other connections.
+        Other credentials retain their existing connection access. Query results are
+        stored temporarily and may expire; use the `expires` field from the result
+        endpoint to understand how long they remain available.
 
         Parameters
         ----------
@@ -356,9 +358,11 @@ class AsyncRawQueryRunnerClient:
         the query to finish. Poll [`GET /api/queries/{id}`](../../../../api-reference/query-runner/get-query) until `status`
         reaches `done`, `failed`, or `unknown`. These statuses are terminal.
 
-        Only the user who created the query can fetch its results later. Query results
-        are stored temporarily and may expire; use the `expires` field from the result
-        endpoint to understand how long they will remain available.
+        A Harbor-bound scoped credential can submit freeform SQL only against its
+        Harbor's backing connection, even if its profile allows other connections.
+        Other credentials retain their existing connection access. Query results are
+        stored temporarily and may expire; use the `expires` field from the result
+        endpoint to understand how long they remain available.
 
         Parameters
         ----------

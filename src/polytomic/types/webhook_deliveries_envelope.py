@@ -4,16 +4,13 @@ import typing
 
 import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
+from .pagination_details import PaginationDetails
+from .webhook_delivery import WebhookDelivery
 
 
-class PickValue(UniversalBaseModel):
-    depends_on: typing.Optional[typing.Dict[str, str]] = pydantic.Field(default=None)
-    """
-    Field IDs and internal values required for this option to apply. All entries must match. Omitted for independent options.
-    """
-
-    label: typing.Optional[str] = None
-    value: typing.Optional[str] = None
+class WebhookDeliveriesEnvelope(UniversalBaseModel):
+    data: typing.Optional[typing.List[WebhookDelivery]] = None
+    pagination: typing.Optional[PaginationDetails] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

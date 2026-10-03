@@ -11,6 +11,11 @@ from .bulk_filter import BulkFilter
 
 class BulkSchema(UniversalBaseModel):
     data_cutoff_timestamp: typing.Optional[dt.datetime] = None
+    destination_history_output_name: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Name of the companion history table. Present only when history is enabled on a destination that supports it.
+    """
+
     disable_data_cutoff: typing.Optional[bool] = None
     enabled: typing.Optional[bool] = None
     fields: typing.Optional[typing.List[BulkField]] = pydantic.Field(default=None)
@@ -21,6 +26,11 @@ class BulkSchema(UniversalBaseModel):
     filters: typing.Optional[typing.List[BulkFilter]] = pydantic.Field(default=None)
     """
     filters is not populated on the list endpoint and will be removed in a future version; retrieve individual schemas for filters.
+    """
+
+    history_enabled: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    Whether a companion history table is maintained beside this schema's output, recording every version observed on successive runs. Requires a replicate-mode sync to a destination reporting supports_history_mode. Always present in responses; when patching, omit it to keep the current value.
     """
 
     id: typing.Optional[str] = None

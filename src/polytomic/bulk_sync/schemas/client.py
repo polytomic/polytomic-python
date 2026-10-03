@@ -202,6 +202,7 @@ class SchemasClient:
         enabled: typing.Optional[bool] = OMIT,
         fields: typing.Optional[typing.Sequence[UpdateBulkField]] = OMIT,
         filters: typing.Optional[typing.Sequence[BulkFilter]] = OMIT,
+        history_enabled: typing.Optional[bool] = OMIT,
         partition_key: typing.Optional[str] = OMIT,
         tracking_field: typing.Optional[str] = OMIT,
         user_output_name: typing.Optional[str] = OMIT,
@@ -248,6 +249,9 @@ class SchemasClient:
         filters : typing.Optional[typing.Sequence[BulkFilter]]
             Row-level filters applied when reading from the source.
 
+        history_enabled : typing.Optional[bool]
+            Whether a companion history table is maintained beside this schema's output. Requires a replicate-mode sync to a destination reporting supports_history_mode. Omit to keep the current value.
+
         partition_key : typing.Optional[str]
             Source field used to partition rows when writing to the destination.
 
@@ -287,6 +291,7 @@ class SchemasClient:
             enabled=enabled,
             fields=fields,
             filters=filters,
+            history_enabled=history_enabled,
             partition_key=partition_key,
             tracking_field=tracking_field,
             user_output_name=user_output_name,
@@ -558,6 +563,7 @@ class AsyncSchemasClient:
         enabled: typing.Optional[bool] = OMIT,
         fields: typing.Optional[typing.Sequence[UpdateBulkField]] = OMIT,
         filters: typing.Optional[typing.Sequence[BulkFilter]] = OMIT,
+        history_enabled: typing.Optional[bool] = OMIT,
         partition_key: typing.Optional[str] = OMIT,
         tracking_field: typing.Optional[str] = OMIT,
         user_output_name: typing.Optional[str] = OMIT,
@@ -603,6 +609,9 @@ class AsyncSchemasClient:
 
         filters : typing.Optional[typing.Sequence[BulkFilter]]
             Row-level filters applied when reading from the source.
+
+        history_enabled : typing.Optional[bool]
+            Whether a companion history table is maintained beside this schema's output. Requires a replicate-mode sync to a destination reporting supports_history_mode. Omit to keep the current value.
 
         partition_key : typing.Optional[str]
             Source field used to partition rows when writing to the destination.
@@ -651,6 +660,7 @@ class AsyncSchemasClient:
             enabled=enabled,
             fields=fields,
             filters=filters,
+            history_enabled=history_enabled,
             partition_key=partition_key,
             tracking_field=tracking_field,
             user_output_name=user_output_name,

@@ -13,6 +13,11 @@ class BulkSchemaListItem(UniversalBaseModel):
     Per-schema cutoff. Records older than this timestamp are excluded from sync runs.
     """
 
+    destination_history_output_name: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Name of the companion history table. Present only when history is enabled on a destination that supports it.
+    """
+
     disable_data_cutoff: typing.Optional[bool] = pydantic.Field(default=None)
     """
     When true, the sync ignores any configured data_cutoff_timestamp and syncs the full history of this schema.
@@ -21,6 +26,11 @@ class BulkSchemaListItem(UniversalBaseModel):
     enabled: typing.Optional[bool] = pydantic.Field(default=None)
     """
     Whether this schema is included in sync runs.
+    """
+
+    history_enabled: typing.Optional[bool] = pydantic.Field(default=None)
+    """
+    Whether a companion history table is maintained beside this schema's output, recording every version observed on successive runs.
     """
 
     id: typing.Optional[str] = pydantic.Field(default=None)

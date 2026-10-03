@@ -5,6 +5,7 @@ import typing
 import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2, UniversalBaseModel
 from .identity_function import IdentityFunction
+from .pick_value import PickValue
 from .supported_filter_function import SupportedFilterFunction
 
 
@@ -82,6 +83,11 @@ class TargetField(UniversalBaseModel):
     updateable: typing.Optional[bool] = pydantic.Field(default=None)
     """
     True if this field can be written when updating an existing record.
+    """
+
+    values: typing.Optional[typing.List[PickValue]] = pydantic.Field(default=None)
+    """
+    Stored field options as value and label pairs. Use value when configuring mappings. Omitted when no options are available; enumeration fields may still omit options.
     """
 
     if IS_PYDANTIC_V2:
