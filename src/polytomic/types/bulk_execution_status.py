@@ -15,6 +15,7 @@ BulkExecutionStatus = typing.Union[
         "processing",
         "errors",
         "interrupted",
+        "completed_with_cancellations",
     ],
     typing.Any,
 ]

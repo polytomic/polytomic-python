@@ -10,18 +10,181 @@ from ..core.jsonable_encoder import encode_path_param
 from ..core.parse_error import ParsingError
 from ..core.pydantic_utilities import parse_obj_as
 from ..core.request_options import RequestOptions
+from ..errors.bad_request_error import BadRequestError
 from ..errors.forbidden_error import ForbiddenError
 from ..errors.internal_server_error import InternalServerError
 from ..errors.not_found_error import NotFoundError
 from ..errors.unauthorized_error import UnauthorizedError
 from ..types.api_error import ApiError as types_api_error_ApiError
 from ..types.entity_response_envelope import EntityResponseEnvelope
+from ..types.search_envelope import SearchEnvelope
 from pydantic import ValidationError
 
 
 class RawEntitiesClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
+
+    def search(
+        self,
+        *,
+        search: str,
+        limit: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[SearchEnvelope]:
+        """
+        Searches models, model fields, model syncs, bulk syncs, and connections in the caller's organization.
+
+        Supply a nonblank `search` term to search all five result categories. Unlike
+        [entity lookup](../../../api-reference/entities/get), this endpoint does not search
+        Organizations, users, executions, Harbors, or Harbor contexts. Model fields are
+        searchable but have no standalone lookup endpoint.
+
+        ## Searchable resources
+
+        - Models: ID, name, and source Connection type.
+        - Model fields: ID, technical name, and label.
+        - Model Syncs: ID, name, source and target Connection types, and saved field and
+          identity mappings. Mappings include source field names and labels, target
+          field IDs, and available target field names.
+        - Bulk Syncs: ID, name, source and target Connection names and types, and enabled
+          schema IDs, display names, and configured output names. Disabled schemas are
+          excluded; enabled schemas remain searchable when the sync is inactive.
+        - Connections: ID and name.
+
+        Search uses cached metadata and does not refresh schemas. Names absent from
+        that metadata are not searchable. Bulk Sync fields, execution state,
+        expressions, filters, and constant values are not searched.
+
+        ## Matching and evidence
+
+        Matching is case-insensitive and uses word prefixes, not fuzzy matching. Every
+        query word must match somewhere within a result. Spaces and punctuation split
+        words: `other emails` matches `other_emails`, but `mail` does not match `email`.
+        Some Model Sync source-type matches require a leading `~`.
+
+        Each resource appears once. Its `matches` explain which attributes matched and
+        which query terms contributed. Mapping and schema attributes carry their
+        respective `mapping` or `schema` context; resource metadata has neither. A name
+        or Connection type match alone does not establish mapping or schema use.
+        Results include canonical `links`, not complete configurations or schema lists.
+
+        ## Limits and completeness
+
+        Results are ordered by category, then name or field label, then ID, not by
+        relevance. `limit` defaults to 50 and accepts 1–100. It limits resource hits,
+        not match evidence. When `metadata.truncated` is `true`, narrow your search or
+        increase the limit. There is no cursor pagination.
+
+        > ⚠️ Incomplete model-field coverage
+        >
+        > Above 40,000 published model fields, `metadata.model_fields_complete` is
+        > `false`: standalone field results cover a subset, not every published field.
+        > Model Sync mapping search is unaffected. Incomplete or truncated results
+        > cannot establish that no other matches exist.
+
+        Parameters
+        ----------
+        search : str
+            Search term matched, by word prefix, against models, model fields, model syncs, bulk syncs, and connections in the caller's organization.
+
+        limit : typing.Optional[int]
+            Maximum number of results to return across all result types. Defaults to 50 and cannot exceed 100.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[SearchEnvelope]
+            OK
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "api/entities/search",
+            method="GET",
+            params={
+                "search": search,
+                "limit": limit,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    SearchEnvelope,
+                    parse_obj_as(
+                        type_=SearchEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.text
+            )
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise core_api_error_ApiError(
+            status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
+        )
 
     def get(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
@@ -56,8 +219,8 @@ class RawEntitiesClient:
         - `user`
         - `connection`
         - `model`
-        - `sync`
-        - `sync_execution`
+        - `model_sync`
+        - `model_sync_execution`
         - `bulk_sync`
         - `bulk_sync_execution`
         - `harbor`
@@ -65,8 +228,8 @@ class RawEntitiesClient:
 
         Examples:
 
-        - A model sync execution resolves to a `sync_execution` and includes a `sync`
-          relationship.
+        - A model sync execution resolves to a `model_sync_execution` and includes a
+          `sync` relationship.
         - A bulk sync execution resolves to a `bulk_sync_execution`, includes a
           `bulk_sync` relationship, and may include `context.schema_ids`.
         - A Harbor context resolves to a `harbor_context` and includes a `harbor`
@@ -191,8 +354,8 @@ class RawEntitiesClient:
         - `user`
         - `connection`
         - `model`
-        - `sync`
-        - `sync_execution`
+        - `model_sync`
+        - `model_sync_execution`
         - `bulk_sync`
         - `bulk_sync_execution`
         - `harbor`
@@ -200,8 +363,8 @@ class RawEntitiesClient:
 
         Examples:
 
-        - A model sync execution resolves to a `sync_execution` and includes a `sync`
-          relationship.
+        - A model sync execution resolves to a `model_sync_execution` and includes a
+          `sync` relationship.
         - A bulk sync execution resolves to a `bulk_sync_execution`, includes a
           `bulk_sync` relationship, and may include `context.schema_ids`.
         - A Harbor context resolves to a `harbor_context` and includes a `harbor`
@@ -288,6 +451,167 @@ class AsyncRawEntitiesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
+    async def search(
+        self,
+        *,
+        search: str,
+        limit: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[SearchEnvelope]:
+        """
+        Searches models, model fields, model syncs, bulk syncs, and connections in the caller's organization.
+
+        Supply a nonblank `search` term to search all five result categories. Unlike
+        [entity lookup](../../../api-reference/entities/get), this endpoint does not search
+        Organizations, users, executions, Harbors, or Harbor contexts. Model fields are
+        searchable but have no standalone lookup endpoint.
+
+        ## Searchable resources
+
+        - Models: ID, name, and source Connection type.
+        - Model fields: ID, technical name, and label.
+        - Model Syncs: ID, name, source and target Connection types, and saved field and
+          identity mappings. Mappings include source field names and labels, target
+          field IDs, and available target field names.
+        - Bulk Syncs: ID, name, source and target Connection names and types, and enabled
+          schema IDs, display names, and configured output names. Disabled schemas are
+          excluded; enabled schemas remain searchable when the sync is inactive.
+        - Connections: ID and name.
+
+        Search uses cached metadata and does not refresh schemas. Names absent from
+        that metadata are not searchable. Bulk Sync fields, execution state,
+        expressions, filters, and constant values are not searched.
+
+        ## Matching and evidence
+
+        Matching is case-insensitive and uses word prefixes, not fuzzy matching. Every
+        query word must match somewhere within a result. Spaces and punctuation split
+        words: `other emails` matches `other_emails`, but `mail` does not match `email`.
+        Some Model Sync source-type matches require a leading `~`.
+
+        Each resource appears once. Its `matches` explain which attributes matched and
+        which query terms contributed. Mapping and schema attributes carry their
+        respective `mapping` or `schema` context; resource metadata has neither. A name
+        or Connection type match alone does not establish mapping or schema use.
+        Results include canonical `links`, not complete configurations or schema lists.
+
+        ## Limits and completeness
+
+        Results are ordered by category, then name or field label, then ID, not by
+        relevance. `limit` defaults to 50 and accepts 1–100. It limits resource hits,
+        not match evidence. When `metadata.truncated` is `true`, narrow your search or
+        increase the limit. There is no cursor pagination.
+
+        > ⚠️ Incomplete model-field coverage
+        >
+        > Above 40,000 published model fields, `metadata.model_fields_complete` is
+        > `false`: standalone field results cover a subset, not every published field.
+        > Model Sync mapping search is unaffected. Incomplete or truncated results
+        > cannot establish that no other matches exist.
+
+        Parameters
+        ----------
+        search : str
+            Search term matched, by word prefix, against models, model fields, model syncs, bulk syncs, and connections in the caller's organization.
+
+        limit : typing.Optional[int]
+            Maximum number of results to return across all result types. Defaults to 50 and cannot exceed 100.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[SearchEnvelope]
+            OK
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "api/entities/search",
+            method="GET",
+            params={
+                "search": search,
+                "limit": limit,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    SearchEnvelope,
+                    parse_obj_as(
+                        type_=SearchEnvelope,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 401:
+                raise UnauthorizedError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise core_api_error_ApiError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.text
+            )
+        except ValidationError as e:
+            raise ParsingError(
+                status_code=_response.status_code, headers=dict(_response.headers), body=_response.json(), cause=e
+            )
+        raise core_api_error_ApiError(
+            status_code=_response.status_code, headers=dict(_response.headers), body=_response_json
+        )
+
     async def get(
         self, id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[EntityResponseEnvelope]:
@@ -321,8 +645,8 @@ class AsyncRawEntitiesClient:
         - `user`
         - `connection`
         - `model`
-        - `sync`
-        - `sync_execution`
+        - `model_sync`
+        - `model_sync_execution`
         - `bulk_sync`
         - `bulk_sync_execution`
         - `harbor`
@@ -330,8 +654,8 @@ class AsyncRawEntitiesClient:
 
         Examples:
 
-        - A model sync execution resolves to a `sync_execution` and includes a `sync`
-          relationship.
+        - A model sync execution resolves to a `model_sync_execution` and includes a
+          `sync` relationship.
         - A bulk sync execution resolves to a `bulk_sync_execution`, includes a
           `bulk_sync` relationship, and may include `context.schema_ids`.
         - A Harbor context resolves to a `harbor_context` and includes a `harbor`
@@ -456,8 +780,8 @@ class AsyncRawEntitiesClient:
         - `user`
         - `connection`
         - `model`
-        - `sync`
-        - `sync_execution`
+        - `model_sync`
+        - `model_sync_execution`
         - `bulk_sync`
         - `bulk_sync_execution`
         - `harbor`
@@ -465,8 +789,8 @@ class AsyncRawEntitiesClient:
 
         Examples:
 
-        - A model sync execution resolves to a `sync_execution` and includes a `sync`
-          relationship.
+        - A model sync execution resolves to a `model_sync_execution` and includes a
+          `sync` relationship.
         - A bulk sync execution resolves to a `bulk_sync_execution`, includes a
           `bulk_sync` relationship, and may include `context.schema_ids`.
         - A Harbor context resolves to a `harbor_context` and includes a `harbor`

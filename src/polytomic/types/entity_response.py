@@ -35,7 +35,7 @@ class EntityResponse(UniversalBaseModel):
 
     type: typing.Optional[str] = pydantic.Field(default=None)
     """
-    Resolved entity type. One of: organization, user, connection, model, sync, sync_execution, bulk_sync, bulk_sync_execution, harbor, harbor_context.
+    Resolved entity type. One of: organization, user, connection, model, model_sync, model_sync_execution, bulk_sync, bulk_sync_execution, harbor, harbor_context.
     """
 
     if IS_PYDANTIC_V2:

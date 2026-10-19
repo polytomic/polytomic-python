@@ -52,6 +52,7 @@ if typing.TYPE_CHECKING:
     from .bulk_sync_schedule_api import BulkSyncScheduleApi
     from .bulk_sync_schema_execution import BulkSyncSchemaExecution
     from .bulk_sync_schema_execution_status import BulkSyncSchemaExecutionStatus
+    from .bulk_sync_search_hit import BulkSyncSearchHit
     from .bulk_sync_source import BulkSyncSource
     from .bulk_sync_source_capabilities import BulkSyncSourceCapabilities
     from .bulk_sync_source_envelope import BulkSyncSourceEnvelope
@@ -94,6 +95,7 @@ if typing.TYPE_CHECKING:
     from .connection_response_envelope import ConnectionResponseEnvelope
     from .connection_response_schema import ConnectionResponseSchema
     from .connection_response_schema_rate_limit import ConnectionResponseSchemaRateLimit
+    from .connection_search_hit import ConnectionSearchHit
     from .connection_type import ConnectionType
     from .connection_type_response_envelope import ConnectionTypeResponseEnvelope
     from .connection_type_schema import ConnectionTypeSchema
@@ -171,16 +173,28 @@ if typing.TYPE_CHECKING:
     from .get_sync_source_meta_envelope import GetSyncSourceMetaEnvelope
     from .global_error_subscribers_response import GlobalErrorSubscribersResponse
     from .harbor_action_capability import HarborActionCapability
+    from .harbor_action_configuration_envelope import HarborActionConfigurationEnvelope
+    from .harbor_action_configuration_field_response import HarborActionConfigurationFieldResponse
+    from .harbor_action_configuration_idempotency_response import HarborActionConfigurationIdempotencyResponse
+    from .harbor_action_configuration_operation_response import HarborActionConfigurationOperationResponse
+    from .harbor_action_configuration_operation_response_effect import HarborActionConfigurationOperationResponseEffect
+    from .harbor_action_configuration_operations_envelope import HarborActionConfigurationOperationsEnvelope
+    from .harbor_action_configuration_response import HarborActionConfigurationResponse
+    from .harbor_action_configuration_schemas_envelope import HarborActionConfigurationSchemasEnvelope
     from .harbor_action_describe_envelope import HarborActionDescribeEnvelope
     from .harbor_action_execution_envelope import HarborActionExecutionEnvelope
     from .harbor_action_execution_response import HarborActionExecutionResponse
     from .harbor_action_execution_response_status import HarborActionExecutionResponseStatus
     from .harbor_action_field import HarborActionField
+    from .harbor_action_grant_schema import HarborActionGrantSchema
     from .harbor_action_list_envelope import HarborActionListEnvelope
     from .harbor_action_list_envelope_pagination import HarborActionListEnvelopePagination
     from .harbor_action_lookup_envelope import HarborActionLookupEnvelope
     from .harbor_action_preparation import HarborActionPreparation
     from .harbor_action_preparation_envelope import HarborActionPreparationEnvelope
+    from .harbor_action_schema_response import HarborActionSchemaResponse
+    from .harbor_action_source_connection_response import HarborActionSourceConnectionResponse
+    from .harbor_action_source_connections_envelope import HarborActionSourceConnectionsEnvelope
     from .harbor_action_summary import HarborActionSummary
     from .harbor_activity_event_envelope import HarborActivityEventEnvelope
     from .harbor_activity_list_envelope import HarborActivityListEnvelope
@@ -268,6 +282,7 @@ if typing.TYPE_CHECKING:
     from .mode import Mode
     from .model_field import ModelField
     from .model_field_response import ModelFieldResponse
+    from .model_field_search_hit import ModelFieldSearchHit
     from .model_filter_condition import ModelFilterCondition
     from .model_filters import ModelFilters
     from .model_list_response_envelope import ModelListResponseEnvelope
@@ -278,9 +293,12 @@ if typing.TYPE_CHECKING:
     from .model_response_envelope import ModelResponseEnvelope
     from .model_sample import ModelSample
     from .model_sample_response_envelope import ModelSampleResponseEnvelope
+    from .model_search_hit import ModelSearchHit
     from .model_sync_identities import ModelSyncIdentities
     from .model_sync_identities_strategy import ModelSyncIdentitiesStrategy
     from .model_sync_problem import ModelSyncProblem
+    from .model_sync_search_hit import ModelSyncSearchHit
+    from .model_sync_source_connection import ModelSyncSourceConnection
     from .model_sync_source_identity import ModelSyncSourceIdentity
     from .model_sync_v5response import ModelSyncV5Response
     from .model_sync_v5response_envelope import ModelSyncV5ResponseEnvelope
@@ -346,8 +364,24 @@ if typing.TYPE_CHECKING:
     from .schema_primary_key_override_input import SchemaPrimaryKeyOverrideInput
     from .schema_record import SchemaRecord
     from .schema_records_response_envelope import SchemaRecordsResponseEnvelope
+    from .search_envelope import SearchEnvelope
+    from .search_match import SearchMatch
+    from .search_match_attribute import SearchMatchAttribute
+    from .search_match_mapping import SearchMatchMapping
+    from .search_match_mapping_kind import SearchMatchMappingKind
+    from .search_match_schema import SearchMatchSchema
     from .search_operations_envelope import SearchOperationsEnvelope
     from .search_operations_response import SearchOperationsResponse
+    from .search_result_item import (
+        SearchResultItem,
+        SearchResultItem_BulkSync,
+        SearchResultItem_Connection,
+        SearchResultItem_Model,
+        SearchResultItem_ModelField,
+        SearchResultItem_ModelSync,
+    )
+    from .search_result_links import SearchResultLinks
+    from .search_result_metadata import SearchResultMetadata
     from .source import Source
     from .source_meta import SourceMeta
     from .start_sync_response_envelope import StartSyncResponseEnvelope
@@ -439,6 +473,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "BulkSyncScheduleApi": ".bulk_sync_schedule_api",
     "BulkSyncSchemaExecution": ".bulk_sync_schema_execution",
     "BulkSyncSchemaExecutionStatus": ".bulk_sync_schema_execution_status",
+    "BulkSyncSearchHit": ".bulk_sync_search_hit",
     "BulkSyncSource": ".bulk_sync_source",
     "BulkSyncSourceCapabilities": ".bulk_sync_source_capabilities",
     "BulkSyncSourceEnvelope": ".bulk_sync_source_envelope",
@@ -481,6 +516,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ConnectionResponseEnvelope": ".connection_response_envelope",
     "ConnectionResponseSchema": ".connection_response_schema",
     "ConnectionResponseSchemaRateLimit": ".connection_response_schema_rate_limit",
+    "ConnectionSearchHit": ".connection_search_hit",
     "ConnectionType": ".connection_type",
     "ConnectionTypeResponseEnvelope": ".connection_type_response_envelope",
     "ConnectionTypeSchema": ".connection_type_schema",
@@ -558,16 +594,28 @@ _dynamic_imports: typing.Dict[str, str] = {
     "GetSyncSourceMetaEnvelope": ".get_sync_source_meta_envelope",
     "GlobalErrorSubscribersResponse": ".global_error_subscribers_response",
     "HarborActionCapability": ".harbor_action_capability",
+    "HarborActionConfigurationEnvelope": ".harbor_action_configuration_envelope",
+    "HarborActionConfigurationFieldResponse": ".harbor_action_configuration_field_response",
+    "HarborActionConfigurationIdempotencyResponse": ".harbor_action_configuration_idempotency_response",
+    "HarborActionConfigurationOperationResponse": ".harbor_action_configuration_operation_response",
+    "HarborActionConfigurationOperationResponseEffect": ".harbor_action_configuration_operation_response_effect",
+    "HarborActionConfigurationOperationsEnvelope": ".harbor_action_configuration_operations_envelope",
+    "HarborActionConfigurationResponse": ".harbor_action_configuration_response",
+    "HarborActionConfigurationSchemasEnvelope": ".harbor_action_configuration_schemas_envelope",
     "HarborActionDescribeEnvelope": ".harbor_action_describe_envelope",
     "HarborActionExecutionEnvelope": ".harbor_action_execution_envelope",
     "HarborActionExecutionResponse": ".harbor_action_execution_response",
     "HarborActionExecutionResponseStatus": ".harbor_action_execution_response_status",
     "HarborActionField": ".harbor_action_field",
+    "HarborActionGrantSchema": ".harbor_action_grant_schema",
     "HarborActionListEnvelope": ".harbor_action_list_envelope",
     "HarborActionListEnvelopePagination": ".harbor_action_list_envelope_pagination",
     "HarborActionLookupEnvelope": ".harbor_action_lookup_envelope",
     "HarborActionPreparation": ".harbor_action_preparation",
     "HarborActionPreparationEnvelope": ".harbor_action_preparation_envelope",
+    "HarborActionSchemaResponse": ".harbor_action_schema_response",
+    "HarborActionSourceConnectionResponse": ".harbor_action_source_connection_response",
+    "HarborActionSourceConnectionsEnvelope": ".harbor_action_source_connections_envelope",
     "HarborActionSummary": ".harbor_action_summary",
     "HarborActivityEventEnvelope": ".harbor_activity_event_envelope",
     "HarborActivityListEnvelope": ".harbor_activity_list_envelope",
@@ -655,6 +703,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "Mode": ".mode",
     "ModelField": ".model_field",
     "ModelFieldResponse": ".model_field_response",
+    "ModelFieldSearchHit": ".model_field_search_hit",
     "ModelFilterCondition": ".model_filter_condition",
     "ModelFilters": ".model_filters",
     "ModelListResponseEnvelope": ".model_list_response_envelope",
@@ -665,9 +714,12 @@ _dynamic_imports: typing.Dict[str, str] = {
     "ModelResponseEnvelope": ".model_response_envelope",
     "ModelSample": ".model_sample",
     "ModelSampleResponseEnvelope": ".model_sample_response_envelope",
+    "ModelSearchHit": ".model_search_hit",
     "ModelSyncIdentities": ".model_sync_identities",
     "ModelSyncIdentitiesStrategy": ".model_sync_identities_strategy",
     "ModelSyncProblem": ".model_sync_problem",
+    "ModelSyncSearchHit": ".model_sync_search_hit",
+    "ModelSyncSourceConnection": ".model_sync_source_connection",
     "ModelSyncSourceIdentity": ".model_sync_source_identity",
     "ModelSyncV5Response": ".model_sync_v5response",
     "ModelSyncV5ResponseEnvelope": ".model_sync_v5response_envelope",
@@ -731,8 +783,22 @@ _dynamic_imports: typing.Dict[str, str] = {
     "SchemaPrimaryKeyOverrideInput": ".schema_primary_key_override_input",
     "SchemaRecord": ".schema_record",
     "SchemaRecordsResponseEnvelope": ".schema_records_response_envelope",
+    "SearchEnvelope": ".search_envelope",
+    "SearchMatch": ".search_match",
+    "SearchMatchAttribute": ".search_match_attribute",
+    "SearchMatchMapping": ".search_match_mapping",
+    "SearchMatchMappingKind": ".search_match_mapping_kind",
+    "SearchMatchSchema": ".search_match_schema",
     "SearchOperationsEnvelope": ".search_operations_envelope",
     "SearchOperationsResponse": ".search_operations_response",
+    "SearchResultItem": ".search_result_item",
+    "SearchResultItem_BulkSync": ".search_result_item",
+    "SearchResultItem_Connection": ".search_result_item",
+    "SearchResultItem_Model": ".search_result_item",
+    "SearchResultItem_ModelField": ".search_result_item",
+    "SearchResultItem_ModelSync": ".search_result_item",
+    "SearchResultLinks": ".search_result_links",
+    "SearchResultMetadata": ".search_result_metadata",
     "Source": ".source",
     "SourceMeta": ".source_meta",
     "StartSyncResponseEnvelope": ".start_sync_response_envelope",
@@ -850,6 +916,7 @@ __all__ = [
     "BulkSyncScheduleApi",
     "BulkSyncSchemaExecution",
     "BulkSyncSchemaExecutionStatus",
+    "BulkSyncSearchHit",
     "BulkSyncSource",
     "BulkSyncSourceCapabilities",
     "BulkSyncSourceEnvelope",
@@ -892,6 +959,7 @@ __all__ = [
     "ConnectionResponseEnvelope",
     "ConnectionResponseSchema",
     "ConnectionResponseSchemaRateLimit",
+    "ConnectionSearchHit",
     "ConnectionType",
     "ConnectionTypeResponseEnvelope",
     "ConnectionTypeSchema",
@@ -969,16 +1037,28 @@ __all__ = [
     "GetSyncSourceMetaEnvelope",
     "GlobalErrorSubscribersResponse",
     "HarborActionCapability",
+    "HarborActionConfigurationEnvelope",
+    "HarborActionConfigurationFieldResponse",
+    "HarborActionConfigurationIdempotencyResponse",
+    "HarborActionConfigurationOperationResponse",
+    "HarborActionConfigurationOperationResponseEffect",
+    "HarborActionConfigurationOperationsEnvelope",
+    "HarborActionConfigurationResponse",
+    "HarborActionConfigurationSchemasEnvelope",
     "HarborActionDescribeEnvelope",
     "HarborActionExecutionEnvelope",
     "HarborActionExecutionResponse",
     "HarborActionExecutionResponseStatus",
     "HarborActionField",
+    "HarborActionGrantSchema",
     "HarborActionListEnvelope",
     "HarborActionListEnvelopePagination",
     "HarborActionLookupEnvelope",
     "HarborActionPreparation",
     "HarborActionPreparationEnvelope",
+    "HarborActionSchemaResponse",
+    "HarborActionSourceConnectionResponse",
+    "HarborActionSourceConnectionsEnvelope",
     "HarborActionSummary",
     "HarborActivityEventEnvelope",
     "HarborActivityListEnvelope",
@@ -1066,6 +1146,7 @@ __all__ = [
     "Mode",
     "ModelField",
     "ModelFieldResponse",
+    "ModelFieldSearchHit",
     "ModelFilterCondition",
     "ModelFilters",
     "ModelListResponseEnvelope",
@@ -1076,9 +1157,12 @@ __all__ = [
     "ModelResponseEnvelope",
     "ModelSample",
     "ModelSampleResponseEnvelope",
+    "ModelSearchHit",
     "ModelSyncIdentities",
     "ModelSyncIdentitiesStrategy",
     "ModelSyncProblem",
+    "ModelSyncSearchHit",
+    "ModelSyncSourceConnection",
     "ModelSyncSourceIdentity",
     "ModelSyncV5Response",
     "ModelSyncV5ResponseEnvelope",
@@ -1142,8 +1226,22 @@ __all__ = [
     "SchemaPrimaryKeyOverrideInput",
     "SchemaRecord",
     "SchemaRecordsResponseEnvelope",
+    "SearchEnvelope",
+    "SearchMatch",
+    "SearchMatchAttribute",
+    "SearchMatchMapping",
+    "SearchMatchMappingKind",
+    "SearchMatchSchema",
     "SearchOperationsEnvelope",
     "SearchOperationsResponse",
+    "SearchResultItem",
+    "SearchResultItem_BulkSync",
+    "SearchResultItem_Connection",
+    "SearchResultItem_Model",
+    "SearchResultItem_ModelField",
+    "SearchResultItem_ModelSync",
+    "SearchResultLinks",
+    "SearchResultMetadata",
     "Source",
     "SourceMeta",
     "StartSyncResponseEnvelope",

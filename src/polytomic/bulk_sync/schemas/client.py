@@ -309,7 +309,7 @@ class SchemasClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CancelBulkSyncResponseEnvelope:
         """
-        Requests cancellation of any running executions for a specific schema on a bulk sync.
+        Requests cancellation of any running executions for a specific schema on a bulk sync. A schema whose only running work is a backfill returns a conflict.
 
         Cancellation is asynchronous. A successful response means the cancellation
         signal for this schema has been queued; the schema's in-flight work continues
@@ -678,7 +678,7 @@ class AsyncSchemasClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> CancelBulkSyncResponseEnvelope:
         """
-        Requests cancellation of any running executions for a specific schema on a bulk sync.
+        Requests cancellation of any running executions for a specific schema on a bulk sync. A schema whose only running work is a backfill returns a conflict.
 
         Cancellation is asynchronous. A successful response means the cancellation
         signal for this schema has been queued; the schema's in-flight work continues

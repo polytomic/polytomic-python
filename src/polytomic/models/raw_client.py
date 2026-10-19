@@ -292,6 +292,7 @@ class RawModelsClient:
         enricher : typing.Optional[Enrichment]
 
         fields : typing.Optional[typing.Sequence[str]]
+            Technical/source field names to publish in the model. Use source names, not model-field UUIDs or display labels. For example, use dealname rather than Deal Name. Omit or pass an empty array to publish all standard source fields.
 
         identifier : typing.Optional[str]
 
@@ -513,6 +514,7 @@ class RawModelsClient:
         enricher : typing.Optional[Enrichment]
 
         fields : typing.Optional[typing.Sequence[str]]
+            Technical/source field names to publish in the model. Use source names, not model-field UUIDs or display labels. For example, use dealname rather than Deal Name. Omit or pass an empty array to publish all standard source fields.
 
         identifier : typing.Optional[str]
 
@@ -754,6 +756,7 @@ class RawModelsClient:
         enricher : typing.Optional[Enrichment]
 
         fields : typing.Optional[typing.Sequence[str]]
+            Technical/source field names to publish in the model. Use source names, not model-field UUIDs or display labels. For example, use dealname rather than Deal Name. Omit or pass an empty array to publish all standard source fields.
 
         identifier : typing.Optional[str]
 
@@ -1308,6 +1311,7 @@ class AsyncRawModelsClient:
         enricher : typing.Optional[Enrichment]
 
         fields : typing.Optional[typing.Sequence[str]]
+            Technical/source field names to publish in the model. Use source names, not model-field UUIDs or display labels. For example, use dealname rather than Deal Name. Omit or pass an empty array to publish all standard source fields.
 
         identifier : typing.Optional[str]
 
@@ -1529,6 +1533,7 @@ class AsyncRawModelsClient:
         enricher : typing.Optional[Enrichment]
 
         fields : typing.Optional[typing.Sequence[str]]
+            Technical/source field names to publish in the model. Use source names, not model-field UUIDs or display labels. For example, use dealname rather than Deal Name. Omit or pass an empty array to publish all standard source fields.
 
         identifier : typing.Optional[str]
 
@@ -1770,6 +1775,7 @@ class AsyncRawModelsClient:
         enricher : typing.Optional[Enrichment]
 
         fields : typing.Optional[typing.Sequence[str]]
+            Technical/source field names to publish in the model. Use source names, not model-field UUIDs or display labels. For example, use dealname rather than Deal Name. Omit or pass an empty array to publish all standard source fields.
 
         identifier : typing.Optional[str]
 

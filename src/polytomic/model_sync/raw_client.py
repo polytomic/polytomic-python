@@ -160,7 +160,7 @@ class RawModelSyncClient:
         self,
         id: str,
         *,
-        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        params: typing.Optional[typing.Dict[str, typing.Optional[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[ModelFieldResponse]:
         """
@@ -177,12 +177,36 @@ class RawModelSyncClient:
         The available source configuration parameters are described by
         [`GET /api/connections/{id}/modelsync/source`](../../../../../../api-reference/model-sync/get-source).
 
+        ## Query parameter format
+
+        Send each source setting as a bracketed key with a single string value. For
+        example, a source configured with `stream_id: "deals"` uses
+        `params[stream_id]=deals`.
+
+        With Polytomic MCP, pass the bracketed key directly in `query`:
+
+        ```javascript
+        async () => {
+          return polytomic.request({
+            method: "GET",
+            path: "/api/connections/<connection_id>/modelsync/source/fields",
+            query: {"params[stream_id]": "deals"}
+          });
+        }
+        ```
+
+        > ⚠️ Send one value per setting
+        >
+        > Each setting uses only the first value if you repeat its query key. An empty
+        > array suffix, such as `params[stream_id][]=deals`, is rejected with
+        > `400 Bad Request`. Use `params[stream_id]=deals` instead.
+
         Parameters
         ----------
         id : str
             Unique identifier of the connection.
 
-        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+        params : typing.Optional[typing.Dict[str, typing.Optional[str]]]
             Source configuration, matching the params used with GET /api/connections/{id}/modelsync/source, that selects the specific source to return fields for.
 
         request_options : typing.Optional[RequestOptions]
@@ -1693,7 +1717,7 @@ class AsyncRawModelSyncClient:
         self,
         id: str,
         *,
-        params: typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]] = None,
+        params: typing.Optional[typing.Dict[str, typing.Optional[str]]] = None,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[ModelFieldResponse]:
         """
@@ -1710,12 +1734,36 @@ class AsyncRawModelSyncClient:
         The available source configuration parameters are described by
         [`GET /api/connections/{id}/modelsync/source`](../../../../../../api-reference/model-sync/get-source).
 
+        ## Query parameter format
+
+        Send each source setting as a bracketed key with a single string value. For
+        example, a source configured with `stream_id: "deals"` uses
+        `params[stream_id]=deals`.
+
+        With Polytomic MCP, pass the bracketed key directly in `query`:
+
+        ```javascript
+        async () => {
+          return polytomic.request({
+            method: "GET",
+            path: "/api/connections/<connection_id>/modelsync/source/fields",
+            query: {"params[stream_id]": "deals"}
+          });
+        }
+        ```
+
+        > ⚠️ Send one value per setting
+        >
+        > Each setting uses only the first value if you repeat its query key. An empty
+        > array suffix, such as `params[stream_id][]=deals`, is rejected with
+        > `400 Bad Request`. Use `params[stream_id]=deals` instead.
+
         Parameters
         ----------
         id : str
             Unique identifier of the connection.
 
-        params : typing.Optional[typing.Dict[str, typing.Optional[typing.Sequence[str]]]]
+        params : typing.Optional[typing.Dict[str, typing.Optional[str]]]
             Source configuration, matching the params used with GET /api/connections/{id}/modelsync/source, that selects the specific source to return fields for.
 
         request_options : typing.Optional[RequestOptions]

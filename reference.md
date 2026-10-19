@@ -4454,7 +4454,7 @@ client.models.update(
 <dl>
 <dd>
 
-**fields:** `typing.Optional[typing.List[str]]` 
+**fields:** `typing.Optional[typing.List[str]]` — Technical/source field names to publish in the model. Use source names, not model-field UUIDs or display labels. For example, use dealname rather than Deal Name. Omit or pass an empty array to publish all standard source fields.
     
 </dd>
 </dl>
@@ -4812,6 +4812,30 @@ returned fields are what can be referenced in sync field mappings.
 
 The available source configuration parameters are described by
 [`GET /api/connections/{id}/modelsync/source`](../../../../../../api-reference/model-sync/get-source).
+
+## Query parameter format
+
+Send each source setting as a bracketed key with a single string value. For
+example, a source configured with `stream_id: "deals"` uses
+`params[stream_id]=deals`.
+
+With Polytomic MCP, pass the bracketed key directly in `query`:
+
+```javascript
+async () => {
+  return polytomic.request({
+    method: "GET",
+    path: "/api/connections/<connection_id>/modelsync/source/fields",
+    query: {"params[stream_id]": "deals"}
+  });
+}
+```
+
+> ⚠️ Send one value per setting
+>
+> Each setting uses only the first value if you repeat its query key. An empty
+> array suffix, such as `params[stream_id][]=deals`, is rejected with
+> `400 Bad Request`. Use `params[stream_id]=deals` instead.
 </dd>
 </dl>
 </dd>
@@ -4860,7 +4884,7 @@ client.model_sync.get_source_fields(
 <dl>
 <dd>
 
-**params:** `typing.Optional[typing.Dict[str, typing.Optional[typing.List[str]]]]` — Source configuration, matching the params used with GET /api/connections/{id}/modelsync/source, that selects the specific source to return fields for.
+**params:** `typing.Optional[typing.Dict[str, typing.Optional[str]]]` — Source configuration, matching the params used with GET /api/connections/{id}/modelsync/source, that selects the specific source to return fields for.
     
 </dd>
 </dl>
@@ -6128,6 +6152,136 @@ client.model_sync.get_status(
 </details>
 
 ## Entities
+<details><summary><code>client.entities.<a href="src/polytomic/entities/client.py">search</a>(...) -> SearchEnvelope</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Searches models, model fields, model syncs, bulk syncs, and connections in the caller's organization.
+
+Supply a nonblank `search` term to search all five result categories. Unlike
+[entity lookup](../../../api-reference/entities/get), this endpoint does not search
+Organizations, users, executions, Harbors, or Harbor contexts. Model fields are
+searchable but have no standalone lookup endpoint.
+
+## Searchable resources
+
+- Models: ID, name, and source Connection type.
+- Model fields: ID, technical name, and label.
+- Model Syncs: ID, name, source and target Connection types, and saved field and
+  identity mappings. Mappings include source field names and labels, target
+  field IDs, and available target field names.
+- Bulk Syncs: ID, name, source and target Connection names and types, and enabled
+  schema IDs, display names, and configured output names. Disabled schemas are
+  excluded; enabled schemas remain searchable when the sync is inactive.
+- Connections: ID and name.
+
+Search uses cached metadata and does not refresh schemas. Names absent from
+that metadata are not searchable. Bulk Sync fields, execution state,
+expressions, filters, and constant values are not searched.
+
+## Matching and evidence
+
+Matching is case-insensitive and uses word prefixes, not fuzzy matching. Every
+query word must match somewhere within a result. Spaces and punctuation split
+words: `other emails` matches `other_emails`, but `mail` does not match `email`.
+Some Model Sync source-type matches require a leading `~`.
+
+Each resource appears once. Its `matches` explain which attributes matched and
+which query terms contributed. Mapping and schema attributes carry their
+respective `mapping` or `schema` context; resource metadata has neither. A name
+or Connection type match alone does not establish mapping or schema use.
+Results include canonical `links`, not complete configurations or schema lists.
+
+## Limits and completeness
+
+Results are ordered by category, then name or field label, then ID, not by
+relevance. `limit` defaults to 50 and accepts 1–100. It limits resource hits,
+not match evidence. When `metadata.truncated` is `true`, narrow your search or
+increase the limit. There is no cursor pagination.
+
+> ⚠️ Incomplete model-field coverage
+>
+> Above 40,000 published model fields, `metadata.model_fields_complete` is
+> `false`: standalone field results cover a subset, not every published field.
+> Model Sync mapping search is unaffected. Incomplete or truncated results
+> cannot establish that no other matches exist.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
+
+client = Polytomic(
+    token="<token>",
+    environment=PolytomicEnvironment.DEFAULT,
+)
+
+client.entities.search(
+    search="email",
+    limit=50,
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**search:** `str` — Search term matched, by word prefix, against models, model fields, model syncs, bulk syncs, and connections in the caller's organization.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` — Maximum number of results to return across all result types. Defaults to 50 and cannot exceed 100.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.entities.<a href="src/polytomic/entities/client.py">get</a>(...) -> EntityResponseEnvelope</code></summary>
 <dl>
 <dd>
@@ -6169,8 +6323,8 @@ Supported `type` values currently include:
 - `user`
 - `connection`
 - `model`
-- `sync`
-- `sync_execution`
+- `model_sync`
+- `model_sync_execution`
 - `bulk_sync`
 - `bulk_sync_execution`
 - `harbor`
@@ -6178,8 +6332,8 @@ Supported `type` values currently include:
 
 Examples:
 
-- A model sync execution resolves to a `sync_execution` and includes a `sync`
-  relationship.
+- A model sync execution resolves to a `model_sync_execution` and includes a
+  `sync` relationship.
 - A bulk sync execution resolves to a `bulk_sync_execution`, includes a
   `bulk_sync` relationship, and may include `context.schema_ids`.
 - A Harbor context resolves to a `harbor_context` and includes a `harbor`
@@ -6286,8 +6440,8 @@ Supported `type` values currently include:
 - `user`
 - `connection`
 - `model`
-- `sync`
-- `sync_execution`
+- `model_sync`
+- `model_sync_execution`
 - `bulk_sync`
 - `bulk_sync_execution`
 - `harbor`
@@ -6295,8 +6449,8 @@ Supported `type` values currently include:
 
 Examples:
 
-- A model sync execution resolves to a `sync_execution` and includes a `sync`
-  relationship.
+- A model sync execution resolves to a `model_sync_execution` and includes a
+  `sync` relationship.
 - A bulk sync execution resolves to a `bulk_sync_execution`, includes a
   `bulk_sync` relationship, and may include `context.schema_ids`.
 - A Harbor context resolves to a `harbor_context` and includes a `harbor`
@@ -7535,6 +7689,708 @@ client.harbors.delete(
 <dd>
 
 **harbor_id:** `str` — Unique identifier of the Harbor.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.harbors.<a href="src/polytomic/harbors/client.py">get_action_configuration</a>(...) -> HarborActionConfigurationEnvelope</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Returns configured action grants and revisions for a Harbor.
+
+You must be an Organization administrator with permission to edit the Harbor.
+Use a writable API credential, not a Harbor profile credential. Read-only keys
+are denied because this endpoint requires Harbor edit permission.
+
+This response includes grants for Connections that no longer populate the
+Harbor. You can remove those stale grants without reattaching the Connection.
+Reading configuration does not require the Harbor Actions entitlement.
+
+Use each Connection's `revision` as `expected_revision` when replacing or
+removing its grants. Configuration responses contain metadata only, not provider
+credentials or record values.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
+
+client = Polytomic(
+    token="<token>",
+    environment=PolytomicEnvironment.DEFAULT,
+)
+
+client.harbors.get_action_configuration(
+    harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**harbor_id:** `str` — Unique identifier of the Harbor.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.harbors.<a href="src/polytomic/harbors/client.py">disable_action_configuration</a>(...) -> HarborActionConfigurationEnvelope</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Disables all configured actions for a Harbor.
+
+You must be an Organization administrator with permission to edit the Harbor.
+Use a normal writable API credential, not a Harbor profile credential. Your
+Organization must have the Harbor Actions entitlement.
+
+> 🚧 Disable all actions
+>
+> This removes every configured action grant from the Harbor, including grants
+> for detached Connections. There is no per-Connection revision check.
+
+The response contains the empty configuration. This request does not delete
+Connections, syncs, or provider records.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
+
+client = Polytomic(
+    token="<token>",
+    environment=PolytomicEnvironment.DEFAULT,
+)
+
+client.harbors.disable_action_configuration(
+    harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**harbor_id:** `str` — Unique identifier of the Harbor.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.harbors.<a href="src/polytomic/harbors/client.py">list_action_source_connections</a>(...) -> HarborActionSourceConnectionsEnvelope</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists action-capable source Connections that populate a Harbor.
+
+You must be an Organization administrator with permission to edit the Harbor.
+Use a writable API credential, not a Harbor profile credential. Read-only keys
+are denied because this endpoint requires Harbor edit permission. Discovery does
+not require the Harbor Actions entitlement.
+
+A Connection is eligible when it supports actions and is a source of a
+non-deleted Bulk Sync or Model Sync targeting the Harbor's backing Connection.
+Only saved, non-shared Connections in your Organization that you can query are
+included. Disabled syncs still establish source membership.
+
+Discover schemas and operations before choosing the grants to configure.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
+
+client = Polytomic(
+    token="<token>",
+    environment=PolytomicEnvironment.DEFAULT,
+)
+
+client.harbors.list_action_source_connections(
+    harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**harbor_id:** `str` — Unique identifier of the Harbor.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.harbors.<a href="src/polytomic/harbors/client.py">set_action_configuration</a>(...) -> HarborActionConfigurationEnvelope</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Creates or replaces action grants for an eligible Harbor source Connection.
+
+You must be an Organization administrator with permission to edit both the
+Harbor and the source Connection. Use a normal writable API credential, not a
+Harbor profile credential. Your Organization must have the Harbor Actions
+entitlement.
+
+The Connection must populate the Harbor through a non-deleted Bulk Sync or Model
+Sync targeting its backing Connection. This requirement applies to new grants
+and replacements, even when you only remove fields from an existing grant.
+
+Submit the complete grant set for this Connection. Omit `expected_revision` to
+create it, or supply the current revision to replace it. A missing, stale, or
+unexpected revision returns `409 Conflict`; read configuration again before
+retrying. Successful replacement creates a new revision.
+
+For mutating operations, `field_ids` selects input fields and
+`lookup_field_ids` must be omitted. For read-only operations, `field_ids`
+selects output fields and `lookup_field_ids` selects allowed lookup fields.
+Duplicate operations or field IDs are invalid. An empty grant set is invalid;
+remove the Connection's grants instead.
+
+This request changes permissions only. It does not execute provider actions.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
+
+client = Polytomic(
+    token="<token>",
+    environment=PolytomicEnvironment.DEFAULT,
+)
+
+client.harbors.set_action_configuration(
+    harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**harbor_id:** `str` — Unique identifier of the Harbor.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**connection_id:** `str` — Source Connection whose action grants you want to manage.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**expected_revision:** `typing.Optional[str]` — Current revision when replacing existing grants. Omit when creating grants for this Connection.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**grants:** `typing.Optional[typing.List[HarborActionGrantSchema]]` — Complete replacement of this Connection's action grants.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.harbors.<a href="src/polytomic/harbors/client.py">remove_action_configuration</a>(...) -> HarborActionConfigurationEnvelope</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Removes a Connection's action grants from a Harbor.
+
+You must be an Organization administrator with permission to edit the Harbor.
+Use a normal writable API credential, not a Harbor profile credential. Your
+Organization must have the Harbor Actions entitlement.
+
+Supply the current `expected_revision` as a query parameter. A stale revision
+returns `409 Conflict`; read configuration again before retrying.
+
+You can remove grants after the Connection stops populating the Harbor, or after
+the Connection is deleted. The response contains the remaining configured action
+Connections. This request does not delete the Connection or provider records.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
+
+client = Polytomic(
+    token="<token>",
+    environment=PolytomicEnvironment.DEFAULT,
+)
+
+client.harbors.remove_action_configuration(
+    harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    expected_revision="248df4b7-aa70-47b8-a036-33ac447e668d",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**harbor_id:** `str` — Unique identifier of the Harbor.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**connection_id:** `str` — Source Connection whose action grants you want to manage.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**expected_revision:** `str` — Current revision of the Connection's action grants.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.harbors.<a href="src/polytomic/harbors/client.py">list_action_configuration_schemas</a>(...) -> HarborActionConfigurationSchemasEnvelope</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists available action schemas for an eligible Harbor source Connection.
+
+You must be an Organization administrator with permission to edit the Harbor
+and query the source Connection. Use a writable API credential, not a Harbor
+profile credential. Read-only keys are denied because this endpoint requires
+Harbor edit permission. Discovery does not require the Harbor Actions entitlement.
+
+The Connection must populate the Harbor through a non-deleted Bulk Sync or Model
+Sync targeting its backing Connection. The response lists action schemas, not
+records. Use the next page token with the same search filter to continue.
+
+Operation IDs in the catalog are hints. Operation discovery returns the current
+configurable fields for a schema.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
+
+client = Polytomic(
+    token="<token>",
+    environment=PolytomicEnvironment.DEFAULT,
+)
+
+client.harbors.list_action_configuration_schemas(
+    harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    search="search",
+    limit=1,
+    page_token="page_token",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**harbor_id:** `str` — Unique identifier of the Harbor.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**connection_id:** `str` — Source Connection whose action grants you want to manage.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**search:** `typing.Optional[str]` — Filter action schemas by ID or name.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**limit:** `typing.Optional[int]` — Maximum number of schemas to return.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page_token:** `typing.Optional[str]` — Opaque cursor returned by the previous request.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.harbors.<a href="src/polytomic/harbors/client.py">list_action_configuration_operations</a>(...) -> HarborActionConfigurationOperationsEnvelope</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lists operations and configurable fields for an eligible Harbor action schema.
+
+You must be an Organization administrator with permission to edit the Harbor
+and query the source Connection. Use a writable API credential, not a Harbor
+profile credential. Read-only keys are denied because this endpoint requires
+Harbor edit permission. Discovery does not require the Harbor Actions entitlement.
+
+The Connection must populate the Harbor through a non-deleted Bulk Sync or Model
+Sync targeting its backing Connection. This request returns operation metadata,
+not provider records, and does not execute an action.
+
+For a mutating operation, choose input field IDs. For a read-only operation,
+choose output field IDs and at least one lookup field ID. Required input fields
+must be included in the grant.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from polytomic import Polytomic
+from polytomic.environment import PolytomicEnvironment
+
+client = Polytomic(
+    token="<token>",
+    environment=PolytomicEnvironment.DEFAULT,
+)
+
+client.harbors.list_action_configuration_operations(
+    harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+    schema_id="schema_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**harbor_id:** `str` — Unique identifier of the Harbor.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**connection_id:** `str` — Source Connection whose action grants you want to manage.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**schema_id:** `str` — Exact action schema ID returned by schema discovery.
     
 </dd>
 </dl>
@@ -16357,7 +17213,7 @@ client.bulk_sync.schemas.update(
 <dl>
 <dd>
 
-Requests cancellation of any running executions for a specific schema on a bulk sync.
+Requests cancellation of any running executions for a specific schema on a bulk sync. A schema whose only running work is a backfill returns a conflict.
 
 Cancellation is asynchronous. A successful response means the cancellation
 signal for this schema has been queued; the schema's in-flight work continues

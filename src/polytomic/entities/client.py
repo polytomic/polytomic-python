@@ -5,6 +5,7 @@ import typing
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
 from ..types.entity_response_envelope import EntityResponseEnvelope
+from ..types.search_envelope import SearchEnvelope
 from .raw_client import AsyncRawEntitiesClient, RawEntitiesClient
 
 
@@ -22,6 +23,96 @@ class EntitiesClient:
         RawEntitiesClient
         """
         return self._raw_client
+
+    def search(
+        self,
+        *,
+        search: str,
+        limit: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SearchEnvelope:
+        """
+        Searches models, model fields, model syncs, bulk syncs, and connections in the caller's organization.
+
+        Supply a nonblank `search` term to search all five result categories. Unlike
+        [entity lookup](../../../api-reference/entities/get), this endpoint does not search
+        Organizations, users, executions, Harbors, or Harbor contexts. Model fields are
+        searchable but have no standalone lookup endpoint.
+
+        ## Searchable resources
+
+        - Models: ID, name, and source Connection type.
+        - Model fields: ID, technical name, and label.
+        - Model Syncs: ID, name, source and target Connection types, and saved field and
+          identity mappings. Mappings include source field names and labels, target
+          field IDs, and available target field names.
+        - Bulk Syncs: ID, name, source and target Connection names and types, and enabled
+          schema IDs, display names, and configured output names. Disabled schemas are
+          excluded; enabled schemas remain searchable when the sync is inactive.
+        - Connections: ID and name.
+
+        Search uses cached metadata and does not refresh schemas. Names absent from
+        that metadata are not searchable. Bulk Sync fields, execution state,
+        expressions, filters, and constant values are not searched.
+
+        ## Matching and evidence
+
+        Matching is case-insensitive and uses word prefixes, not fuzzy matching. Every
+        query word must match somewhere within a result. Spaces and punctuation split
+        words: `other emails` matches `other_emails`, but `mail` does not match `email`.
+        Some Model Sync source-type matches require a leading `~`.
+
+        Each resource appears once. Its `matches` explain which attributes matched and
+        which query terms contributed. Mapping and schema attributes carry their
+        respective `mapping` or `schema` context; resource metadata has neither. A name
+        or Connection type match alone does not establish mapping or schema use.
+        Results include canonical `links`, not complete configurations or schema lists.
+
+        ## Limits and completeness
+
+        Results are ordered by category, then name or field label, then ID, not by
+        relevance. `limit` defaults to 50 and accepts 1–100. It limits resource hits,
+        not match evidence. When `metadata.truncated` is `true`, narrow your search or
+        increase the limit. There is no cursor pagination.
+
+        > ⚠️ Incomplete model-field coverage
+        >
+        > Above 40,000 published model fields, `metadata.model_fields_complete` is
+        > `false`: standalone field results cover a subset, not every published field.
+        > Model Sync mapping search is unaffected. Incomplete or truncated results
+        > cannot establish that no other matches exist.
+
+        Parameters
+        ----------
+        search : str
+            Search term matched, by word prefix, against models, model fields, model syncs, bulk syncs, and connections in the caller's organization.
+
+        limit : typing.Optional[int]
+            Maximum number of results to return across all result types. Defaults to 50 and cannot exceed 100.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SearchEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.entities.search(
+            search="email",
+            limit=50,
+        )
+        """
+        _response = self._raw_client.search(search=search, limit=limit, request_options=request_options)
+        return _response.data
 
     def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> EntityResponseEnvelope:
         """
@@ -54,8 +145,8 @@ class EntitiesClient:
         - `user`
         - `connection`
         - `model`
-        - `sync`
-        - `sync_execution`
+        - `model_sync`
+        - `model_sync_execution`
         - `bulk_sync`
         - `bulk_sync_execution`
         - `harbor`
@@ -63,8 +154,8 @@ class EntitiesClient:
 
         Examples:
 
-        - A model sync execution resolves to a `sync_execution` and includes a `sync`
-          relationship.
+        - A model sync execution resolves to a `model_sync_execution` and includes a
+          `sync` relationship.
         - A bulk sync execution resolves to a `bulk_sync_execution`, includes a
           `bulk_sync` relationship, and may include `context.schema_ids`.
         - A Harbor context resolves to a `harbor_context` and includes a `harbor`
@@ -132,8 +223,8 @@ class EntitiesClient:
         - `user`
         - `connection`
         - `model`
-        - `sync`
-        - `sync_execution`
+        - `model_sync`
+        - `model_sync_execution`
         - `bulk_sync`
         - `bulk_sync_execution`
         - `harbor`
@@ -141,8 +232,8 @@ class EntitiesClient:
 
         Examples:
 
-        - A model sync execution resolves to a `sync_execution` and includes a `sync`
-          relationship.
+        - A model sync execution resolves to a `model_sync_execution` and includes a
+          `sync` relationship.
         - A bulk sync execution resolves to a `bulk_sync_execution`, includes a
           `bulk_sync` relationship, and may include `context.schema_ids`.
         - A Harbor context resolves to a `harbor_context` and includes a `harbor`
@@ -194,6 +285,104 @@ class AsyncEntitiesClient:
         """
         return self._raw_client
 
+    async def search(
+        self,
+        *,
+        search: str,
+        limit: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SearchEnvelope:
+        """
+        Searches models, model fields, model syncs, bulk syncs, and connections in the caller's organization.
+
+        Supply a nonblank `search` term to search all five result categories. Unlike
+        [entity lookup](../../../api-reference/entities/get), this endpoint does not search
+        Organizations, users, executions, Harbors, or Harbor contexts. Model fields are
+        searchable but have no standalone lookup endpoint.
+
+        ## Searchable resources
+
+        - Models: ID, name, and source Connection type.
+        - Model fields: ID, technical name, and label.
+        - Model Syncs: ID, name, source and target Connection types, and saved field and
+          identity mappings. Mappings include source field names and labels, target
+          field IDs, and available target field names.
+        - Bulk Syncs: ID, name, source and target Connection names and types, and enabled
+          schema IDs, display names, and configured output names. Disabled schemas are
+          excluded; enabled schemas remain searchable when the sync is inactive.
+        - Connections: ID and name.
+
+        Search uses cached metadata and does not refresh schemas. Names absent from
+        that metadata are not searchable. Bulk Sync fields, execution state,
+        expressions, filters, and constant values are not searched.
+
+        ## Matching and evidence
+
+        Matching is case-insensitive and uses word prefixes, not fuzzy matching. Every
+        query word must match somewhere within a result. Spaces and punctuation split
+        words: `other emails` matches `other_emails`, but `mail` does not match `email`.
+        Some Model Sync source-type matches require a leading `~`.
+
+        Each resource appears once. Its `matches` explain which attributes matched and
+        which query terms contributed. Mapping and schema attributes carry their
+        respective `mapping` or `schema` context; resource metadata has neither. A name
+        or Connection type match alone does not establish mapping or schema use.
+        Results include canonical `links`, not complete configurations or schema lists.
+
+        ## Limits and completeness
+
+        Results are ordered by category, then name or field label, then ID, not by
+        relevance. `limit` defaults to 50 and accepts 1–100. It limits resource hits,
+        not match evidence. When `metadata.truncated` is `true`, narrow your search or
+        increase the limit. There is no cursor pagination.
+
+        > ⚠️ Incomplete model-field coverage
+        >
+        > Above 40,000 published model fields, `metadata.model_fields_complete` is
+        > `false`: standalone field results cover a subset, not every published field.
+        > Model Sync mapping search is unaffected. Incomplete or truncated results
+        > cannot establish that no other matches exist.
+
+        Parameters
+        ----------
+        search : str
+            Search term matched, by word prefix, against models, model fields, model syncs, bulk syncs, and connections in the caller's organization.
+
+        limit : typing.Optional[int]
+            Maximum number of results to return across all result types. Defaults to 50 and cannot exceed 100.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SearchEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.entities.search(
+                search="email",
+                limit=50,
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.search(search=search, limit=limit, request_options=request_options)
+        return _response.data
+
     async def get(self, id: str, *, request_options: typing.Optional[RequestOptions] = None) -> EntityResponseEnvelope:
         """
         Returns a resolved entity by ID.
@@ -225,8 +414,8 @@ class AsyncEntitiesClient:
         - `user`
         - `connection`
         - `model`
-        - `sync`
-        - `sync_execution`
+        - `model_sync`
+        - `model_sync_execution`
         - `bulk_sync`
         - `bulk_sync_execution`
         - `harbor`
@@ -234,8 +423,8 @@ class AsyncEntitiesClient:
 
         Examples:
 
-        - A model sync execution resolves to a `sync_execution` and includes a `sync`
-          relationship.
+        - A model sync execution resolves to a `model_sync_execution` and includes a
+          `sync` relationship.
         - A bulk sync execution resolves to a `bulk_sync_execution`, includes a
           `bulk_sync` relationship, and may include `context.schema_ids`.
         - A Harbor context resolves to a `harbor_context` and includes a `harbor`
@@ -311,8 +500,8 @@ class AsyncEntitiesClient:
         - `user`
         - `connection`
         - `model`
-        - `sync`
-        - `sync_execution`
+        - `model_sync`
+        - `model_sync_execution`
         - `bulk_sync`
         - `bulk_sync_execution`
         - `harbor`
@@ -320,8 +509,8 @@ class AsyncEntitiesClient:
 
         Examples:
 
-        - A model sync execution resolves to a `sync_execution` and includes a `sync`
-          relationship.
+        - A model sync execution resolves to a `model_sync_execution` and includes a
+          `sync` relationship.
         - A bulk sync execution resolves to a `bulk_sync_execution`, includes a
           `bulk_sync` relationship, and may include `context.schema_ids`.
         - A Harbor context resolves to a `harbor_context` and includes a `harbor`

@@ -14,6 +14,11 @@ from ..types.deleted_harbor_envelope import DeletedHarborEnvelope
 from ..types.deleted_harbor_saved_query_draft_envelope import DeletedHarborSavedQueryDraftEnvelope
 from ..types.deleted_harbor_saved_query_envelope import DeletedHarborSavedQueryEnvelope
 from ..types.execute_harbor_saved_query_envelope import ExecuteHarborSavedQueryEnvelope
+from ..types.harbor_action_configuration_envelope import HarborActionConfigurationEnvelope
+from ..types.harbor_action_configuration_operations_envelope import HarborActionConfigurationOperationsEnvelope
+from ..types.harbor_action_configuration_schemas_envelope import HarborActionConfigurationSchemasEnvelope
+from ..types.harbor_action_grant_schema import HarborActionGrantSchema
+from ..types.harbor_action_source_connections_envelope import HarborActionSourceConnectionsEnvelope
 from ..types.harbor_connection_list_envelope import HarborConnectionListEnvelope
 from ..types.harbor_connection_schema_envelope import HarborConnectionSchemaEnvelope
 from ..types.harbor_context_draft_envelope import HarborContextDraftEnvelope
@@ -626,6 +631,434 @@ class HarborsClient:
         )
         """
         _response = self._raw_client.delete(harbor_id, idempotency_key=idempotency_key, request_options=request_options)
+        return _response.data
+
+    def get_action_configuration(
+        self, harbor_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HarborActionConfigurationEnvelope:
+        """
+        Returns configured action grants and revisions for a Harbor.
+
+        You must be an Organization administrator with permission to edit the Harbor.
+        Use a writable API credential, not a Harbor profile credential. Read-only keys
+        are denied because this endpoint requires Harbor edit permission.
+
+        This response includes grants for Connections that no longer populate the
+        Harbor. You can remove those stale grants without reattaching the Connection.
+        Reading configuration does not require the Harbor Actions entitlement.
+
+        Use each Connection's `revision` as `expected_revision` when replacing or
+        removing its grants. Configuration responses contain metadata only, not provider
+        credentials or record values.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborActionConfigurationEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.harbors.get_action_configuration(
+            harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = self._raw_client.get_action_configuration(harbor_id, request_options=request_options)
+        return _response.data
+
+    def disable_action_configuration(
+        self,
+        harbor_id: str,
+        *,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborActionConfigurationEnvelope:
+        """
+        Disables all configured actions for a Harbor.
+
+        You must be an Organization administrator with permission to edit the Harbor.
+        Use a normal writable API credential, not a Harbor profile credential. Your
+        Organization must have the Harbor Actions entitlement.
+
+        > 🚧 Disable all actions
+        >
+        > This removes every configured action grant from the Harbor, including grants
+        > for detached Connections. There is no per-Connection revision check.
+
+        The response contains the empty configuration. This request does not delete
+        Connections, syncs, or provider records.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborActionConfigurationEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.harbors.disable_action_configuration(
+            harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = self._raw_client.disable_action_configuration(
+            harbor_id, idempotency_key=idempotency_key, request_options=request_options
+        )
+        return _response.data
+
+    def list_action_source_connections(
+        self, harbor_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HarborActionSourceConnectionsEnvelope:
+        """
+        Lists action-capable source Connections that populate a Harbor.
+
+        You must be an Organization administrator with permission to edit the Harbor.
+        Use a writable API credential, not a Harbor profile credential. Read-only keys
+        are denied because this endpoint requires Harbor edit permission. Discovery does
+        not require the Harbor Actions entitlement.
+
+        A Connection is eligible when it supports actions and is a source of a
+        non-deleted Bulk Sync or Model Sync targeting the Harbor's backing Connection.
+        Only saved, non-shared Connections in your Organization that you can query are
+        included. Disabled syncs still establish source membership.
+
+        Discover schemas and operations before choosing the grants to configure.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborActionSourceConnectionsEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.harbors.list_action_source_connections(
+            harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = self._raw_client.list_action_source_connections(harbor_id, request_options=request_options)
+        return _response.data
+
+    def set_action_configuration(
+        self,
+        harbor_id: str,
+        connection_id: str,
+        *,
+        expected_revision: typing.Optional[str] = OMIT,
+        grants: typing.Optional[typing.Sequence[HarborActionGrantSchema]] = OMIT,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborActionConfigurationEnvelope:
+        """
+        Creates or replaces action grants for an eligible Harbor source Connection.
+
+        You must be an Organization administrator with permission to edit both the
+        Harbor and the source Connection. Use a normal writable API credential, not a
+        Harbor profile credential. Your Organization must have the Harbor Actions
+        entitlement.
+
+        The Connection must populate the Harbor through a non-deleted Bulk Sync or Model
+        Sync targeting its backing Connection. This requirement applies to new grants
+        and replacements, even when you only remove fields from an existing grant.
+
+        Submit the complete grant set for this Connection. Omit `expected_revision` to
+        create it, or supply the current revision to replace it. A missing, stale, or
+        unexpected revision returns `409 Conflict`; read configuration again before
+        retrying. Successful replacement creates a new revision.
+
+        For mutating operations, `field_ids` selects input fields and
+        `lookup_field_ids` must be omitted. For read-only operations, `field_ids`
+        selects output fields and `lookup_field_ids` selects allowed lookup fields.
+        Duplicate operations or field IDs are invalid. An empty grant set is invalid;
+        remove the Connection's grants instead.
+
+        This request changes permissions only. It does not execute provider actions.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        connection_id : str
+            Source Connection whose action grants you want to manage.
+
+        expected_revision : typing.Optional[str]
+            Current revision when replacing existing grants. Omit when creating grants for this Connection.
+
+        grants : typing.Optional[typing.Sequence[HarborActionGrantSchema]]
+            Complete replacement of this Connection's action grants.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborActionConfigurationEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.harbors.set_action_configuration(
+            harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = self._raw_client.set_action_configuration(
+            harbor_id,
+            connection_id,
+            expected_revision=expected_revision,
+            grants=grants,
+            idempotency_key=idempotency_key,
+            request_options=request_options,
+        )
+        return _response.data
+
+    def remove_action_configuration(
+        self,
+        harbor_id: str,
+        connection_id: str,
+        *,
+        expected_revision: str,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborActionConfigurationEnvelope:
+        """
+        Removes a Connection's action grants from a Harbor.
+
+        You must be an Organization administrator with permission to edit the Harbor.
+        Use a normal writable API credential, not a Harbor profile credential. Your
+        Organization must have the Harbor Actions entitlement.
+
+        Supply the current `expected_revision` as a query parameter. A stale revision
+        returns `409 Conflict`; read configuration again before retrying.
+
+        You can remove grants after the Connection stops populating the Harbor, or after
+        the Connection is deleted. The response contains the remaining configured action
+        Connections. This request does not delete the Connection or provider records.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        connection_id : str
+            Source Connection whose action grants you want to manage.
+
+        expected_revision : str
+            Current revision of the Connection's action grants.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborActionConfigurationEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.harbors.remove_action_configuration(
+            harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            expected_revision="248df4b7-aa70-47b8-a036-33ac447e668d",
+        )
+        """
+        _response = self._raw_client.remove_action_configuration(
+            harbor_id,
+            connection_id,
+            expected_revision=expected_revision,
+            idempotency_key=idempotency_key,
+            request_options=request_options,
+        )
+        return _response.data
+
+    def list_action_configuration_schemas(
+        self,
+        harbor_id: str,
+        connection_id: str,
+        *,
+        search: typing.Optional[str] = None,
+        limit: typing.Optional[int] = None,
+        page_token: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborActionConfigurationSchemasEnvelope:
+        """
+        Lists available action schemas for an eligible Harbor source Connection.
+
+        You must be an Organization administrator with permission to edit the Harbor
+        and query the source Connection. Use a writable API credential, not a Harbor
+        profile credential. Read-only keys are denied because this endpoint requires
+        Harbor edit permission. Discovery does not require the Harbor Actions entitlement.
+
+        The Connection must populate the Harbor through a non-deleted Bulk Sync or Model
+        Sync targeting its backing Connection. The response lists action schemas, not
+        records. Use the next page token with the same search filter to continue.
+
+        Operation IDs in the catalog are hints. Operation discovery returns the current
+        configurable fields for a schema.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        connection_id : str
+            Source Connection whose action grants you want to manage.
+
+        search : typing.Optional[str]
+            Filter action schemas by ID or name.
+
+        limit : typing.Optional[int]
+            Maximum number of schemas to return.
+
+        page_token : typing.Optional[str]
+            Opaque cursor returned by the previous request.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborActionConfigurationSchemasEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.harbors.list_action_configuration_schemas(
+            harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            search="search",
+            limit=1,
+            page_token="page_token",
+        )
+        """
+        _response = self._raw_client.list_action_configuration_schemas(
+            harbor_id, connection_id, search=search, limit=limit, page_token=page_token, request_options=request_options
+        )
+        return _response.data
+
+    def list_action_configuration_operations(
+        self,
+        harbor_id: str,
+        connection_id: str,
+        schema_id: str,
+        *,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborActionConfigurationOperationsEnvelope:
+        """
+        Lists operations and configurable fields for an eligible Harbor action schema.
+
+        You must be an Organization administrator with permission to edit the Harbor
+        and query the source Connection. Use a writable API credential, not a Harbor
+        profile credential. Read-only keys are denied because this endpoint requires
+        Harbor edit permission. Discovery does not require the Harbor Actions entitlement.
+
+        The Connection must populate the Harbor through a non-deleted Bulk Sync or Model
+        Sync targeting its backing Connection. This request returns operation metadata,
+        not provider records, and does not execute an action.
+
+        For a mutating operation, choose input field IDs. For a read-only operation,
+        choose output field IDs and at least one lookup field ID. Required input fields
+        must be included in the grant.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        connection_id : str
+            Source Connection whose action grants you want to manage.
+
+        schema_id : str
+            Exact action schema ID returned by schema discovery.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborActionConfigurationOperationsEnvelope
+            OK
+
+        Examples
+        --------
+        from polytomic import Polytomic
+
+        client = Polytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+        client.harbors.list_action_configuration_operations(
+            harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            schema_id="schema_id",
+        )
+        """
+        _response = self._raw_client.list_action_configuration_operations(
+            harbor_id, connection_id, schema_id, request_options=request_options
+        )
         return _response.data
 
     def list_contexts(
@@ -3485,6 +3918,490 @@ class AsyncHarborsClient:
         """
         _response = await self._raw_client.delete(
             harbor_id, idempotency_key=idempotency_key, request_options=request_options
+        )
+        return _response.data
+
+    async def get_action_configuration(
+        self, harbor_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HarborActionConfigurationEnvelope:
+        """
+        Returns configured action grants and revisions for a Harbor.
+
+        You must be an Organization administrator with permission to edit the Harbor.
+        Use a writable API credential, not a Harbor profile credential. Read-only keys
+        are denied because this endpoint requires Harbor edit permission.
+
+        This response includes grants for Connections that no longer populate the
+        Harbor. You can remove those stale grants without reattaching the Connection.
+        Reading configuration does not require the Harbor Actions entitlement.
+
+        Use each Connection's `revision` as `expected_revision` when replacing or
+        removing its grants. Configuration responses contain metadata only, not provider
+        credentials or record values.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborActionConfigurationEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.harbors.get_action_configuration(
+                harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_action_configuration(harbor_id, request_options=request_options)
+        return _response.data
+
+    async def disable_action_configuration(
+        self,
+        harbor_id: str,
+        *,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborActionConfigurationEnvelope:
+        """
+        Disables all configured actions for a Harbor.
+
+        You must be an Organization administrator with permission to edit the Harbor.
+        Use a normal writable API credential, not a Harbor profile credential. Your
+        Organization must have the Harbor Actions entitlement.
+
+        > 🚧 Disable all actions
+        >
+        > This removes every configured action grant from the Harbor, including grants
+        > for detached Connections. There is no per-Connection revision check.
+
+        The response contains the empty configuration. This request does not delete
+        Connections, syncs, or provider records.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborActionConfigurationEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.harbors.disable_action_configuration(
+                harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.disable_action_configuration(
+            harbor_id, idempotency_key=idempotency_key, request_options=request_options
+        )
+        return _response.data
+
+    async def list_action_source_connections(
+        self, harbor_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HarborActionSourceConnectionsEnvelope:
+        """
+        Lists action-capable source Connections that populate a Harbor.
+
+        You must be an Organization administrator with permission to edit the Harbor.
+        Use a writable API credential, not a Harbor profile credential. Read-only keys
+        are denied because this endpoint requires Harbor edit permission. Discovery does
+        not require the Harbor Actions entitlement.
+
+        A Connection is eligible when it supports actions and is a source of a
+        non-deleted Bulk Sync or Model Sync targeting the Harbor's backing Connection.
+        Only saved, non-shared Connections in your Organization that you can query are
+        included. Disabled syncs still establish source membership.
+
+        Discover schemas and operations before choosing the grants to configure.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborActionSourceConnectionsEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.harbors.list_action_source_connections(
+                harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.list_action_source_connections(harbor_id, request_options=request_options)
+        return _response.data
+
+    async def set_action_configuration(
+        self,
+        harbor_id: str,
+        connection_id: str,
+        *,
+        expected_revision: typing.Optional[str] = OMIT,
+        grants: typing.Optional[typing.Sequence[HarborActionGrantSchema]] = OMIT,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborActionConfigurationEnvelope:
+        """
+        Creates or replaces action grants for an eligible Harbor source Connection.
+
+        You must be an Organization administrator with permission to edit both the
+        Harbor and the source Connection. Use a normal writable API credential, not a
+        Harbor profile credential. Your Organization must have the Harbor Actions
+        entitlement.
+
+        The Connection must populate the Harbor through a non-deleted Bulk Sync or Model
+        Sync targeting its backing Connection. This requirement applies to new grants
+        and replacements, even when you only remove fields from an existing grant.
+
+        Submit the complete grant set for this Connection. Omit `expected_revision` to
+        create it, or supply the current revision to replace it. A missing, stale, or
+        unexpected revision returns `409 Conflict`; read configuration again before
+        retrying. Successful replacement creates a new revision.
+
+        For mutating operations, `field_ids` selects input fields and
+        `lookup_field_ids` must be omitted. For read-only operations, `field_ids`
+        selects output fields and `lookup_field_ids` selects allowed lookup fields.
+        Duplicate operations or field IDs are invalid. An empty grant set is invalid;
+        remove the Connection's grants instead.
+
+        This request changes permissions only. It does not execute provider actions.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        connection_id : str
+            Source Connection whose action grants you want to manage.
+
+        expected_revision : typing.Optional[str]
+            Current revision when replacing existing grants. Omit when creating grants for this Connection.
+
+        grants : typing.Optional[typing.Sequence[HarborActionGrantSchema]]
+            Complete replacement of this Connection's action grants.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborActionConfigurationEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.harbors.set_action_configuration(
+                harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.set_action_configuration(
+            harbor_id,
+            connection_id,
+            expected_revision=expected_revision,
+            grants=grants,
+            idempotency_key=idempotency_key,
+            request_options=request_options,
+        )
+        return _response.data
+
+    async def remove_action_configuration(
+        self,
+        harbor_id: str,
+        connection_id: str,
+        *,
+        expected_revision: str,
+        idempotency_key: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborActionConfigurationEnvelope:
+        """
+        Removes a Connection's action grants from a Harbor.
+
+        You must be an Organization administrator with permission to edit the Harbor.
+        Use a normal writable API credential, not a Harbor profile credential. Your
+        Organization must have the Harbor Actions entitlement.
+
+        Supply the current `expected_revision` as a query parameter. A stale revision
+        returns `409 Conflict`; read configuration again before retrying.
+
+        You can remove grants after the Connection stops populating the Harbor, or after
+        the Connection is deleted. The response contains the remaining configured action
+        Connections. This request does not delete the Connection or provider records.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        connection_id : str
+            Source Connection whose action grants you want to manage.
+
+        expected_revision : str
+            Current revision of the Connection's action grants.
+
+        idempotency_key : typing.Optional[str]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborActionConfigurationEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.harbors.remove_action_configuration(
+                harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                expected_revision="248df4b7-aa70-47b8-a036-33ac447e668d",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.remove_action_configuration(
+            harbor_id,
+            connection_id,
+            expected_revision=expected_revision,
+            idempotency_key=idempotency_key,
+            request_options=request_options,
+        )
+        return _response.data
+
+    async def list_action_configuration_schemas(
+        self,
+        harbor_id: str,
+        connection_id: str,
+        *,
+        search: typing.Optional[str] = None,
+        limit: typing.Optional[int] = None,
+        page_token: typing.Optional[str] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborActionConfigurationSchemasEnvelope:
+        """
+        Lists available action schemas for an eligible Harbor source Connection.
+
+        You must be an Organization administrator with permission to edit the Harbor
+        and query the source Connection. Use a writable API credential, not a Harbor
+        profile credential. Read-only keys are denied because this endpoint requires
+        Harbor edit permission. Discovery does not require the Harbor Actions entitlement.
+
+        The Connection must populate the Harbor through a non-deleted Bulk Sync or Model
+        Sync targeting its backing Connection. The response lists action schemas, not
+        records. Use the next page token with the same search filter to continue.
+
+        Operation IDs in the catalog are hints. Operation discovery returns the current
+        configurable fields for a schema.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        connection_id : str
+            Source Connection whose action grants you want to manage.
+
+        search : typing.Optional[str]
+            Filter action schemas by ID or name.
+
+        limit : typing.Optional[int]
+            Maximum number of schemas to return.
+
+        page_token : typing.Optional[str]
+            Opaque cursor returned by the previous request.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborActionConfigurationSchemasEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.harbors.list_action_configuration_schemas(
+                harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                search="search",
+                limit=1,
+                page_token="page_token",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.list_action_configuration_schemas(
+            harbor_id, connection_id, search=search, limit=limit, page_token=page_token, request_options=request_options
+        )
+        return _response.data
+
+    async def list_action_configuration_operations(
+        self,
+        harbor_id: str,
+        connection_id: str,
+        schema_id: str,
+        *,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HarborActionConfigurationOperationsEnvelope:
+        """
+        Lists operations and configurable fields for an eligible Harbor action schema.
+
+        You must be an Organization administrator with permission to edit the Harbor
+        and query the source Connection. Use a writable API credential, not a Harbor
+        profile credential. Read-only keys are denied because this endpoint requires
+        Harbor edit permission. Discovery does not require the Harbor Actions entitlement.
+
+        The Connection must populate the Harbor through a non-deleted Bulk Sync or Model
+        Sync targeting its backing Connection. This request returns operation metadata,
+        not provider records, and does not execute an action.
+
+        For a mutating operation, choose input field IDs. For a read-only operation,
+        choose output field IDs and at least one lookup field ID. Required input fields
+        must be included in the grant.
+
+        Parameters
+        ----------
+        harbor_id : str
+            Unique identifier of the Harbor.
+
+        connection_id : str
+            Source Connection whose action grants you want to manage.
+
+        schema_id : str
+            Exact action schema ID returned by schema discovery.
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HarborActionConfigurationOperationsEnvelope
+            OK
+
+        Examples
+        --------
+        import asyncio
+
+        from polytomic import AsyncPolytomic
+
+        client = AsyncPolytomic(
+            "2025-09-18",
+            token="YOUR_TOKEN",
+        )
+
+
+        async def main() -> None:
+            await client.harbors.list_action_configuration_operations(
+                harbor_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                connection_id="248df4b7-aa70-47b8-a036-33ac447e668d",
+                schema_id="schema_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.list_action_configuration_operations(
+            harbor_id, connection_id, schema_id, request_options=request_options
         )
         return _response.data
 

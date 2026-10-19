@@ -14,7 +14,11 @@ class CreateModelRequest(UniversalBaseModel):
     configuration: typing.Dict[str, typing.Any]
     connection_id: str
     enricher: typing.Optional[Enrichment] = None
-    fields: typing.Optional[typing.List[str]] = None
+    fields: typing.Optional[typing.List[str]] = pydantic.Field(default=None)
+    """
+    Technical/source field names to publish in the model. Use source names, not model-field UUIDs or display labels. For example, use dealname rather than Deal Name. Omit or pass an empty array to publish all standard source fields.
+    """
+
     identifier: typing.Optional[str] = None
     labels: typing.Optional[typing.List[str]] = None
     name: str

@@ -13,6 +13,7 @@ from ...core.pydantic_utilities import parse_obj_as
 from ...core.request_options import RequestOptions
 from ...core.serialization import convert_and_respect_annotation_metadata
 from ...errors.bad_request_error import BadRequestError
+from ...errors.conflict_error import ConflictError
 from ...errors.forbidden_error import ForbiddenError
 from ...errors.internal_server_error import InternalServerError
 from ...errors.not_found_error import NotFoundError
@@ -487,7 +488,7 @@ class RawSchemasClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[CancelBulkSyncResponseEnvelope]:
         """
-        Requests cancellation of any running executions for a specific schema on a bulk sync.
+        Requests cancellation of any running executions for a specific schema on a bulk sync. A schema whose only running work is a backfill returns a conflict.
 
         Cancellation is asynchronous. A successful response means the cancellation
         signal for this schema has been queued; the schema's in-flight work continues
@@ -545,6 +546,17 @@ class RawSchemasClient:
                 )
             if _response.status_code == 404:
                 raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,
@@ -1036,7 +1048,7 @@ class AsyncRawSchemasClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[CancelBulkSyncResponseEnvelope]:
         """
-        Requests cancellation of any running executions for a specific schema on a bulk sync.
+        Requests cancellation of any running executions for a specific schema on a bulk sync. A schema whose only running work is a backfill returns a conflict.
 
         Cancellation is asynchronous. A successful response means the cancellation
         signal for this schema has been queued; the schema's in-flight work continues
@@ -1094,6 +1106,17 @@ class AsyncRawSchemasClient:
                 )
             if _response.status_code == 404:
                 raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        types_api_error_ApiError,
+                        parse_obj_as(
+                            type_=types_api_error_ApiError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 409:
+                raise ConflictError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         types_api_error_ApiError,

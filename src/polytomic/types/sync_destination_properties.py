@@ -12,6 +12,11 @@ class SyncDestinationProperties(UniversalBaseModel):
     True if execution reports for this destination will not break record counts out by operation (insert vs. update); typical for upsert-only destinations.
     """
 
+    identity_logics: typing.Optional[typing.List[str]] = pydantic.Field(default=None)
+    """
+    How this destination can combine more than one identity mapping: 'priority', 'and', or both. Every combination is supported when empty.
+    """
+
     mappings_not_required: typing.Optional[bool] = pydantic.Field(default=None)
     """
     True if a sync may be configured with only a target identity and no field mappings.
